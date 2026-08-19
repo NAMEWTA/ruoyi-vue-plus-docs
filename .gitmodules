@@ -1,6 +1,6 @@
-[submodule "RuoYi-Vue-Plus-namewta"]
-	path = RuoYi-Vue-Plus-namewta
-	url = https://github.com/NAMEWTA/RuoYi-Vue-Plus-namewta.git
+[submodule "ruoyi-vue-plus-namewta"]
+	path = ruoyi-vue-plus-namewta
+	url = https://github.com/NAMEWTA/ruoyi-vue-plus-namewta.git
 [submodule "plus-ui-namewta"]
 	path = plus-ui-namewta
 	url = https://github.com/NAMEWTA/plus-ui-namewta.git

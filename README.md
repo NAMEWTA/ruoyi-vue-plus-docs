@@ -7,12 +7,12 @@
 | 仓库 | 角色 | 说明 |
 |------|------|------|
 | [ruoyi-vue-plus-docs](https://github.com/NAMEWTA/ruoyi-vue-plus-docs) | 父仓库 | 聚合入口，以 submodule 引用前后端 |
-| [RuoYi-Vue-Plus-namewta](https://github.com/NAMEWTA/RuoYi-Vue-Plus-namewta) | 后端 | Spring Boot / RuoYi-Vue-Plus 服务端 |
+| [ruoyi-vue-plus-namewta](https://github.com/NAMEWTA/ruoyi-vue-plus-namewta) | 后端 | Spring Boot / RuoYi-Vue-Plus 服务端 |
 | [plus-ui-namewta](https://github.com/NAMEWTA/plus-ui-namewta) | 前端 | Vue 管理端（plus-ui） |
 
 ```
 ruoyi-vue-plus-docs/                 # 父仓库（本仓库）
-├── RuoYi-Vue-Plus-namewta/          # submodule → 后端仓库
+├── ruoyi-vue-plus-namewta/          # submodule → 后端仓库
 └── plus-ui-namewta/                 # submodule → 前端仓库
 ```
 

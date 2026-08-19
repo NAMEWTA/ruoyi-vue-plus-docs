@@ -1,0 +1,6 @@
+[submodule "RuoYi-Vue-Plus-namewta"]
+	path = RuoYi-Vue-Plus-namewta
+	url = https://github.com/NAMEWTA/RuoYi-Vue-Plus-namewta.git
+[submodule "plus-ui-namewta"]
+	path = plus-ui-namewta
+	url = https://github.com/NAMEWTA/plus-ui-namewta.git

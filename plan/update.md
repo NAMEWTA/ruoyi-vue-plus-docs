@@ -253,7 +253,7 @@ SysUserTypeVo requireLoginAccess(Long userId, SysClientVo client);
 
 新增 `GET /auth/client/context`,只返回 `{ clientEnabled, registerEnabled }`,严禁泄露 `clientSecret`/IP 白名单/`accessPath`/超时策略。
 
-注册流程:按 `RegisterBody.clientId` 查 Client → Client 正常 → `registerEnabled` 开启 → 登录域正常 → 验证码 → 用户名/手机/邮箱唯一性 → 同事务创建 `sys_user` + `sys_user_type_rel`。`RegisterBody` 删除 `userType`(它继承 `LoginBody`,`clientId` 天然具备),授予的登录域只能来自 `client.userTypeId`。已存在账号一律提示"请登录",**绝不**自动追加登录域。
+注册流程:按 `RegisterBody.clientId` 查 Client → Client 正常 → `registerEnabled` 开启 → 登录域正常 → 验证码 → 用户名/手机/邮箱唯一性 → 同事务创建 `sys_user` + `sys_user_type_rel`。`RegisterBody` 删除 `userType`(它继承 `LoginBody`,`clientId` 天然具备),并允许后端调用方可选提交 `phoneNumber`/`email`;非空时必须先通过格式和唯一性校验。当前公开注册前端仍只提交 `clientId`/`username`/`password`/`captcha`,不增加手机号或邮箱表单。授予的登录域只能来自 `client.userTypeId`。已存在账号一律提示"请登录",**绝不**自动追加登录域。
 
 ### 阶段 9 — 用户管理
 

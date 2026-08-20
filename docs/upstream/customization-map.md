@@ -50,4 +50,4 @@ git diff --name-status "$(git merge-base main upstream/6.X-Vue)" upstream/6.X-Vu
 
 ## 初始化注意
 
-全新库：`ry_vue.sql` → `001_user_type.sql` → `002_client_rbac.sql` → `003_initial_data.sql`。若某环境已经执行过旧版 `003`，后来脚本新增的 `sys_role_menu` 行需要手工补插，不要整份重跑。
+全新库：`ry_vue.sql` → `001_user_type.sql` → `002_client_rbac.sql` → `003_initial_data.sql`。若某环境已经执行过旧版 `003`，不要整份重跑；后来新增的用户端菜单执行 `004_app_client_menus.sql`（幂等）。

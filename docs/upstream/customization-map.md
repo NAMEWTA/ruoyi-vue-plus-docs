@@ -28,7 +28,7 @@ git diff --name-status "$(git merge-base main upstream/6.X-Vue)" upstream/6.X-Vu
 | 动态路由 | 菜单与路由不得跨 Client，含超管 | `SysMenuMapper.java`；`SysMenuServiceImpl.java`；`SysMenuController.java` | `getRouters` 缺 `clientPk` 必须拒绝，不得返回全局菜单；超管旁路也只查当前 Client |
 | 会话 | 当前 Token 必须带 Client 主键和登录域 | `LoginUser.java`；`LoginHelper.java`；`IAuthStrategy.buildLoginParameter`；`ClientSessionService` | `LoginHelper.getUserType()` 只读 Token extra，不从 LoginUser/loginId 推断；用户全局禁用或删除时先捕获其登录域再逐域清 Token；extra `clientPk` 与 RBAC `clientId` 都是 Long PK，登录体 `clientId` 仍是 OAuth 字符串 |
 | 下拉别名 | 前端 options 契约 | `SysUserTypeController.java` | 保留 `GET /system/userType/options`（`optionselect` 别名） |
-| SQL | 旁路增量，不改上游脚本 | `script/sql/namewta/{001,002,003,README.md}` | 初始化顺序：`ry_vue.sql` → `001` → `002` → `003`；不修改 `script/sql/ry_vue.sql` |
+| SQL | 旁路增量，不改上游脚本 | `script/sql/namewta/{DDL.sql,DSL.sql,README.md}` | 初始化顺序：`ry_vue.sql` → `DDL.sql` → `DSL.sql`；两个 SQL 文件只允许末尾追加，不修改 `script/sql/ry_vue.sql` |
 
 ## 前端（plus-ui-namewta）
 
@@ -50,4 +50,4 @@ git diff --name-status "$(git merge-base main upstream/6.X-Vue)" upstream/6.X-Vu
 
 ## 初始化注意
 
-全新库：`ry_vue.sql` → `001_user_type.sql` → `002_client_rbac.sql` → `003_initial_data.sql`。若某环境已经执行过旧版 `003`，不要整份重跑；后来新增的用户端菜单执行 `004_app_client_menus.sql`（幂等）。
+全新库：`ry_vue.sql` → `namewta/DDL.sql` → `namewta/DSL.sql`。已执行旧编号脚本的环境不要重放对应基线块；缺少用户端菜单时，只执行 `DSL.sql` 中幂等的 `NAMEWTA-BASE-DSL-002`。后续结构和数据变化分别追加到两个文件末尾。

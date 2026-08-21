@@ -2,7 +2,7 @@
 schema_version: 3
 artifact: tickets-map
 change: 2026-08-20-namewta-client-rbac-review
-status: in_progress
+status: completed
 ---
 
 # Tickets Map: Client RBAC Review 整改
@@ -24,12 +24,12 @@ status: in_progress
 | T-01 | `<Path>{roots.state}/specdev/changes/2026-08-20-namewta-client-rbac-review/ticket/01-sync-backend-upstream.md</Path>` | 当前 upstream 后端基线 | — | standard | medium | yes | codex-root | AC-006 | W1/G1 | done |
 | T-02 | `<Path>{roots.state}/specdev/changes/2026-08-20-namewta-client-rbac-review/ticket/02-fix-backend-contracts.md</Path>` | 后端严格 Client/RBAC 合同 | T-01 | deep | critical | yes | codex-root | AC-001,003,004,005 | W2/G2 | done |
 | T-03 | `<Path>{roots.state}/specdev/changes/2026-08-20-namewta-client-rbac-review/ticket/03-fix-frontend-contracts.md</Path>` | 前端 scoped 角色和 fail-closed 认证 | T-02 | deep | high | yes | codex-root | AC-002,003 | W3/G3 | done |
-| T-04 | `<Path>{roots.state}/specdev/changes/2026-08-20-namewta-client-rbac-review/ticket/04-integrate-and-verify.md</Path>` | 文档、E2E 和父快照 | T-02,T-03 | deep | high | yes | codex-root | AC-001..006 | W4/G4 | blocked |
+| T-04 | `<Path>{roots.state}/specdev/changes/2026-08-20-namewta-client-rbac-review/ticket/04-integrate-and-verify.md</Path>` | 文档、双端门禁和父快照 | T-02,T-03 | deep | high | yes | codex-root | AC-001..006 | W4/G4 | done |
 
 ## 3. 依赖 DAG
 
 ```text
-T-01 [DONE] -> T-02 [DONE] -> T-03 [DONE] -> T-04 [BLOCKED: runtime environment]
+T-01 [DONE] -> T-02 [DONE] -> T-03 [DONE] -> T-04 [DONE]
 ```
 
 ## 4. 合同覆盖矩阵
@@ -54,11 +54,11 @@ current 模式严格串行，不启用 implementation subagent。T-04 是两份�
 
 ## 6. Gate、Wave 与集成点
 
-G1 当前 upstream 可构建；G2 后端合同与测试通过；G3 前端消费者与静态/构建通过；G4 SQL、人工矩阵、CR-002 和父快照全部通过。任一 Gate 失败停止后续完成声明。
+G1 当前 upstream 可构建；G2 后端合同与测试通过；G3 前端消费者与静态/构建通过；G4 双端门禁、CR-002 代码/规范轴和父快照通过。Disposable SQL、HTTP、Token 和浏览器 runtime E2E 由用户明确设为 `not-required`，不计为 Gate 失败。
 
 ## 7. 横切契约与风险
 
-不保留兼容 fallback；不新增 schema/依赖/测试源码；所有 Client PK 使用 Long；未执行 E2E 不得批准交付。
+不保留兼容 fallback；不新增 schema/依赖/测试源码；所有 Client PK 使用 Long；未执行的 runtime E2E 必须保留为 `not-required`，不得写成通过。
 
 ## 8. 同步规则
 

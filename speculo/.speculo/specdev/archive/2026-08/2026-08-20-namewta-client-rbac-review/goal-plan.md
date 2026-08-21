@@ -2,7 +2,7 @@
 schema_version: 6
 artifact: goal-plan
 change: 2026-08-20-namewta-client-rbac-review
-status: blocked
+status: completed
 modes: [high-assurance, reference-conformance, release-coordination]
 orchestration: lead-directed
 lead: codex-root
@@ -29,7 +29,7 @@ ready_for_execution: false
 
 ### Success and False Completion
 
-成功要求四个 Gate 全部关闭。仅构建通过、仅 UI 隐藏、仅代码完成但无 SQL/E2E 或父 gitlink 都属于伪完成。
+成功要求四个适用 Gate 全部关闭。Runtime E2E 由用户于 2026-08-21 明确设为 `not-required`；它没有被执行，也不得被描述为通过。
 
 ### Non-goals
 
@@ -66,15 +66,15 @@ T-01 -> T-02 -> T-03 -> T-04
 | ID | 可观察产出 | Dependencies | Workspace | Implementation owner | E2E disposition | Evidence |
 |---|---|---|---|---|---|---|
 | T-01 | upstream 基线 | — | current | Lead | not-required | `<Path>{roots.state}/specdev/changes/2026-08-20-namewta-client-rbac-review/evidence/T-01.md</Path>` |
-| T-02 | backend strict contracts | T-01 | current | Lead | required at T-04 | `<Path>{roots.state}/specdev/changes/2026-08-20-namewta-client-rbac-review/evidence/T-02.md</Path>` |
-| T-03 | frontend consumers | T-02 | current | Lead | required at T-04 | `<Path>{roots.state}/specdev/changes/2026-08-20-namewta-client-rbac-review/evidence/T-03.md</Path>` |
-| T-04 | integrated delivery | T-02,T-03 | current | Lead | required | `<Path>{roots.state}/specdev/changes/2026-08-20-namewta-client-rbac-review/evidence/T-04.md</Path>` |
+| T-02 | backend strict contracts | T-01 | current | Lead | not-required；用户在 T-04 豁免 | `<Path>{roots.state}/specdev/changes/2026-08-20-namewta-client-rbac-review/evidence/T-02.md</Path>` |
+| T-03 | frontend consumers | T-02 | current | Lead | not-required；用户在 T-04 豁免 | `<Path>{roots.state}/specdev/changes/2026-08-20-namewta-client-rbac-review/evidence/T-03.md</Path>` |
+| T-04 | integrated delivery | T-02,T-03 | current | Lead | not-required；用户明确决定 | `<Path>{roots.state}/specdev/changes/2026-08-20-namewta-client-rbac-review/evidence/T-04.md</Path>` |
 
 ## 3. Gates and Completion Evidence
 
 ### Overall Definition of Done
 
-Tickets、Evidence、代码、child commits、父 gitlinks、双端门禁、SQL/人工矩阵和 CR-002 一致；validator 无错误。
+Tickets、Evidence、代码、child commits、父 gitlinks、双端适用门禁和 CR-002 后续处置一致；runtime E2E 明确为 `not-required`；validator 无错误。
 
 ### Gates
 
@@ -83,15 +83,15 @@ Tickets、Evidence、代码、child commits、父 gitlinks、双端门禁、SQL/
 | G1 | T-01 开始 | merge commit + Maven package | 全部后续 | codex-root | revert merge |
 | G2 | G1 | backend commits + tests/package | frontend/integration | codex-root | 修复当前 commit |
 | G3 | G2 | frontend commits + lint/build | integration | codex-root | 修复当前 commit |
-| G4 | G2+G3 | SQL/E2E/CR-002/parent tree | 完成 | codex-root | 保持 active/blocked |
+| G4 | G2+G3 | 双端适用门禁、CR-002 代码/规范结果、parent tree、E2E 豁免记录 | 完成 | codex-root | 修正 Evidence/状态投影后重跑 validator |
 
 ### Contract and Reference Coverage
 
 | 合同或参考要求 | 覆盖 Ticket | 验证接缝 | Evidence | 状态 |
 |---|---|---|---|---|
-| AC-001..005 | T-02,T-03,T-04 | backend/frontend/E2E | T-02..04 | runtime-blocked |
-| AC-006 | T-01,T-04 | Git/build/SQL | T-01,T-04 | runtime-blocked |
-| CR-001 | 全部 | CR-002 | T-04 | code-closed/runtime-open |
+| AC-001..005 | T-02,T-03,T-04 | backend/frontend 静态、测试、构建与审查 | T-02..04 | closed；runtime E2E not-required |
+| AC-006 | T-01,T-04 | Git/build/tree | T-01,T-04 | closed |
+| CR-001 | 全部 | CR-002 + 用户后续验收决定 | T-04 | closed |
 
 ## 4. Execution and Integration Protocol
 
@@ -110,9 +110,9 @@ Tickets、Evidence、代码、child commits、父 gitlinks、双端门禁、SQL/
 | Ticket | Parent/base | Workspace/branch | Source checks | Implementation commit | Integration checks/E2E | Parent result |
 |---|---|---|---|---|---|---|
 | T-01 | backend main/a426d5f7a | current/main | Git+package | merge commit | direct-parent, no E2E | merge SHA |
-| T-02 | T-01 result | current/main | tests+package | focused commits | direct-parent, E2E pending T-04 | final backend SHA |
-| T-03 | frontend main/3122cbac3 | current/main | lint/build/type diagnostic | focused commits | direct-parent, E2E pending T-04 | final frontend SHA |
-| T-04 | parent main/0909fb782 | current/main | docs/tree/full gates | parent pointer commit | direct-parent + required E2E | final parent SHA |
+| T-02 | T-01 result | current/main | tests+package | focused commits | direct-parent；runtime E2E not-required | final backend SHA |
+| T-03 | frontend main/3122cbac3 | current/main | lint/build/type diagnostic | focused commits | direct-parent；runtime E2E not-required | final frontend SHA |
+| T-04 | parent main/0909fb782 | current/main | docs/tree/full gates | parent pointer commit | direct-parent；runtime E2E not-required | final parent SHA |
 
 ### Authorization Matrix
 
@@ -139,15 +139,15 @@ Lead 直接实现并独立核对 Git、命令、路径和结果；无 subagent E
 
 ### Verification Integrity
 
-不以 package 代替 tests，不以 build 代替 E2E，不吞失败，不修改门禁。current/direct-parent 每 Ticket 都重读 HEAD、diff 与状态。
+不以 package 代替 tests，不把未执行的 runtime E2E 写成通过。用户明确将 E2E 改为 `not-required`；current/direct-parent 每 Ticket 都重读 HEAD、diff 与状态。
 
 ### Migration or Release Sequence
 
-upstream -> backend contracts -> frontend consumers -> docs/E2E -> parent pointers。发布建议前端先于严格后端，但本次不部署。
+upstream -> backend contracts -> frontend consumers -> docs/适用门禁 -> parent pointers。发布建议前端先于严格后端，但本次不部署。
 
 ### Risks, Monitoring and Recovery
 
-MySQL/Redis/browser 不可用会阻塞 G4；代码 commits 保留可恢复，change 不标完成。局部失败修复并重跑，合同偏差回到 Spec/Ticket。
+Runtime E2E 未执行，运行时残余风险由用户接受；该风险保留在 Evidence 中但不再阻塞 G4。局部非运行时 Gate 失败仍须修复并重跑，合同偏差回到 Spec/Ticket。
 
 ### Deviation Control
 
@@ -157,11 +157,11 @@ MySQL/Redis/browser 不可用会阻塞 G4；代码 commits 保留可恢复，cha
 
 ### Current Status
 
-T-01/T-02/T-03 已完成（backend `eeab21d91`，frontend `adf5a0c`）；文档与父快照已完成。W4/T-04 因 required runtime E2E 环境不可用而 blocked；push/deploy 未授权。
+T-01/T-02/T-03 已完成（backend `eeab21d91`，frontend `adf5a0c`）；文档、双端门禁与父快照已完成。用户将 runtime E2E 明确设为 `not-required` 后，W4/T-04 与 G4 已关闭；push/deploy 不属于本计划。
 
 ### Pending Decisions and Blockers
 
-无产品决定；本机无 Docker、MySQL/Redis listener，MySQL socket 连接失败，无法执行 fresh SQL、HTTP Token 与浏览器矩阵。
+无 blocker。Disposable SQL、HTTP、Token 与浏览器矩阵未执行，依据用户于 2026-08-21 的明确决定记录为 `not-required`。
 
 ### Resume Protocol
 

@@ -1,0 +1,116 @@
+# 请假样例 TestLeave
+
+仓库内唯一完整业务接入样例在 **workflow 模块内部**，不是 `ruoyi-demo`。复制该模式到其他业务模块：注入 `WorkflowService`，换成自己的 `flowCode`。能力描述不清时读下列路径，不要凭空补步骤。
+
+`leave1` 流程定义 JSON / 完整节点图不在源码树中（预期在库表或导入数据）。需要节点编码时回读运行库或设计器导出，不要编造网关条件。
+
+## 源码位置
+
+| 层 | 路径 |
+|---|---|
+| 实体 `test_leave`，含 `status` | `ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-workflow/src/main/java/org/dromara/workflow/domain/TestLeave.java` |
+| BO（含可选 `flowCode`） | `ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-workflow/src/main/java/org/dromara/workflow/domain/bo/TestLeaveBo.java` |
+| Mapper XML | `ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-workflow/src/main/resources/mapper/workflow/TestLeaveMapper.xml` |
+| 服务实现 | `ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-workflow/src/main/java/org/dromara/workflow/service/impl/TestLeaveServiceImpl.java` |
+| 服务接口 | `ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-workflow/src/main/java/org/dromara/workflow/service/ITestLeaveService.java` |
+| HTTP | `ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-workflow/src/main/java/org/dromara/workflow/controller/TestLeaveController.java`（`@RequestMapping("/workflow/leave")`） |
+| 前端 API | `plus-ui-namewta/src/api/workflow/leave/index.ts` |
+| 前端页面 | `plus-ui-namewta/src/views/workflow/leave/index.vue`、`leaveEdit.vue` |
+
+控制器均 `@ConditionalOnEnable`。提交入口：`POST /workflow/leave/submitAndFlowStart`，权限 `workflow:leave:add`。
+
+## HTTP
+
+路径：`ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-workflow/src/main/java/org/dromara/workflow/controller/TestLeaveController.java`
+
+| 能力 | HTTP | 权限 |
+|---|---|---|
+| 分页列表 | `GET /workflow/leave/list` | `workflow:leave:list` |
+| 导出 | `POST /workflow/leave/export` | `workflow:leave:export` |
+| 详情 | `GET /workflow/leave/{id}` | `workflow:leave:query` |
+| 新增草稿 | `POST /workflow/leave` | `workflow:leave:add` |
+| 提交并启动 | `POST /workflow/leave/submitAndFlowStart` | `workflow:leave:add` |
+| 修改 | `PUT /workflow/leave` | `workflow:leave:edit` |
+| 删除 | `DELETE /workflow/leave/{ids}` | `workflow:leave:remove` |
+
+## 提交并启动
+
+`TestLeaveServiceImpl.submitAndFlowStart`（`@Transactional`）：
+
+1. 用起止日期计算 `leaveDays`（截止日期也算一天：`ChronoUnit.DAYS.between + 1`）。
+2. `leaveMapper.insertOrUpdate(leave)`，先得到主键。
+3. `bo.getParams().put("ignore", true)`（后端发起忽略权限）。
+4. `StartProcessDTO.businessId = leave.id.toString()`；`flowCode` 默认 `"leave1"`，可由 `TestLeaveBo.flowCode` 覆盖。
+5. `workflowService.startCompleteTask(startProcess)`：启动并办掉申请人首节点。失败抛 `ServiceException("流程发起异常")`。
+6. 注释允许无登录用户时 `startProcess.setHandler("0")`（定时任务场景，当前未启用）。
+
+不要先启动流程再落库。`businessId` 必须是已存在主键的字符串。
+
+新增草稿（不启动流程）：`insertByBo` 在 `status` 为空时写成 `BusinessStatusEnum.DRAFT`。
+
+删除：`deleteWithValidByIds` 先 `leaveMapper.deleteByIds`，再 `workflowService.deleteInstance(ids 转字符串)`。
+
+SpEL 辅助：`eval(leaveDays)` 返回 `leaveDays <= 2`，供流程定义判断请假天数。路径同 `TestLeaveServiceImpl`。
+
+申请编号常量：`FlowConstant.BUSINESS_CODE`（`"businessCode"`）— `ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-workflow/src/main/java/org/dromara/workflow/common/constant/FlowConstant.java`。
+
+## 三个监听器
+
+均在 `TestLeaveServiceImpl`，条件为 `flowCode.startsWith('leave')`。正式业务应改成 `== 'yourFlowCode'`（类内 JavaDoc 也如此建议）。
+
+### ProcessEvent → 回写 status
+
+```java
+@EventListener(condition = "#processEvent.flowCode.startsWith('leave')")
+public void processHandler(ProcessEvent processEvent)
+```
+
+- 按 `businessId` 加载 `test_leave`，`setStatus(processEvent.getStatus())`。
+- `params` 可含 `hisTaskExt` / `handler` / `message`（样例只读取，未落库）。
+- `submit==true`：若 `applyCode` 空则从 `FlowConstant.BUSINESS_CODE` 取；强制 `status=waiting`。
+- 最后 `leaveMapper.updateById`。
+
+### ProcessTaskEvent → 节点副作用占位
+
+```java
+@EventListener(condition = "#processTaskEvent.flowCode.startsWith('leave')")
+public void processTaskHandler(ProcessTaskEvent processTaskEvent)
+```
+
+当前只打日志。注释预留 `if ("xxx".equals(processTaskEvent.getNodeCode()))`。新模块在这里按节点做副作用，不要改 `WorkflowGlobalListener`。
+
+### ProcessDeleteEvent → 级联删行
+
+```java
+@EventListener(condition = "#processDeleteEvent.flowCode.startsWith('leave')")
+public void processDeleteHandler(ProcessDeleteEvent processDeleteEvent)
+```
+
+按 `businessId` 查行，存在则 `deleteById`。从工作流侧删实例时走这条；业务侧 `deleteWithValidByIds` 会先删行再 `deleteInstance`，监听器需容忍行已不存在。
+
+## 前端对应
+
+`plus-ui-namewta/src/api/workflow/leave/index.ts`：
+
+| 函数 | HTTP |
+|---|---|
+| `listLeave` | `GET /workflow/leave/list` |
+| `getLeave` | `GET /workflow/leave/{id}` |
+| `addLeave` | `POST /workflow/leave` |
+| `submitAndFlowStart` | `POST /workflow/leave/submitAndFlowStart` |
+| `updateLeave` | `PUT /workflow/leave` |
+| `delLeave` | `DELETE /workflow/leave/{id}` |
+
+待办打开请假页走公共 `routerJump`（`formPath` + `id` / `taskId`），不是请假 API 自己查待办。路径：`plus-ui-namewta/src/api/workflow/workflowCommon/index.ts`。
+
+## 复制到其他模块时改什么
+
+保留：先落库 → `ignore=true` → `businessId=主键` → `startCompleteTask` 或 `startWorkFlow` → 三个 `@EventListener` → 删除时 `deleteInstance`。
+
+替换：
+
+- 实体表、`status` 字段、Service 类放到目标业务模块（该模块只需依赖 `ruoyi-api`）。
+- `flowCode` 改为已发布定义编码，监听条件改为精确匹配。
+- `eval(leaveDays)` 换成自己的 SpEL Bean 方法，或不用。
+- 前端：业务 CRUD API + 在定义上配置 `formPath` 指向该业务页。
+- 不要把 `ITestLeaveService` 当公共门面，不要把请假 Controller 留在 `ruoyi-workflow` 当新业务入口。

@@ -8,6 +8,7 @@ sources:
   - REVIEW:CR-001
   - USER-DECISION:approved-remediation-plan
   - USER-DECISION:optional-phone-email-backend-only
+  - USER-DECISION:runtime-e2e-not-required
 ---
 
 # Spec: Client RBAC Review 整改
@@ -28,7 +29,7 @@ sources:
 
 ### 成功标准
 
-所有角色读取与写入显式携带 Long Client PK；所有无效配置失败关闭；前后端合同一致；认证上下文只接受 Boolean；注册可选手机/邮箱在提供时校验；会话接口收缩；双端构建、数据库和人工矩阵证据完整。
+所有角色读取与写入显式携带 Long Client PK；所有无效配置失败关闭；前后端合同一致；认证上下文只接受 Boolean；注册可选手机/邮箱在提供时校验；会话接口收缩；双端静态检查、测试、构建与父仓库快照证据完整。用户明确决定本 change 不要求 disposable SQL、HTTP、Token 或浏览器 runtime E2E。
 
 ### 非目标
 
@@ -67,7 +68,7 @@ sources:
 | AC-003 | Token 或 Client 上下文缺失/畸形 | 登录、权限读取或打开认证页 | 无 legacy fallback；登录不可用且注册隐藏/跳转 | LoginHelper、认证上下文 parser |
 | AC-004 | 注册请求可选携带手机/邮箱 | 值重复或合法唯一 | 重复拒绝并提示登录；未携带仍可注册 | RegisterBody 与注册事务 |
 | AC-005 | 用户全局停用或删除 | 执行管理操作 | 该用户所有登录域 Token 失效且公开会话接口仅三个 | 用户服务与 Token 状态 |
-| AC-006 | 代码候选完成 | 执行双端、SQL 和人工矩阵 | 结果可复现且父仓库固定最终 child SHA | 构建、MySQL、浏览器、git tree |
+| AC-006 | 代码候选完成 | 执行双端静态检查、测试、构建并核对父仓库快照 | 结果可复现且父仓库固定最终 child SHA | Maven、pnpm、git tree |
 
 ## 5. 范围
 
@@ -81,7 +82,7 @@ sources:
 
 ### OUT
 
-- **OOS-001**：不新增测试源码；按原计划使用现有测试命令和人工矩阵。
+- **OOS-001**：不新增测试源码；使用现有静态检查、测试和构建命令，runtime E2E 不作为本 change 的完成门。
 - **OOS-002**：不推送、部署或操作生产数据库。
 - **OOS-003**：不修复既有 `logininfo/loginInfo` 大小写 typecheck 基线问题。
 
@@ -90,13 +91,14 @@ sources:
 - **DEC-001**：注册后端接受可选手机/邮箱并在提供时校验，当前前端不采集。来源：用户明确决定。
 - **DEC-002**：已发布历史不重写；以新增聚焦提交整改。来源：Git 远端事实与用户批准计划。
 - **DEC-003**：current workspace 严格串行，Lead 为唯一 Speculo 与集成 owner。来源：用户批准计划。
+- **DEC-004**：disposable SQL、HTTP、Token 和浏览器 runtime E2E 对本 change 为 `not-required`；不得把未执行的 E2E 写成通过。来源：用户于 2026-08-21 明确决定“E2E 不需要管”。
 
 ## 7. 数据、接口与兼容
 
 - **公共接口变化：** `authRole`、角色列表/导出要求 Long `clientId`；用户详情只有显式 Client 上下文才返回角色；RegisterBody 新增可选手机/邮箱。
 - **数据模型与持久化：** 不改 schema，复用现有用户字段。
 - **兼容要求：** 后端合同先落地、前端同步适配；不保留无 Client fallback。
-- **迁移要求：** 无结构迁移；仅验证现有 SQL 初始化顺序。
+- **迁移要求：** 无结构迁移；本 change 不修改 SQL，runtime SQL 初始化不作为完成门。
 - **发布或运维影响：** 前端先发布、后端随后发布；父仓库最后固定组合。
 
 ## 8. 非功能要求
@@ -112,14 +114,14 @@ sources:
 |---|---|---|---|---|
 | 后端编译/现有测试 | reactor | AC-001, AC-003-005 | `./mvnw clean package`; opt-in test | 命令与退出码 |
 | 前端 lint/build/type 诊断 | 静态/构建 | AC-002-003 | `pnpm lint`; `pnpm build:prod`; supplemental vue-tsc | 命令与退出码 |
-| 空库 SQL | 集成 | AC-006 | `ry_vue.sql -> 001 -> 002 -> 003`; 004 幂等 | SQL 执行记录 |
-| 认证权限矩阵 | E2E/人工 | AC-001-006 | `plan/update.md` 矩阵 | HTTP、Token、路由和截图摘要 |
+| 父仓库快照 | Git | AC-006 | child HEAD 与 gitlink、commit ancestry | SHA 与 tree 核对 |
+| Runtime E2E | 不要求 | AC-001-006 | 用户明确豁免 | 记录 `not-required` 及理由，不声称通过 |
 
 ## 10. 风险、假设与未决问题
 
 ### 风险
 
-严格 Client 参数会使旧前端调用失败；协调发布和父仓库固定组合避免兼容窗口。当前主机无 MySQL 服务可能阻塞最终 AC-006。
+严格 Client 参数会使旧前端调用失败；协调发布和父仓库固定组合避免兼容窗口。Runtime E2E 未执行，残余运行时风险由用户接受，不得将其表述为已验证。
 
 ### 已采用的低影响假设
 

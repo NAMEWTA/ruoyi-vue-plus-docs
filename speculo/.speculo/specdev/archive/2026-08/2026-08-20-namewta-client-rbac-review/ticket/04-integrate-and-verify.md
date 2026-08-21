@@ -4,10 +4,10 @@ artifact: ticket
 change: 2026-08-20-namewta-client-rbac-review
 id: T-04
 title: 更新长期合同、父仓库快照并完成集成验收
-status: blocked
+status: done
 planning_depth: deep
-planning_depth_reason: 跨两个子模块、文档、数据库和 E2E Gate，决定最终可交付性。
-ready: false
+planning_depth_reason: 跨两个子模块、文档和父仓库快照，决定最终可交付性；runtime E2E 后由用户明确设为不要求。
+ready: true
 risk: high
 blocked_by: [T-02, T-03]
 contract_ids: [AC-001, AC-002, AC-003, AC-004, AC-005, AC-006]
@@ -29,9 +29,9 @@ shared_path_owners: ["<Path>plan/update.md</Path> => codex-root", "<Path>docs/up
 ## 1. 战略与来源
 
 - **目标：** 固化新合同、验证集成候选并使父仓库精确记录 child commits。
-- **可观察产出：** 文档与代码一致，双端/SQL/人工矩阵可复现，父 gitlinks 指向通过验证的最终提交。
+- **可观察产出：** 文档与代码一致，双端静态检查、测试和构建可复现，父 gitlinks 指向通过验证的最终提交。
 - **来源：** 全部 AC、CR-001、用户批准计划。
-- **当前事实：** 父仓库 gitlinks 落后，主机当前无 MySQL server/Docker。
+- **当前事实：** 父仓库 gitlinks、长期合同与双端门禁均已完成；runtime E2E 未执行。
 - **Planning Depth 原因：** 最终发布 Gate 和外部环境依赖。
 
 ## 2. 决策状态
@@ -42,7 +42,7 @@ shared_path_owners: ["<Path>plan/update.md</Path> => codex-root", "<Path>docs/up
 
 ### 已采用的低影响假设
 
-- 若 MySQL/浏览器环境不可用，代码与构建可完成，但 Ticket 保持 blocked 而非伪完成。
+- 用户于 2026-08-21 明确决定本 change 不要求 disposable SQL、HTTP、Token 或浏览器 runtime E2E；这些检查记录为 `not-required`，不得写成通过。
 
 ### 未决问题
 
@@ -52,7 +52,7 @@ shared_path_owners: ["<Path>plan/update.md</Path> => codex-root", "<Path>docs/up
 
 | IN（本 Ticket 构建） | REUSE（复用且不改变契约） | OUT（明确不做） |
 |---|---|---|
-| plan/map 文档、双端 Gate、SQL/E2E、gitlinks | 现有 SQL 和验收矩阵 | push、deploy、生产迁移 |
+| plan/map 文档、双端 Gate、gitlinks | 现有 SQL 和历史验收矩阵 | runtime E2E、push、deploy、生产迁移 |
 
 ## 4. 要构建什么
 
@@ -73,9 +73,9 @@ shared_path_owners: ["<Path>plan/update.md</Path> => codex-root", "<Path>docs/up
 
 1. 更新 plan 与 customization map。
 2. 重跑双端真实门禁、diff/lock audit 和 CR-002。
-3. 在可用环境运行 fresh SQL、004 幂等和认证权限矩阵。
+3. 记录用户对 disposable SQL、HTTP、Token 和浏览器 runtime E2E 的 `not-required` 决定及残余风险。
 4. 提交 child 最终文档指针后更新父 gitlinks并核对 tree。
-5. 写 Evidence；未满足外部 Gate 时保持 blocked。
+5. 写 Evidence，补齐 current/direct-parent workspace execution record并关闭 Gate。
 
 ## 7. 路径访问契约
 
@@ -90,13 +90,13 @@ shared_path_owners: ["<Path>plan/update.md</Path> => codex-root", "<Path>docs/up
 | 行为或风险 | 验证接缝 | 命令或步骤 | 预期结果 | Evidence |
 |---|---|---|---|---|
 | 双端质量 | Maven/pnpm | package/test/lint/build | active gates pass | `<Path>{roots.state}/specdev/changes/2026-08-20-namewta-client-rbac-review/evidence/T-04.md</Path>` |
-| SQL | disposable MySQL | fresh install + 004 twice | 成功且无重复 | 同上 |
-| 安全矩阵 | HTTP/Token/browser | plan 场景与负向输入 | 严格隔离/失效 | 同上 |
+| SQL/runtime | disposable MySQL/Redis | 不执行 | `not-required`，理由为用户明确豁免 | 同上 |
+| 安全矩阵 | HTTP/Token/browser | 不执行 | `not-required`，不得声称通过 | 同上 |
 | 可复现快照 | git tree | child HEAD vs gitlinks | 精确一致 | 同上 |
 
 - **Workspace checks：** current workspace，双端全量 Gate 和 parent status/tree。
-- **E2E disposition：** required：跨 HTTP、数据库、Token、浏览器和发布快照。
-- **E2E owner/environment：** Lead/current-workspace；disposable MySQL/Redis/backend/browser。
+- **E2E disposition：** not-required：用户于 2026-08-21 明确豁免 disposable SQL、HTTP、Token 和浏览器 runtime E2E。
+- **E2E owner/environment：** Lead/current-workspace；不执行 runtime harness，保留未执行事实与残余风险。
 - **Integration evidence：** child commits、parent before/result SHA、截图/命令摘要。
 
 ## 9. 发布、迁移与恢复
@@ -106,14 +106,14 @@ shared_path_owners: ["<Path>plan/update.md</Path> => codex-root", "<Path>docs/up
 - **监控信号：** 登录/注册拒绝、角色接口 4xx、Token 和路由集合。
 - **回滚或前向恢复：** revert child commits并恢复上一组 gitlinks；无 schema 回滚。
 - **不可逆操作与批准点：** push/deploy/生产迁移均未授权。
-- **收缩条件：** CR-002 无 blocker且全部 Gate有 Evidence。
+- **收缩条件：** CR-002 的代码/工程规范检查通过，唯一 runtime finding 被后续用户决定关闭，全部适用 Gate 有 Evidence。
 
 ## 10. 验收标准
 
-- [ ] 全部 AC 满足并有 Evidence。
-- [ ] 双端、SQL、人工矩阵全部执行；未执行则 Ticket blocked。
+- [x] 全部 AC 的适用非运行时验证满足并有 Evidence。
+- [x] 双端静态检查、测试、构建和父快照核对完成。
 - [x] 修改路径和 shared owner 合法。
 - [x] child 与父 pointer commits 非空且 direct-parent 验证通过。
-- [ ] required E2E 由 Lead 在 current workspace 完成。
+- [x] Runtime E2E 记录为 `not-required`，理由和用户决定可定位，未伪报为通过。
 - [x] 无未批准偏差。
 - [x] Ticket、Map、Goal Plan、Evidence 和 change 状态一致。

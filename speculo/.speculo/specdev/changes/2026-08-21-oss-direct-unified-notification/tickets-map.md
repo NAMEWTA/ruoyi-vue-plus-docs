@@ -1,0 +1,141 @@
+---
+schema_version: 3
+artifact: tickets-map
+change: 2026-08-21-oss-direct-unified-notification
+status: completed
+---
+
+# Tickets Map: OSS 浏览器直传与统一对外通知
+
+- **Map：** `<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/tickets-map.md</Path>`
+- **Spec：** `<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/spec.md</Path>`
+- **Ticket 目录：** `<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/ticket/</Path>`
+- **Evidence 目录：** `<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/evidence/</Path>`
+- **下一步 Goal Plan：** `<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/goal-plan.md</Path>`
+
+## 1. 目标与拆分策略
+
+11 个 Ticket 共同交付 `US-001` 至 `US-012` 和 `AC-001` 至 `AC-032`。拆分以可观察行为和安全准备能力为边界：T-01/T-02/T-06 是解除公共客户端、schema 和通知契约阻塞的 prefactor；OSS 沿 foundation -> lifecycle -> control plane -> protocol contract 展开；通知沿 core -> idempotency -> snapshot -> observe -> callers/UI 展开。旧 OSS HTTP 采用一次性 contract，不保留生产兼容入口。
+
+Client 只参与认证授权求值；Ticket 中出现的 `client_pk` 只记录请求来自哪个 `sys_client.id`，不得成为 OSS/通知租户、所有权、Provider 路由、幂等作用域或隐式 SQL 过滤。`sys_oss_ref.ref_type/ref_id` 只保存真实物理表名和真实主键，便于反向定位与生命周期保护，不动态查表、不推导 ACL。
+
+## 2. 执行清单
+
+| ID | Ticket | 可观察产出 | Blocked By | Depth | Risk | Ready | Owner | Contract IDs | Wave/Gate | Status |
+|---|---|---|---|---|---|---|---|---|---|---|
+| T-01 | `<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/ticket/01-oss-s3-direct-transfer-foundation.md</Path>` | S3 兼容 Multipart/HEAD/Copy 公共合同 | — | deep | high | yes | cursor-agent | AC-002/005/006/007/023/024/032 | Wave 1 | done |
+| T-02 | `<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/ticket/02-shared-persistence-migration.md</Path>` | OSS/Notify schema、回填、权限菜单 | — | deep | high | yes | cursor-agent | AC-005/008/009/010/011/025/029/032 | Wave 1 | done |
+| T-03 | `<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/ticket/03-oss-lifecycle-reference-download.md</Path>` | TEMP/ref/删除保护/授权下载 | T-01,T-02 | deep | high | yes | cursor-agent | AC-007..013/026/029/030 | Wave 2 | done |
+| T-04 | `<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/ticket/04-oss-upload-control-plane.md</Path>` | SINGLE/Multipart 上传控制面 | T-03 | deep | high | yes | cursor-agent | AC-001/002/004/005/006/007/032 | Wave 3 | done |
+| T-05 | `<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/ticket/05-oss-protocol-cutover.md</Path>` | 浏览器直传直下和旧协议收缩 | T-04 | deep | high | yes | cursor-agent | AC-001/003/004/012/013/014 | Wave 4 | done |
+| T-06 | `<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/ticket/06-common-notify-core-adapters.md</Path>` | NotifyClient 与 Mail/SMS Adapter | — | deep | high | yes | cursor-agent | AC-015/016/017/031 | Wave 1 | done |
+| T-07 | `<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/ticket/07-notify-redis-idempotency.md</Path>` | 五分钟可选 Redis 幂等 | T-06 | standard | high | yes | cursor-agent | AC-018..022 | Wave 2 | done |
+| T-08 | `<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/ticket/08-notify-attachment-snapshots.md</Path>` | Provider 前独立附件快照 | T-03,T-07 | deep | high | yes | cursor-agent | AC-023/024/025/026 | Wave 3 | done |
+| T-09 | `<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/ticket/09-notify-monitoring-backend.md</Path>` | Event 两层监控与全局管理 API | T-02,T-03,T-08 | deep | critical | yes | cursor-agent | AC-020/025..031 | Wave 4 | done |
+| T-10 | `<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/ticket/10-notify-caller-migration.md</Path>` | Captcha/Workflow/Demo 调用收口 | T-09 | standard | medium | yes | cursor-agent | AC-015/016/017/023/024/025/031 | Wave 5 | done |
+| T-11 | `<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/ticket/11-notify-monitoring-frontend.md</Path>` | 通知列表/详情/删除运维页面 | T-09 | deep | high | yes | cursor-agent | AC-027/028/029/030 | Wave 5 | done |
+
+Ticket frontmatter 是状态、依赖、深度和路径访问契约的权威；本表只同步投影。
+
+## 3. 依赖 DAG
+
+```text
+T-01 [OSS foundation] ─┐
+                       ├─→ T-03 [lifecycle/ref/download] ─→ T-04 [upload control] ─→ T-05 [protocol contract]
+T-02 [schema/menu] ─────┤                 │
+                       │                 └────────────────────────┐
+T-06 [notify core] ─→ T-07 [idempotency] ─→ T-08 [snapshot] ─→ T-09 [observe/API] ─┬─→ T-10 [callers]
+T-02 ───────────────────────────────────────────────────────────────┘               └─→ T-11 [UI]
+```
+
+- 根 Ticket：T-01、T-02、T-06。
+- 关键汇合点：T-03 汇合 common-oss/schema；T-08 汇合 OSS 生命周期/通知幂等；T-09 汇合 schema/附件/Event。
+- T-05 是 OSS 破坏性 contract Gate；T-09 是通知 observe Gate；T-10/T-11 可在 T-09 后并行。
+- 每条边都是编译契约、schema 或可验证行为的真实开始条件，不用于表达人员交接。
+
+## 4. 合同覆盖矩阵
+
+| Contract ID | 覆盖 Ticket | 验证接缝 | 状态 | 说明 |
+|---|---|---|---|---|
+| AC-001 | T-04,T-05 | HTTP+浏览器网络 | covered | SINGLE 直传只返回 ossId |
+| AC-002 | T-01,T-04 | OssClient+控制面 | covered | Multipart 批量签名 |
+| AC-003 | T-05 | 浏览器人工故障验收 | covered | 失败 Part 重传 |
+| AC-004 | T-04,T-05 | Ticket+浏览器 | covered | 同文件续传 |
+| AC-005 | T-01,T-02,T-04 | Provider+DB | covered | Complete 幂等 |
+| AC-006 | T-01,T-04 | 完成失败注入 | covered | 校验失败无 ossId |
+| AC-007 | T-01,T-03,T-04 | Abort/cleanup | covered | 双层清理 |
+| AC-008 | T-02,T-03 | DB/定时任务 | covered | TEMP 24 小时 |
+| AC-009 | T-02,T-03 | lifecycle+DB | covered | 真实表名/主键引用 |
+| AC-010 | T-02,T-03 | lifecycle+DB | covered | 多引用与最后解绑 |
+| AC-011 | T-02,T-03 | 删除保护 | covered | 有引用拒绝删除 |
+| AC-012 | T-03,T-05 | 集成测试+浏览器人工验收 | covered | 短时直下 URL |
+| AC-013 | T-03,T-05 | 业务权限矩阵 | covered | 业务授权后 presign |
+| AC-014 | T-05 | 前端门禁/人工验收/扫描 | covered | 所有已知前端迁移 |
+| AC-015 | T-06,T-10 | Dispatcher+真实入口 | covered | 统一发送成功 |
+| AC-016 | T-06,T-10 | 部分失败测试 | covered | 完整结果异常 |
+| AC-017 | T-06,T-10 | 验证失败测试 | covered | USER/缺快照拒绝 |
+| AC-018 | T-07 | Redis 集成 | covered | 首次占位与五分钟窗口 |
+| AC-019 | T-07 | 并发集成 | covered | IN_PROGRESS |
+| AC-020 | T-07,T-09 | Redis/Event/DB | covered | duplicate 逻辑日志 |
+| AC-021 | T-07 | Redis 故障 | covered | Key 请求 fail-closed |
+| AC-022 | T-07 | 无 Key 回归 | covered | Redis 故障不阻断 |
+| AC-023 | T-01,T-08,T-10 | Copy+Provider | covered | 一通知一组快照 |
+| AC-024 | T-01,T-08,T-10 | Copy 失败 | covered | Provider 零调用 |
+| AC-025 | T-02,T-08,T-09,T-10 | Event+DB | covered | 两层日志与状态语义 |
+| AC-026 | T-03,T-08,T-09 | Listener 失败 | covered | 同步结果不变、TEMP 回收 |
+| AC-027 | T-09,T-11 | API+UI | covered | 全局脱敏列表 |
+| AC-028 | T-09,T-11 | 权限+安全 UI | covered | 完整详情且 HTML 不执行 |
+| AC-029 | T-02,T-03,T-09,T-11 | DB/API/UI | covered | 删除/清空与附件解绑 |
+| AC-030 | T-03,T-09,T-11 | 多 Client 矩阵 | covered | 权限求值而非行隔离 |
+| AC-031 | T-06,T-09,T-10 | Context/Job | covered | 无 Client 可发送 |
+| AC-032 | T-01,T-02,T-04 | Context/运维诊断 | covered | 配置安全失败 |
+
+## 5. 并行与路径所有权
+
+- implementation 配置上限来自 `<Path>{roots.state}/specdev/config.json</Path>`；Goal Plan 已选择 current workspace，因此实际 implementation writer 上限降低为 1，全部 Ticket 严格串行。
+- Wave 仍表达依赖和自然里程碑，不构成当前计划的并发授权；Wave 内按 Goal Plan 固定序列逐个推进。
+- T-02 是 `DDL.sql/DSL.sql` 唯一 owner；T-06 是 common parent/BOM 唯一 owner。
+- T-06 -> T-07 -> T-08 的 common-notify，以及 T-03 -> T-04 -> T-05 的 OSS 重叠路径通过真实依赖串行移交，不允许并行写。
+- Lead 是 SpecDev 工件、父分支集成和人工验收 Evidence owner；本计划不运行 E2E 测试。
+
+| Ticket A | Ticket B | Writable 交集 | 真实依赖 | 处理 |
+|---|---|---|---|---|
+| T-01 | T-02 | 无 | 否 | DAG 可并行，但 current 策略串行 |
+| T-01 | T-06 | 无 | 否 | DAG 可并行，但 current 策略串行 |
+| T-02 | T-06 | 无 | 否 | DAG 可并行，但 current 策略串行 |
+| T-03 | T-07 | 无 | 否 | DAG 可并行，但 current 策略串行 |
+| T-04 | T-08 | 无 | 否 | DAG 可并行，但 current 策略串行 |
+| T-05 | T-09 | 无 | 否 | DAG 可并行，但 current 策略串行 |
+| T-10 | T-11 | 无 | 否 | DAG 可并行，但 current 策略串行 |
+| T-06 | T-07 | common-notify | 是 | T-06 完成后移交 |
+| T-07 | T-08 | common-notify | 是 | T-07 完成后移交 |
+| T-03 | T-05 | system OSS files | 是（传递） | T-05 最终 contract |
+| T-08 | T-09 | system notify package | 是 | T-09 接管监控实现 |
+
+## 6. Gate、Wave 与集成点
+
+- **Wave 1 / Foundations：** T-01、T-02、T-06。
+- **Wave 2 / State：** T-03、T-07。
+- **Wave 3 / Control & Snapshot：** T-04、T-08。
+- **Wave 4 / Contract & Observe：** T-05、T-09。
+- **Wave 5 / Consumers：** T-10、T-11。
+- 9 个 Deep Ticket、2 个 Standard Ticket、数据库迁移和双仓库 release coordination 使 Goal Plan 成为必需编排工件；用户明确将全部 E2E disposition 设为 not-required。
+- 每个 Ticket 在所属子仓库形成非空 implementation commit；当前 Goal Plan 在 current-workspace 严格串行验证 direct-parent 并记录 result SHA，不创建 source/candidate worktree。
+
+## 7. 横切契约与风险
+
+- 后端永远不接收或返回浏览器文件字节；objectKey、Provider、uploadId、策略快照由服务端控制。
+- Client/userType 只影响登录准入、角色、菜单、权限、数据权限和动态路由；不自动形成 OSS/通知数据隔离。
+- `sys_oss_ref` 是轻量多态引用，无动态外键或 ACL；真实表改名时必须显式迁移 ref_type。
+- Provider 同步发送，Event best-effort 监控；不可把 Event 当可靠队列或把 ACCEPTED 当 DELIVERED。
+- 通知正文、OTP、Token 与完整目标永久明文保存是批准风险；不得因此泄露 Provider Secret，列表仍必须脱敏、HTML 不执行。
+- T-05 前后端必须原子发布；启用直传前完成 CORS/Lifecycle 运维检查。
+- SQL 只追加 NAMEWTA DDL/DSL；后端单元/集成测试集中在 ruoyi-admin 并显式 `-Dmaven.test.skip=false`，前端执行 lint、补充 type diagnostic 和 build；不建设 E2E 测试套件。
+
+## 8. 同步规则
+
+- Ticket 状态变化后同步执行清单；Ticket frontmatter 为依赖、状态、深度和路径权威。
+- Goal Plan 存在后，Wave/Gate/owner 以 `<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/goal-plan.md</Path>` 为编排权威。
+- Evidence 必须写入 `<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/evidence/T-NN.md</Path>`，记录命令、结果、source/parent/candidate SHA 和偏差。
+- 依赖、合同或路径变化后运行 `<Path>{roots.workflows}/specdev/common/tools/validate-specdev.mjs</Path>` 的 `--stage tickets` 校验。
+- 内部工件始终使用完整根变量 Path 标签，不使用相对 Markdown 链接。

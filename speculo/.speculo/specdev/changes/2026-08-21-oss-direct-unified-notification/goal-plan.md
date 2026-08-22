@@ -10,7 +10,7 @@ implementation_agent_limit: 1
 integration_attempt_limit: 3
 ticket_workspace_policy: current
 integration_gate: direct-parent
-ready_for_execution: true
+ready_for_execution: false
 ---
 
 # Goal Plan: OSS 浏览器直传与统一对外通知
@@ -33,7 +33,7 @@ ready_for_execution: true
 
 以下均属于伪完成：只完成 SDK 或表结构；后端仍代理文件字节；旧 OSS URL 仍有调用；业务仍直接调用 MailBuilder/SMS SDK；Event 落库缺少部分失败/duplicate/附件引用；把 Client 当租户过滤；只运行默认跳过测试的 package；把既有 `vue-tsc` 失败隐藏为通过；把人工浏览器验收写成 E2E passed。
 
-用户于 2026-08-22 明确要求不做 E2E 测试。全部 Ticket 的 E2E disposition 为 `not-required`；不新增或运行自动化 E2E harness。关键跨浏览器行为仍由 Lead 做人工网络/权限/安全验收并记录为 manual Evidence，不声称 E2E pass。
+用户于 2026-08-22 明确要求不做 E2E 测试。全部 Ticket 的 E2E disposition 为 `not-required`；不新增或运行自动化 E2E harness。真实 Bucket/CORS/Provider 浏览器矩阵仅作为发布前人工条件保留，本次未执行且不声称通过。
 
 ### Non-goals
 
@@ -238,6 +238,7 @@ T-05 是双仓库 Ticket，backend 与 frontend commit 均为完成条件，任�
 
 - `DEV-T10-001`：T-10 的 CaptchaController 路径随仓库升级已迁移，精确纠正 expected/writable path，不改变行为。
 - `DEV-T10-002`：Demo 邮件附件的本地占位路径改为 ossId/ossIds；SMS 黑名单保留为 Provider 管理原子操作，不计入通知发送直调扫描。
+- `DEV-T10-003`：最终审计发现应用未装配 NotifyContextResolver；只扩展 T-10 的 ruoyi-admin config/context-test 路径，履行既有 AC-031，不改变 Client 语义。
 
 ## 6. Progress and Decisions
 
@@ -257,9 +258,10 @@ T-05 是双仓库 Ticket，backend 与 frontend commit 均为完成条件，任�
 - T-08 已完成 direct-parent 集成，backend `main` 推进到 `bb2a8114f`；10 个附件快照聚焦测试、70 个 admin 全量测试和 36 模块 package 均通过。
 - T-05 已完成双仓库 direct-parent 集成：backend `68473cbbb`、frontend `1dba1ea71`；旧字节协议扫描为零，72 个 admin 测试、36 模块 package、frontend lint/build 通过，vue-tsc 仅保留基线两个 TS1149。
 - T-09 已完成 direct-parent 集成，backend `main` 推进到 `63a05b8ee`；8 个聚焦单测、一次性 MySQL 8.4 真实 Mapper/Service 测试、81 个 admin 全量测试和 41 模块 package 均通过。
-- T-10 已完成 direct-parent 集成，backend `main` 推进到 `b1ded45d8e7c926650c4c054522e242319890c4a`；9 个聚焦 caller 测试、90 个 admin 全量测试和 41 模块 package 均通过，Adapter 外发送直调只剩已批准的 Demo SMS 黑名单管理例外。
+- T-10 已完成 direct-parent 集成并经最终审计推进到 backend `a56a6f907dc1fad2bde4daa92adfeafbcea3613f`；应用 Resolver 已真实快照请求来源，最终 93 个 admin 测试和 36 模块 package 通过，Adapter 外发送直调只剩已批准的 Demo SMS 黑名单管理例外。
 - T-11 已完成 direct-parent 集成，frontend `main` 推进到 `783da5759bbc0b978bec90a410ac940957ed9cc7`；安全合同测试、lint、format 和 production build 通过，vue-tsc 仅保留基线两个 TS1149。
-- 当前恢复点是 backend `b1ded45d8e7c926650c4c054522e242319890c4a` / frontend `783da5759bbc0b978bec90a410ac940957ed9cc7`；11 个 Ticket 全部完成，本地 change 已关闭。
+- T-05 的最终前端审计 checkpoint 为 `866e5ba1a75c9d308ce752f32fa6b4158763feed`；新增 2 个 Multipart retry/resume Vitest 后，前端全部 4 tests、lint 和 production build 通过。
+- 当前恢复点是 backend `a56a6f907dc1fad2bde4daa92adfeafbcea3613f` / frontend `866e5ba1a75c9d308ce752f32fa6b4158763feed`；11 个 Ticket 全部完成，本地 change 已关闭。
 
 ### Pending Decisions and Blockers
 
@@ -267,7 +269,7 @@ T-05 是双仓库 Ticket，backend 与 frontend commit 均为完成条件，任�
 
 ### Resume Protocol
 
-如进入后续发布阶段，依次读取 Goal Plan、`.status.json.worktrees`、T-01..T-11 Evidence 和三个仓库 HEAD/dirty，并以 backend `b1ded45d8`、frontend `783da5759b` 及父仓库最终聚合 commit 为本地完成基线。生产动作必须重新取得明确授权。
+如进入后续发布阶段，依次读取 Goal Plan、`.status.json.worktrees`、T-01..T-11 Evidence 和三个仓库 HEAD/dirty，并以 backend `a56a6f907`、frontend `866e5ba1a` 及父仓库最终聚合 commit 为本地完成基线。生产动作必须重新取得明确授权。
 
 ## Assumptions
 

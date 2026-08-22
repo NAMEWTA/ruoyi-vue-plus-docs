@@ -39,8 +39,8 @@
     "history": []
   },
   "created_at": "2026-08-21T22:14:37+08:00",
-  "updated_at": "2026-08-22T17:30:00+08:00",
-  "completed_at": "2026-08-22T17:30:00+08:00",
+  "updated_at": "2026-08-22T17:56:38+08:00",
+  "completed_at": "2026-08-22T17:56:38+08:00",
   "archived": false,
   "archive_path": null,
   "blockers": [],
@@ -92,6 +92,18 @@
       "approved_at": "2026-08-22T17:00:00+08:00",
       "authority": "T-10 owner and Goal Plan lead; user-approved ossId-only attachment and atomic common boundaries",
       "impact": "No common contract or production domain change; Demo attachment parameters become usable OSS identifiers while provider management remains atomic."
+    },
+    {
+      "id": "DEV-T10-003",
+      "level": "ticket",
+      "ticket_id": "T-10",
+      "status": "approved",
+      "trigger": "Final audit found that common-notify's empty fallback resolver was still active because T-10 omitted the application assembly path.",
+      "decision": "Add only the ruoyi-admin NotifyContext configuration/resolver and centralized context tests to T-10 writable scope.",
+      "approved_by": "cursor-agent",
+      "approved_at": "2026-08-22T17:46:00+08:00",
+      "authority": "T-10 owner and Goal Plan lead; user-authorized current-workspace implementation",
+      "impact": "Fulfils the existing AC-031 and audit snapshot contract; no Spec, ADR, routing, ownership, or isolation change."
     }
   ],
   "worktrees": [
@@ -181,11 +193,11 @@
       "parent_branch": "main",
       "branch": "main",
       "workspace_ref": "current",
-      "source_checkpoint": "2a94b4dfa28241be9a702b7c2713bfd7362c3ef9",
+      "source_checkpoint": "2a94b4dfa7a0f0031ff111c4eb534abf7f930c57",
       "integration": {
-        "status": "passed", "parent_ref": "main", "parent_before_sha": "7a37357b6f62b4464081d410e1a0baae6560d959", "source_sha": "2a94b4dfa28241be9a702b7c2713bfd7362c3ef9",
+        "status": "passed", "parent_ref": "main", "parent_before_sha": "7a37357b6f62b4464081d410e1a0baae6560d959", "source_sha": "2a94b4dfa7a0f0031ff111c4eb534abf7f930c57",
         "candidate_sha": null, "candidate_tree_sha": null, "candidate_branch": null, "candidate_workspace_ref": null,
-        "result_sha": "2a94b4dfa28241be9a702b7c2713bfd7362c3ef9", "method": "direct-parent", "conflict_paths": [], "verification": "passed",
+        "result_sha": "2a94b4dfa7a0f0031ff111c4eb534abf7f930c57", "method": "direct-parent", "conflict_paths": [], "verification": "passed",
         "full_suite": {"required": true, "status": "passed", "reason": "ruoyi-admin 32 tests、36-module package 与 disposable MySQL row-lock verification 通过。", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/evidence/T-03.md</Path>"},
         "e2e": {"required": false, "status": "not-required", "reason": "用户明确不做 E2E；本 Ticket 以 ruoyi-admin 生命周期/授权测试和一次性 MySQL 行锁验证。", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/evidence/T-03.md</Path>"},
         "evidence": "<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/evidence/T-03.md</Path>",
@@ -239,9 +251,9 @@
     {
       "ticket_id": "T-07",
       "owner": "cursor-agent", "implementation_owner": "cursor-agent", "integration_owner": "cursor-agent", "provider": "git",
-      "base_sha": "2a94b4dfa28241be9a702b7c2713bfd7362c3ef9", "parent_branch": "main", "branch": "main", "workspace_ref": "current", "source_checkpoint": "3e35a9c3646f5f3313b7223f3f31771d132caea1",
+      "base_sha": "2a94b4dfa7a0f0031ff111c4eb534abf7f930c57", "parent_branch": "main", "branch": "main", "workspace_ref": "current", "source_checkpoint": "3e35a9c3646f5f3313b7223f3f31771d132caea1",
       "integration": {
-        "status": "passed", "parent_ref": "main", "parent_before_sha": "2a94b4dfa28241be9a702b7c2713bfd7362c3ef9", "source_sha": "3e35a9c3646f5f3313b7223f3f31771d132caea1",
+        "status": "passed", "parent_ref": "main", "parent_before_sha": "2a94b4dfa7a0f0031ff111c4eb534abf7f930c57", "source_sha": "3e35a9c3646f5f3313b7223f3f31771d132caea1",
         "candidate_sha": null, "candidate_tree_sha": null, "candidate_branch": null, "candidate_workspace_ref": null,
         "result_sha": "3e35a9c3646f5f3313b7223f3f31771d132caea1", "method": "direct-parent", "conflict_paths": [], "verification": "passed",
         "full_suite": {"required": true, "status": "passed", "reason": "ruoyi-admin 42 tests、41-module package 与 disposable Redis concurrency verification 通过。", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/evidence/T-07.md</Path>"},
@@ -281,16 +293,16 @@
     {
       "ticket_id": "T-10",
       "owner": "cursor-agent", "implementation_owner": "cursor-agent", "integration_owner": "cursor-agent", "provider": "git",
-      "base_sha": "63a05b8eec82b5cc65927c326c51ca8f25a811a6", "parent_branch": "main", "branch": "main", "workspace_ref": "current", "source_checkpoint": "b1ded45d8e7c926650c4c054522e242319890c4a",
+      "base_sha": "63a05b8eec82b5cc65927c326c51ca8f25a811a6", "parent_branch": "main", "branch": "main", "workspace_ref": "current", "source_checkpoint": "a56a6f907dc1fad2bde4daa92adfeafbcea3613f",
       "integration": {
-        "status": "passed", "parent_ref": "main", "parent_before_sha": "63a05b8eec82b5cc65927c326c51ca8f25a811a6", "source_sha": "b1ded45d8e7c926650c4c054522e242319890c4a",
+        "status": "passed", "parent_ref": "main", "parent_before_sha": "63a05b8eec82b5cc65927c326c51ca8f25a811a6", "source_sha": "a56a6f907dc1fad2bde4daa92adfeafbcea3613f",
         "candidate_sha": null, "candidate_tree_sha": null, "candidate_branch": null, "candidate_workspace_ref": null,
-        "result_sha": "b1ded45d8e7c926650c4c054522e242319890c4a", "method": "direct-parent", "conflict_paths": [], "verification": "passed",
-        "full_suite": {"required": true, "status": "passed", "reason": "ruoyi-admin 90 tests, caller scans, and 41-module package passed.", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/evidence/T-10.md</Path>"},
+        "result_sha": "a56a6f907dc1fad2bde4daa92adfeafbcea3613f", "method": "direct-parent", "conflict_paths": [], "verification": "passed",
+        "full_suite": {"required": true, "status": "passed", "reason": "ruoyi-admin 93 tests, request-context assembly checks, caller scans, and 36-module package passed.", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/evidence/T-10.md</Path>"},
         "e2e": {"required": false, "status": "not-required", "reason": "用户明确不做 E2E；本 Ticket 以 ruoyi-admin caller 聚合测试与调用扫描验证。", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/evidence/T-10.md</Path>"},
         "evidence": "<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/evidence/T-10.md</Path>", "attempts": 1, "promotion_status": "applied"
       },
-      "status": "integrated", "updated_at": "2026-08-22T17:12:00+08:00"
+      "status": "integrated", "updated_at": "2026-08-22T17:50:00+08:00"
     },
     {
       "ticket_id": "T-11",

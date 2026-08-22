@@ -12,8 +12,8 @@ risk: medium
 blocked_by: [T-09]
 contract_ids: [AC-015, AC-016, AC-017, AC-023, AC-024, AC-025, AC-031]
 owner: cursor-agent
-expected_changes: ["<Path>ruoyi-vue-plus-namewta/ruoyi-admin/src/main/java/org/dromara/web/controller/CaptchaController.java</Path>", "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-workflow/src/main/java/org/dromara/workflow/service/impl/FlwCommonServiceImpl.java</Path>", "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-demo/src/main/java/org/dromara/demo/controller/**</Path>"]
-writable_paths: ["<Path>ruoyi-vue-plus-namewta/ruoyi-admin/src/main/java/org/dromara/web/controller/CaptchaController.java</Path>", "<Path>ruoyi-vue-plus-namewta/ruoyi-admin/pom.xml</Path>", "<Path>ruoyi-vue-plus-namewta/ruoyi-admin/src/test/java/org/dromara/test/notify/caller/**</Path>", "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-workflow/src/main/java/org/dromara/workflow/service/impl/FlwCommonServiceImpl.java</Path>", "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-workflow/pom.xml</Path>", "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-demo/src/main/java/org/dromara/demo/controller/MailSendController.java</Path>", "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-demo/src/main/java/org/dromara/demo/controller/SmsController.java</Path>", "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-demo/pom.xml</Path>"]
+expected_changes: ["<Path>ruoyi-vue-plus-namewta/ruoyi-admin/src/main/java/org/dromara/web/controller/CaptchaController.java</Path>", "<Path>ruoyi-vue-plus-namewta/ruoyi-admin/src/main/java/org/dromara/web/config/*NotifyContext*.java</Path>", "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-workflow/src/main/java/org/dromara/workflow/service/impl/FlwCommonServiceImpl.java</Path>", "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-demo/src/main/java/org/dromara/demo/controller/**</Path>"]
+writable_paths: ["<Path>ruoyi-vue-plus-namewta/ruoyi-admin/src/main/java/org/dromara/web/controller/CaptchaController.java</Path>", "<Path>ruoyi-vue-plus-namewta/ruoyi-admin/src/main/java/org/dromara/web/config/*NotifyContext*.java</Path>", "<Path>ruoyi-vue-plus-namewta/ruoyi-admin/pom.xml</Path>", "<Path>ruoyi-vue-plus-namewta/ruoyi-admin/src/test/java/org/dromara/test/notify/caller/**</Path>", "<Path>ruoyi-vue-plus-namewta/ruoyi-admin/src/test/java/org/dromara/test/notify/context/**</Path>", "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-workflow/src/main/java/org/dromara/workflow/service/impl/FlwCommonServiceImpl.java</Path>", "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-workflow/pom.xml</Path>", "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-demo/src/main/java/org/dromara/demo/controller/MailSendController.java</Path>", "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-demo/src/main/java/org/dromara/demo/controller/SmsController.java</Path>", "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-demo/pom.xml</Path>"]
 read_only_paths: ["<Path>ruoyi-vue-plus-namewta/ruoyi-common/ruoyi-common-notify/**</Path>", "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-system/src/main/java/org/dromara/system/notify/**</Path>"]
 shared_paths: []
 shared_path_owners: []
@@ -114,7 +114,7 @@ shared_path_owners: []
 
 ## 10. 验收标准
 
-- [ ] `AC-015/016/017/023/024/025/031` 在代表性入口验证。
-- [ ] Captcha/Workflow/Demo 对外合同保持，Adapter 外直接调用为零。
-- [ ] 无 Client 后台路径正常且不伪造 SYSTEM/client scope。
-- [ ] ruoyi-admin 聚合集成测试、提交 SHA 与 Evidence 完整。
+- [x] `AC-015/016/017/023/024/025/031` 在代表性入口验证。
+- [x] Captcha/Workflow/Demo 对外合同保持，Adapter 外直接调用为零。
+- [x] 无 Client 后台路径正常且不伪造 SYSTEM/client scope。
+- [x] ruoyi-admin 聚合集成测试、提交 SHA 与 Evidence 完整。

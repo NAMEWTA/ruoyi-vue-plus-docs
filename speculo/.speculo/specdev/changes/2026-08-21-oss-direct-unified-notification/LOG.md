@@ -386,3 +386,17 @@
 - **事实与来源：** 用户选择 55B，并进一步明确平台共用后端、业务逻辑、用户和数据资源。
 - **最终结论：** Client 用于登录准入、角色、菜单、权限字符、数据权限和动态路由，userType 是动态登录域；两者都不是 tenant。通知只记录来源 `sys_client.id` Long 主键供审计，不参与 Provider、日志隔离、所有权或幂等，也不设置 SYSTEM scope。
 - **约束：** 资源访问由用户在当前 Client 下获得的权限与数据权限决定；不得跨 Client 合并权限，也不得自动把 Client 变成业务数据分区。
+
+## LOG-056 — 2026-08-22T17:50:00+08:00 — 最终实现审计
+- **设计树节点：** implementation audit
+- **状态：** confirmed
+- **事实与来源：** I-implement 最终双轴审查发现应用未装配 NotifyContextResolver、三处新增事务注解不符合工程规范、前端 Multipart 缺少可执行状态机测试，以及 Goal Plan 路径错误。
+- **最终结论：** backend `a56a6f907dc1fad2bde4daa92adfeafbcea3613f` 补齐请求上下文装配并切换 `@DSTransactional`；frontend `866e5ba1a75c9d308ce752f32fa6b4158763feed` 补齐 retry/resume Vitest；Goal Plan 归位到 change 根目录。
+- **约束：** 本次只履行既有 ADR/Spec/Ticket，不改变 Client、OSS 引用、通知可靠性或 E2E 决定。最终非 E2E 门禁为 backend 93 tests/package 与 frontend 4 tests/lint/build；真实 Bucket/Provider/生产动作仍未授权。
+
+## LOG-057 — 2026-08-22T17:56:38+08:00 — 最终 Git Evidence 校正
+- **设计树节点：** implementation audit
+- **状态：** confirmed
+- **事实与来源：** 最终逐子仓对象校验发现 T-03 完整 SHA 抄录错误；Speculo 校验器单仓 `--repo` 模式不能表达 backend/frontend submodule SHA，也错误地要求所有历史 Ticket result 同时等于当前 HEAD。
+- **最终结论：** 将 T-03 SHA 统一校正为后端真实对象 `2a94b4dfa7a0f0031ff111c4eb534abf7f930c57`；implement 结构校验 0 error/0 warning，并按实际子仓验证全部组件 SHA 可解析且为最终 checkpoint 祖先。
+- **约束：** 不修改校验器、不伪造父仓 SHA、不清理用户 dirty 文件；单仓 Git 模式限制保留为工具事实，不降低真实 direct-parent 证据标准。

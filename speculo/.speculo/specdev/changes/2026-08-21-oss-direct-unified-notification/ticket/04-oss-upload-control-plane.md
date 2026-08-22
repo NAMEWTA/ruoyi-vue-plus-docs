@@ -66,7 +66,7 @@ shared_path_owners: []
 - **入口或接缝：** 固定 REST、ConfigurationProperties、Redis UploadTicket、T-01/T-03 Service。
 - **输入与输出：** Spec 第 7 节固定请求/响应；complete `R<String>`。
 - **公共接口变化：** 新 HTTP 控制面和配置键；不再新增 MultipartFile 入口。
-- **不变量：** 浏览器不权威提供 key/provider/uploadId；Ticket 绑定 user/tenant 和来源 client_pk 快照，但 client_pk 不授予所有权。
+- **不变量：** 浏览器不权威提供 key/provider/uploadId；Ticket 绑定 user 并记录来源 client_pk 快照，但 client_pk 不授予所有权。
 - **状态或数据流：** INITIALIZED -> UPLOADING -> COMPLETING -> COMPLETED/ABORTED/EXPIRED。
 - **错误与失败行为：** 未知策略、无权限、指纹不符、过期/非本人、校验失败与清理失败可区分。
 - **兼容要求：** T-05 同批迁移前保留旧 Controller，不在此 Ticket 收缩。

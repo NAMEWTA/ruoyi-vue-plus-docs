@@ -189,3 +189,30 @@ Provider Secret、Authorization 和无关内部异常仍不得入库。两张项
 
 ### Consequences
 `common-notify` 通过资源/快照 SPI 使用附件，不向业务暴露 `File`、`InputStream` 或 system 实体。附件缺失、无权或复制失败不得静默降级为无附件发送。
+
+## ADR-010: OSS 引用生命周期由业务写入 module 拥有
+
+**Status:** accepted
+**Source:** LOG-059, LOG-060, LOG-061, LOG-062, LOG-063
+**Supersedes:** none
+
+### Context
+TEMP 对象只有在业务记录建立 `sys_oss_ref` 后才获得长期生命周期。用户头像与公告已经分别需要协调旧新 ossId、业务写入和 `bind/unbind`；把这类协调完全交给中央 module 会迫使它理解业务授权、事务、表结构与删除恢复语义。
+
+### Decision
+每个持久化 ossId 的业务写入 module 是该引用的 Business OSS Owner。它通过自身稳定 interface 完成授权、业务记录保存、旧新附件差异和引用生命周期；跨业务共享的内部 module 只承载集合差异与引用转换的机械规则，不读取、回调或反射业务表，也不推断 ACL。
+
+业务记录保存与引用转换处于同一 `@DSTransactional` 并 fail-closed；任一步失败回滚全部数据库变化，不建设 best-effort 引用修复队列。逻辑删除后的附件保留由 owner 的真实恢复合同决定：无恢复合同则在删除事务内立即解绑；有明确恢复能力则保留引用直到不可恢复清理，不能从 `@TableLogic` 自动推断统一策略。
+
+当前项目是没有历史数据负担的基座系统。建立全仓显式 owner 清单并直接验证 fresh baseline，不建设存量回填、兼容窗口或旧数据迁移。所有新基线数据从创建时建立引用。
+
+owner 清单同时是未来变化的 ratchet：每个新增持久化 ossId owner 必须显式登记，并通过聚焦架构/契约测试证明 insert/update/delete/restore（适用时）的引用转换与失败回滚。清单和测试只在设计与交付阶段提供门禁，不成为运行时注册中心；不采用注解扫描或动态业务回调。
+
+### Trade-off
+相比中央协调、注解驱动或提交后修复方案，业务 modules 仍保留少量显式 ownership 代码；换取授权、事务、失败和恢复语义的 locality，并避免 common 或 system 基础能力反向理解业务表。
+
+### Consequences
+新增 ossId 持久化所有者必须进入显式清单并提供 insert/update/delete/restore（适用时）引用合同证据。引用转换失败必须证明业务事务回滚。真实物理表名和主键、引用非 ACL、无前端通用 bind、无动态查表等 ADR-005 决定保持不变。
+
+### Verification / Migration
+只验证 fresh install 与 fresh data，不执行历史兼容或回填。TEMP 主动清理在 owner 清单、聚焦合同测试和 dry-run 核对通过前保持 disabled；启用清理仍是独立发布批准点。

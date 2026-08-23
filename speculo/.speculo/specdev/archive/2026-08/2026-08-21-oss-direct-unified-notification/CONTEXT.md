@@ -37,6 +37,9 @@ _Avoid_: 把 ref_type/ref_id 塞进 sys_oss、抽象业务名、动态外键、�
 **Global OSS Metadata**：`sys_oss` 与 `sys_oss_ref` 是全局资源元数据，不记录 Client 数据归属，也不按 Client/userType 自动过滤。引用关系不是用户 ACL；普通业务仍须完成对象级权限和数据权限校验。
 _Avoid_: 把全局元数据理解为公开访问
 
+**Business OSS Owner**：持久化 ossId 的业务写入 module；它在同一 `@DSTransactional` 中 fail-closed 地拥有业务记录保存、旧新附件差异和 OSS 引用转换，并按真实恢复合同决定逻辑删除时解绑或保留。每个 owner 必须登记显式清单并通过 insert/update/delete/restore（适用时）合同测试；该清单是交付门禁而非运行时注册中心。跨业务共享能力只承载集合差异与引用转换的机械规则，不读取、回调或反射业务表。
+_Avoid_: 中央业务协调器、动态业务回调、由 common 推断业务权限
+
 ## Notify
 
 **Notify Channel**：`mail`、`sms` 及未来 `wechat`、`feishu` 等可插拔物理通讯渠道；每个 `NotifyRequest` 只选择一个 Channel。

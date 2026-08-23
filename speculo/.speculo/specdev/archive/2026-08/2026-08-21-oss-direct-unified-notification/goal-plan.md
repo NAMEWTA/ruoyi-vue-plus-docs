@@ -29,7 +29,7 @@ ready_for_execution: false
 
 ### Success and False Completion
 
-成功要求 `AC-001` 至 `AC-032` 都有 Evidence，原始 T-01 至 T-11 与 CR-001 修复 T-12 至 T-18 均有真实 implementation checkpoint、current-workspace 检查和 Lead direct-parent result SHA，全部 Gate 关闭，前后端子仓库和父 gitlink 一致。
+成功要求 `AC-001` 至 `AC-032` 都有 Evidence，T-01 至 T-18 的既有交付保持通过，新增 T-19 至 T-22 均有真实 implementation checkpoint、current-workspace 检查和 Lead direct-parent result SHA；Business OSS Owner、同事务 fail-closed、fresh baseline 与 future ratchet Gate 全部关闭。
 
 以下均属于伪完成：只完成 SDK 或表结构；后端仍代理文件字节；旧 OSS URL 仍有调用；业务仍直接调用 MailBuilder/SMS SDK；Event 落库缺少部分失败/duplicate/附件引用；把 Client 当租户过滤；只运行默认跳过测试的 package；把既有 `vue-tsc` 失败隐藏为通过；把人工浏览器验收写成 E2E passed。
 
@@ -109,7 +109,7 @@ Wave 是里程碑投影，不是并发授权。current 模式任何时刻只有�
 
 ### Overall Definition of Done
 
-- 18 个 Ticket 均为 done 或经用户批准 cancelled；每个 done Ticket 在所属子仓库有聚焦 commit 或明确复用的共享文件 checkpoint，并记录 direct-parent result SHA。
+- 22 个 Ticket 均为 done 或经用户批准 cancelled；每个 done Ticket 在所属子仓库有聚焦 commit 或明确复用的共享文件 checkpoint，并记录 direct-parent result SHA。
 - `AC-001..032` 都映射到实际命令、数据库/Provider/API transcript、静态扫描或人工浏览器 Evidence；E2E 始终记录为 not-required。
 - 后端新增单元/集成测试全部集中在 `<Path>ruoyi-vue-plus-namewta/ruoyi-admin/src/test/java/org/dromara/test/**</Path>`，并从 ruoyi-admin 聚合入口运行。
 - 后端 opt-in tests 和 package 通过；前端 lint/build 通过；`vue-tsc` 不新增超出基线两个 TS1149 的诊断。
@@ -139,6 +139,7 @@ Wave 是里程碑投影，不是并发授权。current 模式任何时刻只有�
 | AC-032 配置安全 | T-01,T-02,T-04 | ConfigurationProperties context test、运维诊断 review | T-01,T-02,T-04 | completed |
 | Client/RBAC customization | T-03..05,T-09..11 | 多 Client 权限矩阵；检查无 client_pk 行过滤 | 对应 Ticket | completed |
 | NAMEWTA SQL 只追加/七字段 | T-02 | diff、时间戳脚本、information_schema、fresh/upgrade | T-02 | completed |
+| ADR-010 Business OSS Owner | T-19..T-22 | 集合协调、system/workflow Owner 合同、manifest/架构扫描 | T-19..T-22 | completed；E2E not-required |
 
 ## 4. Execution and Integration Protocol
 
@@ -239,11 +240,16 @@ T-05 是双仓库 Ticket，backend 与 frontend commit 均为完成条件，任�
 - `DEV-T10-001`：T-10 的 CaptchaController 路径随仓库升级已迁移，精确纠正 expected/writable path，不改变行为。
 - `DEV-T10-002`：Demo 邮件附件的本地占位路径改为 ossId/ossIds；SMS 黑名单保留为 Provider 管理原子操作，不计入通知发送直调扫描。
 - `DEV-T10-003`：最终审计发现应用未装配 NotifyContextResolver；只扩展 T-10 的 ruoyi-admin config/context-test 路径，履行既有 AC-031，不改变 Client 语义。
+- `DEV-T20-001`：迁移两个旧通知测试中的 raw bind/unbind 断言为集合协调断言，仅维护既有回归合同。
+- `DEV-T22-001`：T-22 公共 API 收缩使旧生命周期合同测试必然过期；将该精确测试路径纳入 writable scope 并改为断言 `reconcileReferences` 存在、raw bind/unbind 不存在。
 
 ## 6. Progress and Decisions
 
 ### Current Status
 
+- 2026-08-23 AR-001/ADR-010 新增 T-19 至 T-22 已获用户确认；change 重新打开为 active，本计划按 current/direct-parent 刷新并进入 I-implement。
+- 2026-08-23 T-19 至 T-22 已按 current/direct-parent 串行完成；最终 backend result 为 `704d87a6ba09cf106760ff6619c4d4e4437c4087`，G7/G8/G9 全部关闭，change completion 门禁通过。
+- 新批次 backend 基线为 `d836894f969d8f4134d72af129f3c452f8265c46`；仅保留用户 `ruoyi-admin/pom.xml` dirty patch，frontend `f7d116f6e2b6b61239afc86cbcb860a07530abad` 无需修改。
 - CR-001 remediation 已完成；T-12 至 T-18 在 current workspace 严格串行落为 backend `d836894f969d8f4134d72af129f3c452f8265c46` 与 frontend `f7d116f6e2b6b61239afc86cbcb860a07530abad`，未创建 worktree、未触碰远端。
 - 修复覆盖附件入口授权、REDACT_SENSITIVE、重复日志索引、分批物理清理、OSS PENDING 删除、续传/策略、业务引用/下载以及管理面诊断；102 个后端测试、36 模块 package、前端 Vitest/lint/build 已通过，vue-tsc 仅保留既有两条 TS1149。
 
@@ -264,7 +270,7 @@ T-05 是双仓库 Ticket，backend 与 frontend commit 均为完成条件，任�
 - T-10 已完成 direct-parent 集成并经最终审计推进到 backend `a56a6f907dc1fad2bde4daa92adfeafbcea3613f`；应用 Resolver 已真实快照请求来源，最终 93 个 admin 测试和 36 模块 package 通过，Adapter 外发送直调只剩已批准的 Demo SMS 黑名单管理例外。
 - T-11 已完成 direct-parent 集成，frontend `main` 推进到 `783da5759bbc0b978bec90a410ac940957ed9cc7`；安全合同测试、lint、format 和 production build 通过，vue-tsc 仅保留基线两个 TS1149。
 - T-05 的最终前端审计 checkpoint 为 `866e5ba1a75c9d308ce752f32fa6b4158763feed`；新增 2 个 Multipart retry/resume Vitest 后，前端全部 4 tests、lint 和 production build 通过。
-- 当前恢复点是 backend `a56a6f907dc1fad2bde4daa92adfeafbcea3613f` / frontend `866e5ba1a75c9d308ce752f32fa6b4158763feed`；11 个 Ticket 全部完成，本地 change 已关闭。
+- 当前恢复点是 backend `704d87a6ba09cf106760ff6619c4d4e4437c4087` / frontend `f7d116f6e2b6b61239afc86cbcb860a07530abad`；22 个 Ticket 全部完成，本地 change 已关闭。
 
 ### Pending Decisions and Blockers
 
@@ -272,7 +278,45 @@ T-05 是双仓库 Ticket，backend 与 frontend commit 均为完成条件，任�
 
 ### Resume Protocol
 
-如进入后续发布阶段，依次读取 Goal Plan、`.status.json.worktrees`、T-01..T-11 Evidence 和三个仓库 HEAD/dirty，并以 backend `a56a6f907`、frontend `866e5ba1a` 及父仓库最终聚合 commit 为本地完成基线。生产动作必须重新取得明确授权。
+如进入后续发布阶段，依次读取 Goal Plan、`.status.json.worktrees`、T-01..T-22 Evidence 和三个仓库 HEAD/dirty，并以 backend `704d87a6b`、frontend `f7d116f6e` 为本地完成基线。生产动作必须重新取得明确授权。
+
+## 7. ADR-010 Owner Extension Execution
+
+### DAG, Waves and Gates
+
+```text
+W-A: T-19 [reconcile expand]
+             ├─> W-B1: T-20 [system owners]
+             └─> W-B2: T-21 [workflow owner]
+                         \ /
+W-C:                    T-22 [manifest + API contract]
+```
+
+current workspace 固定串行执行 `T-19 -> T-20 -> T-21 -> T-22`。T-20/T-21 的 DAG 可并行性只保留为架构事实，不构成第二 writer 授权。
+
+| Gate | 开启条件 | 关闭证据 | Shared owner | 失败恢复 |
+|---|---|---|---|---|
+| G7 引用协调稳定 | T-19 Ready | 集合差分、非法输入、幂等与失败传播测试；backend commit/result | T-19 expand OssService/SysOssServiceImpl | 保持后续 Owner 未迁移，修正 T-19 |
+| G8 Owner 迁移完成 | G7；T-20/T-21 Ready | system 与 workflow insert/update/delete/rollback 测试；公共 bind/unbind 业务调用为零 | system 路径 T-20；workflow 路径 T-21 | 停在最后通过的 result，修正当前 Owner |
+| G9 Ratchet Contract | G8 | manifest 双向扫描、fresh baseline、cleanup disabled/dry-run、旧公共 API 删除、全量 test/package | T-22 contract OssService/SysOssServiceImpl | 恢复编译并前向登记/迁移遗漏 Owner，不启用兼容层 |
+
+### Ticket Execution Contract
+
+| Ticket | Parent/base | Workspace | Implementation owner | Checks/E2E | Result |
+|---|---|---|---|---|---|
+| T-19 | backend `d836894f969d8f4134d72af129f3c452f8265c46` + preserved dirty POM | current/backend main | Lead | 24 focused lifecycle tests + 36-module package；E2E not-required | `c658669af9f6f44ddc92899b4fa3d52b3711179d` |
+| T-20 | `c658669af9f6f44ddc92899b4fa3d52b3711179d` | current/backend main | Lead | 14 system/notify tests + 36-module package；E2E not-required | `3cd24fa2e63362e2c970a93773187c24e057a0ed` |
+| T-21 | `3cd24fa2e63362e2c970a93773187c24e057a0ed` | current/backend main | Lead | 7 workflow Owner tests + 36-module package；E2E not-required | `44049525e24b688366b889f0771d096ef9aa3f30` |
+| T-22 | `44049525e24b688366b889f0771d096ef9aa3f30` | current/backend main | Lead | 9 architecture/fresh baseline tests + 129 full opt-in tests + 41-module package；E2E not-required | `704d87a6ba09cf106760ff6619c4d4e4437c4087` |
+
+### Extension Constraints and Recovery
+
+- `OssService.reconcileReferences` 只承载机械集合差分；业务授权、表结构、恢复和删除语义留在 Owner module。
+- 业务行与引用转换使用同一 `@DSTransactional` 并 fail-closed；不引入 best-effort 修复队列。
+- workflow 只依赖 ruoyi-api；`flow_his_task.id` 是 refId，`task_id` 只用于定位新历史记录。
+- manifest 是测试资源，不是运行时注册中心；禁止注解扫描、动态回调和动态查表。
+- 当前无历史负担，不回填；`cleanup-enabled:false`、`cleanup-dry-run:true` 保持不变，启用仍需独立批准。
+- backend 预存 `ruoyi-admin/pom.xml` patch 的 SHA-256 为 `53683d824e306dcb8584e22ad0cc39acdb7526d11e887dca6674e27f2310df97`，所有 commits 选择性暂存且不得包含该文件。
 
 ## Assumptions
 

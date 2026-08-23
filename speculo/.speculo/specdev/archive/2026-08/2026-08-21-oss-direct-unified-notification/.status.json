@@ -2,7 +2,7 @@
   "schema_version": 6,
   "artifact": "change-status",
   "change": "2026-08-21-oss-direct-unified-notification",
-  "change_status": "completed",
+  "change_status": "archived",
   "current_work": null,
   "works_run": [
     "specdev/grill-with-docs",
@@ -10,7 +10,10 @@
     "specdev/tickets",
     "specdev/goal-plan",
     "specdev/implement",
-    "specdev/code-review"
+    "specdev/code-review",
+    "specdev/review-architecture",
+    "specdev/triage",
+    "specdev/archive-and-consolidate"
   ],
   "claimed_investigations": [],
   "execution_authorization": {
@@ -48,10 +51,10 @@
     ]
   },
   "created_at": "2026-08-21T22:14:37+08:00",
-  "updated_at": "2026-08-23T08:10:00+08:00",
-  "completed_at": "2026-08-23T08:10:00+08:00",
-  "archived": false,
-  "archive_path": null,
+  "updated_at": "2026-08-23T17:08:34+08:00",
+  "completed_at": "2026-08-23T11:19:24+08:00",
+  "archived": true,
+  "archive_path": "<Path>{roots.state}/specdev/archive/2026-08/2026-08-21-oss-direct-unified-notification</Path>",
   "blockers": [],
   "deviations": [
     {
@@ -113,6 +116,30 @@
       "approved_at": "2026-08-22T17:46:00+08:00",
       "authority": "T-10 owner and Goal Plan lead; user-authorized current-workspace implementation",
       "impact": "Fulfils the existing AC-031 and audit snapshot contract; no Spec, ADR, routing, ownership, or isolation change."
+    },
+    {
+      "id": "DEV-T20-001",
+      "level": "ticket",
+      "ticket_id": "T-20",
+      "status": "approved",
+      "trigger": "Two existing notification monitor tests asserted the raw bind/unbind calls that T-20 is required to replace, but those test files were omitted from writable_paths.",
+      "decision": "Update only the affected Mockito assertions to the equivalent reconcileReferences collection contract.",
+      "approved_by": "codex",
+      "approved_at": "2026-08-23T10:40:00+08:00",
+      "authority": "T-20 owner and Goal Plan lead; required regression maintenance within the user-authorized implementation",
+      "impact": "Test expectation migration only; no production behavior, Spec, ADR, schema, dependency direction, or release change."
+    },
+    {
+      "id": "DEV-T22-001",
+      "level": "ticket",
+      "ticket_id": "T-22",
+      "status": "approved",
+      "trigger": "The T-03 lifecycle contract test required public bind/unbind methods that T-22 is required to remove, but the exact test path was initially read-only.",
+      "decision": "Add only OssLifecycleContractUnitTest to T-22 writable scope and migrate its assertion to reconcileReferences with raw bind/unbind absent.",
+      "approved_by": "codex",
+      "approved_at": "2026-08-23T11:02:00+08:00",
+      "authority": "T-22 owner and Goal Plan lead; required regression maintenance within the user-authorized implementation",
+      "impact": "Test contract migration only; no production behavior, Spec, ADR, schema, dependency direction, release, or cleanup-policy change."
     }
   ],
   "worktrees": [
@@ -373,6 +400,30 @@
       "base_sha": "backend:fc902e0820a869d1044b59629b74c00ab14b64c3;frontend:db17e3fbed8bd588f0c8c0cd8c817e0c485f8d6f", "parent_branch": "main", "branch": "main", "workspace_ref": "current", "source_checkpoint": "backend:d836894f969d8f4134d72af129f3c452f8265c46;frontend:f7d116f6e2b6b61239afc86cbcb860a07530abad",
       "integration": {"status": "passed", "parent_ref": "main", "parent_before_sha": "backend:fc902e0820a869d1044b59629b74c00ab14b64c3;frontend:db17e3fbed8bd588f0c8c0cd8c817e0c485f8d6f", "source_sha": "backend:d836894f969d8f4134d72af129f3c452f8265c46;frontend:f7d116f6e2b6b61239afc86cbcb860a07530abad", "candidate_sha": null, "candidate_tree_sha": null, "candidate_branch": null, "candidate_workspace_ref": null, "result_sha": "backend:d836894f969d8f4134d72af129f3c452f8265c46;frontend:f7d116f6e2b6b61239afc86cbcb860a07530abad", "method": "direct-parent", "conflict_paths": [], "verification": "passed", "full_suite": {"required": true, "status": "passed", "reason": "Backend 102 tests/package and frontend Vitest/lint/build passed.", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/evidence/T-18.md</Path>"}, "e2e": {"required": false, "status": "not-required", "reason": "用户明确不建设 E2E。", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/evidence/T-18.md</Path>"}, "evidence": "<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/evidence/T-18.md</Path>", "attempts": 1, "promotion_status": "applied"},
       "status": "integrated", "updated_at": "2026-08-23T08:10:00+08:00"
+    },
+    {
+      "ticket_id": "T-19", "owner": "codex", "implementation_owner": "codex", "integration_owner": "codex", "provider": "git",
+      "base_sha": "d836894f969d8f4134d72af129f3c452f8265c46", "parent_branch": "main", "branch": "main", "workspace_ref": "current", "source_checkpoint": "c658669af9f6f44ddc92899b4fa3d52b3711179d",
+      "integration": {"status": "passed", "parent_ref": "main", "parent_before_sha": "d836894f969d8f4134d72af129f3c452f8265c46", "source_sha": "c658669af9f6f44ddc92899b4fa3d52b3711179d", "candidate_sha": null, "candidate_tree_sha": null, "candidate_branch": null, "candidate_workspace_ref": null, "result_sha": "c658669af9f6f44ddc92899b4fa3d52b3711179d", "method": "direct-parent", "conflict_paths": [], "verification": "passed", "full_suite": {"required": true, "status": "passed", "reason": "24 lifecycle/reconciliation tests and 36-module package passed; unrelated user POM patch was preserved.", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/evidence/T-19.md</Path>"}, "e2e": {"required": false, "status": "not-required", "reason": "No HTTP/UI behavior; user confirmed no E2E construction.", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/evidence/T-19.md</Path>"}, "evidence": "<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/evidence/T-19.md</Path>", "attempts": 1, "promotion_status": "applied"},
+      "status": "integrated", "updated_at": "2026-08-23T10:28:00+08:00"
+    },
+    {
+      "ticket_id": "T-20", "owner": "codex", "implementation_owner": "codex", "integration_owner": "codex", "provider": "git",
+      "base_sha": "c658669af9f6f44ddc92899b4fa3d52b3711179d", "parent_branch": "main", "branch": "main", "workspace_ref": "current", "source_checkpoint": "3cd24fa2e63362e2c970a93773187c24e057a0ed",
+      "integration": {"status": "passed", "parent_ref": "main", "parent_before_sha": "c658669af9f6f44ddc92899b4fa3d52b3711179d", "source_sha": "3cd24fa2e63362e2c970a93773187c24e057a0ed", "candidate_sha": null, "candidate_tree_sha": null, "candidate_branch": null, "candidate_workspace_ref": null, "result_sha": "3cd24fa2e63362e2c970a93773187c24e057a0ed", "method": "direct-parent", "conflict_paths": [], "verification": "passed", "full_suite": {"required": true, "status": "passed", "reason": "14 system owner/notification tests and 36-module package passed; raw system bind/unbind scan returned zero.", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/evidence/T-20.md</Path>"}, "e2e": {"required": false, "status": "not-required", "reason": "No HTTP/UI behavior; user confirmed no E2E construction.", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/evidence/T-20.md</Path>"}, "evidence": "<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/evidence/T-20.md</Path>", "attempts": 1, "promotion_status": "applied"},
+      "status": "integrated", "updated_at": "2026-08-23T10:43:00+08:00"
+    },
+    {
+      "ticket_id": "T-21", "owner": "codex", "implementation_owner": "codex", "integration_owner": "codex", "provider": "git",
+      "base_sha": "3cd24fa2e63362e2c970a93773187c24e057a0ed", "parent_branch": "main", "branch": "main", "workspace_ref": "current", "source_checkpoint": "44049525e24b688366b889f0771d096ef9aa3f30",
+      "integration": {"status": "passed", "parent_ref": "main", "parent_before_sha": "3cd24fa2e63362e2c970a93773187c24e057a0ed", "source_sha": "44049525e24b688366b889f0771d096ef9aa3f30", "candidate_sha": null, "candidate_tree_sha": null, "candidate_branch": null, "candidate_workspace_ref": null, "result_sha": "44049525e24b688366b889f0771d096ef9aa3f30", "method": "direct-parent", "conflict_paths": [], "verification": "passed", "full_suite": {"required": true, "status": "passed", "reason": "7 workflow owner tests, write-entry/dependency scans, and 36-module package passed.", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/evidence/T-21.md</Path>"}, "e2e": {"required": false, "status": "not-required", "reason": "No HTTP/UI behavior; user confirmed no E2E construction.", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/evidence/T-21.md</Path>"}, "evidence": "<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/evidence/T-21.md</Path>", "attempts": 1, "promotion_status": "applied"},
+      "status": "integrated", "updated_at": "2026-08-23T10:52:00+08:00"
+    },
+    {
+      "ticket_id": "T-22", "owner": "codex", "implementation_owner": "codex", "integration_owner": "codex", "provider": "git",
+      "base_sha": "44049525e24b688366b889f0771d096ef9aa3f30", "parent_branch": "main", "branch": "main", "workspace_ref": "current", "source_checkpoint": "704d87a6ba09cf106760ff6619c4d4e4437c4087",
+      "integration": {"status": "passed", "parent_ref": "main", "parent_before_sha": "44049525e24b688366b889f0771d096ef9aa3f30", "source_sha": "704d87a6ba09cf106760ff6619c4d4e4437c4087", "candidate_sha": null, "candidate_tree_sha": null, "candidate_branch": null, "candidate_workspace_ref": null, "result_sha": "704d87a6ba09cf106760ff6619c4d4e4437c4087", "method": "direct-parent", "conflict_paths": [], "verification": "passed", "full_suite": {"required": true, "status": "passed", "reason": "9 focused architecture/fresh-baseline tests, 129 full opt-in tests, repository scans, and 41-module package passed.", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/evidence/T-22.md</Path>"}, "e2e": {"required": false, "status": "not-required", "reason": "No UI, HTTP, external protocol, or runtime registry behavior; user confirmed no E2E construction.", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/evidence/T-22.md</Path>"}, "evidence": "<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/evidence/T-22.md</Path>", "attempts": 1, "promotion_status": "applied"},
+      "status": "integrated", "updated_at": "2026-08-23T11:09:00+08:00"
     }
   ]
 }

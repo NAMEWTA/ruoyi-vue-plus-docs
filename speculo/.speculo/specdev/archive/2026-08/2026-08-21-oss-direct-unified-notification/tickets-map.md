@@ -2,7 +2,7 @@
 schema_version: 3
 artifact: tickets-map
 change: 2026-08-21-oss-direct-unified-notification
-status: completed
+status: ready
 ---
 
 # Tickets Map: OSS 浏览器直传与统一对外通知
@@ -16,6 +16,8 @@ status: completed
 ## 1. 目标与拆分策略
 
 T-01 至 T-11 交付原始合同；CR-001 后追加 T-12 至 T-18，修复权限、敏感审计、外部副作用一致性、上传续传、业务引用/下载和运维可观测性。旧 OSS HTTP 采用一次性 contract，不保留生产兼容入口。
+
+AR-001/ADR-010 共识后追加 T-19 至 T-22：先 expand 机械引用集合协调契约，再由 system 与 workflow 两个业务 module 分别完成 Owner 迁移，最后以显式 Owner manifest、聚焦架构/合同测试和公共 API contract 建立 future ratchet。当前是 fresh baseline，不增加历史回填、旧数据迁移或生产兼容窗口。
 
 Client 只参与认证授权求值；Ticket 中出现的 `client_pk` 只记录请求来自哪个 `sys_client.id`，不得成为 OSS/通知租户、所有权、Provider 路由、幂等作用域或隐式 SQL 过滤。`sys_oss_ref.ref_type/ref_id` 只保存真实物理表名和真实主键，便于反向定位与生命周期保护，不动态查表、不推导 ACL。
 
@@ -41,6 +43,10 @@ Client 只参与认证授权求值；Ticket 中出现的 `client_pk` 只记录�
 | T-16 | `<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/ticket/16-review-business-oss-adoption.md</Path>` | 业务引用与业务附件短链 | T-15 | deep | high | yes | codex | AC-009/010/013/028 | Remediation | done |
 | T-17 | `<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/ticket/17-review-frontend-cutover.md</Path>` | 策略化组件与富文本回显 | T-16 | standard | high | yes | codex | AC-003/004/014 | Remediation | done |
 | T-18 | `<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/ticket/18-review-operations-observability.md</Path>` | 生命周期 UI 与 Bucket 实检 | T-17 | standard | medium | yes | codex | AC-008/009/032 | Remediation | done |
+| T-19 | `<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/ticket/19-oss-reference-reconciliation-contract.md</Path>` | OSS 引用集合机械协调 API | — | deep | high | yes | codex | AC-009/010 | Owner Expand | done |
+| T-20 | `<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/ticket/20-system-business-oss-owners.md</Path>` | System 三类 Owner 全写路径与事务收口 | T-19 | deep | high | yes | codex | AC-009/010/029 | Owner Migrate | done |
+| T-21 | `<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/ticket/21-workflow-history-attachment-owner.md</Path>` | Workflow 历史任务附件引用闭环 | T-19 | deep | high | yes | codex | AC-009/010 | Owner Migrate | done |
+| T-22 | `<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/ticket/22-business-oss-owner-ratchet.md</Path>` | Owner manifest、架构棘轮与公共 API 收缩 | T-20,T-21 | deep | high | yes | codex | AC-008/009/010/011 | Owner Contract Gate | done |
 
 Ticket frontmatter 是状态、依赖、深度和路径访问契约的权威；本表只同步投影。
 
@@ -53,11 +59,17 @@ T-02 [schema/menu] ─────┤                 │
                        │                 └────────────────────────┐
 T-06 [notify core] ─→ T-07 [idempotency] ─→ T-08 [snapshot] ─→ T-09 [observe/API] ─┬─→ T-10 [callers]
 T-02 ───────────────────────────────────────────────────────────────┘               └─→ T-11 [UI]
+
+T-12 ─→ T-13 ─→ T-14 ─→ T-15 ─→ T-16 ─→ T-17 ─→ T-18 [review remediation done]
+
+T-19 [reference reconcile expand] ─┬─→ T-20 [system owners] ───┐
+                                   └─→ T-21 [workflow owner] ──┴─→ T-22 [manifest + contract gate]
 ```
 
 - 根 Ticket：T-01、T-02、T-06。
 - 关键汇合点：T-03 汇合 common-oss/schema；T-08 汇合 OSS 生命周期/通知幂等；T-09 汇合 schema/附件/Event。
 - T-05 是 OSS 破坏性 contract Gate；T-09 是通知 observe Gate；T-10/T-11 可在 T-09 后并行。
+- T-19 是 Owner 能力 expand 根节点；T-20/T-21 是路径不相交的迁移候选；T-22 是二者汇合后的 contract 与架构 Gate。
 - 每条边都是编译契约、schema 或可验证行为的真实开始条件，不用于表达人员交接。
 
 ## 4. 合同覆盖矩阵
@@ -71,10 +83,10 @@ T-02 ─────────────────────────
 | AC-005 | T-01,T-02,T-04 | Provider+DB | covered | Complete 幂等 |
 | AC-006 | T-01,T-04 | 完成失败注入 | covered | 校验失败无 ossId |
 | AC-007 | T-01,T-03,T-04 | Abort/cleanup | covered | 双层清理 |
-| AC-008 | T-02,T-03 | DB/定时任务 | covered | TEMP 24 小时 |
-| AC-009 | T-02,T-03 | lifecycle+DB | covered | 真实表名/主键引用 |
-| AC-010 | T-02,T-03 | lifecycle+DB | covered | 多引用与最后解绑 |
-| AC-011 | T-02,T-03 | 删除保护 | covered | 有引用拒绝删除 |
+| AC-008 | T-02,T-03,T-18,T-22 | DB/定时任务+fresh baseline | covered | TEMP 24 小时与清理启用前门禁 |
+| AC-009 | T-02,T-03,T-16,T-18,T-19,T-20,T-21,T-22 | lifecycle+业务 Owner+架构清单 | covered | 真实表名/主键引用和 owner ratchet |
+| AC-010 | T-02,T-03,T-16,T-19,T-20,T-21,T-22 | lifecycle+业务事务 | covered | 多引用、集合差异与最后解绑 |
+| AC-011 | T-02,T-03,T-14,T-22 | 删除保护+fresh baseline | covered | 有引用拒绝删除且不进入清理候选 |
 | AC-012 | T-03,T-05 | 集成测试+浏览器人工验收 | covered | 短时直下 URL |
 | AC-013 | T-03,T-05 | 业务权限矩阵 | covered | 业务授权后 presign |
 | AC-014 | T-05 | 前端门禁/人工验收/扫描 | covered | 所有已知前端迁移 |
@@ -92,15 +104,16 @@ T-02 ─────────────────────────
 | AC-026 | T-03,T-08,T-09 | Listener 失败 | covered | 同步结果不变、TEMP 回收 |
 | AC-027 | T-09,T-11 | API+UI | covered | 全局脱敏列表 |
 | AC-028 | T-09,T-11 | 权限+安全 UI | covered | 完整详情且 HTML 不执行 |
-| AC-029 | T-02,T-03,T-09,T-11 | DB/API/UI | covered | 删除/清空与附件解绑 |
+| AC-029 | T-02,T-03,T-09,T-11,T-13,T-20 | DB/API/UI+Owner 事务 | covered | 删除/清空与附件解绑 |
 | AC-030 | T-03,T-09,T-11 | 多 Client 矩阵 | covered | 权限求值而非行隔离 |
 | AC-031 | T-06,T-09,T-10 | Context/Job | covered | 无 Client 可发送 |
 | AC-032 | T-01,T-02,T-04 | Context/运维诊断 | covered | 配置安全失败 |
 
 ## 5. 并行与路径所有权
 
-- implementation 配置上限来自 `<Path>{roots.state}/specdev/config.json</Path>`；Goal Plan 已选择 current workspace，因此实际 implementation writer 上限降低为 1，全部 Ticket 严格串行。
-- Wave 仍表达依赖和自然里程碑，不构成当前计划的并发授权；Wave 内按 Goal Plan 固定序列逐个推进。
+- T-01 至 T-18 的既有 Goal Plan 已执行完成；它不包含 T-19 至 T-22，不能作为新 Ticket 的编排依据。
+- T-19 至 T-22 包含公共 API、两个业务 module、expand-migrate-contract 和高风险数据完整性门禁，进入实现前必须重新运行 `<Path>{roots.workflows}/specdev/P-goal-plan/P-goal-plan.md</Path>`。
+- T-20/T-21 在 DAG 和生产可写路径上可并行；实际 writer 上限、workspace 与 direct-parent/candidate 策略由新 Goal Plan 决定。
 - T-02 是 `DDL.sql/DSL.sql` 唯一 owner；T-06 是 common parent/BOM 唯一 owner。
 - T-06 -> T-07 -> T-08 的 common-notify，以及 T-03 -> T-04 -> T-05 的 OSS 重叠路径通过真实依赖串行移交，不允许并行写。
 - Lead 是 SpecDev 工件、父分支集成和人工验收 Evidence owner；本计划不运行 E2E 测试。
@@ -118,16 +131,20 @@ T-02 ─────────────────────────
 | T-07 | T-08 | common-notify | 是 | T-07 完成后移交 |
 | T-03 | T-05 | system OSS files | 是（传递） | T-05 最终 contract |
 | T-08 | T-09 | system notify package | 是 | T-09 接管监控实现 |
+| T-19 | T-20 | 无（T-20 只读 OssService） | 是 | T-19 expand 完成后迁移 system Owner |
+| T-19 | T-21 | 无（T-21 只读 OssService） | 是 | T-19 expand 完成后迁移 workflow Owner |
+| T-20 | T-21 | 无 | 否 | DAG 可并行，实际并发由新 Goal Plan 决定 |
+| T-19 | T-22 | OssService/SysOssServiceImpl | 是（传递） | T-19 expand owner，T-22 在迁移后接管 contract |
 
 ## 6. Gate、Wave 与集成点
 
-- **Wave 1 / Foundations：** T-01、T-02、T-06。
-- **Wave 2 / State：** T-03、T-07。
-- **Wave 3 / Control & Snapshot：** T-04、T-08。
-- **Wave 4 / Contract & Observe：** T-05、T-09。
-- **Wave 5 / Consumers：** T-10、T-11。
-- 9 个 Deep Ticket、2 个 Standard Ticket、数据库迁移和双仓库 release coordination 使 Goal Plan 成为必需编排工件；用户明确将全部 E2E disposition 设为 not-required。
-- 每个 Ticket 在所属子仓库形成非空 implementation commit；当前 Goal Plan 在 current-workspace 严格串行验证 direct-parent 并记录 result SHA，不创建 source/candidate worktree。
+- **Historical Waves 1-5：** T-01 至 T-11 已完成 Foundations、State、Control/Snapshot、Contract/Observe 和 Consumers。
+- **Historical Remediation：** T-12 至 T-18 已完成 review remediation。
+- **Owner Wave A / Expand：** T-19。
+- **Owner Wave B / Migrate：** T-20、T-21；依赖允许并行。
+- **Owner Wave C / Contract Gate：** T-22。
+- 当前共 17 个 Deep Ticket、5 个 Standard Ticket；新批次包含共享公共契约、两个 module 和 contract Gate，必须重新生成 Goal Plan。用户确认全部新增 Ticket 的 E2E disposition 为 not-required。
+- 每个新增 Ticket 必须在所属后端仓库形成非空 implementation commit；workspace、集成顺序与 result SHA 规则由新 Goal Plan 锁定。
 
 ## 7. 横切契约与风险
 
@@ -137,12 +154,14 @@ T-02 ─────────────────────────
 - Provider 同步发送，Event best-effort 监控；不可把 Event 当可靠队列或把 ACCEPTED 当 DELIVERED。
 - 通知正文、OTP、Token 与完整目标永久明文保存是批准风险；不得因此泄露 Provider Secret，列表仍必须脱敏、HTML 不执行。
 - T-05 前后端必须原子发布；启用直传前完成 CORS/Lifecycle 运维检查。
+- Business OSS Owner 位于业务写入 module；业务行与引用转换同一 `@DSTransactional` 且 fail-closed，不使用运行时扫描、动态回调或提交后修复队列。
+- Owner manifest 是测试/交付门禁而非生产注册中心；T-22 前后 `cleanup-enabled:false`、`cleanup-dry-run:true` 保持不变，真实启用仍需独立发布批准。
 - SQL 只追加 NAMEWTA DDL/DSL；后端单元/集成测试集中在 ruoyi-admin 并显式 `-Dmaven.test.skip=false`，前端执行 lint、补充 type diagnostic 和 build；不建设 E2E 测试套件。
 
 ## 8. 同步规则
 
 - Ticket 状态变化后同步执行清单；Ticket frontmatter 为依赖、状态、深度和路径权威。
-- Goal Plan 存在后，Wave/Gate/owner 以 `<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/goal-plan.md</Path>` 为编排权威。
+- 新 Goal Plan 发布后，Wave/Gate/owner 以 `<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/goal-plan.md</Path>` 为编排权威；当前旧文件只覆盖已完成的 T-01 至 T-18。
 - Evidence 必须写入 `<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/evidence/T-NN.md</Path>`，记录命令、结果、source/parent/candidate SHA 和偏差。
 - 依赖、合同或路径变化后运行 `<Path>{roots.workflows}/specdev/common/tools/validate-specdev.mjs</Path>` 的 `--stage tickets` 校验。
 - 内部工件始终使用完整根变量 Path 标签，不使用相对 Markdown 链接。

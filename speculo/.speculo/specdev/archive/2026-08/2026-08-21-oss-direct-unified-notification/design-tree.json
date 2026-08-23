@@ -3,7 +3,7 @@
   "artifact": "design-tree",
   "change": "2026-08-21-oss-direct-unified-notification",
   "status": "consensus",
-  "round": 10,
+  "round": 14,
   "nodes": [
     {
       "id": "D-001",
@@ -609,6 +609,72 @@
       "round": 10,
       "answer": "Client 用于登录准入、角色、菜单、权限字符、数据权限和动态路由，userType 是动态登录域；两者都不是 tenant。通知日志只记录来源 sys_client.id Long 主键供审计，不参与 Provider、日志隔离、数据所有权或幂等，也不设置 SYSTEM scope。",
       "log_ref": "LOG-055"
+    },
+    {
+      "id": "D-056",
+      "title": "架构深化候选选择",
+      "question": "架构审查的三个候选中，本次进入完整设计访谈的是哪一个？",
+      "depends_on": [],
+      "recommendation": "选择 AR-001，优先深化业务 OSS 引用生命周期。",
+      "status": "answered",
+      "round": 11,
+      "answer": "选择 AR-001：Deepen business-owned OSS references。",
+      "log_ref": "LOG-058"
+    },
+    {
+      "id": "D-057",
+      "title": "业务 OSS 引用 seam 的位置",
+      "question": "深化后由每个业务领域写入 module 完整拥有记录保存、附件差异与引用转换，还是建立一个跨业务的中央协调 module 让调用者提交旧新 ossId 集合？",
+      "depends_on": ["D-056"],
+      "recommendation": "由业务领域写入 module 拥有完整事务与授权；只把集合差异和引用转换的机械规则沉入可复用的内部 module，不建立能回调或反射业务表的中央协调者。",
+      "status": "answered",
+      "round": 12,
+      "answer": "采用业务领域写入 module ownership；授权、记录保存和引用生命周期留在业务 module，共享内部 module 只承载集合差异与引用转换的机械规则。",
+      "log_ref": "LOG-059"
+    },
+    {
+      "id": "D-058",
+      "title": "现有业务引用治理范围",
+      "question": "在允许 TEMP 主动清理前，是只覆盖当前已确认的 sys_user 头像、sys_notice 富文本和 sys_notify_log 快照并对未来变更采用 ratchet，还是先完成全仓现有 ossId 所有者清单与定向回填？",
+      "depends_on": ["D-056"],
+      "recommendation": "先形成全仓显式所有者清单，但只为确认的持久化所有者做定向回填与合同测试；清理保持 disabled/dry-run，直到清单与存量引用核对通过，禁止反射 schema 的通用回填。",
+      "status": "answered",
+      "round": 12,
+      "answer": "形成全仓显式所有者清单并验证 fresh baseline；当前是无历史负担的基座系统，不做存量回填、兼容窗口或旧数据迁移，清理仍在所有者清单验证后才启用。",
+      "log_ref": "LOG-060"
+    },
+    {
+      "id": "D-059",
+      "title": "业务写入与引用转换的失败语义",
+      "question": "业务记录保存与 OSS 引用转换是否必须在同一事务中 fail-closed，还是允许业务先提交、引用随后 best-effort 修复？",
+      "depends_on": ["D-057"],
+      "recommendation": "同一 @DSTransactional 中 fail-closed；bind/unbind 任一步失败都回滚业务记录与引用变化，不引入最终一致性修复队列。",
+      "status": "answered",
+      "round": 13,
+      "answer": "业务记录保存与 OSS 引用转换在同一 @DSTransactional 中 fail-closed；任一步失败都回滚，不建设 best-effort 修复队列。",
+      "log_ref": "LOG-061"
+    },
+    {
+      "id": "D-060",
+      "title": "业务逻辑删除后的附件保留",
+      "question": "业务记录逻辑删除时应立即解除 OSS 引用并进入 TEMP 宽限期，还是在业务记录仍可恢复期间继续保留引用？",
+      "depends_on": ["D-057", "D-058"],
+      "recommendation": "没有恢复合同的业务在逻辑删除事务内立即解绑；具有明确恢复能力的业务继续保留引用，直到不可恢复清理。不得从 @TableLogic 自动推断统一策略。",
+      "status": "answered",
+      "round": 13,
+      "answer": "由每个 Business OSS Owner 明确声明恢复语义；无恢复合同的逻辑删除立即解绑，有恢复合同的保留引用直到不可恢复清理，不从 @TableLogic 推断统一策略。",
+      "log_ref": "LOG-062"
+    },
+    {
+      "id": "D-061",
+      "title": "未来附件所有者的 Ratchet",
+      "question": "怎样防止新增 ossId 持久化字段再次绕过引用生命周期？",
+      "depends_on": ["D-057", "D-058", "D-059"],
+      "recommendation": "建立显式所有者清单与聚焦架构测试，要求每个持久化所有者证明 insert/update/delete 的引用转换；不使用运行时注解扫描或动态业务回调。",
+      "status": "answered",
+      "round": 14,
+      "answer": "建立显式 Business OSS Owner 清单与聚焦架构/契约测试；每个持久化所有者必须证明 insert/update/delete/restore（适用时）的引用语义，不采用运行时注解扫描或动态业务回调。",
+      "log_ref": "LOG-063"
     }
   ]
 }

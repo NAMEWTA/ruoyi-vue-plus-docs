@@ -3,10 +3,14 @@
   "workflow": "specdev",
   "active": [
     {
-      "change": "2026-08-21-module-knowledge-skills"
+      "change": "2026-08-22-unified-payment-foundation",
+      "current_work": "specdev/grill-with-docs",
+      "works_run": []
     }
   ],
   "archived": [
-    "2026-08-20-namewta-client-rbac-review"
+    "2026-08-20-namewta-client-rbac-review",
+    "2026-08-21-module-knowledge-skills",
+    "2026-08-21-oss-direct-unified-notification"
   ]
 }

@@ -106,7 +106,7 @@ Direct Upload 的文件字节不经过 Controller，前端组件的扩展名和�
 OSS 管理面可以定位文件来自哪张表、哪条数据，并安全支持共享对象；代价是数据库不能验证多态引用，表名变更需要同步迁移引用值。
 
 ### Consequences
-前端没有通用 bind 接口。后端业务 Service 在确认用户有权使用文件后调用内部引用能力。通用 OSS 删除拒绝仍有引用的对象；Provider 对象删除和数据库变更需要幂等补偿。`sys_oss_ref` 是项目自有表，遵守七个基础字段和 NAMEWTA DDL/DSL 只追加合同。
+前端没有通用 bind 接口。后端业务 Service 在确认用户有权使用文件后调用内部引用能力。通用 OSS 删除拒绝仍有引用的对象。无引用对象先在独立事务中持久化 `delete_state=PENDING` 和到期 TEMP 状态，后续清理幂等删除 Provider 对象再删除元数据；Provider 或数据库失败均保留 PENDING 供重试，新的业务 bind 在行锁内取消 PENDING。`sys_oss_ref` 是项目自有表，遵守七个基础字段和 NAMEWTA DDL/DSL 只追加合同。
 
 ## ADR-006: common-notify 是薄的渠道契约层
 
@@ -160,12 +160,12 @@ Spring Event 适合解耦监控落库，但不提供可靠队列语义。用户�
 ### Decision
 Dispatcher 在成功、失败或幂等跳过后发布携带同步上下文快照的 Event；`@Async + EventListener` 只做 best-effort 监控。`NotifyContextResolver` 在发布前解析 userId、traceId 和可为空的来源 `client_pk`；异步 Listener 不读取 ThreadLocal。`client_pk` 只作审计展示，通知日志是全局监控数据，不按 Client 隔离，也不存在 SYSTEM scope。
 
-`sys_notify_log` 保存一次逻辑通知及完整正文，`sys_notify_delivery_log` 保存逐目标 attempt、状态、耗时、错误和 Provider Message ID。最终 subject、content、模板编码、参数、contentSnapshot、OTP、重置链接、Token 和完整 Target 全部明文永久保存，不加密、不自动清理。模板通知缺少 contentSnapshot 时不得发送。
+`sys_notify_log` 保存一次逻辑通知及正文，`sys_notify_delivery_log` 保存逐目标 attempt、状态、耗时、错误和 Provider Message ID。普通业务通知默认使用 `FULL` 审计策略；验证码、重置 Token 等 credential-like 通知必须显式使用 `REDACT_SENSITIVE`，不保存主题、正文、模板参数或内容快照，物理目标只保存脱敏值。模板通知缺少 contentSnapshot 时仍不得发送。
 
-首版交付数据库、分页/详情/删除 API 和前端监控页面。列表 Target 脱敏，详情在相同查询权限下返回明文；不增加 reveal 权限。`system:notify:remove` 支持删除、批量删除和清空并记录 OperLog；父子日志一致删除。HTML 正文只能安全文本展示或隔离预览。
+首版交付数据库、分页/详情/删除 API 和前端监控页面。列表 Target 脱敏，FULL 详情在相同查询权限下返回明文；REDACT_SENSITIVE 数据不可恢复。`system:notify:remove` 支持删除、批量删除和清空并记录 OperLog；清理固定批次物理删除父子日志。HTML 正文只能安全文本展示或隔离预览。
 
 ### Trade-off
-监控查询直接且内容可完整追溯；应用宕机窗口可能丢日志。数据库泄露或查询权限滥用会暴露永久保存的 OTP、Token、正文和目标，且所有获权管理员面对全局日志。这是本 change 明确接受的高风险取舍。
+监控查询直接且普通通知内容可完整追溯；应用宕机窗口可能丢日志。credential-like 通知因最小化审计无法恢复原文，这是降低数据库泄露与权限误授影响面的明确取舍。
 
 ### Consequences
 Provider Secret、Authorization 和无关内部异常仍不得入库。两张项目自有表遵守七个基础字段与 NAMEWTA DDL/DSL 只追加合同。

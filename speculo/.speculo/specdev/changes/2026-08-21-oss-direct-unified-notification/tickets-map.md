@@ -15,7 +15,7 @@ status: completed
 
 ## 1. 目标与拆分策略
 
-11 个 Ticket 共同交付 `US-001` 至 `US-012` 和 `AC-001` 至 `AC-032`。拆分以可观察行为和安全准备能力为边界：T-01/T-02/T-06 是解除公共客户端、schema 和通知契约阻塞的 prefactor；OSS 沿 foundation -> lifecycle -> control plane -> protocol contract 展开；通知沿 core -> idempotency -> snapshot -> observe -> callers/UI 展开。旧 OSS HTTP 采用一次性 contract，不保留生产兼容入口。
+T-01 至 T-11 交付原始合同；CR-001 后追加 T-12 至 T-18，修复权限、敏感审计、外部副作用一致性、上传续传、业务引用/下载和运维可观测性。旧 OSS HTTP 采用一次性 contract，不保留生产兼容入口。
 
 Client 只参与认证授权求值；Ticket 中出现的 `client_pk` 只记录请求来自哪个 `sys_client.id`，不得成为 OSS/通知租户、所有权、Provider 路由、幂等作用域或隐式 SQL 过滤。`sys_oss_ref.ref_type/ref_id` 只保存真实物理表名和真实主键，便于反向定位与生命周期保护，不动态查表、不推导 ACL。
 
@@ -34,6 +34,13 @@ Client 只参与认证授权求值；Ticket 中出现的 `client_pk` 只记录�
 | T-09 | `<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/ticket/09-notify-monitoring-backend.md</Path>` | Event 两层监控与全局管理 API | T-02,T-03,T-08 | deep | critical | yes | cursor-agent | AC-020/025..031 | Wave 4 | done |
 | T-10 | `<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/ticket/10-notify-caller-migration.md</Path>` | Captcha/Workflow/Demo 调用收口 | T-09 | standard | medium | yes | cursor-agent | AC-015/016/017/023/024/025/031 | Wave 5 | done |
 | T-11 | `<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/ticket/11-notify-monitoring-frontend.md</Path>` | 通知列表/详情/删除运维页面 | T-09 | deep | high | yes | cursor-agent | AC-027/028/029/030 | Wave 5 | done |
+| T-12 | `<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/ticket/12-review-attachment-authorization.md</Path>` | 通知附件入口授权 | — | standard | high | yes | codex | AC-013/023/024 | Remediation | done |
+| T-13 | `<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/ticket/13-review-notify-audit-cleanup.md</Path>` | 敏感审计、重复日志、物理清理 | T-12 | deep | critical | yes | codex | AC-020/025/028/029 | Remediation | done |
+| T-14 | `<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/ticket/14-review-oss-deletion-state.md</Path>` | 可恢复 Provider 删除状态 | T-13 | deep | critical | yes | codex | AC-007/008/010/011 | Remediation | done |
+| T-15 | `<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/ticket/15-review-upload-resume-policy.md</Path>` | 安全续传与命名策略 | T-14 | deep | high | yes | codex | AC-001/004/005/014/032 | Remediation | done |
+| T-16 | `<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/ticket/16-review-business-oss-adoption.md</Path>` | 业务引用与业务附件短链 | T-15 | deep | high | yes | codex | AC-009/010/013/028 | Remediation | done |
+| T-17 | `<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/ticket/17-review-frontend-cutover.md</Path>` | 策略化组件与富文本回显 | T-16 | standard | high | yes | codex | AC-003/004/014 | Remediation | done |
+| T-18 | `<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/ticket/18-review-operations-observability.md</Path>` | 生命周期 UI 与 Bucket 实检 | T-17 | standard | medium | yes | codex | AC-008/009/032 | Remediation | done |
 
 Ticket frontmatter 是状态、依赖、深度和路径访问契约的权威；本表只同步投影。
 

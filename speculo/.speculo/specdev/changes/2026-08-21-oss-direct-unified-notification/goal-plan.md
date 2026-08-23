@@ -5,7 +5,7 @@ change: 2026-08-21-oss-direct-unified-notification
 status: completed
 modes: [migration, high-assurance, release-coordination]
 orchestration: lead-directed
-lead: cursor-agent
+lead: codex
 implementation_agent_limit: 1
 integration_attempt_limit: 3
 ticket_workspace_policy: current
@@ -29,7 +29,7 @@ ready_for_execution: false
 
 ### Success and False Completion
 
-成功要求 `AC-001` 至 `AC-032` 都有 Evidence，11 个 Ticket 均有非空 implementation commit、current-workspace 检查、Lead direct-parent result SHA，6 个 Gate 全部关闭，前后端子仓库和父 gitlink 一致。
+成功要求 `AC-001` 至 `AC-032` 都有 Evidence，原始 T-01 至 T-11 与 CR-001 修复 T-12 至 T-18 均有真实 implementation checkpoint、current-workspace 检查和 Lead direct-parent result SHA，全部 Gate 关闭，前后端子仓库和父 gitlink 一致。
 
 以下均属于伪完成：只完成 SDK 或表结构；后端仍代理文件字节；旧 OSS URL 仍有调用；业务仍直接调用 MailBuilder/SMS SDK；Event 落库缺少部分失败/duplicate/附件引用；把 Client 当租户过滤；只运行默认跳过测试的 package；把既有 `vue-tsc` 失败隐藏为通过；把人工浏览器验收写成 E2E passed。
 
@@ -109,7 +109,7 @@ Wave 是里程碑投影，不是并发授权。current 模式任何时刻只有�
 
 ### Overall Definition of Done
 
-- 11 个 Ticket 均为 done 或经用户批准 cancelled；每个 done Ticket 在所属子仓库有聚焦 commit 和 direct-parent result SHA。
+- 18 个 Ticket 均为 done 或经用户批准 cancelled；每个 done Ticket 在所属子仓库有聚焦 commit 或明确复用的共享文件 checkpoint，并记录 direct-parent result SHA。
 - `AC-001..032` 都映射到实际命令、数据库/Provider/API transcript、静态扫描或人工浏览器 Evidence；E2E 始终记录为 not-required。
 - 后端新增单元/集成测试全部集中在 `<Path>ruoyi-vue-plus-namewta/ruoyi-admin/src/test/java/org/dromara/test/**</Path>`，并从 ruoyi-admin 聚合入口运行。
 - 后端 opt-in tests 和 package 通过；前端 lint/build 通过；`vue-tsc` 不新增超出基线两个 TS1149 的诊断。
@@ -243,6 +243,9 @@ T-05 是双仓库 Ticket，backend 与 frontend commit 均为完成条件，任�
 ## 6. Progress and Decisions
 
 ### Current Status
+
+- CR-001 remediation 已完成；T-12 至 T-18 在 current workspace 严格串行落为 backend `d836894f969d8f4134d72af129f3c452f8265c46` 与 frontend `f7d116f6e2b6b61239afc86cbcb860a07530abad`，未创建 worktree、未触碰远端。
+- 修复覆盖附件入口授权、REDACT_SENSITIVE、重复日志索引、分批物理清理、OSS PENDING 删除、续传/策略、业务引用/下载以及管理面诊断；102 个后端测试、36 模块 package、前端 Vitest/lint/build 已通过，vue-tsc 仅保留既有两条 TS1149。
 
 - Goal Plan 已选择 current/direct-parent，implementation writer 上限 1，integration attempt 上限 3。
 - 用户已授权 current workspace 修改、每 Ticket implementation commit 和 Lead local direct-parent/父分支推进；远端、部署、生产迁移和清理未授权。

@@ -123,9 +123,9 @@ OSS 采用控制面/数据面分离。后端控制面负责认证授权、命名
 
 1. `sys_notify_log` 每行表示一次逻辑通知，保存最终 subject/content、模板编码、参数、contentSnapshot、附件快照 ossId、业务关联、状态、来源 userId/traceId/`client_pk` 等。
 2. `sys_notify_delivery_log` 每行表示一个物理目标的 Provider attempt，保存完整目标、目标角色、状态、耗时、错误和 Provider Message ID。
-3. 两表内容明文永久保存，不加密、不自动清理，包括 OTP、重置链接、Token 和完整目标。
-4. 监控列表只返回脱敏目标；详情在相同查询权限下返回完整正文、完整目标、Delivery 和附件快照。HTML 正文只能安全文本展示或隔离预览，不能直接作为可信 DOM 执行。
-5. 拥有 `system:notify:remove` 的管理员可单条、批量删除或清空。操作记录 OperLog；父子日志一致删除，并解除通知附件引用。零引用附件重新进入 TEMP 宽限期。
+3. 普通业务通知使用 FULL 审计并保留正文和完整目标；OTP、重置 Token 等 credential-like 通知必须使用 REDACT_SENSITIVE，不保存内容字段且目标只保存脱敏值。
+4. 监控列表只返回脱敏目标；详情按实际审计策略返回可用字段、Delivery 和附件快照。HTML 正文只能安全文本展示或隔离预览，不能直接作为可信 DOM 执行。
+5. 拥有 `system:notify:remove` 的管理员可单条、批量删除或清空。操作记录 OperLog；父子日志按固定批次物理删除，并解除通知附件引用。零引用附件重新进入 TEMP 宽限期。
 6. 通知日志是全局监控数据。`client_pk` 只展示请求来自哪个 `sys_client.id`，不得自动成为查询条件、所有权或访问边界；后台 Job 可记录 null。
 
 ### 边界、失败与稳定错误行为
@@ -147,7 +147,7 @@ OSS 采用控制面/数据面分离。后端控制面负责认证授权、命名
 | 附件缺失、无权、复制失败或部分复制 | 整次通知失败，不调用 Provider；已生成副本幂等删除或由 TEMP 清理。 |
 | Provider 对部分目标失败 | 继续尝试其余合法目标，最后抛出含完整结果的 NotifyDeliveryException。 |
 | 异步监控落库失败 | 不回滚或改写已完成的 Provider 结果；附件快照保持 TEMP，24 小时后清理。 |
-| 日志查询权限被授予 | 可查看全局日志详情及完整敏感正文；这是明确接受的权限风险。 |
+| 日志查询权限被授予 | 可查看 FULL 通知详情；credential-like 通知原文不落库，无法通过查询恢复。 |
 
 错误响应继续使用项目现有统一响应与全局异常映射。实现必须提供可区分的 typed exception 或稳定错误类别来表达：上传策略/会话/完成失败、OSS 引用冲突、通知验证失败、幂等冲突、发送中、幂等基础设施不可用、附件快照失败和 Provider Delivery 失败；本 Spec 不虚构数值错误码。
 
@@ -225,11 +225,11 @@ Notify idempotency: ABSENT -> IN_PROGRESS -> COMPLETED
 | AC-022 | Redis 不可用 | 不带 Key 发送 | 正常调用 Provider，不因可选幂等基础设施失败而阻断 | Dispatcher 单元测试 |
 | AC-023 | 通知带多个 attachmentOssIds | 开始发送 | 每个源附件只复制一个本通知快照；全部 Delivery 使用同一组快照；Provider 在复制全部成功后才调用 | 附件快照集成 |
 | AC-024 | 附件部分复制失败 | 开始发送 | Provider 零调用；已复制副本幂等删除或保持 TEMP 等待清理 | 附件失败集成 |
-| AC-025 | Provider 成功、部分失败或失败 | 异步监听正常 | 一条 sys_notify_log 保存完整明文内容，每个实际目标 attempt 有一条 Delivery；ACCEPTED 不显示为 DELIVERED | Event/DB 集成 |
+| AC-025 | Provider 成功、部分失败或失败 | 异步监听正常 | 一条 sys_notify_log 按审计策略保存内容，每个实际目标 attempt 有一条 Delivery；credential-like 内容不落库；ACCEPTED 不显示为 DELIVERED | Event/DB 集成 |
 | AC-026 | 异步日志监听失败 | Provider 已返回结果 | 同步结果不改变；未绑定附件快照保持 TEMP 并可在 24 小时后清理 | Listener 失败注入测试 |
 | AC-027 | 运维人员有通知列表权限 | 查询分页列表 | 可按业务、Channel、Provider、状态、时间等筛选；目标只以服务端脱敏值返回；不按 client_pk 自动过滤 | Monitor Controller + 前端页面 |
-| AC-028 | 运维人员有通知查询权限 | 打开详情 | 返回完整正文、模板参数、完整目标、Delivery、错误和附件；HTML 不在主页面直接执行 | Controller 权限 + UI 安全测试 |
-| AC-029 | 管理员有 system:notify:remove | 单删、批删或清空 | 父子日志一致删除、OperLog 可查、附件引用解除且零引用对象重新 TEMP | Monitor/DB 集成 |
+| AC-028 | 运维人员有通知查询权限 | 打开详情 | FULL 通知返回正文、模板参数、完整目标、Delivery、错误和附件；REDACT_SENSITIVE 只返回脱敏审计；HTML 不在主页面直接执行 | Controller 权限 + UI 安全测试 |
+| AC-029 | 管理员有 system:notify:remove | 单删、批删或清空 | 父子日志固定批次物理删除、OperLog 可查、附件引用解除且零引用对象重新 TEMP | Monitor/DB 集成 |
 | AC-030 | 两个 Client 对同一用户产生不同权限 | 访问 OSS 或通知监控 | 后端按当前 Client 的权限/数据权限决定访问；不合并权限，也不按 client_pk 形成资源行隔离 | 多 Client 权限矩阵 |
 | AC-031 | 后台 Job 无 Token Client | 发送通知 | 可正常发送；日志 client_pk 为 null，不要求 SYSTEM scope | Context Resolver 单元/集成 |
 | AC-032 | 启动配置含无效上传策略或不安全 Bucket 配置 | 应用启动或诊断 | 类型化策略校验明确失败；诊断指出 CORS/Lifecycle 问题且不输出 Secret、不自动改 Bucket policy | ApplicationContext + 运维检查 |
@@ -277,7 +277,7 @@ Notify idempotency: ABSENT -> IN_PROGRESS -> COMPLETED
 - **DEC-005**：sys_oss 保存可索引 TEMP 生命周期，sys_oss_ref 使用真实物理表名和真实主键表达多业务引用；引用不是 ACL。来源：`ADR-005`。
 - **DEC-006**：common-notify 保持薄契约层；一个请求一个 Channel、可多物理目标；调用方负责 USER 解析，Provider 全局默认且可显式覆盖。来源：`ADR-006`。
 - **DEC-007**：Provider 同步发送；可选 Redis 幂等默认五分钟，多目标部分失败通过携带完整结果的 typed exception 表达。来源：`ADR-007`。
-- **DEC-008**：Spring Event 只承担 best-effort 全局监控；完整敏感正文与目标明文永久保存，查询权限可查看，人工删除记录 OperLog。来源：`ADR-008`。
+- **DEC-008**：Spring Event 只承担 best-effort 全局监控；普通通知可 FULL 审计，credential-like 通知必须 REDACT_SENSITIVE；人工删除记录 OperLog。来源：`ADR-008`、`CR-001`、用户接受修复决定。
 - **DEC-009**：通知附件在 Provider 调用前复制为独立快照，实际发送使用快照并绑定真实 `sys_notify_log` 主键。来源：`ADR-009`。
 
 ## 7. 数据、接口与兼容
@@ -294,13 +294,15 @@ OSS 浏览器控制面使用现有 `R<T>` 包装，固定以下操作合同：
 | `POST /resource/oss/uploads/{uploadToken}/complete` | 完成并登记对象 | SINGLE 不传 Part；MULTIPART 传有序 partNumber/ETag；成功 data 仅为字符串 ossId |
 | `DELETE /resource/oss/uploads/{uploadToken}` | 主动取消 | 幂等 Abort/清理 Ticket，不生成 ossId |
 | `GET /resource/oss/{ossId}/download-url` | OSS 管理下载授权 | 需要 system:oss:download；返回 url、expiresAt、fileName |
+| `GET /monitor/notify/{notifyLogId}/attachments/{ossId}/download-url` | 通知附件下载授权 | 需要 system:notify:query，并校验附件属于该通知 |
+| `GET /system/notice/{noticeId}/attachments/download-urls` | 公告富文本附件解析 | 需要 system:notice:query，只返回公告正文实际引用对象 |
 
 普通业务下载、业务引用新增/解除、通知附件快照通过 `ruoyi-api` 或应用装配的稳定 Service/SPI 提供，不开放前端通用 bind。跨模块公共模型不得暴露 system entity、Mapper 或 AWS SDK 类型。
 
 统一通知公开合同至少包含：
 
 - `NotifyClient.send(NotifyRequest) -> NotifyResult`。
-- `NotifyRequest`：request/biz 关联、单一 Channel、可选 providerKey、物理 targets、typed content、可选 attachmentOssIds、可选 idempotencyKey/窗口和非敏感扩展元数据；不得让业务请求写审计 client_pk。
+- `NotifyRequest`：request/biz 关联、单一 Channel、可选 providerKey、物理 targets、typed content、可选 attachmentOssIds、FULL/REDACT_SENSITIVE 审计策略、可选 idempotencyKey/窗口和非敏感扩展元数据；不得让业务请求写审计 client_pk。
 - `NotifyTarget`：类型、完整物理值及邮件 TO/CC/BCC 等角色；不接受 USER 作为 common 层物理目标。
 - `NotifyContent`：文本/富文本或模板内容；模板内容必须含 providerTemplateCode、params、contentSnapshot。
 - `NotifyResult`：逻辑 requestId、Provider、总体状态和逐目标结果；重复完成请求返回首次结果。
@@ -317,11 +319,11 @@ OSS 浏览器控制面使用现有 `R<T>` 包装，固定以下操作合同：
 ### 数据模型与持久化
 
 - `sys_oss` 增加独立、可查询和可索引的 TEMP 标识与过期时间；生命周期状态不得只藏在 `ext1`。现有 fileSize/contentType 等扩展元数据可继续复用 `SysOssExt`，但 `refType/refId/isTemp` 不再作为引用和清理权威。
-- 新建 `sys_oss_ref`，主键命名遵循模块表规则；至少保存 oss_id、ref_type、ref_id 及项目要求的 version/create_dept/create_time/create_by/update_time/update_by/del_flag。有效 `(oss_id, ref_type, ref_id)` 唯一。
+- 新建 `sys_oss_ref`，主键命名遵循模块表规则；至少保存 oss_id、ref_type、ref_id 及项目要求的 version/create_dept/create_time/create_by/update_time/update_by/del_flag。有效 `(oss_id, ref_type, ref_id)` 唯一。`sys_oss.delete_state` 使用 ACTIVE/PENDING 表达可重试 Provider 删除。
 - 新建 `sys_notify_log` 保存逻辑通知、完整内容快照、业务关联、全局状态、附件快照、originalRequestId、userId、traceId 和可空 client_pk。
 - 新建 `sys_notify_delivery_log` 保存 notify_log_id、目标类型/角色、完整目标、Provider attempt 状态、耗时、错误和 Provider Message ID。
 - 两张通知表都是全局监控表，不附加 Client 数据权限过滤。项目自有新表都包含七个基础字段并使用逻辑删除合同；父子与 OSS 引用删除必须保持一致。
-- 通知内容和目标明文永久保存；Provider Secret、Authorization、签名 URL、AccessKey/SecretKey、堆栈和无关内部异常不得写入通知表。
+- 普通通知内容可按 FULL 策略保存；credential-like 通知不得保存内容原文，目标必须脱敏。Provider Secret、Authorization、签名 URL、AccessKey/SecretKey、堆栈和无关内部异常不得写入通知表。
 
 ### 兼容要求
 
@@ -343,11 +345,11 @@ OSS 浏览器控制面使用现有 `R<T>` 包装，固定以下操作合同：
 - 部署需要明确前端 Origin 的 OSS CORS，允许实际 PUT/HEAD 所需方法/Header，并向浏览器暴露 ETag；不得允许任意 Origin 携带无关凭据。
 - Provider 支持时配置 AbortIncompleteMultipartUpload Lifecycle，期限晚于应用主动清理和重试窗口；应用不自动修改 Bucket policy。
 - 配置命名 uploadPolicy、Ticket/TEMP 清理、Part/Download 签名时长、幂等窗口上下限和 Mail/SMS 默认 Provider；Secret 只来自环境或 Secret 管理。
-- 数据库容量必须考虑正文、目标和附件永久保留；人工删除是唯一首版回收入口。
+- 数据库容量必须考虑 FULL 正文、目标和附件保留；管理员可通过审计后的删除/清空物理回收通知日志。
 
 ## 8. 非功能要求
 
-- **NFR-001 安全与隐私：** 服务端不信任浏览器声明的对象 Key、类型、大小或上传结果；Ticket 绑定初始化身份与冻结策略。OSS transport 不携带业务 Authorization、clientid 或全局 Axios 拦截器 Header，只发送预签名明确要求的 Header。下载必须先通过管理权限或业务对象授权。通知正文中的 OTP、重置 Token 等内容明文永久存储及同权详情查看是已接受风险，但列表必须服务端脱敏，HTML 不得直接执行；Provider 凭据、Access Token 和签名 URL 不得入库。
+- **NFR-001 安全与隐私：** 服务端不信任浏览器声明的对象 Key、类型、大小或上传结果；Ticket 绑定初始化身份与冻结策略。OSS transport 不携带业务 Authorization、clientid 或全局 Axios 拦截器 Header，只发送预签名明确要求的 Header。下载必须先通过管理权限或业务对象授权。OTP、重置 Token 等 credential-like 通知必须最小化审计，列表服务端脱敏，HTML 不得直接执行；Provider 凭据、Access Token 和签名 URL 不得入库。
 - **NFR-002 性能与容量：** 浏览器文件字节不得经过后端；Multipart 签名按有限窗口批量生成，不能在 init 返回无界 URL 列表。下载不在 JVM 聚合对象字节。清理查询使用可索引 TEMP/expiry/ref 字段。通知多目标尝试与附件复制必须有明确超时和有界资源使用，不得在数据库事务内无界等待 Provider。
 - **NFR-003 可用性与可靠性：** Complete、Abort、TEMP 清理、引用新增/解除和人工日志删除必须幂等。Provider 发送同步、无自动重试；Event 监控是 best-effort，允许宕机窗口丢日志。带幂等 Key 时 Redis 故障 fail-closed；无 Key 请求和已完成 OSS 下载不依赖 Redis 幂等。
 - **NFR-004 可观测性与运营：** 监控能够按 requestId、bizType/bizId、Channel、Provider、状态、Provider Message ID、traceId、时间和来源 client_pk 排查；幂等基础设施失败与 Provider 失败可区分。UploadTicket/TEMP 清理需要成功、失败、重试和遗留数量的可观察记录，诊断不得输出 Secret。
@@ -372,7 +374,7 @@ OSS 浏览器控制面使用现有 `R<T>` 包装，固定以下操作合同：
 
 ### 风险
 
-- 通知表永久明文保存 OTP、Token、重置链接、正文和完整目标，且查询权限可查看全局详情；数据库泄露或权限误授会造成高影响数据暴露。这是用户明确接受的产品决定，实施仍必须限制权限授予并审计删除。
+- FULL 通知仍可能包含敏感业务正文与完整目标；必须限制查询权限并审计删除。OTP、Token 等 credential-like 请求使用 REDACT_SENSITIVE 降低数据库泄露与权限误授影响。
 - Spring Event 监控允许应用宕机窗口丢失通知日志；它不能作为发送可靠性证据。
 - 不同 S3-compatible Provider 对 Multipart、checksum、ETag、自定义域名签名和 CopyObject 的兼容细节可能不同；实现需通过 capability 和目标 Provider 验证，不得把 Multipart ETag 当整文件 MD5。
 - `sys_oss_ref` 是无数据库外键的多态引用；业务表改名或数据绕过 Service 删除可能留下错误反向定位，需要发布治理和定向核对。

@@ -9,7 +9,8 @@
     "specdev/spec",
     "specdev/tickets",
     "specdev/goal-plan",
-    "specdev/implement"
+    "specdev/implement",
+    "specdev/code-review"
   ],
   "claimed_investigations": [],
   "execution_authorization": {
@@ -33,14 +34,22 @@
     }
   },
   "leadership": {
-    "current": "cursor-agent",
-    "epoch": 1,
-    "assigned_at": "2026-08-21T22:14:37+08:00",
-    "history": []
+    "current": "codex",
+    "epoch": 2,
+    "assigned_at": "2026-08-23T07:20:00+08:00",
+    "history": [
+      {
+        "lead": "cursor-agent",
+        "epoch": 1,
+        "assigned_at": "2026-08-21T22:14:37+08:00",
+        "released_at": "2026-08-23T07:20:00+08:00",
+        "reason": "User resumed the accepted CR-001 remediation plan with Codex."
+      }
+    ]
   },
   "created_at": "2026-08-21T22:14:37+08:00",
-  "updated_at": "2026-08-22T17:56:38+08:00",
-  "completed_at": "2026-08-22T17:56:38+08:00",
+  "updated_at": "2026-08-23T08:10:00+08:00",
+  "completed_at": "2026-08-23T08:10:00+08:00",
   "archived": false,
   "archive_path": null,
   "blockers": [],
@@ -317,6 +326,53 @@
         "evidence": "<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/evidence/T-11.md</Path>", "attempts": 1, "promotion_status": "applied"
       },
       "status": "integrated", "updated_at": "2026-08-22T17:30:00+08:00"
+    },
+    {
+      "ticket_id": "T-12", "owner": "codex", "implementation_owner": "codex", "integration_owner": "codex", "provider": "git",
+      "base_sha": "backend:a56a6f907dc1fad2bde4daa92adfeafbcea3613f;frontend:866e5ba1a75c9d308ce752f32fa6b4158763feed", "parent_branch": "main", "branch": "main", "workspace_ref": "current", "source_checkpoint": "backend:4d5a3b5bce660e1d529383006b8252ff0161f430;frontend:83cfa4f4bb50f0a3882f69469f1f43cef0023f32",
+      "integration": {
+        "status": "passed", "parent_ref": "main", "parent_before_sha": "backend:a56a6f907dc1fad2bde4daa92adfeafbcea3613f;frontend:866e5ba1a75c9d308ce752f32fa6b4158763feed", "source_sha": "backend:4d5a3b5bce660e1d529383006b8252ff0161f430;frontend:83cfa4f4bb50f0a3882f69469f1f43cef0023f32",
+        "candidate_sha": null, "candidate_tree_sha": null, "candidate_branch": null, "candidate_workspace_ref": null, "result_sha": "backend:4d5a3b5bce660e1d529383006b8252ff0161f430;frontend:83cfa4f4bb50f0a3882f69469f1f43cef0023f32", "method": "direct-parent", "conflict_paths": [], "verification": "passed",
+        "full_suite": {"required": true, "status": "passed", "reason": "Backend 102 tests/package and frontend Vitest/lint/build passed.", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/evidence/T-12.md</Path>"},
+        "e2e": {"required": false, "status": "not-required", "reason": "用户明确不建设 E2E。", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/evidence/T-12.md</Path>"},
+        "evidence": "<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/evidence/T-12.md</Path>", "attempts": 1, "promotion_status": "applied"
+      }, "status": "integrated", "updated_at": "2026-08-23T08:10:00+08:00"
+    },
+    {
+      "ticket_id": "T-13", "owner": "codex", "implementation_owner": "codex", "integration_owner": "codex", "provider": "git",
+      "base_sha": "4d5a3b5bce660e1d529383006b8252ff0161f430", "parent_branch": "main", "branch": "main", "workspace_ref": "current", "source_checkpoint": "b2d50248acfb13c46fc490f248c43500e0f4f7cf",
+      "integration": {"status": "passed", "parent_ref": "main", "parent_before_sha": "4d5a3b5bce660e1d529383006b8252ff0161f430", "source_sha": "b2d50248acfb13c46fc490f248c43500e0f4f7cf", "candidate_sha": null, "candidate_tree_sha": null, "candidate_branch": null, "candidate_workspace_ref": null, "result_sha": "b2d50248acfb13c46fc490f248c43500e0f4f7cf", "method": "direct-parent", "conflict_paths": [], "verification": "passed", "full_suite": {"required": true, "status": "passed", "reason": "Backend 102 tests and package passed.", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/evidence/T-13.md</Path>"}, "e2e": {"required": false, "status": "not-required", "reason": "用户明确不建设 E2E。", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/evidence/T-13.md</Path>"}, "evidence": "<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/evidence/T-13.md</Path>", "attempts": 1, "promotion_status": "applied"},
+      "status": "integrated", "updated_at": "2026-08-23T08:10:00+08:00"
+    },
+    {
+      "ticket_id": "T-14", "owner": "codex", "implementation_owner": "codex", "integration_owner": "codex", "provider": "git",
+      "base_sha": "b2d50248acfb13c46fc490f248c43500e0f4f7cf", "parent_branch": "main", "branch": "main", "workspace_ref": "current", "source_checkpoint": "d981d0d217e9825136dd0e3700f55ec245e8097a",
+      "integration": {"status": "passed", "parent_ref": "main", "parent_before_sha": "b2d50248acfb13c46fc490f248c43500e0f4f7cf", "source_sha": "d981d0d217e9825136dd0e3700f55ec245e8097a", "candidate_sha": null, "candidate_tree_sha": null, "candidate_branch": null, "candidate_workspace_ref": null, "result_sha": "d981d0d217e9825136dd0e3700f55ec245e8097a", "method": "direct-parent", "conflict_paths": [], "verification": "passed", "full_suite": {"required": true, "status": "passed", "reason": "15 lifecycle tests plus final backend suite/package passed.", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/evidence/T-14.md</Path>"}, "e2e": {"required": false, "status": "not-required", "reason": "用户明确不建设 E2E。", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/evidence/T-14.md</Path>"}, "evidence": "<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/evidence/T-14.md</Path>", "attempts": 1, "promotion_status": "applied"},
+      "status": "integrated", "updated_at": "2026-08-23T08:10:00+08:00"
+    },
+    {
+      "ticket_id": "T-15", "owner": "codex", "implementation_owner": "codex", "integration_owner": "codex", "provider": "git",
+      "base_sha": "backend:d981d0d217e9825136dd0e3700f55ec245e8097a;frontend:83cfa4f4bb50f0a3882f69469f1f43cef0023f32", "parent_branch": "main", "branch": "main", "workspace_ref": "current", "source_checkpoint": "backend:d09fb314036c2b92395a7bb2271d48769d05926d;frontend:ca35cdd69f768924128729da61db3e48b5272c3b",
+      "integration": {"status": "passed", "parent_ref": "main", "parent_before_sha": "backend:d981d0d217e9825136dd0e3700f55ec245e8097a;frontend:83cfa4f4bb50f0a3882f69469f1f43cef0023f32", "source_sha": "backend:d09fb314036c2b92395a7bb2271d48769d05926d;frontend:ca35cdd69f768924128729da61db3e48b5272c3b", "candidate_sha": null, "candidate_tree_sha": null, "candidate_branch": null, "candidate_workspace_ref": null, "result_sha": "backend:d09fb314036c2b92395a7bb2271d48769d05926d;frontend:ca35cdd69f768924128729da61db3e48b5272c3b", "method": "direct-parent", "conflict_paths": [], "verification": "passed", "full_suite": {"required": true, "status": "passed", "reason": "Backend and frontend final gates passed.", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/evidence/T-15.md</Path>"}, "e2e": {"required": false, "status": "not-required", "reason": "用户明确不建设 E2E。", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/evidence/T-15.md</Path>"}, "evidence": "<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/evidence/T-15.md</Path>", "attempts": 1, "promotion_status": "applied"},
+      "status": "integrated", "updated_at": "2026-08-23T08:10:00+08:00"
+    },
+    {
+      "ticket_id": "T-16", "owner": "codex", "implementation_owner": "codex", "integration_owner": "codex", "provider": "git",
+      "base_sha": "backend:d09fb314036c2b92395a7bb2271d48769d05926d;frontend:ca35cdd69f768924128729da61db3e48b5272c3b", "parent_branch": "main", "branch": "main", "workspace_ref": "current", "source_checkpoint": "backend:fc902e0820a869d1044b59629b74c00ab14b64c3;frontend:5d6ed4b2ce0b066c3a0ad3216e3f8d7d4200d426",
+      "integration": {"status": "passed", "parent_ref": "main", "parent_before_sha": "backend:d09fb314036c2b92395a7bb2271d48769d05926d;frontend:ca35cdd69f768924128729da61db3e48b5272c3b", "source_sha": "backend:fc902e0820a869d1044b59629b74c00ab14b64c3;frontend:5d6ed4b2ce0b066c3a0ad3216e3f8d7d4200d426", "candidate_sha": null, "candidate_tree_sha": null, "candidate_branch": null, "candidate_workspace_ref": null, "result_sha": "backend:fc902e0820a869d1044b59629b74c00ab14b64c3;frontend:5d6ed4b2ce0b066c3a0ad3216e3f8d7d4200d426", "method": "direct-parent", "conflict_paths": [], "verification": "passed", "full_suite": {"required": true, "status": "passed", "reason": "Backend and frontend final gates passed.", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/evidence/T-16.md</Path>"}, "e2e": {"required": false, "status": "not-required", "reason": "用户明确不建设 E2E。", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/evidence/T-16.md</Path>"}, "evidence": "<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/evidence/T-16.md</Path>", "attempts": 1, "promotion_status": "applied"},
+      "status": "integrated", "updated_at": "2026-08-23T08:10:00+08:00"
+    },
+    {
+      "ticket_id": "T-17", "owner": "codex", "implementation_owner": "codex", "integration_owner": "codex", "provider": "git",
+      "base_sha": "5d6ed4b2ce0b066c3a0ad3216e3f8d7d4200d426", "parent_branch": "main", "branch": "main", "workspace_ref": "current", "source_checkpoint": "db17e3fbed8bd588f0c8c0cd8c817e0c485f8d6f",
+      "integration": {"status": "passed", "parent_ref": "main", "parent_before_sha": "5d6ed4b2ce0b066c3a0ad3216e3f8d7d4200d426", "source_sha": "db17e3fbed8bd588f0c8c0cd8c817e0c485f8d6f", "candidate_sha": null, "candidate_tree_sha": null, "candidate_branch": null, "candidate_workspace_ref": null, "result_sha": "db17e3fbed8bd588f0c8c0cd8c817e0c485f8d6f", "method": "direct-parent", "conflict_paths": [], "verification": "passed", "full_suite": {"required": true, "status": "passed", "reason": "Frontend Vitest/lint/build passed; vue-tsc retained only baseline TS1149.", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/evidence/T-17.md</Path>"}, "e2e": {"required": false, "status": "not-required", "reason": "用户明确不建设 E2E。", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/evidence/T-17.md</Path>"}, "evidence": "<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/evidence/T-17.md</Path>", "attempts": 1, "promotion_status": "applied"},
+      "status": "integrated", "updated_at": "2026-08-23T08:10:00+08:00"
+    },
+    {
+      "ticket_id": "T-18", "owner": "codex", "implementation_owner": "codex", "integration_owner": "codex", "provider": "git",
+      "base_sha": "backend:fc902e0820a869d1044b59629b74c00ab14b64c3;frontend:db17e3fbed8bd588f0c8c0cd8c817e0c485f8d6f", "parent_branch": "main", "branch": "main", "workspace_ref": "current", "source_checkpoint": "backend:d836894f969d8f4134d72af129f3c452f8265c46;frontend:f7d116f6e2b6b61239afc86cbcb860a07530abad",
+      "integration": {"status": "passed", "parent_ref": "main", "parent_before_sha": "backend:fc902e0820a869d1044b59629b74c00ab14b64c3;frontend:db17e3fbed8bd588f0c8c0cd8c817e0c485f8d6f", "source_sha": "backend:d836894f969d8f4134d72af129f3c452f8265c46;frontend:f7d116f6e2b6b61239afc86cbcb860a07530abad", "candidate_sha": null, "candidate_tree_sha": null, "candidate_branch": null, "candidate_workspace_ref": null, "result_sha": "backend:d836894f969d8f4134d72af129f3c452f8265c46;frontend:f7d116f6e2b6b61239afc86cbcb860a07530abad", "method": "direct-parent", "conflict_paths": [], "verification": "passed", "full_suite": {"required": true, "status": "passed", "reason": "Backend 102 tests/package and frontend Vitest/lint/build passed.", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/evidence/T-18.md</Path>"}, "e2e": {"required": false, "status": "not-required", "reason": "用户明确不建设 E2E。", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/evidence/T-18.md</Path>"}, "evidence": "<Path>{roots.state}/specdev/changes/2026-08-21-oss-direct-unified-notification/evidence/T-18.md</Path>", "attempts": 1, "promotion_status": "applied"},
+      "status": "integrated", "updated_at": "2026-08-23T08:10:00+08:00"
     }
   ]
 }

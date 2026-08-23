@@ -11,12 +11,24 @@ description: 为 ruoyi-vue-plus-docs 聚合工作区及其 Vue/TypeScript 前端
 
 1. 读取[项目画像](references/project/00-project-profile.md)和[模块地图](references/project/01-module-map.md)。
 2. 将任务映射到 `repository`、`module:*`、`language:*`、`framework:*`、`runtime:*` 或具体 `path:*` scope。
-3. 按风险读取相关通用规则：[架构与边界](references/rules/architecture-and-boundaries.md)、[API/错误/资源](references/rules/api-errors-resources.md)、[测试](references/rules/testing.md)、[安全与数据](references/rules/security-and-data.md)、[质量门禁](references/rules/quality-gates.md)、[评审与交付](references/rules/review-and-delivery.md)。
-4. 修改 `plus-ui-namewta/**` 时读取 [TypeScript 核心](references/typescript/core.md)、[Vue](references/typescript/frameworks/vue.md)和[Browser](references/typescript/runtimes/browser.md)；涉及 `src/api/**`、CRUD 页面、树表、表单或生成模板时再读取[前端 CRUD/API 实现规范](references/typescript/crud-api-and-pages.md)。
-5. 修改 `ruoyi-vue-plus-namewta/**` 时读取 [Java 核心](references/java/core.md)；涉及 Spring 应用、Web、配置或 Bean 生命周期时再读取 [Spring Boot](references/java/frameworks/spring-boot.md)；涉及事务、`@DS`、数据源切换、事务事件、DDL、建表或 schema 迁移时必须读取[数据源事务与建表](references/java/persistence-transactions-and-ddl.md)；涉及 entity/BO/VO、mapper、查询封装、CRUD、树结构、翻译、缓存或导入导出时再读取[后端 CRUD/查询实现规范](references/java/crud-query-and-common.md)。
-6. 读取[决策、迁移与例外](references/project/02-decisions-and-exceptions.md)，确认 current、target、Ratchet、`pending-decision` 和未到期例外。
-7. 实现前检查 public API、依赖方向、安全、错误/取消/资源、数据库兼容和测试影响。
-8. 实现后运行项目画像中该 scope 的真实质量门禁，并按[评审清单](references/project/review-checklist.md)报告命令、退出码、未验证项和残余风险。
+3. 命中下列领域时，根据实际任务调用最小充分的原子 Skill；跨领域任务可以组合调用，不相关领域不加载。
+4. 按风险读取相关通用规则：[架构与边界](references/rules/architecture-and-boundaries.md)、[API/错误/资源](references/rules/api-errors-resources.md)、[测试](references/rules/testing.md)、[安全与数据](references/rules/security-and-data.md)、[质量门禁](references/rules/quality-gates.md)、[评审与交付](references/rules/review-and-delivery.md)。
+5. 修改 `plus-ui-namewta/**` 时读取 [TypeScript 核心](references/typescript/core.md)、[Vue](references/typescript/frameworks/vue.md)和[Browser](references/typescript/runtimes/browser.md)；涉及 `src/api/**`、CRUD 页面、树表、表单或生成模板时再读取[前端 CRUD/API 实现规范](references/typescript/crud-api-and-pages.md)。
+6. 修改 `ruoyi-vue-plus-namewta/**` 时读取 [Java 核心](references/java/core.md)；涉及 Spring 应用、Web、配置或 Bean 生命周期时再读取 [Spring Boot](references/java/frameworks/spring-boot.md)；涉及事务、`@DS`、数据源切换、事务事件、DDL、建表或 schema 迁移时必须读取[数据源事务与建表](references/java/persistence-transactions-and-ddl.md)；涉及 entity/BO/VO、mapper、查询封装、CRUD、树结构、翻译、缓存或导入导出时再读取[后端 CRUD/查询实现规范](references/java/crud-query-and-common.md)。
+7. 读取[决策、迁移与例外](references/project/02-decisions-and-exceptions.md)，确认 current、target、Ratchet、`pending-decision` 和未到期例外。
+8. 实现前检查 public API、依赖方向、安全、错误/取消/资源、数据库兼容和测试影响。
+9. 实现后运行项目画像中该 scope 的真实质量门禁，并按[评审清单](references/project/review-checklist.md)报告命令、退出码、未验证项和残余风险。
+
+## 领域知识路由
+
+`engineering-standards` 是 MUST、质量门禁、Ratchet 和交付裁决层；下列原子 Skill 是当前仓库事实、能力与调用面的知识地图，不能替代本 Skill 的规范裁决。原子 Skill 的描述不够明确或与当前工作树冲突时，以其引用的源码、配置和 POM 为证据，不把摘要当成永久事实。
+
+| 实际任务领域 | 原子 Skill |
+|---|---|
+| `plus-ui-namewta` 编码风格、注释实践、Oxlint/Oxfmt、动态路由、菜单或按钮权限 | [plus-ui-frontend-conventions](../plus-ui-frontend-conventions/SKILL.md) |
+| `ruoyi-system` 对外能力、`ruoyi-api`、system 实现边界、字典/部门/用户/OSS/消息调用 | [ruoyi-system-module-guide](../ruoyi-system-module-guide/SKILL.md) |
+| `ruoyi-workflow`、Warm-Flow、流程启动/办理、`businessId`、事件、待办或业务审批接入 | [ruoyi-workflow-module-guide](../ruoyi-workflow-module-guide/SKILL.md) |
+| `ruoyi-common` 子模块选择、BOM、Maven 依赖、Utils/Helper、Redis/Login/JSON/Excel/OSS 等公共入口 | [ruoyi-common-modules-guide](../ruoyi-common-modules-guide/SKILL.md) |
 
 ## 约束
 

@@ -35,7 +35,7 @@ description: 为 plus-ui-namewta 提供前端编码风格、注释实践、Oxlin
 
 | 能力 | 路径 |
 |---|---|
-| 门禁脚本 | `plus-ui-namewta/package.json`（`pnpm lint` / `pnpm fmt` / `pnpm build:prod`） |
+| 工具链脚本 | `plus-ui-namewta/package.json`（`pnpm lint` 是只读检查；`pnpm fmt` 是写入式格式化工具，不是门禁；`pnpm build:prod` 是构建验证） |
 | Oxlint / Oxfmt / EditorConfig / tsconfig | `plus-ui-namewta/.oxlintrc.json`、`plus-ui-namewta/.oxfmtrc.json`、`plus-ui-namewta/.editorconfig`、`plus-ui-namewta/tsconfig.json` |
 | 守卫与常量路由 | `plus-ui-namewta/src/permission.ts`、`plus-ui-namewta/src/router/index.ts`（`dynamicRoutes = []`） |
 | getRouters → addRoute | `plus-ui-namewta/src/api/menu.ts`、`plus-ui-namewta/src/store/modules/permission.ts` |

@@ -1,29 +1,12 @@
 {
   "schema_version": 5,
   "workflow": "specdev",
-  "active": [
-    {
-      "change": "2026-08-24-upstream-fork-upgrade-assessment",
-      "current_work": null,
-      "works_run": [
-        "specdev/triage",
-        "specdev/code-review"
-      ]
-    },
-    {
-      "change": "2026-08-24-upstream-fork-upgrade-remediation",
-      "current_work": null,
-      "works_run": [
-        "specdev/triage",
-        "specdev/spec",
-        "specdev/tickets",
-        "specdev/implement"
-      ]
-    }
-  ],
+  "active": [],
   "archived": [
     "2026-08-20-namewta-client-rbac-review",
     "2026-08-21-module-knowledge-skills",
-    "2026-08-21-oss-direct-unified-notification"
+    "2026-08-21-oss-direct-unified-notification",
+    "2026-08-24-upstream-fork-upgrade-assessment",
+    "2026-08-24-upstream-fork-upgrade-remediation"
   ]
 }

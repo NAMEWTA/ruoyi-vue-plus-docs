@@ -87,3 +87,33 @@
 - 需冲突裁决：0
 
 **未移动、删除或改写任何 change 与永久知识文件。本文件仅持久化 dry-run 计划，请用户明确确认后执行。**
+
+## Confirmed Execution Addendum
+
+> 确认：用户明确回复“确认执行两份 dry-run 归档计划”。
+> 执行完成：2026-08-24T15:44:59+08:00
+> Verdict：verified
+
+### 已执行动作
+
+| 动作 | 结果 |
+|---|---|
+| 原子移动 assessment change | pass；源路径不存在，归档目标存在并完整保留 7 个文件 |
+| 更新归档 `.status.json` | pass；`change_status=archived`、`archived=true`、archive path 与 works_run 正确 |
+| 更新全局 `status.json` | pass；从 active 移除并去重追加到 archived，active/archived 无重叠 |
+| 永久知识处理 | pass；assessment 无毕业项，未写入或清理永久知识 |
+
+### 执行后验证
+
+| 检查 | 结果 |
+|---|---|
+| 归档前 `--stage complete` | pass；0 error / 1 个预期 warning：非实现型 assessment 无 Spec |
+| 归档后普通 change 校验 | pass；0 error / 1 个 archived-location warning |
+| 归档后 `--stage complete` | 工具限制；校验器只接受 `change_status=completed`，正确的 archived 状态产生 1 error；未为获得绿色回退归档状态 |
+| SpecDev package `--self-check` | pass；0 error / 0 warning |
+| JSON、全局索引、归档状态与文件数断言 | pass |
+| `git diff --check` | pass |
+
+### 未执行与边界
+
+未创建永久知识，未删除文件，未部署，未执行生产 SQL，未修改远程环境或 source worktree。Git commit/push 按用户既有明确授权在归档验证后执行。

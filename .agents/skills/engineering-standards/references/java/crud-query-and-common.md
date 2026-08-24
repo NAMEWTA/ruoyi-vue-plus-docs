@@ -68,11 +68,11 @@ Scope: Spring MVC controllers under `ruoyi-vue-plus-namewta/ruoyi-modules/**`
 
 Level: MUST
 
-Source: `repository-fact` (`TestDemoController`, Java controller template, system controllers)
+Source: `repository-fact` (`TestDemoController`, Java controller template, system controllers) + `user-decision` (`API-005`)
 
-Rule: controller 继承/复用现有 Web 响应合同，使用 `R`/`PageResult`、Bean Validation groups 和准确的 path/body 参数；list/detail/add/edit/remove/export 的 method、URL 与前端一致。写操作按风险使用 `@SaCheckPermission`、`@Log`、`@RepeatSubmit`，controller 不承载核心事务或多表编排；前端隐藏按钮不能替代这里及数据层的授权。
+Rule: controller 继承/复用现有 Web 响应合同，使用 `R`/`PageResult`、Bean Validation groups 和准确的 path/query/body 参数。CRUD 全部遵循 [API-005](../rules/api-errors-resources.md)：list/detail/tree/options 等只读查询使用 `@GetMapping`，不接收 request body；add/edit/remove、批量删除、状态变化和排序更新使用 `@PostMapping`，不得使用 `@PutMapping`、`@PatchMapping`、`@DeleteMapping` 或对应 `RequestMethod`。每个 `@PostMapping` 业务方法必须配置 `@Log(title = "...", businessType = BusinessType.XXX)`，新增使用 `INSERT`，修改/状态/排序使用 `UPDATE`，删除使用 `DELETE`；按请求和响应敏感性设置 `excludeParamNames`、`isSaveRequestData`、`isSaveResponseData`。各操作 URL 必须无映射冲突并与前端一致。写操作同时按风险使用 `@SaCheckPermission`、`@RepeatSubmit`，controller 不承载核心事务或多表编排；前端隐藏按钮不能替代这里及数据层的授权。
 
-Verification: MockMvc/集成测试 status/body/validation/permission；前端 API 对照；annotation 与 permission string review。
+Verification: MockMvc/集成测试 status/body/validation/permission；前端 API 对照；对受影响 controller 搜索 mapping annotation 和 `RequestMethod`，确认查询使用 `@GetMapping`、变更使用 `@PostMapping` 且 CRUD 不含 PUT/PATCH/DELETE；逐个核对 POST 方法的 `@Log`、`BusinessType` 和敏感字段保存配置；annotation 与 permission string review。
 
 ### BE-CRUD-007 多表写入、缓存与副作用
 
@@ -128,8 +128,8 @@ Scope: `path:ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-gen/src/main/resources/f
 
 Level: SHOULD
 
-Source: `repository-fact` (Java, Vue, XML and SQL generator templates)
+Source: `repository-fact` (Java, Vue, XML and SQL generator templates) + `user-decision` (`API-005`)
 
-Rule: 会重复污染新模块的缺陷在生成模板修复，一次性领域行为留在业务模块。模板变化同时检查 Java/Vue/API/types/XML/SQL 关联输出，以及 CRUD/tree、unique、status、sort、between、dict、permission 分支；生成结果必须能编译并保持前后端合同一致。
+Rule: 会重复污染新模块的缺陷在生成模板修复，一次性领域行为留在业务模块。模板变化同时检查 Java/Vue/API/types/XML/SQL 关联输出，以及 CRUD/tree、unique、status、sort、between、dict、permission 分支；CRUD controller 与 Vue API 模板必须同步执行 [API-005](../rules/api-errors-resources.md)，查询只生成 GET，变更只生成 POST，且每个 POST controller 方法生成准确、安全的 `@Log`。生成结果必须能编译并保持前后端合同一致。
 
-Verification: 用覆盖受影响条件的生成元数据产出样例并 diff；前端 lint/type diagnostic/build；后端 compile/test；检查未选择分支无回归。
+Verification: 用覆盖受影响条件的生成元数据产出样例并 diff；搜索生成的 controller 和 API，确认查询为 `@GetMapping`/`method: 'get'`，变更为 `@PostMapping`/`method: 'post'`，不存在 PUT/PATCH/DELETE，且每个 POST 方法均有准确的 `@Log`；前端 lint/type diagnostic/build；后端 compile/test；检查未选择分支无回归。

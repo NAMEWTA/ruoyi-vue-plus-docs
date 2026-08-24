@@ -20,11 +20,11 @@ Scope: `path:plus-ui-namewta/src/api/**`
 
 Level: MUST
 
-Source: `repository-fact` (`src/api/demo/demo/**`, `src/api/demo/tree/**`, `src/utils/api-types.ts`, `src/api/types.ts`)
+Source: `repository-fact` (`src/api/demo/demo/**`, `src/api/demo/tree/**`, `src/utils/api-types.ts`, `src/api/types.ts`) + `user-decision` (`API-005`)
 
-Rule: 标准业务 API 使用同目录 `index.ts` 与 `types.ts` 分离调用和合同。请求/响应类型使用 `import type`；`AxiosPromise` 从 `@/utils/api-types` 导入，分页结果使用 `@/api/types` 的 `PageResult<VO>`。查询放 `params`，新增/修改/状态变化放 `data`；函数名沿用 `list/get/add/update/del/changeStatus/updateSort + BusinessName`，URL、HTTP method 和后端 controller 一致。
+Rule: 标准业务 API 使用同目录 `index.ts` 与 `types.ts` 分离调用和合同。请求/响应类型使用 `import type`；`AxiosPromise` 从 `@/utils/api-types` 导入，分页结果使用 `@/api/types` 的 `PageResult<VO>`。CRUD 全部遵循 [API-005](../rules/api-errors-resources.md)：列表/分页、详情、树和下拉等只读查询显式使用 `method: 'get'`，查询条件放 `params`；新增、修改、删除、状态变化和排序更新显式使用 `method: 'post'`，业务载荷放 `data`，不得使用 `put`、`patch` 或 `delete`。函数名沿用 `list/get/add/update/del/changeStatus/updateSort + BusinessName`，URL 与后端 controller 一致且能区分各操作。
 
-Verification: 对照后端 controller、BO、VO；review import 来源、request config 和返回泛型；`pnpm lint`; `pnpm build:prod`。
+Verification: 对照后端 controller、BO、VO；review import 来源、request config 和返回泛型；对受影响 `src/api/**` 搜索 CRUD 请求 method，确认查询为 `get`、变更为 `post` 且不存在 `put`/`patch`/`delete`；`pnpm lint`; `pnpm build:prod`。
 
 ### FE-CRUD-003 VO、Form 与 Query 分离
 
@@ -92,8 +92,8 @@ Scope: `path:ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-gen/src/main/resources/f
 
 Level: SHOULD
 
-Source: `repository-fact` (Vue generator templates and demo output)
+Source: `repository-fact` (Vue generator templates and demo output) + `user-decision` (`API-005`)
 
-Rule: 反复出现在新生成页面的缺陷应修正模板并用代表性分页/树表生成结果验证；一次性领域逻辑留在业务页面。模板变化必须同时检查 API/types、分页/树表分支、状态/排序、日期范围、字典与权限条件，避免只修单一输出片段。
+Rule: 反复出现在新生成页面的缺陷应修正模板并用代表性分页/树表生成结果验证；一次性领域逻辑留在业务页面。模板变化必须同时检查 API/types、分页/树表分支、状态/排序、日期范围、字典与权限条件，避免只修单一输出片段。CRUD API 模板必须执行 [API-005](../rules/api-errors-resources.md)，查询只生成 GET，变更只生成 POST，不生成 PUT/PATCH/DELETE。
 
-Verification: 生成至少一个受影响形态并 diff；对生成结果执行 lint、补充 typecheck 和 build；检查未影响不相关模板分支。
+Verification: 生成至少一个受影响形态并 diff；搜索生成 API，确认查询为 `get`、变更为 `post` 且不存在 `put`/`patch`/`delete`；对生成结果执行 lint、补充 typecheck 和 build；检查未影响不相关模板分支。

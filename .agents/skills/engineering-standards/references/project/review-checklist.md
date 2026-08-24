@@ -5,6 +5,7 @@
 - [ ] 变更映射到模块地图中的明确 scope；子模块内提交与父仓库指针更新没有混淆。
 - [ ] 实现选择遵循同模块成熟实现、公共能力、生成模板的证据优先级；复杂模块没有被模板化简化。
 - [ ] 前端分页/树表返回类型、VO/Form/Query、请求 `params`/`data`、ID 和日期范围合同与后端一致。
+- [ ] CRUD 只读查询使用 GET，变更操作使用 POST，不使用 PUT/PATCH/DELETE；每个 POST 业务方法均有 `@Log`，`title`、`BusinessType` 和敏感数据保存配置准确；各操作 URL 无冲突且前后端一致。
 - [ ] 前端 loading、dialog、搜索重置、选择、树展开等状态优先复用现有 hooks；请求失败或取消后状态可恢复。
 - [ ] 后端 entity/BO/VO/mapper/service/controller 职责未混用；查询条件、排序、唯一性、删除前校验和树不变量完整。
 - [ ] 数据权限字段与实际 SQL/alias 一致；新建/实质修改的业务事务使用 `@DSTransactional`，未与 Spring `@Transactional` 混用；事务事件使用匹配的 `@DsTxEventListener`；缓存写后失效，翻译避免逐项 N+1。

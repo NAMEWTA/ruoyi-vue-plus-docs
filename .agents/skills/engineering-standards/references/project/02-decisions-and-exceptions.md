@@ -56,6 +56,15 @@
 - Migration: 触及热点时执行前后端和 SQL 契约测试/人工矩阵；不以 UI 隐藏替代服务端授权。
 - Verification: customization map 路径 review；相关回归测试；认证验收矩阵。
 
+### DEC-006 CRUD 查询 GET、变更 POST 并追踪日志
+
+- Scope: 前后端 HTTP CRUD 接口及其生成模板
+- Decision: 列表/分页、详情、树和下拉等只读查询使用 HTTP `GET`；新增、修改、删除、批量删除、状态变更和排序更新等变更操作使用 HTTP `POST`，每个 POST 业务接口必须使用安全、准确的 `@Log` 记录调用追踪；CRUD 不使用 PUT/PATCH/DELETE，非 CRUD 协议按自身合同处理。
+- Source: `user-decision`
+- Rationale: 统一查询与变更的接口语义，并通过操作日志保留 POST 调用的操作者、方法、URL、结果、耗时与失败状态等追踪信息。
+- Migration: 新增 CRUD 立即执行；实质修改存量 CRUD 合同时，同步迁移该合同内受影响的前端请求、controller mapping、`@Log`、测试和文档，禁止继续新增 PUT/PATCH/DELETE CRUD 路由或无 `@Log` 的 POST 业务接口。生成器迁移后才能作为新 CRUD 骨架。
+- Verification: 执行 `API-005` 的前后端静态搜索与契约/集成测试；生成分页和树表代表样例，确认 Java/Vue 两端查询为 GET、变更为 POST，且每个 POST controller 方法均有准确、安全的 `@Log`。
+
 ## 当前状态与目标状态
 
 | ID | Current | Target | Migration / Verification |
@@ -67,6 +76,7 @@
 | `MIG-BE-DDL-BASE` | 历史、上游、第三方及部分 NAMEWTA 表未统一具备 `version/create_dept/create_time/create_by/update_time/update_by/del_flag` | 每个新建项目自有表均具备七个基础字段，并与 `BaseEntity`、`@Version`、`@TableLogic` 映射一致 | 新表立即执行；触及存量项目自有表时评估兼容迁移，未经迁移设计不直接补列；上游冻结和第三方 schema 不做无关整治 |
 | `MIG-CI` | 已配置 `.github/workflows/quality-gates.yml`，含快照、前端、后端与真实服务四个 job | PR 稳定执行同源 lint/typecheck/test/build，并由分支保护设为 required checks | 本地完成静态验证；提交推送后观察首次 Actions 运行，再配置分支保护并记录远程证据 |
 | `MIG-LARGE-FILES` | 前后端存在多个 700-1400 行文件 | 新功能避免继续混合职责，触及文件时提取可命名且可测试的边界 | 文件大小只作 review 触发器；不得为行数机械拆分 |
+| `MIG-CRUD-METHOD-LOG` | 现有前端 API、后端 controller 和生成模板仍混用 GET/POST/PUT/DELETE，POST 日志约束尚未统一 | CRUD 只读查询使用 GET，变更使用 POST；CRUD 不使用 PUT/PATCH/DELETE；每个 POST 业务接口使用安全、准确的 `@Log` | 新增立即执行；存量按 CRUD 合同触及范围迁移，前后端、日志注解、测试、文档和生成模板同步收敛；按 `API-005` 验证 |
 
 ## 例外
 

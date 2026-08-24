@@ -12,7 +12,7 @@ description: 为 ruoyi-vue-plus-docs 聚合工作区及其 Vue/TypeScript 前端
 1. 读取[项目画像](references/project/00-project-profile.md)和[模块地图](references/project/01-module-map.md)。
 2. 将任务映射到 `repository`、`module:*`、`language:*`、`framework:*`、`runtime:*` 或具体 `path:*` scope。
 3. 命中下列领域时，根据实际任务调用最小充分的原子 Skill；跨领域任务可以组合调用，不相关领域不加载。
-4. 按风险读取相关通用规则：[架构与边界](references/rules/architecture-and-boundaries.md)、[API/错误/资源](references/rules/api-errors-resources.md)、[测试](references/rules/testing.md)、[安全与数据](references/rules/security-and-data.md)、[质量门禁](references/rules/quality-gates.md)、[评审与交付](references/rules/review-and-delivery.md)。
+4. 按风险读取相关通用规则：[架构与边界](references/rules/architecture-and-boundaries.md)、[API/错误/资源](references/rules/api-errors-resources.md)、[测试](references/rules/testing.md)、[安全与数据](references/rules/security-and-data.md)、[质量门禁](references/rules/quality-gates.md)、[评审与交付](references/rules/review-and-delivery.md)；涉及 HTTP API 或 CRUD 时必须读取 API 规则，并执行其中“查询 GET、变更 POST、POST 使用 `@Log`”的传输与追踪约束。
 5. 修改 `plus-ui-namewta/**` 时读取 [TypeScript 核心](references/typescript/core.md)、[Vue](references/typescript/frameworks/vue.md)和[Browser](references/typescript/runtimes/browser.md)；涉及 `src/api/**`、CRUD 页面、树表、表单或生成模板时再读取[前端 CRUD/API 实现规范](references/typescript/crud-api-and-pages.md)。
 6. 修改 `ruoyi-vue-plus-namewta/**` 时读取 [Java 核心](references/java/core.md)；涉及 Spring 应用、Web、配置或 Bean 生命周期时再读取 [Spring Boot](references/java/frameworks/spring-boot.md)；涉及事务、`@DS`、数据源切换、事务事件、DDL、建表或 schema 迁移时必须读取[数据源事务与建表](references/java/persistence-transactions-and-ddl.md)；涉及 entity/BO/VO、mapper、查询封装、CRUD、树结构、翻译、缓存或导入导出时再读取[后端 CRUD/查询实现规范](references/java/crud-query-and-common.md)。
 7. 读取[决策、迁移与例外](references/project/02-decisions-and-exceptions.md)，确认 current、target、Ratchet、`pending-decision` 和未到期例外。
@@ -33,6 +33,7 @@ description: 为 ruoyi-vue-plus-docs 聚合工作区及其 Vue/TypeScript 前端
 ## 约束
 
 - MUST 规则只有在 `Verification` 可执行或给出精确 review 证据时成立。
+- CRUD 只读查询使用 HTTP `GET`，产生业务状态变化的操作使用 HTTP `POST`，每个 POST 业务接口使用 `@Log` 记录调用追踪；具体范围、迁移与验证以 `API-005` 为准。
 - 不适用规则不加载；依赖、构建输出、生成声明和冻结 scope 不手工修改。
 - 不通过删除测试、关闭核心规则、放宽编译配置或扩大例外获得通过。
 - 新代码遵循 Target；存量偏差按 Migration/Ratchet 处理，不发动无关全仓重写。

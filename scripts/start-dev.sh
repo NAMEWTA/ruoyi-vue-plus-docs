@@ -6,6 +6,7 @@ workspace_root=$(cd -- "${script_dir}/.." && pwd)
 frontend_dir="${workspace_root}/plus-ui-namewta"
 backend_dir="${workspace_root}/ruoyi-vue-plus-namewta"
 backend_local_config="ruoyi-admin/src/main/resources/application-local.yml"
+pnpm_runner=()
 
 fail() {
   local message=${1}
@@ -17,6 +18,16 @@ fail() {
 require_command() {
   local command_name=${1}
   command -v "${command_name}" >/dev/null 2>&1 || fail "未找到命令 ${command_name}，请先完成本机开发环境配置。"
+}
+
+resolve_pnpm_runner() {
+  if command -v pnpm >/dev/null 2>&1; then
+    pnpm_runner=(pnpm)
+  elif command -v corepack >/dev/null 2>&1; then
+    pnpm_runner=(corepack pnpm)
+  else
+    fail "未找到 pnpm 或 corepack，请先完成本机前端开发环境配置。"
+  fi
 }
 
 ensure_port_available() {
@@ -40,17 +51,17 @@ ensure_port_available() {
 }
 
 start_frontend() {
-  require_command corepack
+  resolve_pnpm_runner
   [[ -f "${frontend_dir}/package.json" ]] || fail "前端目录不完整：${frontend_dir}"
   [[ -f "${frontend_dir}/pnpm-lock.yaml" ]] || fail "缺少前端 lockfile：${frontend_dir}/pnpm-lock.yaml"
   ensure_port_available 80 "前端"
 
   cd "${frontend_dir}"
   echo "正在安装前端依赖（严格使用 pnpm lockfile）..."
-  corepack pnpm install --frozen-lockfile
+  "${pnpm_runner[@]}" install --frozen-lockfile
   echo "正在前台启动前端，启动后请访问 http://localhost/，按 Ctrl+C 停止..."
   export BROWSER=none
-  exec corepack pnpm dev --strictPort
+  exec "${pnpm_runner[@]}" dev --strictPort
 }
 
 start_backend() {

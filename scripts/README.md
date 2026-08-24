@@ -38,7 +38,7 @@ scripts/
 ./scripts/start-dev.sh
 ```
 
-前端选项使用 lockfile 固定的 pnpm 版本安装依赖，然后运行固定端口且不自动打开浏览器的 `pnpm dev`。
+前端选项优先使用本机可直接调用的 `pnpm`，没有 `pnpm` 时回退到 `corepack pnpm`；依赖安装严格遵循 lockfile，随后运行固定端口且不自动打开浏览器的 `pnpm dev`。
 后端选项先通过 Maven Wrapper
 执行跳过自动测试的本地 reactor install，再以 `dev,local` profiles 启动 `ruoyi-admin`。该脚本用于启动
 人工测试环境，不能替代前后端自动测试和质量门禁。

@@ -4,7 +4,7 @@
 
 分支模型：`main` = 产品；后端 `6.X`、前端 `6.X-Vue` = 上游纯镜像（只允许 fast-forward）。基线标签 `namewta-base-upstream-6x` / `namewta-base-upstream-6x-vue` 不要移动。
 
-同步状态以 `docs/upstream/upstream-sync-state.json` 为权威。2026-08-24 首次图谱回填快照：后端产品已通过 merge commit `af4bf65c71087c6080f52fed6155c542a162419b` 集成上游 `387c4f0a20e9232f44e762ef5a46c462f54bd464`，本地镜像 `6.X` 为 `2933badb9182aaecfd5a45ce09444b8ac59576bb`，联网观测 `upstream/6.X` 为 `629e344af50cfc5163f0b5905d47328382b7cc1c`；前端产品集成点、本地镜像与 `upstream/6.X-Vue` 均为 `0870ce17514895854ccff03600e102546d8c5046`。基线标签始终不移动，详细差异与冲突见 `docs/upstream/2026-08-24_current-upstream-merge-backfill/`。
+本文件只维护长期定制约束和复核热点，不记录某次同步的 SHA、工作树状态、文件差异、冲突或结论。当前同步指针见 `docs/upstream/upstream-sync-state.json`；每次实际状态、差异与冲突以对应 `docs/upstream/<change>/state.json`、`diff_report.md` 和 `conflict_report.md` 为准。
 
 ## 同步前重叠面
 

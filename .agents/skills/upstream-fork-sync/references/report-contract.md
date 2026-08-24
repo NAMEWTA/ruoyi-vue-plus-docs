@@ -6,11 +6,14 @@ Each assessment creates:
 
 ```text
 docs/upstream/YYYY-MM-DD_<ascii-kebab-topic>/
+|-- state.json
 |-- diff_report.md
 `-- conflict_report.md
 ```
 
-If the directory already exists, append `-02`, `-03`, and so on. Reports are in Chinese and identify all refs with full SHAs.
+If the directory already exists, append `-02`, `-03`, and so on. `state.json` holds only creation time, frozen upstream targets, and resulting product merge SHAs. Reports are in Chinese and identify all refs with full SHAs.
+
+All dynamic inventories belong in this directory. Do not persist dirty paths, changed files, conflicts, fetch details, or run history in `upstream-sync-state.json`; do not write them into `customization-map.md`.
 
 ## Diff report
 
@@ -22,8 +25,9 @@ For backend and frontend, include:
 - upstream paths also modified by the product since the checkpoint;
 - paths matching authentication, authorization, Client, menu, SQL, OSS, notification, workflow, dependency, or build hotspots;
 - reproducible Git commands using the frozen SHAs.
+- a `现状 Merge 清单` summarizing commit/file counts, Git conflicts, customization-risk paths, and current disposition for each repository.
 
-The report summarizes files and selected high-risk hunks; it does not embed an unbounded full patch. Use exact path-scoped diffs when adding code-level conclusions.
+The script creates the objective checklist baseline. The agent then maps affected paths back to the stable `customization-map.md` invariants and adds only path-diff-supported semantic conclusions. The report does not embed an unbounded full patch.
 
 ## Conflict report
 

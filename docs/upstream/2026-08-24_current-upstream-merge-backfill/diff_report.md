@@ -23,7 +23,7 @@
 - 产品 merge commit：`af4bf65c71087c6080f52fed6155c542a162419b`，提交时间 `2026-08-20T16:01:17+08:00`，主题 `merge(upstream): sync 6.X 20260820`。
 - 第一父节点（当时产品线）：`a426d5f7aab841442f93864a8277a96155a7fbb6`。
 - 第二父节点（实际集成上游点）：`387c4f0a20e9232f44e762ef5a46c462f54bd464`，对应提交 `!880 [fix]修复 启用本地缓存`。
-- 表格中的 `graph_merge` 是首次初始化时的发现方式；随后已在 `upstream-sync-state.json` 写入 `recorded_merge` integration event。该事件只确认父节点与 `main` 可达性，原始合并时的质量门禁证据不可从 Git 历史恢复，状态中明确记录为 unavailable。
+- 表格中的 `graph_merge` 是首次初始化时的发现方式；同目录 `state.json` 已补记实际上游父节点和产品 merge commit。该回填只确认父节点与 `main` 可达性，原始合并时的质量门禁证据不可从 Git 历史恢复。
 - 当前联网观测上游 `629e344af50cfc5163f0b5905d47328382b7cc1c` 尚不是产品 `main` 的祖先，因此不能把本地镜像或远端最新点登记为已集成点。
 - 本地镜像 `6.X=2933badb9` 比联网观测 `upstream/6.X=629e344af` 落后 1 个提交；本次只初始化状态和报告，没有移动镜像分支。
 
@@ -104,6 +104,13 @@ git -C plus-ui-namewta log --oneline 0870ce17514895854ccff03600e102546d8c5046..0
 git -C plus-ui-namewta diff --name-status 0870ce17514895854ccff03600e102546d8c5046..0870ce17514895854ccff03600e102546d8c5046
 git -C plus-ui-namewta diff 0870ce17514895854ccff03600e102546d8c5046..0870ce17514895854ccff03600e102546d8c5046 -- <path>
 ```
+
+## 现状 Merge 清单
+
+| 仓库 | 上游增量 | Git 冲突 | 定制风险路径 | 当前处置 |
+|---|---:|---:|---:|---|
+| backend | 2 commits / 3 files | 0 | 2 | 历史集成点已补回；新上游增量尚未 merge，需验证 UNION、嵌套 Mapper 与缺失权限上下文，并先处理 `SqlLogInterceptor.java` 的未提交吸收结果 |
+| frontend | 0 commits / 0 files | 0 | 0 | 无上游增量，无需合并 |
 
 ## 结论边界
 

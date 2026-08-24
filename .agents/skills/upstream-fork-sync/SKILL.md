@@ -19,19 +19,19 @@ Keep three facts separate for each product repository: the latest fetched upstre
 Run from the parent repository root. Use an ASCII kebab-case topic.
 
 ```bash
-python3 .agents/skills/upstream-fork-sync/scripts/upstream_sync.py assess \
+node .agents/skills/upstream-fork-sync/scripts/upstream-sync.mjs assess \
   --root . \
   --topic <topic>
 ```
 
-The default is offline: it uses existing refs, writes both reports under `docs/upstream/YYYY-MM-DD_<topic>/`, and atomically updates `docs/upstream/upstream-sync-state.json` only after both reports exist.
+The default is offline: it uses existing refs, writes `state.json`, `diff_report.md`, and `conflict_report.md` under `docs/upstream/YYYY-MM-DD_<topic>/`, then atomically replaces the compact `docs/upstream/upstream-sync-state.json` current pointer.
 
 - Add `--fetch` when the user asked to refresh network refs. A failed upstream fetch produces `freshness: stale`; never describe cached refs as latest.
 - Add `--advance-mirrors` only to fast-forward the local `6.X` and `6.X-Vue` mirror refs after fetch/preflight.
 - Add `--advance-products` only when the user asked to synchronize local product branches with `origin/main`. It is fast-forward-only and refuses dirty checked-out worktrees.
 - Use `--dry-run` to inspect the complete snapshot as JSON without writing reports or state.
 
-After generation, inspect every reported conflict and high-risk overlap with exact `git diff <base>..<target> -- <path>` evidence. Enrich the reports only with conclusions supported by the frozen SHAs. Keep textual/tree conflicts, automatically merged overlaps, customization-contract risks, and dirty-worktree overlaps in separate categories.
+After generation, inspect every reported conflict and high-risk overlap with exact `git diff <base>..<target> -- <path>` evidence. Use `customization-map.md` as the stable source checklist, then enrich the generated `现状 Merge 清单` only with conclusions supported by the frozen SHAs. Keep textual/tree conflicts, automatically merged overlaps, customization-contract risks, and dirty-worktree overlaps in separate categories. Never copy run-specific SHAs, dirty paths, conflict lists, or conclusions into `customization-map.md` or the global JSON.
 
 ## Integrate
 
@@ -46,15 +46,16 @@ For an authorized integration:
 5. Record the new checkpoint only after the merge commit is reachable from product `main` and the supplied upstream SHA is one of its non-first parents:
 
 ```bash
-python3 .agents/skills/upstream-fork-sync/scripts/upstream_sync.py record-integration \
+node .agents/skills/upstream-fork-sync/scripts/upstream-sync.mjs record-integration \
   --root . \
+  --change <YYYY-MM-DD_topic> \
   --repository <backend|frontend> \
   --merge-commit <full-sha> \
   --upstream-sha <full-sha> \
   --verification '<command>: exit 0'
 ```
 
-Rerun `assess` after recording so the next report starts at the confirmed upstream parent.
+`--change` defaults to the global `current_change`. Recording updates that change's `main_merge_sha` and the compact global checkpoint; verification evidence remains command output or belongs in the change reports, not either JSON. Rerun `assess` only when a new upstream comparison is needed.
 
 ## Stop conditions
 

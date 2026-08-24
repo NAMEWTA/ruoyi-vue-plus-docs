@@ -3,11 +3,6 @@
   "workflow": "specdev",
   "active": [
     {
-      "change": "2026-08-22-unified-payment-foundation",
-      "current_work": "specdev/grill-with-docs",
-      "works_run": []
-    },
-    {
       "change": "2026-08-24-upstream-fork-upgrade-assessment",
       "current_work": null,
       "works_run": [

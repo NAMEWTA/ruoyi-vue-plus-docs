@@ -1,0 +1,4 @@
+interface:
+  display_name: "Upstream Fork Sync"
+  short_description: "Track and assess safe upstream fork synchronization"
+  default_prompt: "Use $upstream-fork-sync to refresh fork checkpoints and generate upstream diff and conflict reports."

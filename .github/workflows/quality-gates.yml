@@ -1,0 +1,93 @@
+name: Quality Gates
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quality-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: recursive
+          fetch-depth: 0
+          persist-credentials: false
+      - run: scripts/ci/verify-submodules.sh
+
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: recursive
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          package-manager-cache: false
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 10.34.5
+          cache: true
+          cache_dependency_path: plus-ui-namewta/pnpm-lock.yaml
+          package_json_file: plus-ui-namewta/package.json
+      - working-directory: plus-ui-namewta
+        run: pnpm install --frozen-lockfile
+      - working-directory: plus-ui-namewta
+        run: pnpm exec playwright install --with-deps chromium
+      - working-directory: plus-ui-namewta
+        run: pnpm lint
+      - working-directory: plus-ui-namewta
+        run: pnpm typecheck
+      - working-directory: plus-ui-namewta
+        run: pnpm test
+      - working-directory: plus-ui-namewta
+        run: pnpm test:e2e
+      - working-directory: plus-ui-namewta
+        run: pnpm build:prod
+
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: recursive
+          persist-credentials: false
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: maven
+          cache-dependency-path: ruoyi-vue-plus-namewta/pom.xml
+      - working-directory: ruoyi-vue-plus-namewta
+        run: ./mvnw test
+      - working-directory: ruoyi-vue-plus-namewta
+        run: ./mvnw clean package -DskipTests
+      - run: scripts/ci/verify-admin-bundle.sh full
+      - working-directory: ruoyi-vue-plus-namewta
+        run: ./mvnw clean package -Pbundle-core -Dmaven.test.skip=true
+      - run: scripts/ci/verify-admin-bundle.sh core
+
+  external-services:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: recursive
+          persist-credentials: false
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: maven
+          cache-dependency-path: ruoyi-vue-plus-namewta/pom.xml
+      - run: scripts/ci/run-external-services.sh

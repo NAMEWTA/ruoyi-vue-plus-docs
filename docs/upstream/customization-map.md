@@ -4,6 +4,8 @@
 
 分支模型：`main` = 产品；后端 `6.X`、前端 `6.X-Vue` = 上游纯镜像（只允许 fast-forward）。基线标签 `namewta-base-upstream-6x` / `namewta-base-upstream-6x-vue` 不要移动。
 
+同步状态以 `docs/upstream/upstream-sync-state.json` 为权威。2026-08-24 首次图谱回填快照：后端产品已通过 merge commit `af4bf65c71087c6080f52fed6155c542a162419b` 集成上游 `387c4f0a20e9232f44e762ef5a46c462f54bd464`，本地镜像 `6.X` 为 `2933badb9182aaecfd5a45ce09444b8ac59576bb`，联网观测 `upstream/6.X` 为 `629e344af50cfc5163f0b5905d47328382b7cc1c`；前端产品集成点、本地镜像与 `upstream/6.X-Vue` 均为 `0870ce17514895854ccff03600e102546d8c5046`。基线标签始终不移动，详细差异与冲突见 `docs/upstream/2026-08-24_current-upstream-merge-backfill/`。
+
 ## 同步前重叠面
 
 ```bash
@@ -40,6 +42,60 @@ git diff --name-status "$(git merge-base main upstream/6.X-Vue)" upstream/6.X-Vu
 | 动态路由 | 后端已按 Client 过滤 | `permission` store / `loadView` | 前端继续 `addRoute`，不再做跨 Client 菜单过滤 |
 | 多 APP 部署 | 同一 `main` + 环境变量 | `.env*` | 用 `VITE_APP_CLIENT_ID`（OAuth 字符串）区分 APP，不为每个 APP 长期分叉 |
 
+### 37 个上游核心热点
+
+以下文件既属于上游已有路径，又被产品 `main` 修改；同步时必须逐项检查，而不能只依赖自动合并。清单对应 CR-002 固定点，可用下方命令重新计算并在数量变化时更新本节。
+
+```text
+.claude/agents/frontend-api-types.md
+.claude/agents/frontend-crud-coding.md
+.claude/agents/frontend-crud-page.md
+.claude/agents/frontend-page-enhancement.md
+.codex/skills/frontend-crud-coding/SKILL.md
+.codex/skills/frontend-crud-coding/agents/openai.yaml
+.codex/skills/frontend-crud-coding/references/examples.md
+.codex/skills/frontend-crud-coding/references/frontend.md
+src/api/login.ts
+src/api/system/client/index.ts
+src/api/system/client/types.ts
+src/api/system/menu/index.ts
+src/api/system/menu/types.ts
+src/api/system/notice/index.ts
+src/api/system/oss/index.ts
+src/api/system/oss/types.ts
+src/api/system/role/types.ts
+src/api/system/user/index.ts
+src/api/system/user/types.ts
+src/api/types.ts
+src/components/Editor/index.vue
+src/components/FileUpload/index.vue
+src/components/ImageUpload/index.vue
+src/components/RoleSelect/index.vue
+src/plugins/download.ts
+src/utils/ossContent.ts
+src/views/login.vue
+src/views/register.vue
+src/views/system/client/index.vue
+src/views/system/menu/index.vue
+src/views/system/notice/index.vue
+src/views/system/oss/index.vue
+src/views/system/role/index.vue
+src/views/system/user/authRole.vue
+src/views/system/user/index.vue
+src/views/system/user/profile/userAvatar.vue
+src/views/system/user/view.vue
+```
+
+```bash
+# 全量产品差异；再按“路径是否存在于 upstream/6.X-Vue”筛出上游热点。
+git diff --name-only upstream/6.X-Vue...main | sort
+git diff --name-only upstream/6.X-Vue...main \
+  | while IFS= read -r changed_file; do git cat-file -e "upstream/6.X-Vue:$changed_file" 2>/dev/null && printf '%s\n' "$changed_file"; done \
+  | sort
+```
+
+新增行为优先落入 fork 自有的 hooks/adapters，例如 `src/hooks/oss/**`、`src/utils/oss/**`，共享上传组件仅保留接线。触及上述 37 个文件时，评审必须同时核对本文件中的 Client、权限、OSS 和严格 Boolean 合同。
+
 ## 字段别名（容易在合并时写错）
 
 | 场景 | 字段 | 含义 |
@@ -48,6 +104,10 @@ git diff --name-status "$(git merge-base main upstream/6.X-Vue)" upstream/6.X-Vu
 | Token extra、角色/菜单 JSON、RBAC 查询 | `clientId` / `clientPk` | `sys_client.id` Long 主键 |
 | Client.registerEnabled | JSON boolean | 库列 tinyint；不要再当成 `'0'`/`'1'` 字符 |
 
+## 未完成业务入口
+
+`admin-console`、`data-collection`、`data-competition`、`token-relay` 四个前端占位组件已退役。后三个曾由 `NAMEWTA-BASE-DSL-002` 创建的菜单通过 append-only `NAMEWTA-BASE-DSL-003` 删除默认角色关系并设置 `visible/status='1'`；只有独立业务 change 完成合同、页面和验收后才能前向恢复。`admin-console` 没有对应 SQL 菜单，不需要数据迁移。
+
 ## 初始化注意
 
-全新库：`ry_vue.sql` → `namewta/DDL.sql` → `namewta/DSL.sql`。已执行旧编号脚本的环境不要重放对应基线块；缺少用户端菜单时，只执行 `DSL.sql` 中幂等的 `NAMEWTA-BASE-DSL-002`。后续结构和数据变化分别追加到两个文件末尾。
+全新库：`ry_vue.sql` → `namewta/DDL.sql` → `namewta/DSL.sql`。已执行旧编号脚本的环境不要重放对应基线块；upgrade 环境按未执行的变更标识顺序补跑。`NAMEWTA-BASE-DSL-003` 会前向下线三个未实现用户端菜单，不应绕过它重放 `NAMEWTA-BASE-DSL-002`。后续结构和数据变化分别追加到两个文件末尾。

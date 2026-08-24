@@ -1,0 +1,130 @@
+{
+  "schema_version": 1,
+  "artifact": "design-tree",
+  "change": "2026-08-22-unified-payment-foundation",
+  "status": "active",
+  "round": 2,
+  "nodes": [
+    {
+      "id": "D-001",
+      "title": "统一支付底座目标",
+      "question": "这个 change 要为底座补齐什么支付能力？",
+      "depends_on": [],
+      "recommendation": "建立与业务解耦、按应用配置渠道的统一支付底座，先打通账单到支付完成的最小闭环。",
+      "status": "answered",
+      "round": 1,
+      "answer": "建立通用支付底座，支持不同 App 配置各自允许的支付宝、微信等支付方式，并围绕金额账单形成从发起支付、获得支付链接或商家码、完成支付到记录结果的闭环；同时研究成熟开源实现及常见资金清结算方式。",
+      "log_ref": "LOG-001"
+    },
+    {
+      "id": "D-002",
+      "title": "资金角色与首期清算边界",
+      "question": "首期底座只作为技术支付中台，让资金由支付宝、微信或持牌收单机构直接结算到实际商户，还是要由平台先归集资金后再向多个商户结算？",
+      "depends_on": [],
+      "recommendation": "首期采用商户直连或持牌服务商分账：平台只保存订单、渠道流水和对账结果，不归集、不沉淀、不人工二次清算用户资金。",
+      "status": "open",
+      "round": 2,
+      "answer": null,
+      "log_ref": null
+    },
+    {
+      "id": "D-003",
+      "title": "首期收银场景",
+      "question": "第一版必须覆盖哪些支付入口：PC/移动网页支付链接、用户扫商家二维码、商家扫用户付款码、微信公众号/小程序、原生 App？",
+      "depends_on": [],
+      "recommendation": "先支持 PC/移动网页收银台、微信 Native 二维码和支付宝 PC/WAP/预下单二维码；付款码、JSAPI、小程序和原生 App 放到后续适配批次。",
+      "status": "open",
+      "round": 2,
+      "answer": null,
+      "log_ref": null
+    },
+    {
+      "id": "D-004",
+      "title": "钱包与账本边界",
+      "question": "你所说的钱包是否要求用户充值余额、余额支付、退款回余额和提现，还是第一版只需要账单、支付单、退款单、渠道流水和对账差异账本？",
+      "depends_on": [],
+      "recommendation": "第一版只做支付账本，不做可充值、可提现、可转账的储值钱包；钱包作为独立后续 change，并在法务与持牌合作方案明确后再设计。",
+      "status": "open",
+      "round": 2,
+      "answer": null,
+      "log_ref": null
+    },
+    {
+      "id": "D-005",
+      "title": "开源采用方式",
+      "question": "支付能力应作为当前底座内的原生模块，还是部署 Jeepay/DaxPay 一类独立支付中心并通过 HTTP 对接？",
+      "depends_on": [],
+      "recommendation": "首期在当前底座新增原生 payment 业务模块，借鉴 RuoYi-Vue-Pro 的领域模型，并把 IJPay、官方 SDK 或其他渠道 SDK 关在可替换适配器后；只有确定要运营多商户支付平台时才独立部署完整支付中心。",
+      "status": "open",
+      "round": 2,
+      "answer": null,
+      "log_ref": null
+    },
+    {
+      "id": "D-006",
+      "title": "支付应用与 Client 隔离",
+      "question": "一个 Client 下是否允许多个支付应用，每个支付应用独立配置业务回调、允许渠道、商户账户和环境？",
+      "depends_on": ["D-002", "D-005"],
+      "recommendation": "允许；使用 clientPk 作为安全隔离上界，PayApplication 作为业务与幂等命名空间，渠道账户在应用内显式启停。",
+      "status": "open",
+      "round": null,
+      "answer": null,
+      "log_ref": null
+    },
+    {
+      "id": "D-007",
+      "title": "账单与支付尝试模型",
+      "question": "业务账单是否允许分次支付、部分支付、超付或改价，以及同一账单失败后是否可更换渠道重试？",
+      "depends_on": ["D-004"],
+      "recommendation": "MVP 账单金额锁定且只允许一次最终成功，但允许多个支付尝试并更换渠道；不允许超付，部分支付后续再扩展。",
+      "status": "open",
+      "round": null,
+      "answer": null,
+      "log_ref": null
+    },
+    {
+      "id": "D-008",
+      "title": "回调、查询与幂等",
+      "question": "渠道回调丢失、重复、乱序或本地超时时，以什么规则确认支付终态并通知业务应用？",
+      "depends_on": ["D-005", "D-007"],
+      "recommendation": "验签回调与主动查询共同驱动状态机；所有外部单号唯一，状态只单向推进，业务通知使用 outbox 与有限重试。",
+      "status": "open",
+      "round": null,
+      "answer": null,
+      "log_ref": null
+    },
+    {
+      "id": "D-009",
+      "title": "退款、关单与对账范围",
+      "question": "MVP 是否必须同时交付全额/部分退款、超时关单、日对账、差错处理和人工补单？",
+      "depends_on": ["D-002", "D-004", "D-007"],
+      "recommendation": "最小生产闭环至少包含全额退款、超时关单、T+1 渠道交易账单对账和差异告警；部分退款与自动调账可后续扩展。",
+      "status": "open",
+      "round": null,
+      "answer": null,
+      "log_ref": null
+    },
+    {
+      "id": "D-010",
+      "title": "分账与结算",
+      "question": "若一笔款项需要分给多个经营主体，首期是否必须支持渠道官方分账、分账接收方管理和结算状态追踪？",
+      "depends_on": ["D-002"],
+      "recommendation": "首期预留分账合同但不自行清算；真实需要多方收款时，只调用持牌渠道的官方分账能力并记录结果。",
+      "status": "open",
+      "round": null,
+      "answer": null,
+      "log_ref": null
+    },
+    {
+      "id": "D-011",
+      "title": "密钥、风控与审计",
+      "question": "商户私钥、平台证书、回调验签、重放防护、风险限额和敏感操作审计由哪一层拥有？",
+      "depends_on": ["D-005", "D-006"],
+      "recommendation": "由支付模块统一拥有，密钥由 secret provider 注入或加密存储，接口全链路验签、幂等、防重放并记录不含敏感值的审计事件。",
+      "status": "open",
+      "round": null,
+      "answer": null,
+      "log_ref": null
+    }
+  ]
+}

@@ -32,7 +32,7 @@ Level: SHOULD
 
 Source: `repository-fact` (`package.json`, `tsconfig.json`)
 
-Rule: 修改 API 类型、通用 hooks、复杂表单或组件公开合同时，额外运行 `pnpm exec vue-tsc --noEmit`。该命令当前没有 package script，也不是 active gate；结果必须标注为补充诊断，不能借此声称仓库已有 typecheck 门禁。
+Rule: 修改 API 类型、通用 hooks、复杂表单或组件公开合同时，必须运行 `pnpm typecheck`。该 script 执行完整 `vue-tsc --noEmit`，不得用缩小 scope 或跳过诊断制造绿色。
 
 Verification: 在 `plus-ui-namewta` 目录记录命令、退出码和诊断；同时仍执行 `pnpm lint` 与 `pnpm build:prod`，遵循 `PENDING-FE-001`。
 

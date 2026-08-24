@@ -1,0 +1,308 @@
+{
+  "schema_version": 1,
+  "updated_at": "2026-08-24T12:33:30+08:00",
+  "repositories": {
+    "backend": {
+      "path": "ruoyi-vue-plus-namewta",
+      "product_ref": "refs/heads/main",
+      "origin_product_ref": "refs/remotes/origin/main",
+      "upstream_ref": "refs/remotes/upstream/6.X",
+      "mirror_ref": "refs/heads/6.X",
+      "baseline_tag_ref": "refs/tags/namewta-base-upstream-6x",
+      "last_confirmed_integration": {
+        "upstream_sha": "387c4f0a20e9232f44e762ef5a46c462f54bd464",
+        "product_merge_commit_sha": "af4bf65c71087c6080f52fed6155c542a162419b",
+        "source": "recorded_merge",
+        "confirmed_at": "2026-08-24T12:33:30+08:00",
+        "verification": [
+          "historical backfill only: exact merge parent and main reachability verified; original quality-gate evidence unavailable"
+        ]
+      },
+      "last_observation": {
+        "observed_at": "2026-08-24T12:29:43+08:00",
+        "freshness": "fresh",
+        "product_sha": "58aaf342100a2cfc2988e01b257f7468bb2bbad9",
+        "origin_product_sha": "58aaf342100a2cfc2988e01b257f7468bb2bbad9",
+        "mirror_sha": "2933badb9182aaecfd5a45ce09444b8ac59576bb",
+        "observed_upstream_sha": "629e344af50cfc5163f0b5905d47328382b7cc1c",
+        "merge_base_sha": "387c4f0a20e9232f44e762ef5a46c462f54bd464"
+      }
+    },
+    "frontend": {
+      "path": "plus-ui-namewta",
+      "product_ref": "refs/heads/main",
+      "origin_product_ref": "refs/remotes/origin/main",
+      "upstream_ref": "refs/remotes/upstream/6.X-Vue",
+      "mirror_ref": "refs/heads/6.X-Vue",
+      "baseline_tag_ref": "refs/tags/namewta-base-upstream-6x-vue",
+      "last_confirmed_integration": {
+        "upstream_sha": "0870ce17514895854ccff03600e102546d8c5046",
+        "product_merge_commit_sha": null,
+        "source": "derived_merge_base",
+        "confirmed_at": "2026-08-24T12:29:43+08:00"
+      },
+      "last_observation": {
+        "observed_at": "2026-08-24T12:29:43+08:00",
+        "freshness": "fresh",
+        "product_sha": "f7d116f6e2b6b61239afc86cbcb860a07530abad",
+        "origin_product_sha": "f7d116f6e2b6b61239afc86cbcb860a07530abad",
+        "mirror_sha": "0870ce17514895854ccff03600e102546d8c5046",
+        "observed_upstream_sha": "0870ce17514895854ccff03600e102546d8c5046",
+        "merge_base_sha": "0870ce17514895854ccff03600e102546d8c5046"
+      }
+    }
+  },
+  "runs": [
+    {
+      "run_id": "2026-08-24T122943+0800-2026-08-24_current-upstream-merge-backfill",
+      "created_at": "2026-08-24T12:29:43+08:00",
+      "topic": "current-upstream-merge-backfill",
+      "report_dir": "docs/upstream/2026-08-24_current-upstream-merge-backfill",
+      "fetch_requested": true,
+      "fetch_results": {
+        "workspace": {
+          "origin": true,
+          "origin_error": null
+        },
+        "backend": {
+          "origin": true,
+          "origin_error": null,
+          "upstream": true,
+          "upstream_error": null
+        },
+        "frontend": {
+          "origin": true,
+          "origin_error": null,
+          "upstream": true,
+          "upstream_error": null
+        }
+      },
+      "advance_results": [],
+      "workspace": {
+        "product_sha": "aa4752fe2d51ce705d442c9567e8e33f3676b736",
+        "origin_product_sha": "7c57756a50ce7142e6487239a52dce1e2b3b2912",
+        "product_vs_origin": {
+          "left_only": 1,
+          "right_only": 0
+        },
+        "dirty_paths": [
+          ".agents/skills/engineering-standards/references/java/core.md",
+          ".agents/skills/engineering-standards/references/project/00-project-profile.md",
+          ".agents/skills/engineering-standards/references/project/01-module-map.md",
+          ".agents/skills/engineering-standards/references/project/02-decisions-and-exceptions.md",
+          ".agents/skills/engineering-standards/references/project/review-checklist.md",
+          ".agents/skills/engineering-standards/references/rules/quality-gates.md",
+          ".agents/skills/engineering-standards/references/rules/testing.md",
+          ".agents/skills/ruoyi-common-modules-guide/SKILL.md",
+          ".agents/skills/ruoyi-common-modules-guide/references/module-map.md",
+          ".agents/skills/upstream-fork-sync/",
+          ".github/",
+          "docs/upstream/customization-map.md",
+          "plus-ui-namewta",
+          "ruoyi-vue-plus-namewta",
+          "scripts/",
+          "speculo/.speculo/commands/archive-and-consolidate/",
+          "speculo/.speculo/commands/handoff/",
+          "speculo/.speculo/specdev/archive/2026-08/2026-08-21-module-knowledge-skills/",
+          "speculo/.speculo/specdev/changes/2026-08-22-unified-payment-foundation/",
+          "speculo/.speculo/specdev/changes/2026-08-24-upstream-fork-upgrade-assessment/",
+          "speculo/.speculo/specdev/changes/2026-08-24-upstream-fork-upgrade-remediation/",
+          "speculo/.speculo/specdev/status.json"
+        ]
+      },
+      "repositories": {
+        "backend": {
+          "repository": "backend",
+          "path": "ruoyi-vue-plus-namewta",
+          "freshness": "fresh",
+          "fetch_error": null,
+          "product_sha": "58aaf342100a2cfc2988e01b257f7468bb2bbad9",
+          "origin_product_sha": "58aaf342100a2cfc2988e01b257f7468bb2bbad9",
+          "mirror_sha": "2933badb9182aaecfd5a45ce09444b8ac59576bb",
+          "observed_upstream_sha": "629e344af50cfc5163f0b5905d47328382b7cc1c",
+          "baseline_tag_sha": "a16f2490247d3ba33683c46c74782c5dc2827f0c",
+          "merge_base_sha": "387c4f0a20e9232f44e762ef5a46c462f54bd464",
+          "last_confirmed_integration": {
+            "upstream_sha": "387c4f0a20e9232f44e762ef5a46c462f54bd464",
+            "product_merge_commit_sha": "af4bf65c71087c6080f52fed6155c542a162419b",
+            "source": "graph_merge",
+            "confirmed_at": "2026-08-24T12:29:43+08:00"
+          },
+          "product_vs_upstream": {
+            "left_only": 42,
+            "right_only": 2
+          },
+          "product_vs_origin": {
+            "left_only": 0,
+            "right_only": 0
+          },
+          "dirty_paths": [
+            "README.md",
+            "mvnw",
+            "pom.xml",
+            "ruoyi-admin/pom.xml",
+            "ruoyi-admin/src/test/java/org/dromara/test/migration/BusinessMenuRetirementMySqlIntegrationTest.java",
+            "ruoyi-admin/src/test/java/org/dromara/test/oss/client/MinioOssClientIntegrationTest.java",
+            "ruoyi-admin/src/test/java/org/dromara/test/oss/upload/OssUploadHttpContractUnitTest.java",
+            "ruoyi-admin/src/test/java/org/dromara/test/oss/upload/OssUploadServiceUnitTest.java",
+            "ruoyi-common/ruoyi-common-mybatis/src/main/java/org/dromara/common/mybatis/interceptor/SqlLogInterceptor.java",
+            "ruoyi-modules/ruoyi-system/src/main/java/org/dromara/system/controller/system/SysOssUploadController.java",
+            "ruoyi-modules/ruoyi-system/src/main/java/org/dromara/system/oss/upload/OssUploadContracts.java",
+            "ruoyi-modules/ruoyi-system/src/main/java/org/dromara/system/oss/upload/OssUploadService.java",
+            "script/docker/.env.example",
+            "script/docker/README.md",
+            "script/docker/docker-compose.yml",
+            "script/docker/mysql/",
+            "script/docker/redis/conf/redis.conf",
+            "script/sql/namewta/DSL.sql",
+            "script/sql/namewta/README.md"
+          ],
+          "upstream_commits": [
+            {
+              "sha": "2933badb9182aaecfd5a45ce09444b8ac59576bb",
+              "short_sha": "2933badb9",
+              "date": "2026-08-21",
+              "subject": "update 优化 sql输出性能 去掉锁"
+            },
+            {
+              "sha": "629e344af50cfc5163f0b5905d47328382b7cc1c",
+              "short_sha": "629e344af",
+              "date": "2026-08-24",
+              "subject": "fix 修复 数据权限对union语句不兼容问题"
+            }
+          ],
+          "upstream_files": [
+            {
+              "status": "M",
+              "old_path": null,
+              "path": "ruoyi-common/ruoyi-common-mybatis/src/main/java/org/dromara/common/mybatis/aspect/DataPermissionAdvice.java",
+              "additions": "7",
+              "deletions": "2",
+              "risk_categories": [
+                "Client/RBAC/menu"
+              ]
+            },
+            {
+              "status": "M",
+              "old_path": null,
+              "path": "ruoyi-common/ruoyi-common-mybatis/src/main/java/org/dromara/common/mybatis/handler/PlusDataPermissionHandler.java",
+              "additions": "5",
+              "deletions": "3",
+              "risk_categories": [
+                "Client/RBAC/menu"
+              ]
+            },
+            {
+              "status": "M",
+              "old_path": null,
+              "path": "ruoyi-common/ruoyi-common-mybatis/src/main/java/org/dromara/common/mybatis/interceptor/SqlLogInterceptor.java",
+              "additions": "2",
+              "deletions": "14",
+              "risk_categories": []
+            }
+          ],
+          "upstream_shortstat": "3 files changed, 14 insertions(+), 19 deletions(-)",
+          "product_overlap_paths": [],
+          "automatic_overlap_paths": [],
+          "dirty_overlap_paths": [
+            "ruoyi-common/ruoyi-common-mybatis/src/main/java/org/dromara/common/mybatis/interceptor/SqlLogInterceptor.java"
+          ],
+          "risk_paths": [
+            {
+              "path": "ruoyi-common/ruoyi-common-mybatis/src/main/java/org/dromara/common/mybatis/aspect/DataPermissionAdvice.java",
+              "categories": [
+                "Client/RBAC/menu"
+              ]
+            },
+            {
+              "path": "ruoyi-common/ruoyi-common-mybatis/src/main/java/org/dromara/common/mybatis/handler/PlusDataPermissionHandler.java",
+              "categories": [
+                "Client/RBAC/menu"
+              ]
+            }
+          ],
+          "merge_tree": {
+            "status": "clean",
+            "exit_code": 0,
+            "tree_sha": "8ff482f019ca54497acb7ff863f0b61b53c47b0f",
+            "conflict_paths": [],
+            "messages": []
+          }
+        },
+        "frontend": {
+          "repository": "frontend",
+          "path": "plus-ui-namewta",
+          "freshness": "fresh",
+          "fetch_error": null,
+          "product_sha": "f7d116f6e2b6b61239afc86cbcb860a07530abad",
+          "origin_product_sha": "f7d116f6e2b6b61239afc86cbcb860a07530abad",
+          "mirror_sha": "0870ce17514895854ccff03600e102546d8c5046",
+          "observed_upstream_sha": "0870ce17514895854ccff03600e102546d8c5046",
+          "baseline_tag_sha": "0870ce17514895854ccff03600e102546d8c5046",
+          "merge_base_sha": "0870ce17514895854ccff03600e102546d8c5046",
+          "last_confirmed_integration": {
+            "upstream_sha": "0870ce17514895854ccff03600e102546d8c5046",
+            "product_merge_commit_sha": null,
+            "source": "derived_merge_base",
+            "confirmed_at": "2026-08-24T12:29:43+08:00"
+          },
+          "product_vs_upstream": {
+            "left_only": 20,
+            "right_only": 0
+          },
+          "product_vs_origin": {
+            "left_only": 0,
+            "right_only": 0
+          },
+          "dirty_paths": [
+            "e2e/",
+            "package.json",
+            "playwright.config.ts",
+            "pnpm-lock.yaml",
+            "src/api/system/oss/types.ts",
+            "src/components/FileUpload/index.vue",
+            "src/components/ImageUpload/index.vue",
+            "src/hooks/oss/useDirectOssUpload.test.ts",
+            "src/hooks/oss/useDirectOssUpload.ts",
+            "src/views/business/admin-console/.gitkeep",
+            "src/views/business/admin-console/index.vue",
+            "src/views/business/data-collection/.gitkeep",
+            "src/views/business/data-collection/index.vue",
+            "src/views/business/data-competition/.gitkeep",
+            "src/views/business/data-competition/index.vue",
+            "src/views/business/token-relay/.gitkeep",
+            "src/views/business/token-relay/index.vue",
+            "src/views/monitor/logininfo/index.vue",
+            "src/views/system/user/profile/userAvatar.vue"
+          ],
+          "upstream_commits": [],
+          "upstream_files": [],
+          "upstream_shortstat": "",
+          "product_overlap_paths": [],
+          "automatic_overlap_paths": [],
+          "dirty_overlap_paths": [],
+          "risk_paths": [],
+          "merge_tree": {
+            "status": "clean",
+            "exit_code": 0,
+            "tree_sha": "ee7d40b45f95ce94238c8283f6ebf16b5ee4398e",
+            "conflict_paths": [],
+            "messages": []
+          }
+        }
+      }
+    }
+  ],
+  "integration_events": [
+    {
+      "repository": "backend",
+      "recorded_at": "2026-08-24T12:33:30+08:00",
+      "product_sha": "58aaf342100a2cfc2988e01b257f7468bb2bbad9",
+      "merge_commit_sha": "af4bf65c71087c6080f52fed6155c542a162419b",
+      "upstream_sha": "387c4f0a20e9232f44e762ef5a46c462f54bd464",
+      "verification": [
+        "historical backfill only: exact merge parent and main reachability verified; original quality-gate evidence unavailable"
+      ]
+    }
+  ]
+}

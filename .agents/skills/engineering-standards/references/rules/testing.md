@@ -44,6 +44,6 @@ Level: MUST
 
 Source: `repository-fact`
 
-Rule: 前端没有 test script 时不得报告 Vitest passed；后端 `./mvnw clean package` 默认跳过测试时不得报告 JUnit passed。只有实际运行 opt-in 测试命令且退出 0 才能报告测试通过。
+Rule: 不得凭配置或测试文件存在就报告通过。前端分别实际运行 lint、typecheck、Vitest、Playwright 与生产构建；后端分别运行默认 `./mvnw test`、`bundle-full` 与 `bundle-core` 打包。属性门控的 Redis/MySQL/MinIO 测试只有在真实服务参数存在且用例未 skipped 时，才能报告真实集成通过。
 
-Verification: 交付报告列出 command、working directory、exit code；对照 `package.json` scripts 和 root `pom.xml` 的 `maven.test.skip`。
+Verification: 交付报告列出 command、working directory、exit code、执行/跳过数量；对照 `package.json` scripts、root `pom.xml`、CI workflow 与外部服务脚本。远程 CI 未运行或分支保护未启用时必须明确说明。

@@ -1,6 +1,6 @@
 ---
 name: ruoyi-common-modules-guide
-description: 映射 ruoyi-common 子模块与工具类索引：25 个 artifact（BOM + 24 jar）、按需 Maven 依赖、RedisUtils、LoginHelper、JsonUtils、ExcelBuilder、OssFactory、PushHelper、DataPermissionHelper。处理 ruoyi-common、该依赖哪个 common 模块、RedisUtils、LoginHelper、core utils、跨模块 Utils/Helper、找不到 ExcelUtil、或判断 job/ai/ES 是否只是第三方 starter 包装时使用。规范裁决不走本 Skill。
+description: 映射 ruoyi-common 子模块与工具类索引：26 个 artifact（BOM + 25 jar）、按需 Maven 依赖、RedisUtils、LoginHelper、JsonUtils、ExcelBuilder、OssFactory、NotifyDispatcher、PushHelper、DataPermissionHelper。处理 ruoyi-common、该依赖哪个 common 模块、统一通知、RedisUtils、LoginHelper、core utils、跨模块 Utils/Helper、找不到 ExcelUtil、或判断 job/ai/ES 是否只是第三方 starter 包装时使用。规范裁决不走本 Skill。
 ---
 
 # ruoyi-common 模块与工具类地图
@@ -22,7 +22,7 @@ description: 映射 ruoyi-common 子模块与工具类索引：25 个 artifact�
 ## 硬约束
 
 - 父模块 `ruoyi-common` 的 `packaging=pom`，不是 jar。业务 POM 不要依赖父 `ruoyi-common`；按需声明子 artifact（`groupId=org.dromara`，版本走 BOM `${revision}`）。
-- 引入 `ruoyi-common-bom` 只锁版本，不会把 24 个 jar 传进 classpath。
+- 引入 `ruoyi-common-bom` 只锁版本，不会把 25 个 jar 传进 classpath。
 - 本仓库无 `ExcelUtil`。导入导出用 `ExcelBuilder` / `ExcelWriterWrapper`。
 - `DictService`、`PermissionService`、`SensitiveService` 只在 common 定义接口；实现在 `ruoyi-system`。注入 SPI，不要在 common 里找实现类。
 - 多数 core `*Utils` 继承 Hutool / Commons Lang。项目约定优先用这些 FQN，不要直接调 Hutool 同名类（除非本仓库没有对应封装）。
@@ -34,10 +34,10 @@ description: 映射 ruoyi-common 子模块与工具类索引：25 个 artifact�
 2. JSON：`ruoyi-common-json`（会带 core）。
 3. 缓存 / 锁 / 限流 / 防重复提交：`ruoyi-common-redis`，用 `RedisUtils` 与 `@RepeatSubmit` / `@RateLimiter`。
 4. 登录态：`ruoyi-common-satoken` 的 `LoginHelper`（会带 core + redis）。Web CRUD 通常再加 `ruoyi-common-mybatis` + `ruoyi-common-web` + `ruoyi-common-security`。
-5. 文件：`OssFactory` / `OssClient`（`ruoyi-common-oss`）。邮件：`MailBuilder`。推送：`PushHelper`。Excel：`ExcelBuilder`。
+5. 文件：`OssFactory` / `OssClient`（`ruoyi-common-oss`）。统一通知：`NotifyDispatcher`（`ruoyi-common-notify`）；邮件与短信是通知渠道适配。推送：`PushHelper`。Excel：`ExcelBuilder`。
 6. 先看目标业务模块 POM 的显式 `ruoyi-common-*`，再谈传递。不要假设 `ruoyi-workflow/pom.xml` 写了 `ruoyi-common-core`（它没有；mybatis/web/security 会带进来）。
 
-25 个子模块、内部依赖分层、system/workflow/admin 消费方见 [module-map.md](references/module-map.md)。
+26 个子模块、内部依赖分层、system/workflow/admin 消费方见 [module-map.md](references/module-map.md)。
 
 ## 按需加载
 

@@ -4,9 +4,9 @@
 
 | ID | Path | Language / framework / runtime | Build | Source / test roots | Public entrypoint | Quality gates | Evidence |
 |---|---|---|---|---|---|---|---|
-| `workspace-parent` | `.` | Markdown、Git/Submodule 治理 | Git | `docs/**`, `plan/**` | `README.md` | none | `README.md`, `.gitmodules`; high |
-| `plus-ui` | `plus-ui-namewta` | TypeScript, Vue 3, Pinia, Browser | pnpm, Vite, Oxlint | `src/**`; tests absent | `src/main.ts` | `pnpm lint`, `pnpm build:prod` | `package.json`, `src/App.vue`; high |
-| `backend-root` | `ruoyi-vue-plus-namewta` | Java 21, Spring Boot 4, JVM | Maven Wrapper | Maven modules below | `ruoyi-admin` and three extension applications | `./mvnw clean package`; opt-in tests | root `pom.xml`; high |
+| `workspace-parent` | `.` | Markdown、Git/Submodule 治理 | Git, GitHub Actions | `docs/**`, `scripts/ci/**` | `README.md` | submodule snapshot + frontend/backend/external-services jobs | `README.md`, `.gitmodules`, `.github/workflows/quality-gates.yml`; high |
+| `plus-ui` | `plus-ui-namewta` | TypeScript, Vue 3, Pinia, Browser | pnpm, Vite, Oxlint, Vitest, Playwright | `src/**`; `src/**/*.test.ts`; `e2e/**` | `src/main.ts` | lint, typecheck, 4 unit tests, 2 Chromium E2E, production build | `package.json`, `playwright.config.ts`; high |
+| `backend-root` | `ruoyi-vue-plus-namewta` | Java 21, Spring Boot 4, JVM | Maven Wrapper | Maven modules below; 44 test source files | `ruoyi-admin` and three extension applications | default test; bundle-full + bundle-core package | root `pom.xml`, `ruoyi-admin/pom.xml`; high |
 
 ## 后端 Maven 模块
 
@@ -28,6 +28,7 @@
 | `ruoyi-common/ruoyi-common-json` | Spring/Jackson JSON 合同 | package surface | none |
 | `ruoyi-common/ruoyi-common-liteflow` | Spring LiteFlow 集成 | package surface | none |
 | `ruoyi-common/ruoyi-common-log` | 日志/审计切面 | package surface | none |
+| `ruoyi-common/ruoyi-common-notify` | 渠道无关通知契约、分发、幂等和附件快照 | `NotifyDispatcher`, `NotifyClient`, adapter SPI | tests through consumers/admin |
 | `ruoyi-common/ruoyi-common-mail` | 邮件适配 | package surface | none |
 | `ruoyi-common/ruoyi-common-mcp` | MCP 集成 | package surface | none |
 | `ruoyi-common/ruoyi-common-mqtt` | Spring MQTT 集成 | package surface | none |
@@ -60,7 +61,7 @@
 - 前端依赖后端 HTTP/JSON 合同，不深耦合 Java 类型或数据库 schema；API transport 类型集中在 `src/api/**`。
 - 后端 Maven 方向为：聚合/可部署应用 -> `ruoyi-modules`/`ruoyi-api`/`ruoyi-common-*`；业务模块可依赖 `ruoyi-api` 和所需 common 能力，common 不反向依赖业务模块。
 - `ruoyi-api` 是跨业务模块合同面；`ruoyi-common-*` 只承载可复用基础能力，禁止成为绕过业务边界的容器。
-- `ruoyi-admin` 负责组装，不承载可复用领域实现；`ruoyi-gen` 仅在 `gen` Maven profile 中接入主应用。
+- `ruoyi-admin` 负责组装，不承载可复用领域实现；默认 `bundle-full` 接入 job/ai/demo/workflow/gen，显式 `bundle-core` 只保留平台基础依赖。
 - 认证/权限/菜单跨层契约以 `docs/upstream/customization-map.md` 为额外硬边界。
 
 ## 实现基线与成熟样例

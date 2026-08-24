@@ -58,6 +58,6 @@ Level: MUST
 
 Source: `repository-fact` + `builder-baseline`
 
-Rule: 纯服务/领域逻辑不默认启动完整 Spring；Web/Data/Security 与真实依赖按风险选择 slice/integration。高风险变更运行 `./mvnw -Dmaven.test.skip=false test`；默认 package 的 skip 例外必须在报告中显式说明。
+Rule: 纯服务/领域逻辑不默认启动完整 Spring；Web/Data/Security 与真实依赖按风险选择 slice/integration。高风险变更和交付候选运行默认 `./mvnw test`；package 阶段显式 skip 只允许复用同一候选已经取得的独立测试证据。
 
-Verification: opt-in test command；测试资源清理 review；遵循 EX-002，不将 package 等同 test passed。
+Verification: 默认 test command；测试资源清理 review；分别报告 test 与 package，不将 package 等同 test passed。core bundle 另用产物清单断言可选模块确实缺席。

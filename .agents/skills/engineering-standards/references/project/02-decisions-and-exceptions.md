@@ -60,12 +60,12 @@
 
 | ID | Current | Target | Migration / Verification |
 |---|---|---|---|
-| `MIG-TS-STRICT` | `strict: true` 但 `noImplicitAny`、`strictNullChecks`、`strictFunctionTypes` 关闭；lint 允许多类 any | 新/修改的 API、存储、环境变量和第三方响应边界使用精确类型、`unknown` + narrowing，不新增无理由 any | 变更文件 Ratchet；review 与 `pnpm lint`，待独立 typecheck gate 落地后接入 |
-| `MIG-FE-TEST` | Vitest 仅为依赖信号，无 test script/config/test files | 新增纯逻辑、状态、权限或复杂交互时配套适合层级测试 | 在测试 harness 决策前，关键变更必须记录人工/集成验证；不得报告“测试通过” |
-| `MIG-BE-TEST` | 有少量 JUnit 测试，但 root package 默认 `maven.test.skip=true` | 认证、权限、事务、SQL 和公共 API 变更有回归测试，并在合并门禁执行 | 可用 opt-in test 命令验证；是否取消默认 skip 见 pending decision |
+| `MIG-TS-STRICT` | `strict: true` 但 `noImplicitAny`、`strictNullChecks`、`strictFunctionTypes` 关闭；lint 允许多类 any | 新/修改的 API、存储、环境变量和第三方响应边界使用精确类型、`unknown` + narrowing，不新增无理由 any | 变更文件 Ratchet；review、`pnpm lint` 与完整 `pnpm typecheck` 已是 active gate |
+| `MIG-FE-TEST` | 已有 `pnpm test` 的 4 个 Vitest 与 `pnpm test:e2e` 的 2 个 Chromium 用例，覆盖 Client 上下文严格 Boolean 边界 | 新增纯逻辑、状态、权限或复杂交互时持续扩展对应层级测试 | 本地与 CI 同时运行 lint/typecheck/unit/E2E/build；覆盖率阈值仍待决策 |
+| `MIG-BE-TEST` | 44 个 JUnit 测试源码文件；root 默认执行测试，Redis/MySQL/MinIO 用例通过属性门控接入真实服务 job | 认证、权限、事务、SQL 和公共 API 变更有回归测试，并在合并门禁执行 | `./mvnw test` 为默认门禁；core 产物因排除 demo/workflow 而在已测试后用 `-Dmaven.test.skip=true` 组装；真实服务由 CI 补证 |
 | `MIG-BE-DS-TX` | 业务代码同时存在 Spring `@Transactional` 与 dynamic-datasource `@DSTransactional` | 新建或实质修改的业务事务统一使用 `@DSTransactional`，事务事件使用匹配的 `@DsTxEventListener` | 按变更文件 Ratchet；迁移时验证代理调用、回滚、数据源切换和提交阶段事件；不发动无需求证据的全仓替换 |
 | `MIG-BE-DDL-BASE` | 历史、上游、第三方及部分 NAMEWTA 表未统一具备 `version/create_dept/create_time/create_by/update_time/update_by/del_flag` | 每个新建项目自有表均具备七个基础字段，并与 `BaseEntity`、`@Version`、`@TableLogic` 映射一致 | 新表立即执行；触及存量项目自有表时评估兼容迁移，未经迁移设计不直接补列；上游冻结和第三方 schema 不做无关整治 |
-| `MIG-CI` | 未检测到 CI | PR 至少稳定执行非写入式 lint/compile/test/build 组合 | 先确认门禁与运行成本，再新增 CI；当前只记录本地命令结果 |
+| `MIG-CI` | 已配置 `.github/workflows/quality-gates.yml`，含快照、前端、后端与真实服务四个 job | PR 稳定执行同源 lint/typecheck/test/build，并由分支保护设为 required checks | 本地完成静态验证；提交推送后观察首次 Actions 运行，再配置分支保护并记录远程证据 |
 | `MIG-LARGE-FILES` | 前后端存在多个 700-1400 行文件 | 新功能避免继续混合职责，触及文件时提取可命名且可测试的边界 | 文件大小只作 review 触发器；不得为行数机械拆分 |
 
 ## 例外
@@ -82,21 +82,8 @@
 - Expires/removal condition: axios/typescript 类型兼容方式允许删除 adapter 断言，或项目建立精确本地类型包装。
 - Verification: `pnpm lint`, `pnpm build:prod`, review `src/utils/request.ts` 中 any 的扩散。
 
-### EX-002 Maven 默认打包跳过测试
-
-- Scope: `module:ruoyi-vue-plus-namewta`
-- Rule: 打包门禁通常应执行测试。
-- Owner: `ruoyi-vue-plus-namewta` maintainers
-- Reason: root `pom.xml` 当前明确设置 `maven.test.skip=true`，且项目文档以此为当前构建事实。
-- Risk: `./mvnw clean package` 不能证明测试通过。
-- Compensation: 高风险变更另行运行 `./mvnw -Dmaven.test.skip=false test` 并记录结果。
-- Created: existing repository state
-- Expires/removal condition: 团队确认默认测试策略并调整 root POM/CI。
-- Verification: 检查 `pom.xml` 属性；交付报告不得把 package 结果写成 test passed。
-
 ## 待确认
 
-- `PENDING-CI-001`: PR/主分支是否建立 CI，以及前后端门禁、缓存、运行时版本和失败责任。
-- `PENDING-FE-001`: 是否新增非写入式 format-check、独立 `vue-tsc` typecheck 与 Vitest test script；在确认前均不是 active gate。
-- `PENDING-BE-001`: 是否移除 `maven.test.skip=true`，或只在 CI/高风险 profile 强制测试。
+- `PENDING-CI-001`: 首次 GitHub Actions 远程运行通过后，将哪些 job 设为 PR/主分支 required checks，以及失败责任与重跑权限。
+- `PENDING-FE-001`: 是否新增非写入式 format-check 与覆盖率阈值；typecheck、Vitest、Playwright 已成为 active gate。
 - `PENDING-ARCH-001`: 是否为 Client 隔离、Maven 依赖方向增加自动架构测试；当前以 build 和精确 review 验证。

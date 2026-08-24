@@ -4,7 +4,7 @@ artifact: ticket
 change: 2026-08-24-upstream-fork-upgrade-remediation
 id: T-02
 title: 后端构建、上游补丁与支持合同
-status: review
+status: done
 planning_depth: standard
 planning_depth_reason: 修改 Maven 默认行为和部署 profile，并吸收单文件非重叠上游补丁；无业务 API 或 schema 变化
 ready: true
@@ -77,7 +77,7 @@ shared_path_owners: []
 
 - **E2E disposition：** not-required；外部依赖 E2E 由 T-03 负责。
 - **E2E owner/environment：** Lead / current-workspace；本 Ticket 不要求跨边界 E2E。
-- **集成出口：** 未授权 commit 时保留 working tree candidate。
+- **集成出口：** 后端结果已提交并推送，父仓最终快照已通过本地与远程门禁。
 
 ## 9. 发布、迁移与恢复
 
@@ -87,6 +87,6 @@ shared_path_owners: []
 
 ## 10. 验收标准
 
-- [ ] AC-002、AC-005 通过。
-- [ ] 6.X 基线标签不移动，产品安全热点不受影响。
-- [ ] Evidence 记录命令、退出码和测试数量。
+- [x] AC-002、AC-005 通过。
+- [x] 6.X 基线标签不移动，产品安全热点不受影响。
+- [x] Evidence 记录命令、退出码和测试数量。

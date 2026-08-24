@@ -4,7 +4,7 @@ artifact: ticket
 change: 2026-08-24-upstream-fork-upgrade-remediation
 id: T-01
 title: 前端质量门禁与占位页面退役
-status: review
+status: done
 planning_depth: standard
 planning_depth_reason: 涉及工具脚本、路径大小写、浏览器验证和动态路由可达性，但不改变后端公共接口
 ready: true
@@ -12,8 +12,8 @@ risk: medium
 blocked_by: []
 contract_ids: [AC-001, AC-004]
 owner: codex
-expected_changes: ["<Path>plus-ui-namewta/package.json</Path>", "<Path>plus-ui-namewta/pnpm-lock.yaml</Path>", "<Path>plus-ui-namewta/src/api/monitor/logininfo/**</Path>", "<Path>plus-ui-namewta/src/views/business/**</Path>", "<Path>plus-ui-namewta/e2e/**</Path>"]
-writable_paths: ["<Path>plus-ui-namewta/package.json</Path>", "<Path>plus-ui-namewta/pnpm-lock.yaml</Path>", "<Path>plus-ui-namewta/playwright.config.ts</Path>", "<Path>plus-ui-namewta/src/api/monitor/loginInfo/**</Path>", "<Path>plus-ui-namewta/src/api/monitor/logininfo/**</Path>", "<Path>plus-ui-namewta/src/views/monitor/logininfo/**</Path>", "<Path>plus-ui-namewta/src/views/business/**</Path>", "<Path>plus-ui-namewta/e2e/**</Path>"]
+expected_changes: ["<Path>plus-ui-namewta/package.json</Path>", "<Path>plus-ui-namewta/pnpm-lock.yaml</Path>", "<Path>plus-ui-namewta/.gitignore</Path>", "<Path>plus-ui-namewta/src/types/auto-imports.d.ts</Path>", "<Path>plus-ui-namewta/src/types/components.d.ts</Path>", "<Path>plus-ui-namewta/src/api/monitor/logininfo/**</Path>", "<Path>plus-ui-namewta/src/views/business/**</Path>", "<Path>plus-ui-namewta/e2e/**</Path>"]
+writable_paths: ["<Path>plus-ui-namewta/package.json</Path>", "<Path>plus-ui-namewta/pnpm-lock.yaml</Path>", "<Path>plus-ui-namewta/.gitignore</Path>", "<Path>plus-ui-namewta/src/types/auto-imports.d.ts</Path>", "<Path>plus-ui-namewta/src/types/components.d.ts</Path>", "<Path>plus-ui-namewta/playwright.config.ts</Path>", "<Path>plus-ui-namewta/src/api/monitor/loginInfo/**</Path>", "<Path>plus-ui-namewta/src/api/monitor/logininfo/**</Path>", "<Path>plus-ui-namewta/src/views/monitor/logininfo/**</Path>", "<Path>plus-ui-namewta/src/views/business/**</Path>", "<Path>plus-ui-namewta/e2e/**</Path>"]
 read_only_paths: ["<Path>plus-ui-namewta/tsconfig.json</Path>", "<Path>plus-ui-namewta/src/views/login.vue</Path>", "<Path>plus-ui-namewta/src/hooks/oss/**</Path>"]
 shared_paths: []
 shared_path_owners: []
@@ -77,7 +77,7 @@ shared_path_owners: []
 
 - **E2E disposition：** required；Lead 在 current workspace 执行浏览器合同。
 - **E2E owner/environment：** Lead / current-workspace。
-- **集成出口：** 未授权 commit 时保留为可审查 working tree candidate，不声称 Ticket done。
+- **集成出口：** 子仓结果已提交并推送，父仓以 `e623b9e2e9381f39721b15bcb779d260d03a84e4` 记录最终可复现快照。
 
 ## 9. 发布、迁移与恢复
 
@@ -87,6 +87,6 @@ shared_path_owners: []
 
 ## 10. 验收标准
 
-- [ ] AC-001 与 AC-004 的前端部分通过。
-- [ ] 实际修改未超出 writable paths。
-- [ ] Evidence 记录 red/green、命令和未验证项。
+- [x] AC-001 与 AC-004 的前端部分通过。
+- [x] 实际修改未超出 writable paths；fresh-checkout 声明文件修复已补入合同。
+- [x] Evidence 记录 red/green、命令和未验证项。

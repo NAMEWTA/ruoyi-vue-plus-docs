@@ -4,7 +4,7 @@ artifact: ticket
 change: 2026-08-24-upstream-fork-upgrade-remediation
 id: T-04
 title: 占位菜单迁移、维护知识与父快照收口
-status: review
+status: done
 planning_depth: deep
 planning_depth_reason: 包含 append-only 数据迁移、父仓 submodule 指针和跨仓长期维护知识，影响部署可见性与可复现交付
 ready: true
@@ -33,7 +33,7 @@ shared_path_owners: []
 - 追加幂等 DSL 块：先删除三个默认角色菜单关联，再将三个菜单设为停用；不改历史块。
 - 管理台没有 SQL 菜单，只删除前端组件并在热点清单记录 deferred 产品域。
 - common 口径为 26 个子 artifact（BOM + 25 jar）；默认 Maven reactor 与源码树均为 41 个 POM/project。
-- 父仓最终记录两个子仓经验证 result SHA；未授权 commit 前只能形成 gitlink candidate。
+- 父仓最终记录两个子仓经验证 result SHA，并由远程 snapshot job 复核。
 - **批准点：** 用户已要求修复两份审查，且此前明确基座无历史兼容负担；因此允许下线无功能菜单。生产执行 SQL 仍不在本轮授权内。
 
 ## 3. 范围边界
@@ -57,7 +57,7 @@ shared_path_owners: []
 1. 生成上海时区标识，追加幂等 SQL 并增加迁移断言。
 2. 更新 customization hotspot、工程画像/module map 和 common skill。
 3. 运行 POM/目录/热点确定性扫描与 SQL 验证。
-4. 确认两子仓 SHA，形成父仓 gitlink diff；不提交。
+4. 确认两子仓 SHA，提交父仓 gitlink，并运行本地及远程 snapshot 校验。
 
 ## 7. 路径访问契约
 
@@ -89,7 +89,7 @@ shared_path_owners: []
 
 ## 10. 验收标准
 
-- [ ] AC-004、AC-006 通过。
-- [ ] SQL 仅末尾追加，具备前置、范围、幂等和回滚说明。
-- [ ] 所有长期知识不再宣称 25 artifacts/40 Maven modules。
-- [ ] Evidence 明确父仓 commit 未授权状态。
+- [x] AC-004、AC-006 通过。
+- [x] SQL 仅末尾追加，具备前置、范围、幂等和回滚说明。
+- [x] 所有长期知识不再宣称 25 artifacts/40 Maven modules。
+- [x] Evidence 明确父仓结果 SHA、远程 snapshot 与 MySQL 重放结果。

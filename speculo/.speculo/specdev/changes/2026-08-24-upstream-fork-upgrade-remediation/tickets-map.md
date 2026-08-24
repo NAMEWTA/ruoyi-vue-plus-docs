@@ -2,7 +2,7 @@
 schema_version: 3
 artifact: tickets-map
 change: 2026-08-24-upstream-fork-upgrade-remediation
-status: in_progress
+status: completed
 ---
 
 # Tickets Map: 上游 Fork 升级整改
@@ -19,10 +19,10 @@ status: in_progress
 
 | ID | Ticket | 可观察产出 | Blocked By | Depth | Risk | Ready | Owner | Contract IDs | Status |
 |---|---|---|---|---|---|---|---|---|---|
-| T-01 | `<Path>{roots.state}/specdev/changes/2026-08-24-upstream-fork-upgrade-remediation/ticket/01-frontend-quality-and-placeholder-retirement.md</Path>` | 前端门禁全绿且占位组件退役 | — | standard | medium | yes | codex | AC-001, AC-004 | review |
-| T-02 | `<Path>{roots.state}/specdev/changes/2026-08-24-upstream-fork-upgrade-remediation/ticket/02-backend-build-upstream-and-support-contract.md</Path>` | 后端默认测试、双 bundle、上游补丁和 MySQL 合同 | — | standard | medium | yes | codex | AC-002, AC-005 | review |
-| T-03 | `<Path>{roots.state}/specdev/changes/2026-08-24-upstream-fork-upgrade-remediation/ticket/03-ci-and-real-service-acceptance.md</Path>` | CI 自动执行两端和真实服务验收 | T-01, T-02 | standard | high | yes | codex | AC-003 | review |
-| T-04 | `<Path>{roots.state}/specdev/changes/2026-08-24-upstream-fork-upgrade-remediation/ticket/04-menu-migration-knowledge-and-parent-snapshot.md</Path>` | 菜单下线、知识准确、父快照候选正确 | T-01, T-02, T-03 | deep | high | yes | codex | AC-004, AC-006 | review |
+| T-01 | `<Path>{roots.state}/specdev/changes/2026-08-24-upstream-fork-upgrade-remediation/ticket/01-frontend-quality-and-placeholder-retirement.md</Path>` | 前端门禁全绿且占位组件退役 | — | standard | medium | yes | codex | AC-001, AC-004 | done |
+| T-02 | `<Path>{roots.state}/specdev/changes/2026-08-24-upstream-fork-upgrade-remediation/ticket/02-backend-build-upstream-and-support-contract.md</Path>` | 后端默认测试、双 bundle、上游补丁和 MySQL 合同 | — | standard | medium | yes | codex | AC-002, AC-005 | done |
+| T-03 | `<Path>{roots.state}/specdev/changes/2026-08-24-upstream-fork-upgrade-remediation/ticket/03-ci-and-real-service-acceptance.md</Path>` | CI 自动执行两端和真实服务验收 | T-01, T-02 | standard | high | yes | codex | AC-003 | done |
+| T-04 | `<Path>{roots.state}/specdev/changes/2026-08-24-upstream-fork-upgrade-remediation/ticket/04-menu-migration-knowledge-and-parent-snapshot.md</Path>` | 菜单下线、知识准确、父快照候选正确 | T-01, T-02, T-03 | deep | high | yes | codex | AC-004, AC-006 | done |
 
 ## 3. 依赖 DAG
 
@@ -51,4 +51,4 @@ T-01/T-02 路径不相交，但当前 workspace 策略要求严格串行。T-03 
 
 - 不移动上游基线标签，不向镜像分支写业务提交。
 - 不泄露 CI 临时 secret，不用 UI 隐藏替代服务端权限。
-- 未授权 implementation commit/push 时，Ticket 最多进入 review，不标记 done。
+- implementation commit/push 已由用户授权；四个 Ticket 均以可复现父仓结果和远程 CI 证据闭合。

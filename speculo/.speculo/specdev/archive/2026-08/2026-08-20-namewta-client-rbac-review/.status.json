@@ -71,8 +71,18 @@
         "method": "direct-parent",
         "conflict_paths": [],
         "verification": "passed",
-        "full_suite": {"required": true, "status": "passed", "reason": null, "evidence": "bash mvnw clean package: 40/40 SUCCESS"},
-        "e2e": {"required": false, "status": "not-required", "reason": "Upstream synchronization has no runtime behavior; final runtime E2E was explicitly waived by the user at T-04.", "evidence": null},
+        "full_suite": {
+          "required": true,
+          "status": "passed",
+          "reason": null,
+          "evidence": "bash mvnw clean package: 40/40 SUCCESS"
+        },
+        "e2e": {
+          "required": false,
+          "status": "not-required",
+          "reason": "Upstream synchronization has no runtime behavior; final runtime E2E was explicitly waived by the user at T-04.",
+          "evidence": null
+        },
         "evidence": "<Path>{roots.state}/specdev/changes/2026-08-20-namewta-client-rbac-review/evidence/T-01.md</Path>",
         "attempts": 1,
         "promotion_status": "applied"
@@ -104,8 +114,18 @@
         "method": "direct-parent",
         "conflict_paths": [],
         "verification": "passed",
-        "full_suite": {"required": true, "status": "passed", "reason": null, "evidence": "Maven compile/test/package passed at final backend SHA."},
-        "e2e": {"required": false, "status": "not-required", "reason": "Backend compile, tests, and package are the accepted gates; runtime E2E was explicitly waived by the user at T-04.", "evidence": null},
+        "full_suite": {
+          "required": true,
+          "status": "passed",
+          "reason": null,
+          "evidence": "Maven compile/test/package passed at final backend SHA."
+        },
+        "e2e": {
+          "required": false,
+          "status": "not-required",
+          "reason": "Backend compile, tests, and package are the accepted gates; runtime E2E was explicitly waived by the user at T-04.",
+          "evidence": null
+        },
         "evidence": "<Path>{roots.state}/specdev/changes/2026-08-20-namewta-client-rbac-review/evidence/T-02.md</Path>",
         "attempts": 1,
         "promotion_status": "applied"
@@ -137,8 +157,18 @@
         "method": "direct-parent",
         "conflict_paths": [],
         "verification": "passed",
-        "full_suite": {"required": true, "status": "passed", "reason": null, "evidence": "Frontend lint/format/casing-relaxed typecheck/build passed."},
-        "e2e": {"required": false, "status": "not-required", "reason": "Frontend lint, format, typecheck, and build are the accepted gates; runtime E2E was explicitly waived by the user at T-04.", "evidence": null},
+        "full_suite": {
+          "required": true,
+          "status": "passed",
+          "reason": null,
+          "evidence": "Frontend lint/format/casing-relaxed typecheck/build passed."
+        },
+        "e2e": {
+          "required": false,
+          "status": "not-required",
+          "reason": "Frontend lint, format, typecheck, and build are the accepted gates; runtime E2E was explicitly waived by the user at T-04.",
+          "evidence": null
+        },
         "evidence": "<Path>{roots.state}/specdev/changes/2026-08-20-namewta-client-rbac-review/evidence/T-03.md</Path>",
         "attempts": 1,
         "promotion_status": "applied"
@@ -170,8 +200,18 @@
         "method": "direct-parent",
         "conflict_paths": [],
         "verification": "passed",
-        "full_suite": {"required": true, "status": "passed", "reason": null, "evidence": "Backend compile/test/package and frontend lint/format/typecheck/build passed; parent gitlinks were verified at the recorded result SHA."},
-        "e2e": {"required": false, "status": "not-required", "reason": "The user explicitly waived disposable SQL, HTTP, Token, and browser runtime E2E for this change on 2026-08-21.", "evidence": null},
+        "full_suite": {
+          "required": true,
+          "status": "passed",
+          "reason": null,
+          "evidence": "Backend compile/test/package and frontend lint/format/typecheck/build passed; parent gitlinks were verified at the recorded result SHA."
+        },
+        "e2e": {
+          "required": false,
+          "status": "not-required",
+          "reason": "The user explicitly waived disposable SQL, HTTP, Token, and browser runtime E2E for this change on 2026-08-21.",
+          "evidence": null
+        },
         "evidence": "<Path>{roots.state}/specdev/changes/2026-08-20-namewta-client-rbac-review/evidence/T-04.md</Path>",
         "attempts": 1,
         "promotion_status": "applied"

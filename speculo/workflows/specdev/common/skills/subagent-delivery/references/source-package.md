@@ -115,7 +115,7 @@ ARCHIVE="${DELIVERY_ROOT}/outbound/${DISPATCH_ID}.outbound.zip"
 ZIP_SCRIPT="speculo/skills/source-code-zip/scripts/zip_source_code.js"
 ```
 
-若当前执行环境仍位于 template 源树而不是安装后的 workspace，按 `<Path>{roots.state}/workspace.json</Path>` 中 `<Path>{roots.skills}/source-code-zip/scripts/zip_source_code.js</Path>` 的实际解析结果定位脚本，不硬编码另一个根。先创建 `outbound/staging/`、`outbound/` 与后续 inbound attempt 目录，并确认目标 ZIP 不存在。
+若当前执行环境仍位于 template 源树而不是安装后的 workspace，从已解析的公共 roots 定位 `<Path>{roots.skills}/source-code-zip/scripts/zip_source_code.js</Path>`，不硬编码另一个根。先创建 `outbound/staging/`、`outbound/` 与后续 inbound attempt 目录，并确认目标 ZIP 不存在。
 
 必须先预览：
 

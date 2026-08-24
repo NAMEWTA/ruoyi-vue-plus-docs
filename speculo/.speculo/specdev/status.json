@@ -1,7 +1,16 @@
 {
   "schema_version": 5,
   "workflow": "specdev",
-  "active": [],
+  "active": [
+    {
+      "change": "2026-08-24-current-version-vs-upstream-eli5",
+      "current_work": null,
+      "works_run": [
+        "specdev/eli5"
+      ],
+      "claimed_investigations": []
+    }
+  ],
   "archived": [
     "2026-08-20-namewta-client-rbac-review",
     "2026-08-21-module-knowledge-skills",

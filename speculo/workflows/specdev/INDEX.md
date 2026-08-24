@@ -3,8 +3,8 @@ id: specdev
 type: workflow
 workflow: specdev
 name: SpecDev Workflow
-description: 以本地工件为唯一开发权威，从来源冻结、诊断、设计、原型、规格、Ticket、编排和审查推进到证据驱动实现、远程 reconcile 与知识归档。
-keywords: [specdev, local-first, 规格驱动开发, decision-complete, prototype, code-review, TDD, 证据]
+description: 以本地工件为唯一开发权威，从来源冻结、诊断、设计、零基础新生图解、原型、规格、Ticket、编排和审查推进到证据驱动实现、远程 reconcile 与知识归档。
+keywords: [specdev, local-first, 规格驱动开发, decision-complete, eli5, prototype, code-review, TDD, 证据]
 ---
 
 # SpecDev Workflow
@@ -25,7 +25,7 @@ SpecDev 将“理解、决定、规划、执行、验证、沉淀”拆成职责
         ↓
 Triage 冻结为本地 Source
         ↓
-Diagnose / Grill / Wayfinder / Prototype / Code Review / Architecture Review
+Diagnose / Grill / ELI5 / Wayfinder / Prototype / Code Review / Architecture Review
         ↓
 Spec             外部行为、范围、验收合同与关键约束
         ↓
@@ -59,6 +59,7 @@ Archive          归档历史并将经验证知识提升为当前长期知识
 - `<Path>{roots.state}/specdev/changes/{change}/reviews/</Path>`
 - `<Path>{roots.state}/specdev/changes/{change}/prototypes/</Path>`
 - `<Path>{roots.state}/specdev/changes/{change}/questionnaires/</Path>`
+- `<Path>{roots.state}/specdev/changes/{change}/eli_index.md</Path>` 与 `<Path>{roots.state}/specdev/changes/{change}/<number>_<topic>.md</Path>`
 
 工件职责和冲突裁决位于 `<Path>{roots.workflows}/specdev/common/rules/artifact-contract.md</Path>`。
 
@@ -70,7 +71,7 @@ Archive          归档历史并将经验证知识提升为当前长期知识
 - 活跃 change：`<Path>{roots.state}/specdev/changes/</Path>`
 - 历史归档：`<Path>{roots.state}/specdev/archive/</Path>`
 
-刷新时 CLI 在 `<Path>{roots.state}/back/</Path>` 保留最近一次旧配置与完整 runtime state，并对 v0.7+ 状态执行兼容迁移。若 `<Path>{roots.state}/migration.json</Path>` 存在且为 pending，所有 SpecDev Works 必须在读取 workflow state 前停止；只有 `<Path>{roots.commands}/migrate-runtime-state.md</Path>` 可以读取备份并在用户确认后修复。`<Path>{roots.state}/back/</Path>`、`<Path>{roots.state}/install.json</Path>` 与 `<Path>{roots.state}/migration.json</Path>` 均不属于 SpecDev 写入 namespace。
+刷新时 CLI 依据 `<Path>{roots.workflows}/specdev/runtime-contract.json</Path>` 处理持久化数据：配置使用 baseline 三方合并，登记的状态 schema 使用显式 migrator，其他 runtime 文件按字节保留。只有字段删除或结构迁移时才在 `<Path>{roots.state}/back/</Path>` 写入 targeted backup；冲突在替换 active 安装前阻塞。`<Path>{roots.state}/back/</Path>`、`<Path>{roots.state}/install.json</Path>`、`<Path>{roots.state}/managed.json</Path>` 与 `<Path>{roots.state}/baselines/</Path>` 均不属于 SpecDev 写入 namespace。
 
 初始化设置 work 首次运行时生成配置并创建空的永久 namespace：
 
@@ -107,6 +108,7 @@ Archive          归档历史并将经验证知识提升为当前长期知识
 - `<Path>{roots.state}/specdev/changes/{change}/reviews/</Path>`
 - `<Path>{roots.state}/specdev/changes/{change}/prototypes/</Path>`
 - `<Path>{roots.state}/specdev/changes/{change}/questionnaires/</Path>`
+- `<Path>{roots.state}/specdev/changes/{change}/eli_index.md</Path>` 与 `<Path>{roots.state}/specdev/changes/{change}/<number>_<topic>.md</Path>`
 
 ## 全局治理原则
 
@@ -140,12 +142,11 @@ Archive          归档历史并将经验证知识提升为当前长期知识
 ## 启动协议
 
 1. 解析 workflow 和 state roots。
-2. 检查 `<Path>{roots.state}/migration.json</Path>`；存在且 `status: pending` 时停止，不读取或写入 SpecDev state，并路由到 `<Path>{roots.commands}/migrate-runtime-state.md</Path>`。
-3. 读取 `<Path>{roots.state}/specdev/config.json</Path>`；不存在时运行 `<Path>{roots.workflows}/specdev/I-init-setup/I-init-setup.md</Path>`。
-4. 读取 `<Path>{roots.state}/specdev/status.json</Path>`：用户指定 change 优先；唯一活跃 change 直接使用；无活跃时创建；多个候选时请求消歧。
-5. 若当前 change 已有非空 `current_work`，先恢复或显式结束该 Work；否则将 `current_work` 设置为本次 work id。
-6. 只加载当前步骤需要的 work 子文件和共享规则。
-7. 完成后写入产物、运行适用校验、更新状态和 `works_run`。
+2. 读取 `<Path>{roots.state}/specdev/config.json</Path>`；不存在时运行 `<Path>{roots.workflows}/specdev/I-init-setup/I-init-setup.md</Path>`。
+3. 读取 `<Path>{roots.state}/specdev/status.json</Path>`：用户指定 change 优先；唯一活跃 change 直接使用；无活跃时创建；多个候选时请求消歧。
+4. 若当前 change 已有非空 `current_work`，先恢复或显式结束该 Work；否则将 `current_work` 设置为本次 work id。
+5. 只加载当前步骤需要的 work 子文件和共享规则。
+6. 完成后写入产物、运行适用校验、更新状态和 `works_run`。
 
 Change 从 active/blocked 转为 completed 时加载 `<Path>{roots.workflows}/specdev/common/rules/change-completion.md</Path>`：有 Goal Plan 时由其中唯一 Lead 拥有转换；无 Goal Plan 的 Ticket/Direct Spec 由当前 I owner 拥有；非实现型终点由最终验收工件 owner 拥有。Archive 不补造 completed。
 
@@ -196,6 +197,7 @@ Change 从 active/blocked 转为 completed 时加载 `<Path>{roots.workflows}/sp
 | 本地 change 完成且来源可关闭 | T-triage reconcile | A |
 | 疑难 bug 或性能回归 | D-diagnose-bugs | S / T / I / R / W |
 | 模糊但可通过决策访谈收敛 | G-grill-with-docs | P / S / T / W |
+| 需要向刚上大一、没有专业背景的读者做 Markdown 与 ASCII 图解 | E-eli5 | 返回用户 / 继续当前 change |
 | 路径超出单次上下文 | W-wayfinder | G / P / D / S / T |
 | 需要用代码回答逻辑/UI 问题 | P-prototype | G / S / T / I |
 | 固定点 diff、branch 或 PR review | C-code-review | completed / T / S / G |
@@ -214,9 +216,10 @@ Change 从 active/blocked 转为 completed 时加载 `<Path>{roots.workflows}/sp
 - **A-archive-and-consolidate** — 归档与沉淀：校验本地完成与远程 reconcile 门，复用全局归档能力移动 completed change 并提升当前知识，或从代码访谈形成可归档知识 change。
 - **C-code-review** — 代码审查：将 commit、branch、tag、merge-base 或 PR 解析为本地不可变固定点，执行隔离的标准轴与规范轴审查并持久化可恢复报告。
 - **D-diagnose-bugs** — 诊断 Bug：先建立会在精确症状上变红的紧凑反馈回路，再通过最小化、排名假设和单变量探针确认根因，输出修复契约而不实施生产修复。
+- **E-eli5** — 零基础新生解释：面向刚上大一、没有专业背景的读者解释一个主题；用 Markdown 和 ASCII 图解说明概念、数据与调用如何流动。
 - **E-engineering-cognitive-mentor** — 工程认知导师：面向 Bug、项目源码、需求技术方案、架构设计与陌生技术领域的非执行型认知指导 Work；以证据、因果 Why、候选方案对比和逐轮澄清帮助用户形成可复述理解，并将完整问答轨迹持续持久化到当前 change。
 - **G-grill-with-docs** — 设计访谈（带文档）：以完整 frontier 逐轮推进设计树，直到每个决策分支都已关闭并获得用户共识，同时持续维护当前 change 的设计树、日志、领域上下文和架构决策。
-- **I-implement** — 实现：基于 Ready Ticket 或获批小型 Spec 执行设计检查、TDD、动态派单、双轴审查、Ticket worktree commit、候选合并验证和 Lead Evidence 回写。
+- **I-implement** — 实现：基于 Ready Ticket 或获批小型 Spec 执行设计检查、TDD、动态派单、双轴审查、按 Goal Plan 选择的 current workspace 或 Ticket worktree 提交、直接父分支或候选合并验证和 Lead Evidence 回写。
 - **I-init-setup** — 初始化设置：初始化 SpecDev 的语言、配置、全局状态、本地 change 追踪、领域知识布局、验证命令和并发治理。
 - **P-goal-plan** — 目标规划：在跨 Ticket 协调复杂度需要时，以固定 Lead、动态派单、DAG/Gate 和候选合并门禁生成决策完备且可恢复的执行计划。
 - **P-prototype** — 原型：在获授权的临时 branch/worktree 中构建一次性 Logic 或 UI 原型，回答一个明确设计问题并持久化答案、资产定位和清理状态。
@@ -242,7 +245,7 @@ Change 从 active/blocked 转为 completed 时加载 `<Path>{roots.workflows}/sp
 
 ```bash
 node <Path>{roots.workflows}/specdev/common/tools/validate-specdev.mjs</Path> \
-  --stage <triage|diagnosis|grill|spec|tickets|goal-plan|implement|review|prototype|wayfinder|complete> \
+  --stage <triage|diagnosis|grill|eli5|spec|tickets|goal-plan|implement|review|prototype|wayfinder|complete> \
   <Path>{roots.state}/specdev/changes/{change}</Path>
 ```
 

@@ -61,3 +61,5 @@ __pycache__/
 .venv/
 venv/
 .pnpm-store/
+.run/
+.codex/config.toml

@@ -1,113 +1,116 @@
-# NAMEWTA 上游跟随热点清单
+# NAMEWTA 上游能力映射
 
-本表只记录相对上游必须保留的改造面。同步 `6.X` / `6.X-Vue` 到产品 `main` 时，先看重叠文件，再解冲突；通用缺陷回馈上游，业务特有逻辑留在 NAMEWTA。
+本地产品架构是合并目标，上游仓库是能力发现来源。评估 `6.X` 或 `6.X-Vue` 时，先说明上游增加或优化了什么能力，再把该能力映射到本地 app、domain、web-domain、platform、adapter、web-kit 或 tooling 边界；不得以恢复旧目录、复制同名文件或保持路径同构作为完成标准。
 
-分支模型：`main` = 产品；后端 `6.X`、前端 `6.X-Vue` = 上游纯镜像（只允许 fast-forward）。基线标签 `namewta-base-upstream-6x` / `namewta-base-upstream-6x-vue` 不要移动。
+本文件是长期治理账本，不记录某次同步的临时工作树状态。当前同步指针见 [upstream-sync-state.json](./upstream-sync-state.json)，每次实际差异、冲突和结果保存在对应日期目录的 `state.json`、`diff_report.md` 与 `conflict_report.md`。
 
-本文件只维护长期定制约束和复核热点，不记录某次同步的 SHA、工作树状态、文件差异、冲突或结论。当前同步指针见 `docs/upstream/upstream-sync-state.json`；每次实际状态、差异与冲突以对应 `docs/upstream/<change>/state.json`、`diff_report.md` 和 `conflict_report.md` 为准。
-
-## 同步前重叠面
-
-```bash
-# 后端
-git log --oneline main..upstream/6.X
-git diff --name-status "$(git merge-base main upstream/6.X)" upstream/6.X
-
-# 前端
-git log --oneline main..upstream/6.X-Vue
-git diff --name-status "$(git merge-base main upstream/6.X-Vue)" upstream/6.X-Vue
-```
-
-## 后端（ruoyi-vue-plus-namewta）
-
-| 区域 | 目的 | 关键文件 | 合并后必须保持的约束 |
-|------|------|----------|----------------------|
-| UserType | 登录域来自 Client 关联的动态类型，而不是用户单值字段或枚举 | 已删 `enums/UserType.java`；`LoginUser.java`；`LoginHelper.java`；`SysUserType*` | 禁止恢复 `sys_user.user_type` / `UserType` 枚举（`ruoyi-workflow` 的 warm-flow `UserType` 除外） |
-| 登录准入 | 用户必须拥有当前 Client 要求的登录域 | `AuthController.java`；`IAuthStrategy.java`；五个 `*AuthStrategy`；`ClientUserTypeAccessService` | 五个策略都走准入；Token extra 必须写 `clientPk`（`sys_client.id`） |
-| 注册 | 后端按 Client 开关校验，不再读全局配置 | `RegisterBody.java`；`AuthController.java`；`SysRegisterService.java` | 使用 `client.registerEnabled`（Java/JSON **boolean**，库列为 tinyint）；后端可选接收 `phoneNumber`/`email`，非空时校验格式和唯一性，当前公开前端仍只提交核心字段；禁止全局注册开关；已存在账号只提示登录，不隐式追加登录域 |
-| Client 公开上下文 | 登录/注册页拉取是否开放注册 | `AuthController.clientContext`；`AuthClientContextVo.java` | `GET /auth/client/context` 接受 query `clientId` **或** header `clientid`（OAuth 字符串）；两个开关必须是 JSON Boolean，缺失或类型错误时前端禁止登录/注册；不得泄露 secret / IP 白名单 / accessPath |
-| 权限 | 有效权限 = `userId + clientId` | `PermissionService.java`；`SysPermissionServiceImpl.java`；`SaPermissionImpl.java`；`SysLoginService.java`；`SysRoleMapper.java`；`SysRoleServiceImpl.java` | 所有管理与授权角色读取必须带 `sys_client.id`；禁止 userId-only/跨 Client 兜底；无 Token 上下文返回空权限；配置了但无效的默认角色必须失败关闭，默认角色运行时合并且**不写入** `sys_user_role` |
-| 动态路由 | 菜单与路由不得跨 Client，含超管 | `SysMenuMapper.java`；`SysMenuServiceImpl.java`；`SysMenuController.java` | `getRouters` 缺 `clientPk` 必须拒绝，不得返回全局菜单；超管旁路也只查当前 Client |
-| 会话 | 当前 Token 必须带 Client 主键和登录域 | `LoginUser.java`；`LoginHelper.java`；`IAuthStrategy.buildLoginParameter`；`ClientSessionService` | `LoginHelper.getUserType()` 只读 Token extra，不从 LoginUser/loginId 推断；用户全局禁用或删除时先捕获其登录域再逐域清 Token；extra `clientPk` 与 RBAC `clientId` 都是 Long PK，登录体 `clientId` 仍是 OAuth 字符串 |
-| 下拉别名 | 前端 options 契约 | `SysUserTypeController.java` | 保留 `GET /system/userType/options`（`optionselect` 别名） |
-| SQL | 旁路增量，不改上游脚本 | `script/sql/namewta/{DDL.sql,DSL.sql,README.md}` | 初始化顺序：`ry_vue.sql` → `DDL.sql` → `DSL.sql`；两个 SQL 文件只允许末尾追加，不修改 `script/sql/ry_vue.sql` |
-
-## 前端（plus-ui-namewta）
-
-| 区域 | 目的 | 关键文件 | 合并后必须保持的约束 |
-|------|------|----------|----------------------|
-| 认证页 | 不硬编码 UserType，按严格 Client 上下文开放操作 | `login.vue`；`register.vue`；`api/login.ts`；`api/types.ts` | 登录+注册都调用 `/auth/client/context`；只接受精确 Boolean，加载中/失败/畸形时禁止提交；`RegisterForm` 无 `userType`；当前公开前端只提交 `clientId`/`username`/`password`/`captcha` |
-| 权限管理 | Client 不可跨域关联角色/菜单/用户 | `views/system/{client,user,role,menu}/index.vue`、`views/system/user/authRole.vue` 及对应 `api/system/*` | 角色请求必须显式携带 Long Client PK；编辑用户按其登录域对应的启用 Client 顺序加载 scoped 角色上下文，完整成功后才打开；禁止跨 Client 并集查询或无 Client 授权 |
-| 登录域管理 | 动态登录域 CRUD | `api/system/userType/`；`views/system/userType/index.vue` | 下拉走 `/system/userType/options`；编码创建后只读 |
-| 动态路由 | 后端已按 Client 过滤 | `permission` store / `loadView` | 前端继续 `addRoute`，不再做跨 Client 菜单过滤 |
-| 多 APP 部署 | 同一 `main` + 环境变量 | `.env*` | 用 `VITE_APP_CLIENT_ID`（OAuth 字符串）区分 APP，不为每个 APP 长期分叉 |
-
-### 37 个上游核心热点
-
-以下文件既属于上游已有路径，又被产品 `main` 修改；同步时必须逐项检查，而不能只依赖自动合并。清单对应 CR-002 固定点，可用下方命令重新计算并在数量变化时更新本节。
+## 1. 决策流程
 
 ```text
-.claude/agents/frontend-api-types.md
-.claude/agents/frontend-crud-coding.md
-.claude/agents/frontend-crud-page.md
-.claude/agents/frontend-page-enhancement.md
-.codex/skills/frontend-crud-coding/SKILL.md
-.codex/skills/frontend-crud-coding/agents/openai.yaml
-.codex/skills/frontend-crud-coding/references/examples.md
-.codex/skills/frontend-crud-coding/references/frontend.md
-src/api/login.ts
-src/api/system/client/index.ts
-src/api/system/client/types.ts
-src/api/system/menu/index.ts
-src/api/system/menu/types.ts
-src/api/system/notice/index.ts
-src/api/system/oss/index.ts
-src/api/system/oss/types.ts
-src/api/system/role/types.ts
-src/api/system/user/index.ts
-src/api/system/user/types.ts
-src/api/types.ts
-src/components/Editor/index.vue
-src/components/FileUpload/index.vue
-src/components/ImageUpload/index.vue
-src/components/RoleSelect/index.vue
-src/plugins/download.ts
-src/utils/ossContent.ts
-src/views/login.vue
-src/views/register.vue
-src/views/system/client/index.vue
-src/views/system/menu/index.vue
-src/views/system/notice/index.vue
-src/views/system/oss/index.vue
-src/views/system/role/index.vue
-src/views/system/user/authRole.vue
-src/views/system/user/index.vue
-src/views/system/user/profile/userAvatar.vue
-src/views/system/user/view.vue
+upstream source
+  -> capability observation
+  -> local owner boundary
+  -> invariant and security review
+  -> adopt | adapt -> implementation -> verification -> completed
+  -> reject -> rationale -> rejected
+  -> defer -> owner + risk treatment + review trigger -> deferred -> re-triage
 ```
 
-```bash
-# 全量产品差异；再按“路径是否存在于 upstream/6.X-Vue”筛出上游热点。
-git diff --name-only upstream/6.X-Vue...main | sort
-git diff --name-only upstream/6.X-Vue...main \
-  | while IFS= read -r changed_file; do git cat-file -e "upstream/6.X-Vue:$changed_file" 2>/dev/null && printf '%s\n' "$changed_file"; done \
-  | sort
-```
+1. `source` 必须能定位到上游仓库、分支/tag 和 commit、PR、release note 或安全公告；本地基线记录必须写明本地 commit。
+2. `capability` 描述行为、合同或风险修复，不写“同步某文件”。路径只能作为发现线索或 evidence。
+3. `local_owner_boundary` 必须指向一个本地责任边界；跨边界能力要拆分记录或明确主 owner 与协作边界。
+4. 先写必须保持的 `invariants`，再做 decision。上游实现与本地架构不一致时，优先 `adapt`。
+5. 只有实际命令、测试、构建、人工审查或运行证据完成后才能写 `status=completed`。
 
-新增行为优先落入 fork 自有的 hooks/adapters，例如 `src/hooks/oss/**`、`src/utils/oss/**`，共享上传组件仅保留接线。触及上述 37 个文件时，评审必须同时核对本文件中的 Client、权限、OSS 和严格 Boolean 合同。
+## 2. 记录合同
 
-## 字段别名（容易在合并时写错）
+每条记录必须包含以下字段，字段名是稳定合同：
 
-| 场景 | 字段 | 含义 |
-|------|------|------|
-| 登录/注册请求体、`clientid` 头 | `clientId` | OAuth 客户端标识字符串 |
-| Token extra、角色/菜单 JSON、RBAC 查询 | `clientId` / `clientPk` | `sys_client.id` Long 主键 |
-| Client.registerEnabled | JSON boolean | 库列 tinyint；不要再当成 `'0'`/`'1'` 字符 |
+| 字段 | 必填 | 合同 |
+|---|---|---|
+| `source` | 是 | 可定位的上游来源；baseline 可使用本地 commit，但必须明确标注 `baseline` |
+| `capability` | 是 | 行为、接口、修复或维护能力，不是文件列表 |
+| `priority` | 是 | `security-critical`、`high`、`normal`、`low` |
+| `local_owner_boundary` | 是 | `apps/*`、`packages/domains/*`、`packages/web-domains/*`、`packages/platform/*`、`packages/adapters/*`、`packages/web-kit/*`、`tooling/*` 或后端模块 |
+| `invariants` | 是 | 吸收后仍必须成立的本地合同和禁止项 |
+| `decision` | 是 | `adopt`、`adapt`、`reject`、`defer` |
+| `status` | 是 | `observed`、`triaged`、`planned`、`in-progress`、`blocked`、`deferred`、`completed`、`rejected` |
+| `actual_verification` | 是 | 已执行的真实验证；未执行时写 `not-run` 和原因，不能写计划命令冒充结果 |
+| `evidence` | 是 | commit、测试报告、Evidence、issue、PR 或同步报告的可追踪位置 |
+| `issue_change` | 是 | 承载实现/风险接受的 issue、change 或 ticket；没有则显式写 `unassigned` |
 
-## 未完成业务入口
+### 完成与安全门禁
 
-`admin-console`、`data-collection`、`data-competition`、`token-relay` 四个前端占位组件已退役。后三个曾由 `NAMEWTA-BASE-DSL-002` 创建的菜单通过 append-only `NAMEWTA-BASE-DSL-003` 删除默认角色关系并设置 `visible/status='1'`；只有独立业务 change 完成合同、页面和验收后才能前向恢复。`admin-console` 没有对应 SQL 菜单，不需要数据迁移。
+- `status=completed` 时，十个字段都必须非空，`actual_verification` 不得为 `not-run`，`evidence` 必须可定位到真实结果，`issue_change` 不得为 `unassigned`。
+- `decision=reject` 必须写兼容性、产品边界或风险依据，最终状态使用 `rejected`。
+- `decision=defer` 只允许使用 `status=deferred`，并必须写 owner、复审日期/触发条件和当前风险处置；`blocked` 表示尚不能完成决策或执行，不是 `defer` 的终态别名。
+- `priority=security-critical` 不允许静默 `defer`。必须在同一记录中给出威胁影响、临时缓解、责任人、截止时间和追踪 issue/change；缺任一项即为 Gate 失败。
+- source、owner、invariants 或 evidence 缺失的记录不能进入 `planned` 或 `completed`。
 
-## 初始化注意
+### 完整样例
 
-全新库：`ry_vue.sql` → `namewta/DDL.sql` → `namewta/DSL.sql`。已执行旧编号脚本的环境不要重放对应基线块；upgrade 环境按未执行的变更标识顺序补跑。`NAMEWTA-BASE-DSL-003` 会前向下线三个未实现用户端菜单，不应绕过它重放 `NAMEWTA-BASE-DSL-002`。后续结构和数据变化分别追加到两个文件末尾。
+| source | capability | priority | local_owner_boundary | invariants | decision | status | actual_verification | evidence | issue_change |
+|---|---|---|---|---|---|---|---|---|---|
+| `baseline: plus-ui main@22c10d2` | OpenAPI transport 漂移检查 | high | `tooling/openapi` + `packages/api-contracts` + `packages/domains/* mapper` | 生成 transport 不替代 domain model；source/provenance 原子激活；错误不泄露凭据 | adapt | completed | 30 workspace frozen install；OpenAPI 7/7；architecture 30/0 + 94/94；lint/type/unit；双 App build | [T-16 Evidence](../../speculo/.speculo/specdev/changes/2026-08-25-plus-ui-multi-app-domain-architecture/evidence/T-16.md) | `2026-08-25-plus-ui-multi-app-domain-architecture/T-16` |
+
+### 无效样例
+
+下面记录缺 source、owner、invariants、实际验证和 evidence，且把 `decision=defer` 错配为 `status=blocked`。它是反例，不能作为有效记录保存：
+
+| source | capability | priority | local_owner_boundary | invariants | decision | status | actual_verification | evidence | issue_change |
+|---|---|---|---|---|---|---|---|---|---|
+| 缺失 | 修复认证漏洞 | security-critical | 缺失 | 缺失 | defer | blocked | not-run：无环境 | 缺失 | unassigned |
+
+## 3. 本地边界索引
+
+| 层级 | 本地 owner | 接收的上游能力 | 必须保持的边界 |
+|---|---|---|---|
+| App | `apps/admin-web`、`apps/client-web` | 布局、品牌、Client 选择、终端组合、宿主运行时 | App 显式选择 domain/web-domain；不同 Client 不共享会话、菜单或隐式注册 |
+| Domain | `packages/domains/{identity-access,system-admin,workflow,demo,ai,devtools,operations}` | 后端 API、业务模型、use case、校验、权限元数据 | headless；不依赖 Vue/DOM/具体 adapter；generated transport 必须映射到 domain model |
+| Web-domain | `packages/web-domains/{identity-access,system-admin,workflow,demo,ai,devtools,operations}` | 页面、交互、manifest、Web-only hooks/components/lang | 不拥有 App 布局/品牌；不 deep-import domain；浏览器副作用由 runtime port 注入 |
+| Platform | `packages/platform/{contracts,auth,http,permission,app-runtime}` | 跨领域端口、认证协调、HTTP 错误、权限求值、manifest registry | 不反向依赖 domain/App；不实现 Axios、Router、DOM 或业务 endpoint |
+| Adapter | `packages/adapters/{axios-browser,storage-browser,crypto-browser}` | 浏览器 HTTP、存储、加解密实现 | 只实现 platform port；不拥有业务规则；Taro adapter 未激活前保持 README-only |
+| Web kit | `packages/web-kit/{design-tokens,shell-element,ui-element}` | 跨领域 Web 组件、壳层机制、设计 token | 不拥有领域流程、后端 API、App 品牌或路由选择 |
+| Contracts | `packages/api-contracts` | 固定 OpenAPI 生成 transport | 不依赖 domain/App；生成物只读；source/provenance 可审计 |
+| Tooling | `tooling/{architecture,openapi}` | 依赖边界 Ratchet、合同生成/漂移检查 | 工具不进入产品运行时；例外必须精确、可反向测试 |
+| Terminal placeholders | `apps/{mobile-web,miniapp-taro}`、`packages/adapters/{taro-request,taro-storage}` | 未来移动端/小程序能力发现 | 当前 README-only、无 package manifest；激活必须另立 change 与终端 Gate |
+
+## 4. 当前前端基线
+
+以下记录描述 `plus-ui-namewta main@22c10d2` 的本地权威能力边界。它们是以后评估上游差异的目标，不要求上游路径与本地路径一致。
+
+| source | capability | priority | local_owner_boundary | invariants | decision | status | actual_verification | evidence | issue_change |
+|---|---|---|---|---|---|---|---|---|---|
+| `baseline: main@22c10d2` | 双 App 组合与独立 Client 上下文 | high | `apps/admin-web`、`apps/client-web` | 显式选择 manifests；Client 会话/菜单隔离；根仓库只编排 workspace | adapt | completed | 双 App build；Playwright 47/47 | [T-15 Evidence](../../speculo/.speculo/specdev/changes/2026-08-25-plus-ui-multi-app-domain-architecture/evidence/T-15.md) | `2026-08-25-plus-ui-multi-app-domain-architecture/T-06,T-15` |
+| `baseline: main@22c10d2` | 认证、注册、会话、动态路由与权限 | security-critical | `packages/domains/identity-access` + `packages/web-domains/identity-access` | Client context 严格 Boolean；401 单飞；菜单只信后端 Client 范围；无跨 Client fallback | adapt | completed | auth/router unit；多 Client/401 E2E | [T-07 Evidence](../../speculo/.speculo/specdev/changes/2026-08-25-plus-ui-multi-app-domain-architecture/evidence/T-07.md) | `2026-08-25-plus-ui-multi-app-domain-architecture/T-07` |
+| `baseline: main@22c10d2` | 用户、Client、角色、菜单、组织与资源治理 | high | `packages/domains/system-admin` + `packages/web-domains/system-admin` | 跨域只走 public port；OSS URL 在 domain 校验；admin 显式选择、client 不选择 | adapt | completed | transport/manifest tests；双 App Gate | [T-10](../../speculo/.speculo/specdev/changes/2026-08-25-plus-ui-multi-app-domain-architecture/evidence/T-10.md)、[T-11](../../speculo/.speculo/specdev/changes/2026-08-25-plus-ui-multi-app-domain-architecture/evidence/T-11.md) | `2026-08-25-plus-ui-multi-app-domain-architecture/T-10,T-11` |
+| `baseline: main@22c10d2` | 流程定义、任务、实例、请假与用户选择 | high | `packages/domains/workflow` + `packages/web-domains/workflow` | system user 只经 public query port；宿主上传/导航由 runtime 注入；任务 transport 字段级投影 | adapt | completed | workflow unit/API；Playwright 11/11；Gate H 47/47 | [T-09 Evidence](../../speculo/.speculo/specdev/changes/2026-08-25-plus-ui-multi-app-domain-architecture/evidence/T-09.md) | `2026-08-25-plus-ui-multi-app-domain-architecture/T-08,T-09` |
+| `baseline: main@22c10d2` | Demo table/tree 领域试点 | normal | `packages/domains/demo` + `packages/web-domains/demo` | domain headless；manifest 显式注册；generated transport 投影 | adapt | completed | manifest/transport/unit；双 App build | [T-05 Evidence](../../speculo/.speculo/specdev/changes/2026-08-25-plus-ui-multi-app-domain-architecture/evidence/T-05.md) | `2026-08-25-plus-ui-multi-app-domain-architecture/T-05` |
+| `baseline: main@22c10d2` | Snail AI 注册与嵌入聊天生命周期 | high | `packages/domains/ai` + `packages/web-domains/ai` | 不虚构已删除的流式协议；credential URL 清理；不记录 token/prompt | adapt | completed | lifecycle/security unit；双 App build | [T-12 Evidence](../../speculo/.speculo/specdev/changes/2026-08-25-plus-ui-multi-app-domain-architecture/evidence/T-12.md) | `2026-08-25-plus-ui-multi-app-domain-architecture/T-12` |
+| `baseline: main@22c10d2` | 代码生成与开发工具 | high | `packages/domains/devtools` + `packages/web-domains/devtools` | 复用 system 公开合同；下载/ZIP 错误显式；client 不注册 | adapt | completed | unit/API；targeted 5/5；full E2E 47/47 | [T-13 Evidence](../../speculo/.speculo/specdev/changes/2026-08-25-plus-ui-multi-app-domain-architecture/evidence/T-13.md) | `2026-08-25-plus-ui-multi-app-domain-architecture/T-13` |
+| `baseline: main@22c10d2` | 监控、日志、通知与外部运维入口 | security-critical | `packages/domains/operations` + `packages/web-domains/operations` | URL/权限 fail-closed；iframe/download 只消费批准 intent；client 不注册 | adapt | completed | URL/permission/API unit；strict unknown E2E；双 build | [T-14 Evidence](../../speculo/.speculo/specdev/changes/2026-08-25-plus-ui-multi-app-domain-architecture/evidence/T-14.md) | `2026-08-25-plus-ui-multi-app-domain-architecture/T-14` |
+| `baseline: main@22c10d2` | 跨领域 auth/http/permission/manifest contracts | security-critical | `packages/platform/*` | 无 domain/App 反向依赖；无浏览器全局；权限不二次过滤服务端菜单 | adapt | completed | architecture 30/0 + 94/94；platform unit；Gate H E2E | [T-03](../../speculo/.speculo/specdev/changes/2026-08-25-plus-ui-multi-app-domain-architecture/evidence/T-03.md)、[T-15](../../speculo/.speculo/specdev/changes/2026-08-25-plus-ui-multi-app-domain-architecture/evidence/T-15.md) | `2026-08-25-plus-ui-multi-app-domain-architecture/T-03,T-04,T-07,T-15` |
+| `baseline: main@22c10d2` | Axios、storage、crypto 浏览器实现 | security-critical | `packages/adapters/axios-browser`、`packages/adapters/storage-browser`、`packages/adapters/crypto-browser` | 只实现注入端口；namespace 隔离；密钥/credential 不进入日志；不承载业务规则 | adapt | completed | adapter unit/security；type/lint；双 App Gate | [T-04 Evidence](../../speculo/.speculo/specdev/changes/2026-08-25-plus-ui-multi-app-domain-architecture/evidence/T-04.md) | `2026-08-25-plus-ui-multi-app-domain-architecture/T-04,T-07` |
+| `baseline: main@22c10d2` | 共享 Web shell、组件机制与设计 token | normal | `packages/web-kit/*` | App 保留品牌/布局选择；web-kit 不拥有业务、路由或 backend API | adapt | completed | component/unit；architecture；双 App visual/E2E | [T-06 Evidence](../../speculo/.speculo/specdev/changes/2026-08-25-plus-ui-multi-app-domain-architecture/evidence/T-06.md) | `2026-08-25-plus-ui-multi-app-domain-architecture/T-06,T-15` |
+| `baseline: main@22c10d2` | workspace 边界 Ratchet 与 OpenAPI bundle drift | high | `tooling/architecture`、`tooling/openapi`、`packages/api-contracts` | 工具不进 runtime；例外精确；bundle 绑定 raw+provenance；domain model 不被生成物替代 | adapt | completed | OpenAPI 7/7；architecture 30/0 + 94/94；full Gate I | [T-16 Evidence](../../speculo/.speculo/specdev/changes/2026-08-25-plus-ui-multi-app-domain-architecture/evidence/T-16.md) | `2026-08-25-plus-ui-multi-app-domain-architecture/T-03,T-16` |
+
+## 5. 后端协同基线
+
+这些能力不是前端路径迁移目标，但任何认证、权限、动态路由或 API 上游变更都必须同时复核：
+
+| source | capability | priority | local_owner_boundary | invariants | decision | status | actual_verification | evidence | issue_change |
+|---|---|---|---|---|---|---|---|---|---|
+| `baseline: backend product main` | Client 登录域、注册准入、Token 与会话 | security-critical | `ruoyi-admin` + `ruoyi-system` auth/session | 登录体 `clientId` 是 OAuth 字符串；Token `clientPk` 与 RBAC `clientId` 是 Long PK；五类登录策略都做 Client 准入；无 userId-only fallback | adapt | observed | not-run：T17 仅固化既有维护合同 | [latest sync report](./2026-08-24_current-upstream-merge-backfill/diff_report.md) | `unassigned` |
+| `baseline: backend product main` | Client-scoped 角色、菜单与动态路由 | security-critical | `ruoyi-system` permission/menu | 超管也只查询当前 Client；缺 Client 上下文 fail-closed；默认角色运行时合并且不写 `sys_user_role` | adapt | observed | not-run：T17 不修改后端 | [latest sync report](./2026-08-24_current-upstream-merge-backfill/diff_report.md) | `unassigned` |
+| `baseline: backend product main` | NAMEWTA 增量 SQL | high | `script/sql/namewta/{DDL.sql,DML.sql,README.md}` | 初始化顺序 `ry_vue.sql -> DDL.sql -> DML.sql`；两个本地 SQL 只末尾追加；不改上游 `ry_vue.sql` | adapt | observed | not-run：T17 不执行数据库迁移 | [latest sync report](./2026-08-24_current-upstream-merge-backfill/diff_report.md) | `unassigned` |
+
+## 6. 每次上游评估
+
+1. 只读更新镜像和同步报告，先从 release notes、commits 与 diff 提取 capability。
+2. 在本文件新增记录或更新已有记录；不要恢复已退役的旧根 `src/**` 热点清单。
+3. 按边界索引定位 owner，写 invariants、priority 和 decision。安全项先走安全门禁。
+4. `adopt/adapt` 必须进入独立 issue/change；实现仍使用来源 worktree、双轴审查和候选集成。
+5. 执行与风险相称的 architecture、lint、typecheck、unit、build、E2E 或后端测试，把真实结果写入 `actual_verification` 和 `evidence`。
+6. 最后复核 completed 字段完整性；同步 SHA、冲突和报告仍写入日期目录，不把临时状态混入本账本。
+
+分支模型保持：产品在 `main`；后端 `6.X`、前端 `6.X-Vue` 是只允许 fast-forward 的上游镜像；基线标签 `namewta-base-upstream-6x` / `namewta-base-upstream-6x-vue` 不移动。

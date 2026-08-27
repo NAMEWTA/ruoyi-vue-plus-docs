@@ -27,6 +27,9 @@ _Avoid_: 所有共享代码、identity-access 领域
 **应用组合清单（App Composition Manifest）**：由 App 显式声明启用哪些领域、Web 领域、平台适配器和壳层能力的编译期组合合同。
 _Avoid_: 运行时插件市场、服务端菜单树
 
+**应用组合层（Application Composition Layer）**：位于 `apps/<app>/src/application`，负责实例化该 App 选择的 domain service、终端 HTTP/会话/权限适配和宿主行为；不重新声明 API 或业务模型。
+_Avoid_: `src/api` 转发门面、共享 domain 实现、另一个 App 的运行时单例
+
 **WebDomainManifest**：Web 领域包的公开注册合同，向 App 提供 component key 到懒加载视图的映射，以及该领域的路由、消息和权限相关贡献。
 _Avoid_: Vite 全仓隐式 glob、后端 RouterVo
 
@@ -39,8 +42,8 @@ _Avoid_: 未发布 npm 包、运行时远程模块
 **占位目录（Placeholder Directory）**：只用 README 固化未来边界、依赖规则和激活条件，但尚不声明为可构建包的目录。
 _Avoid_: 空 package、已实现终端
 
-**兼容入口（Compatibility Entry）**：迁移期间继续承载现有单体 `src` 构建和运行的临时入口；只有替代路径通过对应行为验证后才能删除。
-_Avoid_: 永久双写层、新架构公共 API
+**兼容入口（Compatibility Entry，历史术语）**：迁移期间曾用于承载旧单体调用方的临时入口；2026-08-27 已在 Admin 零兼容收口中删除，不再是允许新增的架构元素。
+_Avoid_: 恢复 `src/api`、永久双写层、新架构公共 API
 
 **选择性上游吸收（Selective Upstream Adoption）**：评估上游新增能力、修复和优化后，将其映射到本地架构边界进行增量实现，而不要求保持目录同构或整包合并。
 _Avoid_: 放弃上游跟踪、无审查复制

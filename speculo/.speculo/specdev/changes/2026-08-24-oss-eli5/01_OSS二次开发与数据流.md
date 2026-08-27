@@ -249,7 +249,7 @@ DELETE /resource/oss/uploads/{token}
 | `oss/exception/OssLifecycleError.java`、`OssLifecycleException.java` | 有引用、删除中、对象不存在等稳定错误。 |
 | `SysOssController.java` | 移除旧字节上传/下载接口，增加管理面 `/{ossId}/download-url`。 |
 | `ISysOssService.java`、`SysOssServiceImpl.java` | 删除旧浏览器字节代理逻辑，接入生命周期管理器。 |
-| `script/sql/namewta/DDL.sql`、`DSL.sql` | 给 `sys_oss` 增加 TEMP/过期/删除状态，新增 `sys_oss_ref` 及索引；不回写 upstream 的 `ry_vue.sql`。 |
+| `script/sql/namewta/DDL.sql`、`DML.sql` | 给 `sys_oss` 增加 TEMP/过期/删除状态，新增 `sys_oss_ref` 及索引；不回写 upstream 的 `ry_vue.sql`。 |
 
 业务引用不是访问权限。`sys_oss_ref` 只回答“谁在使用它、能不能清理”，不能回答“当前用户能不能下载它”。
 

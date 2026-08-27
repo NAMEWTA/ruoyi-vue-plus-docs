@@ -179,3 +179,19 @@
 - **约束或不变量：** 每个迁移波次至少通过适用的 lint、typecheck、unit、E2E、build；新架构边界检查按基线 Ratchet 启用。
 - **后续：** 下一 Work 为 `<Path>{roots.workflows}/specdev/S-spec/S-spec.md</Path>`，不得自动实施产品代码。
 - **替代/被替代：** 无
+
+## LOG-013 — 2026-08-27T16:35:54+0800 — Admin 零兼容门面收口
+- **设计树节点：** D-013
+- **轮次与依赖：** contract follow-up / D-006, D-007, D-008, D-010
+- **状态：** implemented
+- **问题：** 基座完成 domain / web-domain 迁移后，Admin App 是否继续保留 `src/api`、领域页面 wrapper、全局 `$auth` 插件和旧工具兼容入口。
+- **事实与来源：** 用户明确确认当前项目是新基座，无需为旧调用方保留兼容；实施前 Admin 仍有 70 余个 API 转发文件和大量领域页面 wrapper。`USER-DECISION:2026-08-27`；`CODE:<Path>plus-ui-namewta/apps/admin-web/src/application/services.ts</Path>`。
+- **选项：** 长期保留兼容门面；按 App 继续复制 API；迁移消费者后一次性删除旧入口并由架构规则禁止回流。
+- **推荐：** 采用零兼容收口，App 只保留服务组合、终端 HTTP/会话/权限装配和宿主行为，正式 API、模型与领域页面分别由 domain 和 web-domain 提供。
+- **结论：** 已删除 Admin `src/api`、`src/plugins`、领域页面 wrapper、旧流程组件及无调用工具；新增 `application/services.ts`、`application/http.ts`、`application/session.ts`、`application/access.ts` 和 `application/host/*`；新增 `app-api-facade` 架构规则，阻止已激活 App 重建 `src/api`。
+- **原因：** 基座没有需要保护的旧消费者，继续保留转发层只会形成双入口、重复模型和错误的新 App 模板。
+- **影响工件：** frontend main `735a8a9` / Skill / ELI5 / LOG
+- **约束或不变量：** 新 App 直接在 `src/application` 显式组合所需 domain service；不得复制 Admin API、模型或领域页面；401、Client 上下文、动态菜单与权限仍须保持既有安全合同。
+- **验证：** architecture check 30 包零违规；architecture test 95/95；全仓 lint、typecheck、unit、production build 通过；Playwright E2E 47/47。
+- **后续：** 新 App 以正式 domain / web-domain 公共入口组合能力；上游变化按本地边界选择性吸收。
+- **替代/被替代：** 取代 LOG-010 中“现有 `src` 在兼容期继续可构建”和“一个波次未验证前不删除旧入口”的临时迁移约束；LOG-010 其余分波验证原则继续有效。

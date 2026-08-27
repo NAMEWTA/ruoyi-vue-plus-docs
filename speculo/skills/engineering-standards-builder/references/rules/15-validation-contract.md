@@ -17,6 +17,8 @@ node <skill-root>/scripts/validate-generated-skill.mjs \
 - 所有相对 Markdown 引用可解析；
 - 没有未替换模板变量；
 - project profile、module map、decisions/exceptions 存在；
+- `rules/files-and-naming.md` 与 `rules/documentation-and-comments.md` 存在并由入口路由；
+- 检测到 TypeScript/JavaScript 时存在 `typescript/code-organization-and-comments.md`；
 - 每条 MUST/SHOULD 规则有 scope、source 和 verification；
 - 未使用语言/框架目录没有生成；
 - compatibility wrapper 仅一句且单向；
@@ -34,6 +36,7 @@ node <skill-root>/scripts/validate-generated-skill.mjs \
 - 用户决定和仍有效例外被保留；
 - 没有将 Builder 默认伪装为仓库事实；
 - 不存在通用规则中的语言专属目录硬编码。
+- TypeScript/Vue 命名按文件角色和 scope 收窄，不以单一大小写覆盖全部文件；
 
 ## 项目门禁
 

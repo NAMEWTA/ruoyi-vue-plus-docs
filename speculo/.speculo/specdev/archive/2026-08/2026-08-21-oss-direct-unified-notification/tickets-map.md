@@ -114,7 +114,7 @@ T-19 [reference reconcile expand] ─┬─→ T-20 [system owners] ───┐
 - T-01 至 T-18 的既有 Goal Plan 已执行完成；它不包含 T-19 至 T-22，不能作为新 Ticket 的编排依据。
 - T-19 至 T-22 包含公共 API、两个业务 module、expand-migrate-contract 和高风险数据完整性门禁，进入实现前必须重新运行 `<Path>{roots.workflows}/specdev/P-goal-plan/P-goal-plan.md</Path>`。
 - T-20/T-21 在 DAG 和生产可写路径上可并行；实际 writer 上限、workspace 与 direct-parent/candidate 策略由新 Goal Plan 决定。
-- T-02 是 `DDL.sql/DSL.sql` 唯一 owner；T-06 是 common parent/BOM 唯一 owner。
+- T-02 是 `DDL.sql/DML.sql` 唯一 owner；T-06 是 common parent/BOM 唯一 owner。
 - T-06 -> T-07 -> T-08 的 common-notify，以及 T-03 -> T-04 -> T-05 的 OSS 重叠路径通过真实依赖串行移交，不允许并行写。
 - Lead 是 SpecDev 工件、父分支集成和人工验收 Evidence owner；本计划不运行 E2E 测试。
 

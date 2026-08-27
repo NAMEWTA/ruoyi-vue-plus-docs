@@ -121,7 +121,7 @@ references/rules/*
 | 识别事实 | 读取 |
 |---|---|
 | 所有项目 | `references/rules/04`～`13` 中与任务相关的文件 |
-| TypeScript/JavaScript | `references/typescript/00`～`04` |
+| TypeScript/JavaScript | `references/typescript/00`～`05` |
 | React | `references/typescript/frameworks/react.md` |
 | Vue | `references/typescript/frameworks/vue.md` |
 | 浏览器、Node、Electron | 对应 `references/typescript/runtimes/*` |

@@ -14,6 +14,13 @@ const REQUIRED_PROJECT_REFERENCES = [
   'references/project/02-decisions-and-exceptions.md',
   'references/project/review-checklist.md',
 ];
+const REQUIRED_COMMON_REFERENCES = [
+  'references/rules/files-and-naming.md',
+  'references/rules/documentation-and-comments.md',
+];
+const ADAPTER_REFERENCE_CONTRACTS = new Map([
+  ['typescript', ['references/typescript/code-organization-and-comments.md']],
+]);
 const ADAPTERS = new Set(['typescript', 'java', 'go', 'rust']);
 
 function usage() {
@@ -72,6 +79,11 @@ function markdownLinks(text) {
 }
 
 function isExternal(link) { return /^(?:[a-z]+:|#|\/\/)/i.test(link); }
+
+function isAllowedSiblingSkillTarget(projectRoot, canonicalRoot, target) {
+  const agentSkillsRoot = path.join(projectRoot, '.agents', 'skills');
+  return !isInside(canonicalRoot, target) && isInside(agentSkillsRoot, target) && path.basename(target) === 'SKILL.md';
+}
 
 async function collectTree(rootAbs) {
   const files = [];
@@ -159,9 +171,11 @@ async function main() {
     }
     const fileSet = new Set(files);
     const mainSkill = path.join(canonicalReal, 'SKILL.md');
+    let mainSkillText = '';
     if (!fileSet.has(mainSkill)) errors.push(`${CANONICAL_REL}/SKILL.md is missing`);
     else {
       const text = await readFile(mainSkill, 'utf8');
+      mainSkillText = text;
       const fm = parseFrontmatter(text);
       if (!fm) errors.push(`${CANONICAL_REL}/SKILL.md frontmatter is malformed`);
       else {
@@ -175,6 +189,11 @@ async function main() {
       const abs = path.join(canonicalReal, required);
       if (!fileSet.has(abs)) errors.push(`required generated reference is missing: ${required}`);
     }
+    for (const required of REQUIRED_COMMON_REFERENCES) {
+      const abs = path.join(canonicalReal, required);
+      if (!fileSet.has(abs)) errors.push(`required common reference is missing: ${required}`);
+      else if (!mainSkillText.includes(required)) errors.push(`required common reference is not routed from SKILL.md: ${required}`);
+    }
 
     for (const file of files.filter((item) => item.endsWith('.md'))) {
       const rel = toPosix(path.relative(canonicalReal, file));
@@ -186,7 +205,7 @@ async function main() {
         const targetPart = link.split('#')[0].split('?')[0];
         if (!targetPart) continue;
         const target = path.resolve(path.dirname(file), decodeURIComponent(targetPart));
-        if (!isInside(canonicalReal, target)) {
+        if (!isInside(canonicalReal, target) && !isAllowedSiblingSkillTarget(rootReal, canonicalReal, target)) {
           errors.push(`${rel}: link escapes canonical Skill: ${link}`);
           continue;
         }
@@ -221,6 +240,18 @@ async function main() {
     for (const adapter of detectedAdapters) {
       if (!generatedAdapters.has(adapter)) {
         const message = `detected adapter ${adapter} is missing from generated references`;
+        if (args.strict) errors.push(message); else warnings.push(message);
+      }
+    }
+    for (const [adapter, references] of ADAPTER_REFERENCE_CONTRACTS) {
+      if (!detectedAdapters.has(adapter)) continue;
+      for (const rel of references) {
+        const present = fileSet.has(path.join(canonicalReal, rel));
+        const routed = mainSkillText.includes(rel);
+        if (present && routed) continue;
+        const message = present
+          ? `detected adapter ${adapter} required reference is not routed from SKILL.md: ${rel}`
+          : `detected adapter ${adapter} is missing required reference ${rel}`;
         if (args.strict) errors.push(message); else warnings.push(message);
       }
     }

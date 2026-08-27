@@ -335,7 +335,7 @@ OSS 浏览器控制面使用现有 `R<T>` 包装，固定以下操作合同：
 
 ### 迁移要求
 
-- NAMEWTA 只在 `<Path>ruoyi-vue-plus-namewta/script/sql/namewta/DDL.sql</Path>` 和 `<Path>ruoyi-vue-plus-namewta/script/sql/namewta/DSL.sql</Path>` 末尾追加；不修改冻结的 `<Path>ruoyi-vue-plus-namewta/script/sql/ry_vue.sql</Path>`，不新增其他 SQL 文件。
+- NAMEWTA 只在 `<Path>ruoyi-vue-plus-namewta/script/sql/namewta/DDL.sql</Path>` 和 `<Path>ruoyi-vue-plus-namewta/script/sql/namewta/DML.sql</Path>` 末尾追加；不修改冻结的 `<Path>ruoyi-vue-plus-namewta/script/sql/ry_vue.sql</Path>`，不新增其他 SQL 文件。
 - DDL 追加 sys_oss 生命周期字段、三张项目自有表及索引；DSL 追加通知监控菜单、权限和必要字典数据。所有物理表/字段提供中文注释。
 - Fresh install 固定先执行 DDL 再执行 DSL；既有环境只执行本 change 新增块。必须提供已有 sys_oss 行的保守回填，使历史对象不因迁移立即成为到期 TEMP。
 - 前后端作为一次破坏性协议迁移发布；Bucket CORS 和 Lifecycle 在启用 Direct Upload 前由运维完成。

@@ -9,6 +9,7 @@
 - [模块、包与运行环境边界](02-modules-packages-and-runtime-boundaries.md)
 - [函数、异步、错误与资源](03-functions-async-errors-resources.md)
 - [测试、工具链与质量门禁](04-testing-tooling-quality-gates.md)
+- [文件、目录、命名与注释](05-files-directories-naming-and-comments.md)
 
 ## 框架
 

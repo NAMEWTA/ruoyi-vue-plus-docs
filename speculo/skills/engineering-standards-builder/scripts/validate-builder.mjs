@@ -6,6 +6,8 @@ import path from 'node:path';
 import process from 'node:process';
 import { spawnSync } from 'node:child_process';
 
+const IGNORED_DIRECTORY_NAMES = new Set(['.gradle']);
+
 function usage() {
   return `Usage: node scripts/validate-builder.mjs --root <skill-root>\n\n` +
     `Validate the builder package: identity, links, reachability, manifest, fixtures, templates and script help.\n\n` +
@@ -39,6 +41,7 @@ async function collect(rootReal) {
     entries.sort((a, b) => a.name.localeCompare(b.name, 'en'));
     directories.push({ abs: directory, rel: relDir, entries });
     for (const entry of entries) {
+      if (entry.isDirectory() && IGNORED_DIRECTORY_NAMES.has(entry.name)) continue;
       const abs = path.join(directory, entry.name);
       const rel = toPosix(path.relative(rootReal, abs));
       if (entry.isSymbolicLink()) throw new Error(`symlink is not allowed: ${rel}`);

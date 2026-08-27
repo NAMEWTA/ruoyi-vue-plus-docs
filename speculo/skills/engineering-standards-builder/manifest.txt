@@ -86,6 +86,7 @@ references/typescript/01-language-and-type-system.md
 references/typescript/02-modules-packages-and-runtime-boundaries.md
 references/typescript/03-functions-async-errors-resources.md
 references/typescript/04-testing-tooling-quality-gates.md
+references/typescript/05-files-directories-naming-and-comments.md
 references/typescript/app-types/cli.md
 references/typescript/app-types/library.md
 references/typescript/frameworks/react.md

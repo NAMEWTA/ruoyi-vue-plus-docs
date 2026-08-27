@@ -17,4 +17,10 @@ node <Path>{roots.workflows}/specdev/common/tools/validate-specdev.mjs</Path> \
 node <Path>{roots.workflows}/specdev/common/tools/validate-specdev.mjs</Path> --self-check
 ```
 
+## 运行校验器回归测试
+
+```bash
+node --test <Path>{roots.workflows}/specdev/common/tools/validate-specdev.test.mjs</Path>
+```
+
 工具只依赖 Speculo 已要求的 Node.js 运行时，不使用第三方包。返回码 `0` 表示没有阻塞性结构错误；warning 仍需人工判断。工具不替代项目测试、事实核验、设计审查或用户批准。

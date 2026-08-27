@@ -20,12 +20,15 @@ references/
   rules/
     architecture-and-boundaries.md
     files-and-naming.md
+    documentation-and-comments.md
     api-errors-resources.md
     testing.md
     security-and-data.md
     quality-gates.md
     review-and-delivery.md
-  typescript/...
+  typescript/
+    code-organization-and-comments.md
+    ...
   java/...
   go/...
   rust/...
@@ -71,8 +74,9 @@ Exception:
 
 ## 选择性生成
 
-- 通用规则按项目风险裁剪，但安全、错误、资源、测试和门禁不能被无理由删除；
+- 通用规则按项目风险裁剪，但文件/目录/命名、文档/注释、安全、错误、资源、测试和门禁不能被无理由删除；
 - TypeScript 项目才生成 `typescript/`；
+- 检测到 TypeScript/JavaScript 时必须生成 `typescript/code-organization-and-comments.md`，保存按文件角色收窄的命名、目录、测试后缀和注释规则；不得只在通用规则中写“保持一致”；
 - React/Vue 分别按模块生成，混合仓库分别限定 scope；
 - Java/Spring Boot、Go、Rust 同理；
 - 未支持语言生成通用规则与明确 fallback，不伪造专属语法规范。

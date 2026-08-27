@@ -12,11 +12,11 @@ risk: high
 blocked_by: []
 contract_ids: [AC-005, AC-008, AC-009, AC-010, AC-011, AC-025, AC-029, AC-032]
 owner: cursor-agent
-expected_changes: ["<Path>ruoyi-vue-plus-namewta/script/sql/namewta/DDL.sql</Path>", "<Path>ruoyi-vue-plus-namewta/script/sql/namewta/DSL.sql</Path>", "<Path>ruoyi-vue-plus-namewta/ruoyi-admin/src/test/java/org/dromara/test/migration/ossnotify/**</Path>"]
-writable_paths: ["<Path>ruoyi-vue-plus-namewta/script/sql/namewta/DDL.sql</Path>", "<Path>ruoyi-vue-plus-namewta/script/sql/namewta/DSL.sql</Path>", "<Path>ruoyi-vue-plus-namewta/ruoyi-admin/src/test/java/org/dromara/test/migration/ossnotify/**</Path>"]
+expected_changes: ["<Path>ruoyi-vue-plus-namewta/script/sql/namewta/DDL.sql</Path>", "<Path>ruoyi-vue-plus-namewta/script/sql/namewta/DML.sql</Path>", "<Path>ruoyi-vue-plus-namewta/ruoyi-admin/src/test/java/org/dromara/test/migration/ossnotify/**</Path>"]
+writable_paths: ["<Path>ruoyi-vue-plus-namewta/script/sql/namewta/DDL.sql</Path>", "<Path>ruoyi-vue-plus-namewta/script/sql/namewta/DML.sql</Path>", "<Path>ruoyi-vue-plus-namewta/ruoyi-admin/src/test/java/org/dromara/test/migration/ossnotify/**</Path>"]
 read_only_paths: ["<Path>ruoyi-vue-plus-namewta/script/sql/ry_vue.sql</Path>", "<Path>plus-ui-namewta/src/views/monitor/**</Path>"]
-shared_paths: ["<Path>ruoyi-vue-plus-namewta/script/sql/namewta/DDL.sql</Path>", "<Path>ruoyi-vue-plus-namewta/script/sql/namewta/DSL.sql</Path>"]
-shared_path_owners: ["<Path>ruoyi-vue-plus-namewta/script/sql/namewta/DDL.sql</Path> => T-02", "<Path>ruoyi-vue-plus-namewta/script/sql/namewta/DSL.sql</Path> => T-02"]
+shared_paths: ["<Path>ruoyi-vue-plus-namewta/script/sql/namewta/DDL.sql</Path>", "<Path>ruoyi-vue-plus-namewta/script/sql/namewta/DML.sql</Path>"]
+shared_path_owners: ["<Path>ruoyi-vue-plus-namewta/script/sql/namewta/DDL.sql</Path> => T-02", "<Path>ruoyi-vue-plus-namewta/script/sql/namewta/DML.sql</Path> => T-02"]
 ---
 
 # Ticket T-02: OSS 与通知共享持久化迁移
@@ -31,7 +31,7 @@ shared_path_owners: ["<Path>ruoyi-vue-plus-namewta/script/sql/namewta/DDL.sql</P
 - **目标：** 为 TEMP/引用和两层通知监控提供唯一增量 schema 与权限菜单基线。
 - **可观察产出：** 新旧数据库均可获得可索引生命周期字段、`sys_oss_ref`、两张 notify 表及 monitor 菜单权限；历史 OSS 不会被误清理。
 - **来源：** `ADR-005`、`ADR-008`、工程 SQL 规范、`AC-005/008/009/010/011/025/029/032`。
-- **当前事实：** NAMEWTA 数据库改动只能追加到 `<Path>ruoyi-vue-plus-namewta/script/sql/namewta/DDL.sql</Path>` 与 `DSL.sql`。
+- **当前事实：** NAMEWTA 数据库改动只能追加到 `<Path>ruoyi-vue-plus-namewta/script/sql/namewta/DDL.sql</Path>` 与 `DML.sql`。
 - **Planning Depth 原因：** schema、历史数据回填和权限菜单是共享迁移，错误可能不可逆删除业务文件或暴露监控功能。
 
 ## 2. 决策状态
@@ -63,7 +63,7 @@ shared_path_owners: ["<Path>ruoyi-vue-plus-namewta/script/sql/namewta/DDL.sql</P
 
 ## 5. 实现契约
 
-- **入口或接缝：** NAMEWTA `DDL.sql`、`DSL.sql` 与 MySQL 元数据查询。
+- **入口或接缝：** NAMEWTA `DDL.sql`、`DML.sql` 与 MySQL 元数据查询。
 - **输入与输出：** 现有库或新库 -> 完整 schema、索引、注释、回填和菜单权限。
 - **公共接口变化：** 数据库 schema 与动态路由/权限键新增。
 - **不变量：** 历史 sys_oss 不成为到期 TEMP；ref_type 是表名而非 `contract` 等领域别名；无多态外键。

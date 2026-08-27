@@ -3,10 +3,78 @@
   "workflow": "specdev",
   "active": [
     {
-      "change": "2026-08-24-current-version-vs-upstream-eli5",
+      "change": "2026-08-24-login-register-client-dynamic-routing-eli5",
       "current_work": null,
       "works_run": [
         "specdev/eli5"
+      ],
+      "claimed_investigations": []
+    },
+    {
+      "change": "2026-08-24-notify-eli5",
+      "current_work": null,
+      "works_run": [
+        "specdev/eli5"
+      ],
+      "claimed_investigations": []
+    },
+    {
+      "change": "2026-08-24-oss-eli5",
+      "current_work": null,
+      "works_run": [
+        "specdev/eli5"
+      ],
+      "claimed_investigations": []
+    },
+    {
+      "change": "2026-08-25-ruoyi-ai-person-archive-eli5",
+      "current_work": null,
+      "works_run": [
+        "specdev/eli5"
+      ],
+      "claimed_investigations": []
+    },
+    {
+      "change": "2026-08-25-workflow-code-first-multi-client-eli5",
+      "current_work": null,
+      "works_run": [
+        "specdev/eli5"
+      ],
+      "claimed_investigations": []
+    },
+    {
+      "change": "2026-08-25-plus-ui-multi-app-domain-architecture",
+      "current_work": null,
+      "works_run": [
+        "specdev/grill-with-docs",
+        "specdev/spec",
+        "specdev/tickets",
+        "specdev/goal-plan",
+        "specdev/implement",
+        "specdev/eli5"
+      ],
+      "claimed_investigations": []
+    },
+    {
+      "change": "2026-08-26-current-log-system-eli5",
+      "current_work": "specdev/archive-and-consolidate",
+      "works_run": [
+        "specdev/eli5",
+        "specdev/grill-with-docs",
+        "specdev/spec",
+        "specdev/tickets",
+        "specdev/goal-plan"
+      ],
+      "claimed_investigations": []
+    },
+    {
+      "change": "2026-08-27-plus-ui-backend-aligned-domains",
+      "current_work": null,
+      "works_run": [
+        "specdev/spec",
+        "specdev/tickets",
+        "specdev/goal-plan",
+        "specdev/implement"
       ],
       "claimed_investigations": []
     }

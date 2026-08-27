@@ -2256,22 +2256,26 @@ function validateChange(change, stage = null, repoRoot = null) {
 
   if (spec) {
     const declaredContracts = new Set(spec.body.match(/\bAC-\d+\b/g) ?? []);
-    const coveredContracts = new Set(
-      [...tickets.values()].flatMap((artifact) =>
-        (artifact.meta.contract_ids ?? []).map(String),
-      ),
-    );
-    let uncovered = [...declaredContracts].filter((id) => !coveredContracts.has(id)).sort();
-    if (ticketsMap) {
-      uncovered = uncovered.filter(
-        (id) => !new RegExp(`${escapeRegExp(id)}.*\\bdeferred\\b`, "i").test(ticketsMap.body),
-      );
-    }
-    if (uncovered.length) {
-      errors.push(`Spec acceptance contracts are not covered by Tickets: ${JSON.stringify(uncovered)}`);
-    }
     if (spec.meta.ready_for_tickets === true && !declaredContracts.size) {
       errors.push("ready Spec must define at least one AC-### acceptance contract");
+    }
+
+    const ticketCoverageRequired = ticketsRequired || ticketMode || ticketsMap !== null;
+    if (ticketCoverageRequired) {
+      const coveredContracts = new Set(
+        [...tickets.values()].flatMap((artifact) =>
+          (artifact.meta.contract_ids ?? []).map(String),
+        ),
+      );
+      let uncovered = [...declaredContracts].filter((id) => !coveredContracts.has(id)).sort();
+      if (ticketsMap) {
+        uncovered = uncovered.filter(
+          (id) => !new RegExp(`${escapeRegExp(id)}.*\\bdeferred\\b`, "i").test(ticketsMap.body),
+        );
+      }
+      if (uncovered.length) {
+        errors.push(`Spec acceptance contracts are not covered by Tickets: ${JSON.stringify(uncovered)}`);
+      }
     }
   }
 

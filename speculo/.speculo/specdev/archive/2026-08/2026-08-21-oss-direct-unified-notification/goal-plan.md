@@ -200,7 +200,7 @@ T-05 是双仓库 Ticket，backend 与 frontend commit 均为完成条件，任�
 - `sys_oss_ref.ref_type` 必须是实际物理表名，`ref_id` 是真实主键；仅反向定位和生命周期保护，不做 ACL 或动态查表。
 - common 不反向依赖 system；跨业务模块通过 ruoyi-api 或 common SPI；业务 POM 只依赖最小 artifact。
 - 后端不搬运浏览器文件字节；签名 URL、Secret、Authorization 不入库/日志。
-- 新项目自有表具备七个基础字段、模块前缀、非裸 id 与中文注释；只追加 DDL.sql/DSL.sql。
+- 新项目自有表具备七个基础字段、模块前缀、非裸 id 与中文注释；只追加 DDL.sql/DML.sql。
 - Provider 同步发送；Event 只做 best-effort 监控；ACCEPTED 不等于 DELIVERED。
 - 通知正文/目标永久明文是已批准风险，但列表脱敏、HTML 不执行、Provider Secret 不入库。
 - 后端测试集中 ruoyi-admin；不在 common/system/workflow/demo 新建 `src/test`。

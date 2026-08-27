@@ -222,7 +222,7 @@ Caller -> NotifyClient/NotifyDispatcher
 | Notify adapters | `<Path>ruoyi-vue-plus-namewta/ruoyi-common/ruoyi-common-mail/src/main/java/org/dromara/common/mail/notify/</Path>`, `<Path>ruoyi-vue-plus-namewta/ruoyi-common/ruoyi-common-sms/src/main/java/org/dromara/common/sms/notify/</Path>` | Mail/SMS Provider 适配与逐目标结果 |
 | Notify monitoring | `<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-system/src/main/java/org/dromara/system/notify/</Path>` | 双层日志、脱敏/清洗、附件 owner、查询/删除/清空 |
 | Workflow ownership | `WorkflowHistoryOssOwner.java`, `FlwCommonServiceImpl.java`, `FlwTaskServiceImpl.java` | 统一通知，历史附件在真实 `flow_his_task` 主键上绑定 |
-| SQL | `<Path>ruoyi-vue-plus-namewta/script/sql/namewta/DDL.sql</Path>`, `DSL.sql` | 2 个登录域表、Client/role/menu 字段、OSS 引用、2 个通知表、菜单与默认角色 |
+| SQL | `<Path>ruoyi-vue-plus-namewta/script/sql/namewta/DDL.sql</Path>`, `DML.sql` | 2 个登录域表、Client/role/menu 字段、OSS 引用、2 个通知表、菜单与默认角色 |
 | Frontend Client/RBAC | login/register, `<Path>plus-ui-namewta/src/views/system/user/</Path>`, role/menu/client/userType API/pages | 严格 Client context、分域用户、Client-scoped role/menu 管理 |
 | Frontend OSS | `<Path>plus-ui-namewta/src/hooks/oss/</Path>`, `<Path>plus-ui-namewta/src/utils/oss/</Path>`, three upload components, download plugin | 直传、续传、隔离 transport、授权下载、生命周期状态 |
 | Frontend monitoring | `<Path>plus-ui-namewta/src/api/monitor/notify/</Path>`, `<Path>plus-ui-namewta/src/views/monitor/notify/</Path>` | 全局检索、详情、完整投递、附件授权下载、双确认清空 |

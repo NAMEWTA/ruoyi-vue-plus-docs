@@ -30,15 +30,15 @@ Scope: `module:plus-ui-namewta`
 
 Level: MUST
 
-Source: `repository-fact` (`src/api`, `src/views`, `src/store`, `src/utils/request.ts`)
+Source: `repository-fact` (`apps/**`, `packages/domains/**`, `packages/web-domains/**`, `packages/platform/**`, `packages/adapters/**`, `tooling/architecture/**`)
 
-Rule: HTTP transport 与 DTO 位于 `src/api/**`，页面/组件不直接拼装重复 request 配置；全局状态只承载跨页面生命周期状态，瞬时表单和请求状态留在 feature/component；`@/` alias 不能绕过业务边界或制造循环。
+Rule: App 拥有终端 Client、布局、路由装配和部署；domain 拥有无界面模型/服务并只依赖抽象端口；web-domain 拥有 Vue 表现但不拥有 App 全局单例；adapter 实现平台端口。工作区内部只经公开 exports 导入，禁止 App 互相导入、包深层导入、跨包相对导入和通过 alias 绕过依赖方向。
 
-Verification: `pnpm lint`; `pnpm build:prod`; review import graph、API 调用位置和 Pinia state 所有权。
+Verification: `pnpm architecture:check`; `pnpm architecture:test`; `pnpm lint`; `pnpm typecheck`; `pnpm build:prod`; review App composition、import graph、runtime port 与状态所有权。
 
 ### ARCH-004 Public contract 与跨端顺序
 
-Scope: `public-api:ruoyi-api`, HTTP/JSON, SQL/schema, `path:plus-ui-namewta/src/api/**`
+Scope: `public-api:ruoyi-api`, HTTP/JSON, SQL/schema, `path:plus-ui-namewta/packages/api-contracts/**`, `path:plus-ui-namewta/packages/domains/**`
 
 Level: MUST
 
@@ -68,6 +68,6 @@ Level: MUST
 
 Source: `repository-fact` + manual discovery correction
 
-Rule: `gen/**`、`src/**/tool/gen/**` 和 `ruoyi-modules/ruoyi-gen/**` 是可编辑生成器源码；`target/**`、`.flattened-pom.xml`、自动导入声明等才是生成物。生成物通过其源配置/模板修复，不直接手改。
+Rule: 前端根级 `gen/**` 已退役；`tooling/generators` 当前只是 README 占位。后端 `ruoyi-modules/ruoyi-gen/**` 是可编辑生成器源码。`target/**`、`.flattened-pom.xml`、App 自动导入声明和 `packages/api-contracts` 生成结果是生成物，应通过源配置、OpenAPI 快照或生成器修复，不直接手改。
 
 Verification: review 文件头、插件配置和生成来源；`git diff` 不含意外 build output；修改生成结果时同时指出源模板和生成命令。

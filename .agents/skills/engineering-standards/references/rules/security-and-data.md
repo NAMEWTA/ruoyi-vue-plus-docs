@@ -44,7 +44,7 @@ Level: MUST
 
 Source: `repository-fact` (`docs/upstream/customization-map.md`)
 
-Rule: 不修改上游 `script/sql/ry_vue.sql` 承载 NAMEWTA 业务；NAMEWTA 只维护 append-only 的 `script/sql/namewta/DDL.sql` 与 `DSL.sql`，全新环境遵守 `ry_vue.sql -> DDL.sql -> DSL.sql`，已有环境只执行尚未应用的新增块。新建项目自有表还必须遵循[数据源事务与建表](../java/persistence-transactions-and-ddl.md)中的命名、主键、基础字段和中文注释合同；破坏性变更提供 expand/migrate/contract 或明确回滚。
+Rule: 不修改上游 `script/sql/ry_vue.sql` 承载 NAMEWTA 业务；NAMEWTA 只维护 append-only 的 `script/sql/namewta/DDL.sql` 与 `DML.sql`，全新环境遵守 `ry_vue.sql -> DDL.sql -> DML.sql`，已有环境只执行尚未应用的新增块。新建项目自有表还必须遵循[数据源事务与建表](../java/persistence-transactions-and-ddl.md)中的命名、主键、基础字段和中文注释合同；破坏性变更提供 expand/migrate/contract 或明确回滚。
 
 Verification: SQL diff 与 README 顺序 review；在隔离数据库验证 fresh install、重复执行适用迁移和回滚/补偿路径。
 

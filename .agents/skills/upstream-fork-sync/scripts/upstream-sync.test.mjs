@@ -113,13 +113,13 @@ test('dry-run derives graph merge and merge base', (t) => {
   assert.equal(frontend.last_confirmed_integration.upstream_sha, fixture.frontendBase);
 });
 
-test('assess writes per-change state and compact global state', (t) => {
+test('assess replaces current report and compact global state', (t) => {
   const fixture = withFixture(t);
-  for (const suffix of ['2026-08-24_fixture', '2026-08-24_fixture-02']) {
+  for (let run = 0; run < 2; run += 1) {
     const result = runCli('assess', '--root', fixture.root, '--topic', 'fixture', '--date', '2026-08-24');
     assert.equal(result.status, 0, result.stderr);
     const reportDir = JSON.parse(result.stdout).report_dir;
-    assert.ok(reportDir.endsWith(suffix));
+    assert.equal(reportDir, join(fixture.root, 'docs/upstream/current'));
     const changeState = JSON.parse(readFileSync(join(reportDir, 'state.json'), 'utf8'));
     assert.deepEqual(Object.keys(changeState).sort(), ['created_at', 'repositories']);
     assert.deepEqual(changeState.repositories, {
@@ -132,7 +132,7 @@ test('assess writes per-change state and compact global state', (t) => {
   const globalPath = join(fixture.root, 'docs/upstream/upstream-sync-state.json');
   const state = JSON.parse(readFileSync(globalPath, 'utf8'));
   assert.equal(state.schema_version, 2);
-  assert.equal(state.current_change, '2026-08-24_fixture-02');
+  assert.equal(state.current_change, 'current');
   assert.ok(!('runs' in state));
   assert.ok(!('integration_events' in state));
   assert.ok(statSync(globalPath).size < 2_000);
@@ -158,7 +158,7 @@ test('record-integration requires reachable exact merge parent and updates both 
   assert.equal(state.repositories.backend.integrated_upstream_sha, fixture.backendUpstream2);
   assert.equal(state.repositories.backend.main_merge_sha, mergeSha);
   assert.ok(!('integration_events' in state));
-  const changeState = JSON.parse(readFileSync(join(fixture.root, 'docs/upstream/2026-08-24_record/state.json'), 'utf8'));
+  const changeState = JSON.parse(readFileSync(join(fixture.root, 'docs/upstream/current/state.json'), 'utf8'));
   assert.deepEqual(changeState.repositories.backend, { upstream_sha: fixture.backendUpstream2, main_merge_sha: mergeSha });
 });
 
@@ -182,7 +182,7 @@ test('loadState migrates schema v1 to compact v2', (t) => {
   }), 'utf8');
   const state = loadState(path);
   assert.equal(state.schema_version, 2);
-  assert.equal(state.current_change, '2026-08-24_legacy');
+  assert.equal(state.current_change, 'current');
   assert.deepEqual(state.repositories.backend, {
     integrated_upstream_sha: fixture.backendUpstream1,
     main_merge_sha: fixture.backendMerge,

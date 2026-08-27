@@ -1,9 +1,0 @@
-{
-  "created_at": "2026-08-24T12:29:43+08:00",
-  "repositories": {
-    "backend": {
-      "upstream_sha": "387c4f0a20e9232f44e762ef5a46c462f54bd464",
-      "main_merge_sha": "af4bf65c71087c6080f52fed6155c542a162419b"
-    }
-  }
-}

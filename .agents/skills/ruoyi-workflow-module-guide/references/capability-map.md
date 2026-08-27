@@ -248,8 +248,8 @@ Warm-Flow UI 插件自带 `/warm-flow*` 控制器来自第三方 jar，本仓库
 
 任务历史状态：`ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-workflow/src/main/java/org/dromara/workflow/common/enums/TaskStatusEnum.java` — 含 `pass` / `back` / `waiting` / `cancel` / `invalid` / `termination` 等。
 
-表单是路由元数据，不是独立表单引擎。`FlowTaskVo` 带 `formCustom`、`formPath`：`ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-workflow/src/main/java/org/dromara/workflow/domain/vo/FlowTaskVo.java`。定义/历史任务 VO 同样带这两字段。待办 SQL 用 `COALESCE` 选任务或定义的 `form_path`。前端 `routerJump` 把 `formPath` 当 Vue 路由，query 带 `id`（业务 `businessId`）、`type`、`taskId`：`plus-ui-namewta/src/api/workflow/workflowCommon/index.ts`。没有表单设计 CRUD Controller。
+表单是路由元数据，不是独立表单引擎。`FlowTaskVo` 带 `formCustom`、`formPath`：`ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-workflow/src/main/java/org/dromara/workflow/domain/vo/FlowTaskVo.java`。定义/历史任务 VO 同样带这两字段。待办 SQL 用 `COALESCE` 选任务或定义的 `form_path`。前端 workflow web-domain 把 `formPath` 当 Vue 路由，query 带 `id`（业务 `businessId`）、`type`、`taskId`：`plus-ui-namewta/packages/web-domains/workflow/src/task/TaskListPage.vue` 与 `src/instance/{InstancePage,MyDocumentPage}.vue`。没有 App API 门面，也没有表单设计 CRUD Controller。
 
-历史：实例轨迹 `IFlwInstanceService.flowHisTaskList` + REST `GET /workflow/instance/flowHisTaskList/{businessId}`；已办分页 `pageByTaskFinish`（`FlwHisTaskMapper.getListFinishTask`：`ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-workflow/src/main/java/org/dromara/workflow/mapper/FlwHisTaskMapper.java`）。不要虚构 His/Form Facade。
+历史：实例轨迹 `IFlwInstanceService.flowHisTaskList` + REST `GET /workflow/instance/flowHisTaskList/{businessId}`；已办分页 `pageByTaskFinish`（`FlwHisTaskMapper.getListFinishTask`：`ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-workflow/src/main/java/org/dromara/workflow/mapper/FlwHisTaskMapper.java`）。不要虚构额外的历史或表单 API。
 
 流程图悬浮提示：`FlwChartExtServiceImpl` 实现 Warm-Flow `ChartExtService`：`ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-workflow/src/main/java/org/dromara/workflow/service/impl/FlwChartExtServiceImpl.java`。

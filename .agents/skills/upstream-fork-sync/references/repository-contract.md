@@ -9,7 +9,7 @@
 
 The parent repository has only `origin/main`; it owns documentation and submodule gitlinks, not child source history.
 
-`docs/upstream/customization-map.md` owns only stable fork invariants and review hotspots. Current SHAs, merge status, conflicts, dirty paths, and assessment conclusions belong to the applicable `docs/upstream/<change>/` artifacts.
+`docs/upstream/customization-map.md` owns only stable fork invariants and review hotspots. Current SHAs, merge status, conflicts, dirty paths, and assessment conclusions belong to `docs/upstream/current/`; older snapshots belong to Git history.
 
 ## Ref invariants
 

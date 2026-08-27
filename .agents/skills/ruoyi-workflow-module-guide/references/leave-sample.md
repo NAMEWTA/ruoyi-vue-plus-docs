@@ -14,8 +14,9 @@
 | 服务实现 | `ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-workflow/src/main/java/org/dromara/workflow/service/impl/TestLeaveServiceImpl.java` |
 | 服务接口 | `ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-workflow/src/main/java/org/dromara/workflow/service/ITestLeaveService.java` |
 | HTTP | `ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-workflow/src/main/java/org/dromara/workflow/controller/TestLeaveController.java`（`@RequestMapping("/workflow/leave")`） |
-| 前端 API | `plus-ui-namewta/src/api/workflow/leave/index.ts` |
-| 前端页面 | `plus-ui-namewta/src/views/workflow/leave/index.vue`、`leaveEdit.vue` |
+| 前端领域服务 | `plus-ui-namewta/packages/domains/workflow/src/index.ts` |
+| 前端领域页面 | `plus-ui-namewta/packages/web-domains/workflow/src/views/LeaveListPage.vue`、`LeaveEditPage.vue` |
+| Admin 兼容路由页 | `plus-ui-namewta/apps/admin-web/src/views/workflow/leave/leaveEdit.vue`（只加载已组合的 Web 领域页面） |
 
 控制器均 `@ConditionalOnEnable`。提交入口：`POST /workflow/leave/submitAndFlowStart`，权限 `workflow:leave:add`。
 
@@ -90,7 +91,7 @@ public void processDeleteHandler(ProcessDeleteEvent processDeleteEvent)
 
 ## 前端对应
 
-`plus-ui-namewta/src/api/workflow/leave/index.ts`：
+`plus-ui-namewta/packages/domains/workflow/src/index.ts` 的 workflow service：
 
 | 函数 | HTTP |
 |---|---|
@@ -101,7 +102,7 @@ public void processDeleteHandler(ProcessDeleteEvent processDeleteEvent)
 | `updateLeave` | `PUT /workflow/leave` |
 | `delLeave` | `DELETE /workflow/leave/{id}` |
 
-待办打开请假页走公共 `routerJump`（`formPath` + `id` / `taskId`），不是请假 API 自己查待办。路径：`plus-ui-namewta/src/api/workflow/workflowCommon/index.ts`。
+待办打开业务页使用任务的 `formPath`，query 携带业务 `id` / `taskId`，不是请假 service 自己查询待办。当前入口位于 `plus-ui-namewta/packages/web-domains/workflow/src/task/TaskListPage.vue`，实例入口位于 `src/instance/{InstancePage,MyDocumentPage}.vue`；导航由 workflow web-domain 通过 App runtime 执行。
 
 ## 复制到其他模块时改什么
 
@@ -112,5 +113,5 @@ public void processDeleteHandler(ProcessDeleteEvent processDeleteEvent)
 - 实体表、`status` 字段、Service 类放到目标业务模块（该模块只需依赖 `ruoyi-api`）。
 - `flowCode` 改为已发布定义编码，监听条件改为精确匹配。
 - `eval(leaveDays)` 换成自己的 SpEL Bean 方法，或不用。
-- 前端：业务 CRUD API + 在定义上配置 `formPath` 指向该业务页。
+- 前端：在所属 domain 增加业务服务，在对应 web-domain 增加页面/manifest，并由目标 App 显式组合；流程定义的 `formPath` 指向注册路由。
 - 不要把 `ITestLeaveService` 当公共门面，不要把请假 Controller 留在 `ruoyi-workflow` 当新业务入口。

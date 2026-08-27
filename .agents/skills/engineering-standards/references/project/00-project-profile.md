@@ -12,9 +12,11 @@
 
 - `README.md`、`.gitmodules`：父仓库只聚合 `plus-ui-namewta` 与 `ruoyi-vue-plus-namewta`，两个子模块独立开发和发布。
 - `docs/upstream/customization-map.md`：NAMEWTA 相对上游的认证、权限、Client、菜单、SQL 和前端契约权威清单。
-- `plus-ui-namewta/package.json`、`pnpm-lock.yaml`、`tsconfig.json`、`vite.config.ts`、`.oxlintrc.json`：Vue 3.5.40、TypeScript 6、Vite 8、Pinia 4、pnpm 10、Node `>=20.19.0`、浏览器运行时。
-- `plus-ui-namewta/src/main.ts`、`src/views/**`、`src/api/**`、`src/store/**`：Vue 3 Composition API、`<script setup lang="ts">`、API/type 分离、Pinia 和 Element Plus 的主导实践。
-- `plus-ui-namewta/src/hooks/**`、`src/views/demo/{demo,tree}/index.vue`：loading、dialog、搜索重置、表格选择、日期范围、树表展开和页面生命周期的当前复用合同。
+- `plus-ui-namewta/package.json`、`pnpm-workspace.yaml`、`pnpm-lock.yaml`、各包 `package.json`/`tsconfig.json`：Vue 3、TypeScript 6、Vite 8、Pinia 4、pnpm 10、Node `>=20.19.0` 的多 App monorepo。
+- `plus-ui-namewta/apps/admin-web/src/main.ts`、`apps/client-web/src/main.ts`：两个可独立构建和部署的浏览器 App；各自拥有 ClientContext、组合、路由、布局与会话命名空间。
+- `plus-ui-namewta/packages/{domains,web-domains,platform,adapters,web-kit}/**`：headless domain、Vue Web 表现、平台端口、运行时适配器与共享 Web 机制的依赖方向。
+- `plus-ui-namewta/packages/api-contracts/**`、`tooling/openapi/**`：生成 transport、不可变快照、来源与漂移检查；domain model 由各领域独立拥有。
+- `plus-ui-namewta/tooling/architecture/**`：使用 AST/SFC/YAML 结构化检查工作区、公开入口、依赖方向、终端纯度、占位目录和基线漂移。
 - `ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-gen/src/main/resources/fm/{java,vue}/**`：标准 CRUD、树结构、状态/排序和前后端合同的当前生成基线。
 - `ruoyi-vue-plus-namewta/pom.xml`、`mvnw`、各模块 `pom.xml`：Java 21、Spring Boot 4.1.0、Maven Wrapper、41 个 POM 描述符；根 reactor 始终构建 41 projects，`bundle-full/core` 控制最终 admin fat jar 的业务模块集合。
 - `ruoyi-vue-plus-namewta/ruoyi-admin/src/main/java/org/dromara/DromaraApplication.java`、`ruoyi-modules/ruoyi-demo/**` 及 `ruoyi-modules/ruoyi-system/**`：Spring MVC、BO/VO/entity、service、mapper、Bean Validation、数据权限、事务和 Sa-Token 主导实践。
@@ -28,12 +30,13 @@
 
 | Scope | Working directory | Command | Responsibility | Source | Status |
 |---|---|---|---|---|---|
-| `module:plus-ui-namewta` | `plus-ui-namewta` | `pnpm lint` | Oxlint 检查 `src`、`e2e` 与 Playwright 配置 | `package.json` | active local/CI gate |
-| `module:plus-ui-namewta` | `plus-ui-namewta` | `pnpm typecheck` | TypeScript/Vue 非写入式类型检查 | `package.json`, `tsconfig.json` | active local/CI gate |
-| `module:plus-ui-namewta` | `plus-ui-namewta` | `pnpm test` | Vitest 单元测试（当前 4 个） | `package.json`, `src/**/*.test.ts` | active local/CI gate |
-| `module:plus-ui-namewta` | `plus-ui-namewta` | `pnpm test:e2e` | Playwright Chromium 登录上下文验收（当前 2 个） | `playwright.config.ts`, `e2e/**` | active local/CI gate |
-| `module:plus-ui-namewta` | `plus-ui-namewta` | `pnpm build:prod` | Vite 生产构建 | `package.json`, `plan/update.md` | active local gate |
-| `module:plus-ui-namewta` | `plus-ui-namewta` | `pnpm fmt` | Oxfmt 写入式格式化 | `package.json` | active tool, not a check gate |
+| `module:plus-ui-namewta` | `plus-ui-namewta` | `pnpm architecture:check` / `pnpm architecture:test` | 检查工作区依赖方向、公开入口、终端纯度、占位和基线合同 | `package.json`, `tooling/architecture/**` | active local/CI gate |
+| `module:plus-ui-namewta` | `plus-ui-namewta` | `pnpm lint` | 根配置与各激活工作区包的 Oxlint 检查 | `package.json`, `.oxlintrc.json`, package scripts | active local/CI gate |
+| `module:plus-ui-namewta` | `plus-ui-namewta` | `pnpm typecheck` | 各激活 App/包的 TypeScript/Vue 非写入式检查 | `package.json`, package scripts/tsconfig | active local/CI gate |
+| `module:plus-ui-namewta` | `plus-ui-namewta` | `pnpm test` | 各激活 App/包的 Vitest 测试 | `package.json`, `**/*.test.ts` | active local/CI gate |
+| `module:plus-ui-namewta` | `plus-ui-namewta` | `pnpm test:e2e` | Playwright 多 App 浏览器验收 | `playwright.config.ts`, `e2e/**` | risk-based local/CI gate |
+| `module:plus-ui-namewta` | `plus-ui-namewta` | `pnpm build:dev` / `pnpm build:prod` | 开发配置和生产配置的工作区构建 | `package.json`, App/package scripts | active local gate |
+| `module:plus-ui-namewta` | `plus-ui-namewta` | `pnpm fmt` | Oxfmt 写入式格式化受管前端路径 | `package.json` | active tool, not a check gate |
 | `module:ruoyi-vue-plus-namewta` | `ruoyi-vue-plus-namewta` | `./mvnw test` | 默认执行 JUnit/Surefire 测试 | `pom.xml`, Maven Wrapper | active local/CI gate |
 | `module:ruoyi-vue-plus-namewta` | `ruoyi-vue-plus-namewta` | `./mvnw clean package -DskipTests` | `bundle-full` 全量组合打包 | `pom.xml`, `ruoyi-admin/pom.xml` | active local/CI gate |
 | `module:ruoyi-vue-plus-namewta` | `ruoyi-vue-plus-namewta` | `./mvnw clean package -Pbundle-core -Dmaven.test.skip=true` | 核心平台组合打包；clean 防止 profile 产物污染，测试由前置 `./mvnw test` 承担 | `ruoyi-admin/pom.xml` | active local/CI gate |
@@ -46,8 +49,8 @@
 ## 排除与冻结区域
 
 - 依赖/缓存/构建输出：`.git/**`、`.pnpm-store/**`、`**/node_modules/**`、`**/dist/**`、`**/target/**`、`**/.flattened-pom.xml`、coverage 和工具缓存。
-- 生成声明：`plus-ui-namewta/src/types/auto-imports.d.ts` 及由 Vite 插件生成的同类声明；修改生成器配置后重新生成，不手改结果。
-- 代码生成器源码不是生成物：`plus-ui-namewta/gen/**`、`src/api/tool/gen/**`、`src/views/tool/gen/**` 与后端 `ruoyi-modules/ruoyi-gen/**` 均为可编辑的模板/功能源码。Builder 扫描器对这些含 `gen` 路径的 generated 推断已由人工证据覆盖。
+- 生成声明：`plus-ui-namewta/apps/*/src/types/{auto-imports,components}.d.ts` 及同类 Vite 插件输出；修改生成器配置后重新生成，不手改结果。
+- 前端 `packages/api-contracts` 生成结果由 `tooling/openapi` 与已提交快照维护；`tooling/generators` 当前为 README-only 占位。后端 `ruoyi-modules/ruoyi-gen/**` 是可编辑生成器源码，不是生成物。
 - 上游冻结分支：后端 `6.X`、前端 `6.X-Vue` 只允许 fast-forward，不承载业务提交；产品变更进入各自 `main`。
 - 上游基线标签 `namewta-base-upstream-6x`、`namewta-base-upstream-6x-vue` 不移动。
 - `ruoyi-vue-plus-namewta/script/sql/ry_vue.sql` 是上游初始化脚本；NAMEWTA 增量写入 `script/sql/namewta/**`，不得回写上游脚本。

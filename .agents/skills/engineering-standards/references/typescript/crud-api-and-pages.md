@@ -1,99 +1,75 @@
-# 前端 CRUD、API 与页面实现规范
+# 前端领域 CRUD 与页面实现规范
 
-适用 `module:plus-ui-namewta` 的 `src/api/**`、`src/views/**` 和相关生成模板。当前分页 CRUD、树表 CRUD、system 复杂页面及 `src/hooks/**` 共同定义实现基线。
+适用 `packages/domains/**`、`packages/web-domains/**`、`packages/api-contracts/**` 及目标 App 的显式组合。后端模板只可作为接口行为参考，不再决定前端目录。
 
-### FE-CRUD-001 先判定页面形态与实现基线
+### FE-CRUD-001 采用领域纵切片
 
-Scope: `path:plus-ui-namewta/src/api/**`, `path:plus-ui-namewta/src/views/**`
-
-Level: MUST
-
-Source: `repository-fact` (`src/views/demo/**`, `src/views/system/**`, backend Vue generator templates)
-
-Rule: 开始实现前判定是标准分页 CRUD、树表 CRUD、已有复杂页面、工作流页面还是仅 API/type 变更。新建标准功能可用当前生成模板作骨架；已有 system/workflow/复杂页面按同模块最近成熟实现增量修改，不得为套模板删除既有权限、联动、全高布局、缓存状态或流程语义。
-
-Verification: 记录选用的同形态代码路径；diff review 页面既有行为与新增需求；UI 交互回归。
-
-### FE-CRUD-002 API 文件与 transport 合同
-
-Scope: `path:plus-ui-namewta/src/api/**`
+Scope: `module:plus-ui-namewta`
 
 Level: MUST
 
-Source: `repository-fact` (`src/api/demo/demo/**`, `src/api/demo/tree/**`, `src/utils/api-types.ts`, `src/api/types.ts`) + `user-decision` (`API-005`)
+Source: `repository-fact`（demo/system 等领域实现）
 
-Rule: 标准业务 API 使用同目录 `index.ts` 与 `types.ts` 分离调用和合同。请求/响应类型使用 `import type`；`AxiosPromise` 从 `@/utils/api-types` 导入，分页结果使用 `@/api/types` 的 `PageResult<VO>`。CRUD 全部遵循 [API-005](../rules/api-errors-resources.md)：列表/分页、详情、树和下拉等只读查询显式使用 `method: 'get'`，查询条件放 `params`；新增、修改、删除、状态变化和排序更新显式使用 `method: 'post'`，业务载荷放 `data`，不得使用 `put`、`patch` 或 `delete`。函数名沿用 `list/get/add/update/del/changeStatus/updateSort + BusinessName`，URL 与后端 controller 一致且能区分各操作。
+Rule: 新能力按“生成 transport（需要时） -> domain-owned model/mapper/service -> web-domain 页面/manifest -> App 显式选择”落地。页面不得直接把 OpenAPI 生成类型当领域状态，也不得直接创建全局请求实现。
 
-Verification: 对照后端 controller、BO、VO；review import 来源、request config 和返回泛型；对受影响 `src/api/**` 搜索 CRUD 请求 method，确认查询为 `get`、变更为 `post` 且不存在 `put`/`patch`/`delete`；`pnpm lint`; `pnpm build:prod`。
+Verification: 对照后端 controller/BO/VO/OpenAPI；review mapper、公开 exports 与 App composition；运行受影响 domain/web-domain/App 测试和 `pnpm architecture:check`。
 
-### FE-CRUD-003 VO、Form 与 Query 分离
+### FE-CRUD-002 HTTP 合同与方法
 
-Scope: `path:plus-ui-namewta/src/api/**/types.ts`
+Scope: `path:plus-ui-namewta/packages/domains/**`, `path:plus-ui-namewta/packages/api-contracts/**`
 
 Level: MUST
 
-Source: `repository-fact` (`src/api/demo/demo/types.ts`, `src/api/demo/tree/types.ts`, backend Vue types template)
+Source: `API-005` + 后端合同
 
-Rule: `VO` 表达服务端返回，`Form extends BaseEntity` 表达新增/修改草稿，`Query` 表达筛选条件；分页 Query 继承 `PageQuery`，树列表 Query 不继承分页类型。主键和跨端 Long 使用 `string | number`；字段可选性、数组、boolean/null 与后端 JSON 保持一致；日期区间放入项目约定的 `params`，不虚构独立 transport 字段。
+Rule: 请求/响应字段、分页、ID、boolean、nullable 与错误语义必须匹配后端。只读查询使用 GET，产生业务状态变化的操作使用 POST；domain 只依赖平台 HTTP 端口，不泄漏 Axios/Taro 类型。
 
-Verification: 前后端字段逐项对照；分页与树表响应 shape review；`pnpm exec vue-tsc --noEmit`; 构建。
+Verification: 跨端合同 review；domain transport/mapper 测试；搜索受影响请求 method；`pnpm typecheck`; `pnpm test`。
 
-### FE-CRUD-004 页面状态复用现有 hooks
+### FE-CRUD-003 查询与变更状态
 
-Scope: `path:plus-ui-namewta/src/views/**`
+Scope: `path:plus-ui-namewta/packages/web-domains/**`
+
+Level: MUST
+
+Source: `repository-fact` + `builder-baseline`
+
+Rule: 列表查询、分页、选择、表单草稿、提交和删除具有明确 owner；loading 在成功、业务失败、网络失败和取消后都进入终态。快速查询和卸载处理过期响应，变更成功后按领域语义刷新或更新状态。
+
+Verification: 页面/组合式函数测试覆盖成功、失败、空结果、重复提交和过期响应；`pnpm lint`; `pnpm typecheck`; 相关 App build。
+
+### FE-CRUD-004 树与层级数据
+
+Scope: `path:plus-ui-namewta/packages/domains/**`, `path:plus-ui-namewta/packages/web-domains/**`
+
+Level: MUST
+
+Source: demo 树能力 + 后端合同
+
+Rule: domain 明确父子 ID、根节点、循环/孤儿和排序语义；web-domain 保持展开、选择、父节点过滤和非分页行为，不在模板中重复构树。
+
+Verification: domain 树转换测试；页面展开/选择/过滤测试；真实数据人工或 E2E 验收。
+
+### FE-CRUD-005 权限与宿主副作用
+
+Scope: `path:plus-ui-namewta/packages/web-domains/**`, `path:plus-ui-namewta/apps/**`
+
+Level: MUST
+
+Source: platform permission + App runtime contracts
+
+Rule: manifest 组件键和权限标识与后端精确一致；未选择、缺少权限或畸形输入失败关闭。弹窗、字典、下载、上传、导航、iframe 等通过类型化宿主端口执行；前端权限不替代后端鉴权。
+
+Verification: manifest inventory、权限负向和零副作用测试；相关浏览器流程；`pnpm architecture:check`; `pnpm build:prod`。
+
+### FE-CRUD-006 复用必须有真实消费者
+
+Scope: `module:plus-ui-namewta`
 
 Level: SHOULD
 
-Source: `repository-fact` (`src/hooks/**`, `src/views/demo/**`, backend Vue generator templates)
+Source: architecture decision
 
-Rule: loading、dialog/form reset、搜索显隐与重置、表格选择、日期范围、排序、树展开/折叠和全高表格优先复用相应 `useXxx`。调用方遵守 hook 所有权：异步任务经 `withLoading` 的 `finally` 复位；dialog 打开前得到独立初始表单副本并清理校验；搜索重置同步复位分页和额外日期状态；observer/listener/timer 由 hook 或组件在卸载时释放。
+Rule: 页面局部逻辑先留在所属 web-domain，App 私有机制留在 App；只有多个真实消费者形成稳定合同后才提取到 `web-kit` 或 `platform`。禁止建立通用业务 `common/utils` 包。
 
-Verification: 对照 hook 参数/返回合同；失败路径、重复打开、reset、mount/unmount 人工或自动测试；review 不重复造状态机。
-
-### FE-CRUD-005 分页与树表数据流
-
-Scope: `path:plus-ui-namewta/src/views/**`
-
-Level: MUST
-
-Source: `repository-fact` (`src/views/demo/demo/index.vue`, `src/views/demo/tree/index.vue`)
-
-Rule: 分页列表在新查询时复位 `pageNum`，从 `res.data.rows/total` 更新列表和总数，并由 pagination 触发同一 `getList`。树表使用数组响应、稳定 `row-key`、明确 id/parentId 转换和非分页 Query；新增子节点、根节点、父节点下拉和展开状态必须保持各自语义，修改时不得把当前节点或错误字段当父节点。
-
-Verification: 搜索、重置、翻页、空结果与加载失败测试；树根/子节点新增、修改、删除和展开回归；响应合同对照。
-
-### FE-CRUD-006 表单提交、状态开关与错误恢复
-
-Scope: `path:plus-ui-namewta/src/views/**`
-
-Level: MUST
-
-Source: `repository-fact` (`src/views/demo/**`, `src/views/system/client/index.vue`, backend Vue generator templates)
-
-Rule: 提交必须先通过 Element Plus form validation，再按主键是否存在选择 add/update，并在所有成功或失败路径恢复按钮 loading。成功后关闭 dialog、提示并刷新；失败不伪报成功。乐观状态开关须在取消或请求失败时恢复旧值；排序更新失败至少重新拉取权威列表。
-
-Verification: validation failure、API rejection、确认取消、重复提交与刷新回归；review `finally`/catch 恢复分支；lint/build。
-
-### FE-CRUD-007 权限、字典、导出与页面骨架
-
-Scope: `path:plus-ui-namewta/src/views/**`
-
-Level: MUST
-
-Source: `repository-fact` (`src/views/demo/**`, `src/views/system/**`, backend Vue generator templates)
-
-Rule: 操作权限沿用后端 permission string 并用 `v-hasPermi` 控制呈现，但服务端仍必须授权。字典值使用现有 `useDict`/`dict-tag` 合同。导出使用 request 模块的 `download` 别名并传递当前查询条件。标准页沿用现有 search panel、toolbar、data table、pagination 与 dialog 结构；复杂页面保留其既有布局和交互，不机械重排。
-
-Verification: permission string 与 controller/menu 对照；无权限负向测试；字典空值/多值显示与导出筛选回归；UI 截图和构建。
-
-### FE-CRUD-008 生成模板与实际代码同步
-
-Scope: `path:ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-gen/src/main/resources/fm/vue/**`, generated front-end CRUD output
-
-Level: SHOULD
-
-Source: `repository-fact` (Vue generator templates and demo output) + `user-decision` (`API-005`)
-
-Rule: 反复出现在新生成页面的缺陷应修正模板并用代表性分页/树表生成结果验证；一次性领域逻辑留在业务页面。模板变化必须同时检查 API/types、分页/树表分支、状态/排序、日期范围、字典与权限条件，避免只修单一输出片段。CRUD API 模板必须执行 [API-005](../rules/api-errors-resources.md)，查询只生成 GET，变更只生成 POST，不生成 PUT/PATCH/DELETE。
-
-Verification: 生成至少一个受影响形态并 diff；搜索生成 API，确认查询为 `get`、变更为 `post` 且不存在 `put`/`patch`/`delete`；对生成结果执行 lint、补充 typecheck 和 build；检查未影响不相关模板分支。
+Verification: review 消费者与稳定合同证据；架构检查；代表性 App 构建。

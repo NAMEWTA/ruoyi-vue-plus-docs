@@ -52,12 +52,12 @@ Verification: DOM/交互测试或人工键盘/焦点检查；review `v-html`、U
 
 ### VUE-005 大页面按职责 Ratchet
 
-Scope: `path:plus-ui-namewta/src/views/**`
+Scope: `path:plus-ui-namewta/packages/web-domains/**`, `path:plus-ui-namewta/apps/**`
 
 Level: SHOULD
 
 Source: `repository-fact` (multiple 500-1200 line SFCs) + `builder-baseline`
 
-Rule: 新功能不继续把查询、表格、表单、权限、转换和请求编排无界堆入单个 SFC。出现可命名且可独立测试的业务逻辑、dialog/form flow 或 platform side effect 时提取；不为行数创建无语义组件。
+Rule: 新功能不把查询、表格、表单、权限、映射和宿主副作用无界堆入单个 SFC。领域模型/映射下沉 domain，页面复用逻辑留在所属 web-domain composable，下载/导航/反馈走宿主端口；只有形成真实多消费者合同才提取到 web-kit。不为行数创建无语义组件。
 
 Verification: review SFC 职责和依赖数；提取逻辑有测试/调用证据；UI 截图与交互回归。

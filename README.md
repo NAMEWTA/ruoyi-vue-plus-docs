@@ -10,8 +10,8 @@
 - **多 APP 共用主线**：通过 `VITE_APP_CLIENT_ID` 区分不同 APP 的 OAuth Client，同一套前端 `main` 可服务多个入口，无需长期维护 APP 专属分支。
 - **OSS 直传与生命周期管理**：浏览器直传对象存储，支持单文件、分片、断点续传、失败恢复和上传会话隔离；补充对象引用、临时文件清理、可恢复删除及授权下载能力。
 - **统一通知基础设施**：提供渠道无关的通知分发与邮件、短信适配，支持 Redis 幂等、OSS 附件快照、调用上下文审计、敏感信息脱敏和全局投递监控。
-- **增量 SQL 管理**：保留上游 `ry_vue.sql` 不变，NAMEWTA 的结构与数据变更分别通过 append-only 的 `script/sql/namewta/DDL.sql` 和 `DSL.sql` 管理。
-- **可审计的上游同步**：前后端产品分支与上游镜像分离，固定已集成检查点和不可移动基线，并通过 [定制热点清单](docs/upstream/customization-map.md)及逐次 Diff/冲突报告复核认证、权限、Client、OSS 等高风险改造面。
+- **增量 SQL 管理**：保留上游 `ry_vue.sql` 不变，NAMEWTA 的结构与数据变更分别通过 append-only 的 `script/sql/namewta/DDL.sql` 和 `DML.sql` 管理。
+- **可审计的上游同步**：前后端产品分支与上游镜像分离，固定已集成检查点和不可移动基线，并通过 [定制边界](docs/upstream/customization-map.md)及当前 Diff/冲突报告复核认证、权限、Client、OSS 等高风险改造面；历史报告由 Git 保存。
 
 本仓库是 **RuoYi-Vue-Plus** 前后端工程的聚合仓库，通过 Git Submodule 管理两个独立仓库，便于统一查看、克隆与文档整理。
 
@@ -21,7 +21,7 @@
 |------|------|------|
 | [ruoyi-vue-plus-docs](https://github.com/NAMEWTA/ruoyi-vue-plus-docs) | 父仓库 | 聚合入口，以 submodule 引用前后端 |
 | [ruoyi-vue-plus-namewta](https://github.com/NAMEWTA/ruoyi-vue-plus-namewta) | 后端 | Spring Boot / RuoYi-Vue-Plus 服务端 |
-| [plus-ui-namewta](https://github.com/NAMEWTA/plus-ui-namewta) | 前端 | Vue 管理端（plus-ui） |
+| [plus-ui-namewta](https://github.com/NAMEWTA/plus-ui-namewta) | 前端 | Vue 多 App 领域化 monorepo |
 
 ```
 ruoyi-vue-plus-docs/                 # 父仓库（本仓库）

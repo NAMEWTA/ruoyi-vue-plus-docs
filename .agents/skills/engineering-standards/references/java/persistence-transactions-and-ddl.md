@@ -98,15 +98,15 @@ Level: MUST
 
 Source: `user-decision`
 
-Rule: `script/sql/namewta/` 只允许存在两个 `.sql` 文件，且文件名精确为 `DDL.sql` 和 `DSL.sql`。`DDL.sql` 只保存建表、改表、索引、约束等结构语句；`DSL.sql` 是本项目约定的数据类 SQL 文件，只保存初始化、回填及其他 `INSERT`、`UPDATE`、`DELETE` 数据语句。不得新增编号、版本、功能、临时或备份 `.sql` 文件，也不得把 DDL 与数据语句混入对方文件。
+Rule: `script/sql/namewta/` 只允许存在两个 `.sql` 文件，且文件名精确为 `DDL.sql` 和 `DML.sql`。`DDL.sql` 只保存建表、改表、索引、约束等结构语句；`DML.sql` 是本项目约定的数据类 SQL 文件，只保存初始化、回填及其他 `INSERT`、`UPDATE`、`DELETE` 数据语句。不得新增编号、版本、功能、临时或备份 `.sql` 文件，也不得把 DDL 与数据语句混入对方文件。
 
-两个文件均为 append-only：已经生成、提交或执行过的 SQL 不得修改、删除、替换或重排；后续变化只能追加到对应文件末尾。每个追加块必须以 `-- 变更内容：<简明中文说明>` 和 `-- 变更标识：YYYY-MM-DD_HH:mm:ss` 开头，并继续用中文注释标明执行前置、fresh/upgrade 适用性、是否可重复执行以及回滚或补偿方式。变更标识时间必须通过 `node script/sql/namewta/generate-change-timestamp.js` 按 `Asia/Shanghai` 时区生成，不得手工使用其他格式。全新环境固定先执行 `DDL.sql`，再执行 `DSL.sql`；已有环境只执行本次新增块，不得无条件重放全部历史语句。
+两个文件均为 append-only：已经生成、提交或执行过的 SQL 不得修改、删除、替换或重排；后续变化只能追加到对应文件末尾。每个追加块必须以 `-- 变更内容：<简明中文说明>` 和 `-- 变更标识：YYYY-MM-DD_HH:mm:ss` 开头，并继续用中文注释标明执行前置、fresh/upgrade 适用性、是否可重复执行以及回滚或补偿方式。变更标识时间必须通过 `node script/sql/namewta/generate-change-timestamp.js` 按 `Asia/Shanghai` 时区生成，不得手工使用其他格式。全新环境固定先执行 `DDL.sql`，再执行 `DML.sql`；已有环境只执行本次新增块，不得无条件重放全部历史语句。
 
 需要在 DSL 中写入项目主键时，使用 `node script/sql/namewta/generate-snowflake-id.js`；批量生成使用 `--count <数量>`。该脚本以 Node.js `BigInt` 复刻当前 MyBatis-Plus 3.5.17 的 Snowflake 位布局和 MAC/PID 节点推导，输出必须作为十进制字符串或数据库 `BIGINT` 字面量使用，不得先转换为 JavaScript `Number`。
 
-旧 `001_user_type.sql` 至 `004_app_client_menus.sql` 已于 2026-08-21 一次性等价收敛为 `DDL.sql` 和 `DSL.sql`，旧文件名不得恢复或作为后续范例。两个文件自该基线起立即冻结为只追加文件。
+旧 `001_user_type.sql` 至 `004_app_client_menus.sql` 已于 2026-08-21 一次性等价收敛为 `DDL.sql` 和 `DML.sql`，旧文件名不得恢复或作为后续范例。两个文件自该基线起立即冻结为只追加文件。
 
-Verification: `find script/sql/namewta -maxdepth 1 -type f -name '*.sql'` 的结果最终只能是 `DDL.sql` 与 `DSL.sql`；review SQL 分类和 diff，确认历史前缀逐字不变、仅在文件末尾增加完整变更块；在隔离数据库分别验证 fresh install、已有库 upgrade、适用重复执行和回滚/补偿。
+Verification: `find script/sql/namewta -maxdepth 1 -type f -name '*.sql'` 的结果最终只能是 `DDL.sql` 与 `DML.sql`；review SQL 分类和 diff，确认历史前缀逐字不变、仅在文件末尾增加完整变更块；在隔离数据库分别验证 fresh install、已有库 upgrade、适用重复执行和回滚/补偿。
 
 ### PERSIST-007 DDL 所有权、方言与迁移
 

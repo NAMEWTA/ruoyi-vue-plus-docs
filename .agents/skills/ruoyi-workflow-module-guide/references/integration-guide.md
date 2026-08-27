@@ -72,14 +72,14 @@
 在流程定义上配置 `formPath` 为业务路由。待办跳转：
 
 ```ts
-// plus-ui-namewta/src/api/workflow/workflowCommon/index.ts
+// plus-ui-namewta/packages/web-domains/workflow/src/task/TaskListPage.vue
 router.push({
   path: routerJumpVo.formPath,
   query: { id: routerJumpVo.businessId, type: routerJumpVo.type, taskId: routerJumpVo.taskId }
 });
 ```
 
-业务页用 `id` 调自己的 CRUD，用 `taskId` 调 `POST /workflow/task/completeTask`。不要在本模块找表单设计 CRUD。请假页示例：`plus-ui-namewta/src/views/workflow/leave/index.vue`、`leaveEdit.vue`。
+业务页用 `id` 调自己的 CRUD，用 `taskId` 调 `POST /workflow/task/completeTask`。不要在本模块找表单设计 CRUD。当前请假领域页位于 `plus-ui-namewta/packages/web-domains/workflow/src/leave/`；Admin 通过 workflow manifest 装配页面。
 
 ## 可选装配
 

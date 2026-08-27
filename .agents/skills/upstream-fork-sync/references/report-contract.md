@@ -2,16 +2,16 @@
 
 ## Output location
 
-Each assessment creates:
+Each assessment atomically replaces:
 
 ```text
-docs/upstream/YYYY-MM-DD_<ascii-kebab-topic>/
+docs/upstream/current/
 |-- state.json
 |-- diff_report.md
 `-- conflict_report.md
 ```
 
-If the directory already exists, append `-02`, `-03`, and so on. `state.json` holds only creation time, frozen upstream targets, and resulting product merge SHAs. Reports are in Chinese and identify all refs with full SHAs.
+`state.json` holds only creation time, frozen upstream targets, and resulting product merge SHAs. Reports are in Chinese and identify all refs with full SHAs. Previous assessments remain available through Git history; do not retain dated report directories in the working tree.
 
 All dynamic inventories belong in this directory. Do not persist dirty paths, changed files, conflicts, fetch details, or run history in `upstream-sync-state.json`; do not write them into `customization-map.md`.
 

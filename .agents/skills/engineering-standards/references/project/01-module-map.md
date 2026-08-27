@@ -5,7 +5,7 @@
 | ID | Path | Language / framework / runtime | Build | Source / test roots | Public entrypoint | Quality gates | Evidence |
 |---|---|---|---|---|---|---|---|
 | `workspace-parent` | `.` | Markdown、Git/Submodule 治理 | Git, GitHub Actions | `docs/**`, `scripts/ci/**` | `README.md` | submodule snapshot + frontend/backend/external-services jobs | `README.md`, `.gitmodules`, `.github/workflows/quality-gates.yml`; high |
-| `plus-ui` | `plus-ui-namewta` | TypeScript, Vue 3, Pinia, Browser | pnpm, Vite, Oxlint, Vitest, Playwright | `src/**`; `src/**/*.test.ts`; `e2e/**` | `src/main.ts` | lint, typecheck, 4 unit tests, 2 Chromium E2E, production build | `package.json`, `playwright.config.ts`; high |
+| `plus-ui` | `plus-ui-namewta` | TypeScript、Vue 3、Pinia、Browser，多 App monorepo | pnpm workspace、Vite、Oxlint、Vitest、Playwright | `apps/**/src`、`packages/**/src`、`tooling/**/src`、相邻 `*.test.ts`、`e2e/**` | `apps/admin-web/src/main.ts`、`apps/client-web/src/main.ts` | architecture check/test、lint、typecheck、workspace test、双模式 build、按风险 E2E | `package.json`、`pnpm-workspace.yaml`、`tooling/architecture/**`、`playwright.config.ts`; high |
 | `backend-root` | `ruoyi-vue-plus-namewta` | Java 21, Spring Boot 4, JVM | Maven Wrapper | Maven modules below; 44 test source files | `ruoyi-admin` and three extension applications | default test; bundle-full + bundle-core package | root `pom.xml`, `ruoyi-admin/pom.xml`; high |
 
 ## 后端 Maven 模块
@@ -58,7 +58,8 @@
 ## 依赖方向
 
 - 父仓库只依赖子模块 commit 指针；前后端源码不能通过父仓库路径形成隐式构建依赖。
-- 前端依赖后端 HTTP/JSON 合同，不深耦合 Java 类型或数据库 schema；API transport 类型集中在 `src/api/**`。
+- 前端依赖后端 HTTP/JSON 合同，不深耦合 Java 类型或数据库 schema；OpenAPI 生成 transport 位于 `packages/api-contracts`，各 `packages/domains/*` 在边界处映射为领域自有模型。
+- 前端方向为 App -> web-domain -> domain -> platform，以及 App -> adapter/web-kit；App 显式组合所需能力，App 之间不得互相依赖，禁止包深层导入和跨工作区相对导入。
 - 后端 Maven 方向为：聚合/可部署应用 -> `ruoyi-modules`/`ruoyi-api`/`ruoyi-common-*`；业务模块可依赖 `ruoyi-api` 和所需 common 能力，common 不反向依赖业务模块。
 - `ruoyi-api` 是跨业务模块合同面；`ruoyi-common-*` 只承载可复用基础能力，禁止成为绕过业务边界的容器。
 - `ruoyi-admin` 负责组装，不承载可复用领域实现；默认 `bundle-full` 接入 job/ai/demo/workflow/gen，显式 `bundle-core` 只保留平台基础依赖。
@@ -68,17 +69,17 @@
 
 | Scope | Baseline | Mature implementation evidence | Usage |
 |---|---|---|---|
-| 前端标准分页 CRUD | 后端 `ruoyi-gen/fm/vue/{api,types,index}.ftl` | `plus-ui-namewta/src/views/demo/demo/index.vue`、`src/api/demo/demo/**` | 新建常规 CRUD 时建立 API、类型、页面骨架，再按同模块能力修正 |
-| 前端树表 CRUD | 后端 `ruoyi-gen/fm/vue/index-tree.vue.ftl` | `plus-ui-namewta/src/views/demo/tree/index.vue`、`src/api/demo/tree/**` | 保持非分页列表、树转换、父节点选择和展开状态语义 |
-| 前端复用状态 | 无单一模板替代 | `plus-ui-namewta/src/hooks/**` | loading、dialog、搜索重置、选择、日期范围、高度和树状态先复用现有 composable |
+| 前端领域纵切片 | 后端 controller/BO/VO/OpenAPI 合同 | `packages/domains/demo/**`、`packages/web-domains/demo/**`、两个 App 的显式组合 | transport -> domain mapper/model/service -> web-domain 页面/manifest -> App 选择 |
+| 前端树表 CRUD | 后端业务合同，无本地根级模板 | `packages/domains/demo/**`、`packages/web-domains/demo/**` | 保持非分页列表、树转换、父节点选择和展开状态语义，并由领域测试与页面测试分别验证 |
+| 前端复用状态 | 无单一模板替代 | 各 `web-domain` 的局部 composable、稳定 `web-kit`、App 私有 hooks | 状态先留在真实 owner；只有多消费者形成稳定合同时才提取 |
 | 后端标准 CRUD | `ruoyi-gen/fm/java/**` | `ruoyi-modules/ruoyi-demo/**/TestDemo*` | 对照 entity/BO/VO/mapper/service/controller 全链路及数据权限覆盖 |
 | 后端复杂系统能力 | 生成器只提供起点 | `ruoyi-modules/ruoyi-system/**`、`ruoyi-modules/ruoyi-workflow/**` | 关系表、缓存、Client、事务、条件装配和工作流逻辑按同模块成熟实现增量修改 |
 | 数据访问与翻译 | 公共 API 本身 | `ruoyi-common-mybatis`、`ruoyi-common-translation` | 复用 `BaseMapperPlus`、`QueryBuilder`、fresh chain wrapper 与批量翻译合同 |
 
 ## 路由
 
-- `path:plus-ui-namewta/**` -> 通用相关规则 + TypeScript core + Vue + Browser。
-- `path:plus-ui-namewta/src/api/**`、`src/views/**`、前端生成模板 -> 追加前端 CRUD/API 实现规范。
+- `path:plus-ui-namewta/**` -> 通用相关规则 + TypeScript core + 代码组织/命名/注释 + Vue + Browser。
+- `path:plus-ui-namewta/packages/domains/**`、`packages/web-domains/**`、`packages/api-contracts/**` 或领域 CRUD 页面 -> 追加前端 CRUD/API 实现规范。
 - `path:ruoyi-vue-plus-namewta/**` -> 通用相关规则 + Java core；Spring 应用/配置/Web scope 再加 Spring Boot；事务、数据源切换和 DDL/schema scope 追加数据源事务与建表规范。
 - `path:ruoyi-vue-plus-namewta/ruoyi-modules/**` 中的 CRUD/mapper/service/controller，以及 `ruoyi-common-mybatis`、`ruoyi-common-translation` -> 追加后端 CRUD/查询实现规范。
 - `path:docs/upstream/**`、Submodule 指针或上游同步 -> 架构边界 + 安全数据 + 评审交付。

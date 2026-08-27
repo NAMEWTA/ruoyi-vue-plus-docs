@@ -24,7 +24,7 @@ node .agents/skills/upstream-fork-sync/scripts/upstream-sync.mjs assess \
   --topic <topic>
 ```
 
-The default is offline: it uses existing refs, writes `state.json`, `diff_report.md`, and `conflict_report.md` under `docs/upstream/YYYY-MM-DD_<topic>/`, then atomically replaces the compact `docs/upstream/upstream-sync-state.json` current pointer.
+The default is offline: it uses existing refs, atomically replaces `state.json`, `diff_report.md`, and `conflict_report.md` under `docs/upstream/current/`, then atomically replaces the compact `docs/upstream/upstream-sync-state.json` current pointer. Git history owns previous assessments; the working tree keeps only the current report.
 
 - Add `--fetch` when the user asked to refresh network refs. A failed upstream fetch produces `freshness: stale`; never describe cached refs as latest.
 - Add `--advance-mirrors` only to fast-forward the local `6.X` and `6.X-Vue` mirror refs after fetch/preflight.
@@ -48,14 +48,14 @@ For an authorized integration:
 ```bash
 node .agents/skills/upstream-fork-sync/scripts/upstream-sync.mjs record-integration \
   --root . \
-  --change <YYYY-MM-DD_topic> \
+  --change current \
   --repository <backend|frontend> \
   --merge-commit <full-sha> \
   --upstream-sha <full-sha> \
   --verification '<command>: exit 0'
 ```
 
-`--change` defaults to the global `current_change`. Recording updates that change's `main_merge_sha` and the compact global checkpoint; verification evidence remains command output or belongs in the change reports, not either JSON. Rerun `assess` only when a new upstream comparison is needed.
+`--change` defaults to the global `current_change`, which is `current` after assessment. Recording updates the current report's `main_merge_sha` and the compact global checkpoint; verification evidence remains command output or belongs in the current reports, not either JSON. Rerun `assess` only when a new upstream comparison is needed.
 
 ## Stop conditions
 

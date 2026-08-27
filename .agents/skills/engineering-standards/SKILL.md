@@ -3,7 +3,7 @@ name: engineering-standards
 description: 为 ruoyi-vue-plus-docs 聚合工作区及其 Vue/TypeScript 前端、Java/Spring Boot 后端提供按模块路由的工程规范。处理代码、目录、测试、构建、依赖、API、数据库、权限、上游同步或交付变化前使用。
 ---
 
-# ruoyi-vue-plus-docs Engineering Standards
+# ruoyi-vue-plus-docs 工程规范
 
 本 Skill 只描述本工作区已确认的规范。先确定变更 scope，再加载最小充分 references；不要把一个子模块的语言或框架规则扩散到另一个子模块。
 
@@ -12,8 +12,8 @@ description: 为 ruoyi-vue-plus-docs 聚合工作区及其 Vue/TypeScript 前端
 1. 读取[项目画像](references/project/00-project-profile.md)和[模块地图](references/project/01-module-map.md)。
 2. 将任务映射到 `repository`、`module:*`、`language:*`、`framework:*`、`runtime:*` 或具体 `path:*` scope。
 3. 命中下列领域时，根据实际任务调用最小充分的原子 Skill；跨领域任务可以组合调用，不相关领域不加载。
-4. 按风险读取相关通用规则：[架构与边界](references/rules/architecture-and-boundaries.md)、[API/错误/资源](references/rules/api-errors-resources.md)、[测试](references/rules/testing.md)、[安全与数据](references/rules/security-and-data.md)、[质量门禁](references/rules/quality-gates.md)、[评审与交付](references/rules/review-and-delivery.md)；涉及 HTTP API 或 CRUD 时必须读取 API 规则，并执行其中“查询 GET、变更 POST、POST 使用 `@Log`”的传输与追踪约束。
-5. 修改 `plus-ui-namewta/**` 时读取 [TypeScript 核心](references/typescript/core.md)、[Vue](references/typescript/frameworks/vue.md)和[Browser](references/typescript/runtimes/browser.md)；涉及 `src/api/**`、CRUD 页面、树表、表单或生成模板时再读取[前端 CRUD/API 实现规范](references/typescript/crud-api-and-pages.md)。
+4. 按风险读取相关通用规则：[架构与边界](references/rules/architecture-and-boundaries.md)、[文件/目录/命名](references/rules/files-and-naming.md)、[文档与注释](references/rules/documentation-and-comments.md)、[API/错误/资源](references/rules/api-errors-resources.md)、[测试](references/rules/testing.md)、[安全与数据](references/rules/security-and-data.md)、[质量门禁](references/rules/quality-gates.md)、[评审与交付](references/rules/review-and-delivery.md)；新增或移动文件时必须读取命名规则，修改 public contract 或非直观实现时读取注释规则；涉及 HTTP API 或 CRUD 时必须读取 API 规则，并执行其中“查询 GET、变更 POST、POST 使用 `@Log`”的传输与追踪约束。
+5. 修改 `plus-ui-namewta/**` 时读取 [TypeScript 核心](references/typescript/core.md)、[代码组织与注释](references/typescript/code-organization-and-comments.md)、[Vue](references/typescript/frameworks/vue.md)和[Browser](references/typescript/runtimes/browser.md)；涉及 `packages/domains/**`、`packages/web-domains/**`、CRUD 页面、树表、表单或 OpenAPI 传输合同映射时再读取[前端 CRUD/API 实现规范](references/typescript/crud-api-and-pages.md)。
 6. 修改 `ruoyi-vue-plus-namewta/**` 时读取 [Java 核心](references/java/core.md)；涉及 Spring 应用、Web、配置或 Bean 生命周期时再读取 [Spring Boot](references/java/frameworks/spring-boot.md)；涉及事务、`@DS`、数据源切换、事务事件、DDL、建表或 schema 迁移时必须读取[数据源事务与建表](references/java/persistence-transactions-and-ddl.md)；涉及 entity/BO/VO、mapper、查询封装、CRUD、树结构、翻译、缓存或导入导出时再读取[后端 CRUD/查询实现规范](references/java/crud-query-and-common.md)。
 7. 读取[决策、迁移与例外](references/project/02-decisions-and-exceptions.md)，确认 current、target、Ratchet、`pending-decision` 和未到期例外。
 8. 实现前检查 public API、依赖方向、安全、错误/取消/资源、数据库兼容和测试影响。
@@ -25,7 +25,7 @@ description: 为 ruoyi-vue-plus-docs 聚合工作区及其 Vue/TypeScript 前端
 
 | 实际任务领域 | 原子 Skill |
 |---|---|
-| `plus-ui-namewta` 编码风格、注释实践、Oxlint/Oxfmt、动态路由、菜单或按钮权限 | [plus-ui-frontend-conventions](../plus-ui-frontend-conventions/SKILL.md) |
+| `plus-ui-namewta` 文件/目录命名、编码风格、注释实践、Oxlint/Oxfmt、动态路由、菜单或按钮权限 | [plus-ui-frontend-conventions](../plus-ui-frontend-conventions/SKILL.md) |
 | `ruoyi-system` 对外能力、`ruoyi-api`、system 实现边界、字典/部门/用户/OSS/消息调用 | [ruoyi-system-module-guide](../ruoyi-system-module-guide/SKILL.md) |
 | `ruoyi-workflow`、Warm-Flow、流程启动/办理、`businessId`、事件、待办或业务审批接入 | [ruoyi-workflow-module-guide](../ruoyi-workflow-module-guide/SKILL.md) |
 | `ruoyi-common` 子模块选择、BOM、Maven 依赖、Utils/Helper、Redis/Login/JSON/Excel/OSS 等公共入口 | [ruoyi-common-modules-guide](../ruoyi-common-modules-guide/SKILL.md) |

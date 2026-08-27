@@ -8,7 +8,7 @@ State schema version 2 separates the compact current pointer from each assessmen
 {
   "schema_version": 2,
   "updated_at": "RFC-3339 timestamp",
-  "current_change": "YYYY-MM-DD_ascii-kebab-topic",
+  "current_change": "current",
   "repositories": {
     "backend": {
       "integrated_upstream_sha": "full SHA",
@@ -31,7 +31,7 @@ It must not contain run history, ref configuration, dirty paths, file inventorie
 
 ## Per-change state
 
-Every `docs/upstream/<change>/state.json` contains only:
+`docs/upstream/current/state.json` contains only:
 
 ```json
 {
@@ -47,11 +47,9 @@ Every `docs/upstream/<change>/state.json` contains only:
 
 Only repositories with an upstream delta are listed. `main_merge_sha` stays `null` until the exact upstream target has been merged into product `main` and recorded. Detailed facts remain in the two Markdown reports.
 
-For a historical backfill, write the upstream commit that was actually used as the merge parent and the resulting product merge commit. The accompanying diff report may compare forward from that completed integration point to a newer observed upstream tip.
-
 ## Update rules
 
-- `assess` may create an initial graph-derived checkpoint, a new change directory, and replace the global current index.
+- `assess` may create an initial graph-derived checkpoint, replace the current report directory, and replace the global current index.
 - Fetching, advancing mirrors, generating reports, or observing a new upstream target must not change `integrated_upstream_sha`.
 - `record-integration` requires a merge commit reachable from `refs/heads/main`, an exact non-first parent equal to `--upstream-sha`, and at least one verification evidence string.
 - It must also match the frozen `upstream_sha` in the selected change state before filling `main_merge_sha` and advancing the global checkpoint.

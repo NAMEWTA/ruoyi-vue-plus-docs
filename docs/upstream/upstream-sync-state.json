@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
   "updated_at": "2026-08-24T12:33:30+08:00",
-  "current_change": "2026-08-24_current-upstream-merge-backfill",
+  "current_change": null,
   "repositories": {
     "backend": {
       "integrated_upstream_sha": "387c4f0a20e9232f44e762ef5a46c462f54bd464",

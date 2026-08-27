@@ -18,7 +18,7 @@ Scope: `repository`
 
 Level: MUST
 
-Source: `repository-fact` (`GlobalExceptionHandler`, `src/utils/request.ts`) + `builder-baseline`
+Source: `repository-fact`（`GlobalExceptionHandler`、前端 platform HTTP 合同、axios browser adapter）+ `builder-baseline`
 
 Rule: 只在能恢复、映射协议或增加边界上下文时捕获错误；保留原始 cause。用户消息、机器错误码和运维日志分离，不吞异常、不把日志当成功返回，也不在多层重复记录同一失败。
 

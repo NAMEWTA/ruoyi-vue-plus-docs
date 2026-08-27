@@ -335,7 +335,7 @@ export function loadState(path) {
     data = {
       schema_version: SCHEMA_VERSION,
       updated_at: data.updated_at ?? null,
-      current_change: typeof lastRun?.report_dir === 'string' ? basename(lastRun.report_dir) : null,
+      current_change: typeof lastRun?.report_dir === 'string' ? 'current' : null,
       repositories,
     };
   }
@@ -393,11 +393,8 @@ function sanitizeTopic(topic) {
   return normalized;
 }
 
-function chooseReportDir(root, date, topic) {
-  const base = join(root, 'docs/upstream', `${date}_${topic}`);
-  let candidate = base;
-  for (let counter = 2; existsSync(candidate); counter += 1) candidate = `${base}-${String(counter).padStart(2, '0')}`;
-  return candidate;
+function currentReportDir(root) {
+  return join(root, 'docs/upstream/current');
 }
 
 function changedPathSet(repo, start, end) {
@@ -630,7 +627,7 @@ export function assess(options) {
       root, repository, config, state, freshness, fetchError, timestamp,
     );
   }
-  const reportDir = chooseReportDir(root, date, topic);
+  const reportDir = currentReportDir(root);
   const run = {
     run_id: `${timestamp.replaceAll(':', '')}-${basename(reportDir)}`,
     created_at: timestamp,

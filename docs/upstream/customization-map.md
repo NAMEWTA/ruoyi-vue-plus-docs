@@ -42,6 +42,7 @@
 - 模块间优先通过 `ruoyi-api`、common SPI 或公开 Service 合同协作，不跨模块依赖 Controller 或实现细节。
 - NAMEWTA 数据库增量仅维护 `script/sql/namewta/DDL.sql` 与 `DML.sql`，初始化顺序为 `ry_vue.sql -> DDL.sql -> DML.sql`。
 - OSS、通知、工作流与权限修改必须同时验证 API 合同、数据隔离、失败语义和对应集成测试。
+- 完整 HTTP 系统日志必须保留 requestId 关联、同步/异步/异常终态、正文大小与媒体类型策略；日志采集失败不得改变业务响应。
 
 ## 上游评估热点
 
@@ -52,6 +53,7 @@
 | Vue、Router、Axios、状态管理 | App 组合、web-domain、browser adapter | lint、typecheck、unit、双 App build |
 | SQL、ORM、数据权限 | 后端模块与 NAMEWTA DDL/DML | 模块测试、全量 test、full/core package |
 | OSS、通知、工作流、外部 URL | 后端公开合同与前端对应 domain/web-domain | 安全定向测试、unit、E2E |
+| Web Filter、异常处理、日志配置 | `ruoyi-common-web` 系统日志、应用 Logback、敏感信息边界 | 日志定向测试、后端全量 test |
 | 构建和依赖 | 三仓库工具链、架构检查与发布门禁 | frozen install、全量构建、子模块校验 |
 
 评估结果只能基于冻结 SHA 和实际命令。文本可自动合并不代表业务语义安全；未执行的验证必须明确记为未执行。

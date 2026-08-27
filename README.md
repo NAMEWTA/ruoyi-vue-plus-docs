@@ -1,49 +1,86 @@
-# ruoyi-vue-plus-docs
+# NAMEWTA RuoYi-Vue-Plus
 
-## 相较上游的增强
+本项目是基于上游 **RuoYi-Vue-Plus / Plus-UI** 持续演进的 NAMEWTA 增强版。它不是简单改名或上游源码副本，而是在保留上游主要业务能力的基础上，重点增强了多 App 前端架构、Client 级身份与权限隔离、OSS 直传与生命周期、统一通知、HTTP 可观测性及工程治理。
 
-- **动态登录域**：以 Client 与 UserType 的关联关系替代用户单值类型，支持登录域的独立维护、启停和用户多域归属。
-- **Client 级认证与注册策略**：密码、短信、邮件、社交和小程序登录统一校验当前 Client 的登录域准入；注册开关由各 Client 独立控制，并通过严格布尔类型的公开上下文驱动登录、注册页面失败关闭。
-- **Client 级 RBAC 隔离**：权限、角色、默认角色、菜单和动态路由均按 `userId + sys_client.id` 计算，超管也限定在当前 Client，禁止无 Client 上下文或跨 Client 兜底授权。
-- **Client 会话安全**：Token 同时携带 Client 主键与登录域，严格区分 OAuth `clientId` 和数据库 Client 主键；用户、Client 或登录域状态变化时按域清理相关会话。
-- **前端权限管理闭环**：提供登录域 CRUD，并在 Client、用户、角色、菜单和用户授权页面中显式传递 Client 上下文，只有 scoped 数据完整加载后才开放编辑。
-- **多 APP 共用主线**：通过 `VITE_APP_CLIENT_ID` 区分不同 APP 的 OAuth Client，同一套前端 `main` 可服务多个入口，无需长期维护 APP 专属分支。
-- **OSS 直传与生命周期管理**：浏览器直传对象存储，支持单文件、分片、断点续传、失败恢复和上传会话隔离；补充对象引用、临时文件清理、可恢复删除及授权下载能力。
-- **统一通知基础设施**：提供渠道无关的通知分发与邮件、短信适配，支持 Redis 幂等、OSS 附件快照、调用上下文审计、敏感信息脱敏和全局投递监控。
-- **增量 SQL 管理**：保留上游 `ry_vue.sql` 不变，NAMEWTA 的结构与数据变更分别通过 append-only 的 `script/sql/namewta/DDL.sql` 和 `DML.sql` 管理。
-- **可审计的上游同步**：前后端产品分支与上游镜像分离，固定已集成检查点和不可移动基线，并通过 [定制边界](docs/upstream/customization-map.md)及当前 Diff/冲突报告复核认证、权限、Client、OSS 等高风险改造面；历史报告由 Git 保存。
+本仓库是前后端聚合入口，通过 Git Submodule 固定两个独立产品仓库的版本：
 
-本仓库是 **RuoYi-Vue-Plus** 前后端工程的聚合仓库，通过 Git Submodule 管理两个独立仓库，便于统一查看、克隆与文档整理。
+| 仓库 | 职责 | 详细说明 |
+|---|---|---|
+| `ruoyi-vue-plus-docs` | 聚合文档、工程规范、上游治理和子模块版本 | 当前 README 与 [文档导航](docs/README.md) |
+| `plus-ui-namewta` | Vue 3 多 App 领域化前端 monorepo | [前端 README](plus-ui-namewta/README.md) |
+| `ruoyi-vue-plus-namewta` | Spring Boot 模块化后端 | [后端 README](ruoyi-vue-plus-namewta/README.md) |
 
-## 仓库关系
+## 相较上游的核心增强
 
-| 仓库 | 角色 | 说明 |
-|------|------|------|
-| [ruoyi-vue-plus-docs](https://github.com/NAMEWTA/ruoyi-vue-plus-docs) | 父仓库 | 聚合入口，以 submodule 引用前后端 |
-| [ruoyi-vue-plus-namewta](https://github.com/NAMEWTA/ruoyi-vue-plus-namewta) | 后端 | Spring Boot / RuoYi-Vue-Plus 服务端 |
-| [plus-ui-namewta](https://github.com/NAMEWTA/plus-ui-namewta) | 前端 | Vue 多 App 领域化 monorepo |
+| 方向 | NAMEWTA 增强 | 直接收益 |
+|---|---|---|
+| 多 App 前端 | 将单体前端重构为 `apps + domains + web-domains + platform + adapters + web-kit` 的 pnpm monorepo | Admin、Client 及未来移动端/小程序可按需组合能力，不重复实现 API 与数据模型 |
+| 前后端定位 | 前端 domain 按 `admin/system/workflow/demo/gen/ai` 后端模块组织，第二层按 Controller HTTP 资源命名 | 从 Controller、URL 到前端 API、类型、页面都有稳定查找路径 |
+| Client 身份域 | Client 可独立配置登录域、注册开关、默认角色和用户归属；密码、短信、邮件、社交、小程序登录统一执行准入 | 一套后端可安全服务多个产品入口和用户群体 |
+| RBAC 与会话 | 角色、菜单、按钮权限、动态路由、默认角色和会话按 `userId + Client 主键` 计算 | 防止跨 App 菜单、权限、Token 和会话串用 |
+| OSS | 浏览器直传对象存储，支持单文件、分片、断点续传、失败恢复、对象引用、临时文件清理、可恢复删除和授权下载 | 大文件不再经过应用服务器转发，并补齐对象全生命周期治理 |
+| 通知 | 渠道无关的通知分发，提供邮件/短信适配、Redis 幂等、OSS 附件快照、调用上下文审计、脱敏和全局投递监控 | 业务模块通过统一合同发送和追踪通知 |
+| HTTP 可观测性 | 在 Servlet 边界输出可关联的请求/响应结构化事件，覆盖同步、异步、异常、正文截断和媒体类型策略 | 无需为每个接口重复编写基础访问日志，可按 requestId 串联一次调用 |
+| 数据变更 | 保持上游 `ry_vue.sql` 不变，NAMEWTA 结构和数据变更分别追加到 `DDL.sql`、`DML.sql` | 上游基线与本地增量边界清晰，便于全新安装和已有环境升级 |
+| 工程治理 | 前后端产品分支与上游镜像分离，固定基线，维护定制边界、架构检查、OpenAPI 漂移检查和分层测试 | 可吸收上游能力，同时避免覆盖 NAMEWTA 的核心改造 |
 
+完整能力、实现位置和边界见 [NAMEWTA 增强说明](docs/namewta-enhancements.md)。
+
+## 整体架构
+
+```text
+ruoyi-vue-plus-docs/
+├── plus-ui-namewta/                 # 前端独立 Git 仓库
+│   ├── apps/                        # 可独立构建、部署的终端 App
+│   └── packages/                    # 领域、平台、适配器和 Web 共享包
+├── ruoyi-vue-plus-namewta/          # 后端独立 Git 仓库
+│   ├── ruoyi-admin/                 # 服务启动与模块组装
+│   ├── ruoyi-api/                   # 跨模块公开合同
+│   ├── ruoyi-common/                # 通用基础能力
+│   └── ruoyi-modules/               # system/workflow/gen/demo/ai/job
+├── docs/                            # 当前架构与上游治理文档
+└── speculo/                         # 规格驱动研发状态
 ```
-ruoyi-vue-plus-docs/                 # 父仓库（本仓库）
-├── ruoyi-vue-plus-namewta/          # submodule → 后端仓库
-└── plus-ui-namewta/                 # submodule → 前端仓库
-```
 
-- **父仓库** 只记录各 submodule 当前指向的 commit，不复制前后端完整历史。
-- **后端 / 前端** 仍是独立 Git 仓库，可各自开发、发版；在本仓库中作为子模块被引用。
-- 三个仓库默认分支均为 `main`（产品）。后端 `6.X`、前端 `6.X-Vue` 是上游纯镜像，只允许 fast-forward，禁止业务提交。
-- NAMEWTA 相对上游的改造热点与合并约束见 [docs/upstream/customization-map.md](docs/upstream/customization-map.md)。
+前后端通过 HTTP/JSON 合同协作并独立构建、测试和发布。前端 App 只负责 Client、布局、品牌和终端组合；可复用 API、类型、业务规则与 Web 页面分别归 domain 和 web-domain。后端 `ruoyi-admin` 只负责组装，跨业务模块通过 `ruoyi-api` 或明确的 common SPI 协作。
 
-## 克隆
+## 当前终端
 
-递归克隆本仓库及全部 submodule：
+| 终端 | 状态 | 说明 |
+|---|---|---|
+| `admin-web` | 已激活 | 完整后台管理端，组合六个业务领域及动态菜单权限 |
+| `client-web` | 已激活 | 独立 Client、会话、路由、布局和主题的第二个 Web App |
+| `mobile-web` | 规划占位 | 仅保留中文 README，等待独立规格确定技术栈与部署合同 |
+| `miniapp-taro` | 规划占位 | 仅保留中文 README，等待独立规格确定小程序能力边界 |
+
+新增 App 时不复制 `admin-web/src/api`、业务类型或领域页面。App 从公开包入口选择所需 domain/web-domain，再提供本终端的请求、存储、加密、布局和路由适配。
+
+## 获取项目
+
+递归克隆父仓库及两个子模块：
 
 ```bash
 git clone --recurse-submodules https://github.com/NAMEWTA/ruoyi-vue-plus-docs.git
+cd ruoyi-vue-plus-docs
 ```
 
-若已克隆父仓库但未拉取子模块：
+若已克隆父仓库但子模块为空：
 
 ```bash
 git submodule update --init --recursive
 ```
+
+前端要求 Node.js `>=20.19.0`、pnpm `>=10.0.0`；后端要求 Java 21，并通过仓库内 Maven Wrapper 构建。具体启动、构建和验证命令分别见前后端 README。
+
+## 分支与上游关系
+
+- 三个仓库的 `main` 都是 NAMEWTA 产品分支。
+- 后端 `6.X`、前端 `6.X-Vue` 是只读上游镜像，只允许 fast-forward，不承载 NAMEWTA 业务提交。
+- 上游更新用于发现新能力、修复和安全变化；实际代码按当前本地 owner boundary 适配，不要求恢复上游目录结构。
+- 父仓库只记录子模块 commit。前后端提交完成并验证后，才推进父仓库 gitlink。
+
+长期约束见 [上游能力治理](docs/upstream/README.md)与 [定制边界](docs/upstream/customization-map.md)。历史变化直接通过各仓库 Git 日志查看，文档只维护当前有效状态。
+
+## 许可证与上游
+
+NAMEWTA 保留上游项目许可证和署名。使用、分发与二次开发时，请同时遵守前后端仓库中的许可证及其依赖许可证。

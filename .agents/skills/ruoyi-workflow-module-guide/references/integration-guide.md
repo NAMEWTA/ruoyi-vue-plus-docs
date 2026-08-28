@@ -14,7 +14,7 @@
 | 设计/发布流程定义、分类、SpEL 规则 | REST `/workflow/definition` `/workflow/category` `/workflow/spel` + Warm-Flow UI | `ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-workflow/src/main/java/org/dromara/workflow/controller/FlwDefinitionController.java`；`ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-workflow/src/main/java/org/dromara/workflow/controller/FlwCategoryController.java`；`ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-workflow/src/main/java/org/dromara/workflow/controller/FlwSpelController.java` |
 | 办理人 | 设计器配置用户/角色/部门/岗位/SpEL；不要复制 `PermissionHandler` | `ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-workflow/src/main/java/org/dromara/workflow/handler/WorkflowPermissionHandler.java` |
 
-`ruoyi-demo` / `ruoyi-system` / `ruoyi-ai` / `ruoyi-gen` / `ruoyi-job` 当前没有接入实现。新模块复制请假模式，换成自己的 `flowCode`。
+`ruoyi-demo` / `ruoyi-system` / `ruoyi-ai` / `ruoyi-job` 当前没有接入实现。新模块复制请假模式，换成自己的 `flowCode`。
 
 唯一装配方：`ruoyi-vue-plus-namewta/ruoyi-admin/pom.xml` 依赖 `ruoyi-workflow`。
 

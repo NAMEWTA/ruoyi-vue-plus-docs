@@ -4,9 +4,9 @@
 
 ## 状态
 
-- 本目录是独立模板资产，不属于 `ruoyi-gen` 的 classpath 资源。
-- 现有 `ruoyi-gen` 未改为读取本目录；删除该模块前，不再把它作为模板运行器使用。
-- 新生成能力必须显式读取 [catalog.json](./catalog.json)，按 [context-contract.md](./context-contract.md) 提供上下文。
+- 本目录是独立静态模板资产，不属于任何运行时 classpath 资源。
+- 运行时代码生成器已从基座物理删除；AI 与开发者直接参考本目录完成 CRUD 实现和审查。
+- 使用模板时必须显式读取 [catalog.json](./catalog.json)，按 [context-contract.md](./context-contract.md) 提供上下文。
 - 模板只生成资源切片，不覆盖已有模块的共享入口、包清单或 App 组合文件。
 
 ## Vue 输出

@@ -16,7 +16,7 @@
 - [ ] 错误、超时、取消、事务、资源和并发生命周期完整，原始 cause 与中断语义保留。
 - [ ] public API、JSON、数据库 schema、SQL 初始化顺序和持久化兼容影响已说明；每个新建项目自有表均包含 `version/create_dept/create_time/create_by/update_time/update_by/del_flag` 并与 entity 映射一致。
 - [ ] 测试层级匹配风险；前端 lint/typecheck/unit/E2E/build 与后端 default test/双 bundle package 已按适用范围执行，属性门控测试的 skipped/真实服务状态未被掩盖。
-- [ ] `target/**`、`.flattened-pom.xml`、自动导入声明等生成物未被手改；代码生成器源码未被错误排除。
+- [ ] `target/**`、`.flattened-pom.xml`、自动导入声明和 OpenAPI TypeScript 等生成物未被手改；已删除的运行时代码生成器、菜单、权限和当前合同未被重新引入。
 - [ ] 实际运行的 lint/compile/test/build 命令、working directory、退出码和未验证项已记录。
 - [ ] 未混入 `pnpm fmt` 全仓改写、依赖升级、lockfile 漂移或无关大文件拆分。
 - [ ] 上游镜像分支和基线标签保持冻结；SQL 定制仍位于 `script/sql/namewta/**`。

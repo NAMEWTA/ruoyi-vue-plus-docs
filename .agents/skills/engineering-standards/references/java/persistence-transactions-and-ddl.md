@@ -18,7 +18,7 @@ Scope: `module:ruoyi-vue-plus-namewta`, business service transaction boundaries
 
 Level: MUST
 
-Source: `user-decision` + `repository-fact` (`dynamic-datasource-spring-boot4-starter`, `GenTableServiceImpl`)
+Source: `user-decision` + `repository-fact` (`dynamic-datasource-spring-boot4-starter`, `SysNotifyMonitorServiceImpl`)
 
 Rule: 新建或实质修改的业务事务边界使用 `com.baomidou.dynamic.datasource.annotation.DSTransactional`，不再新增 Spring `org.springframework.transaction.annotation.Transactional`。注解放在可由 Spring AOP 代理调用的 public service 用例边界；需要切换数据源时，由该事务内被代理调用的 service/mapper 使用 `@DS`。同一调用链不得叠加或静默混用两套事务注解，也不得依赖 private/self-invocation 触发事务。
 

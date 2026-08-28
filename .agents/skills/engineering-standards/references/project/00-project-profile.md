@@ -16,8 +16,8 @@
 - `plus-ui-namewta/packages/{domains,web-domains,platform,adapters,web-kit}/**`：headless domain、Vue Web 表现、平台端口、运行时适配器与共享 Web 机制的依赖方向。
 - `plus-ui-namewta/packages/api-contracts/**`、`tooling/openapi/**`：生成 transport、不可变快照、来源与漂移检查；domain model 由各领域独立拥有。
 - `plus-ui-namewta/tooling/architecture/**`：使用 AST/SFC/YAML 结构化检查工作区、公开入口、依赖方向、终端纯度、占位目录和基线漂移。
-- `docs/fm/**`：脱离 `ruoyi-gen` classpath 的标准 CRUD 模板资产，是 Java、Vue、React、XML、SQL、树结构、状态/排序和前后端合同的当前生成基线。
-- `ruoyi-vue-plus-namewta/pom.xml`、`mvnw`、各模块 `pom.xml`：Java 21、Spring Boot 4.1.0、Maven Wrapper、41 个 POM 描述符；根 reactor 构建 41 projects，`bundle-full/core` 控制最终 admin fat jar 的业务模块集合。
+- `docs/fm/**`：与已删除的运行时代码生成器解耦的静态 CRUD 模板资产，是 AI 与开发者实现 Java、Vue、React、XML、SQL、树结构、状态/排序和前后端合同时的当前参考基线。
+- `ruoyi-vue-plus-namewta/pom.xml`、`mvnw`、各模块 `pom.xml`：Java 21、Spring Boot 4.1.0、Maven Wrapper、40 个 POM 描述符；根 reactor 构建 40 projects，`bundle-full/core` 控制最终 admin fat jar 的业务模块集合。
 - `ruoyi-vue-plus-namewta/ruoyi-admin/src/main/java/org/dromara/DromaraApplication.java`、`ruoyi-modules/ruoyi-demo/**` 及 `ruoyi-modules/ruoyi-system/**`：Spring MVC、BO/VO/entity、service、mapper、Bean Validation、数据权限、事务和 Sa-Token 主导实践。
 - `ruoyi-vue-plus-namewta/pom.xml`、`ruoyi-common/ruoyi-common-mybatis/**`：dynamic-datasource 4.5.0、`@DSTransactional`、`BaseEntity` 自动填充字段、VO mapper 与链式查询的公共基础设施合同。
 - `ruoyi-vue-plus-namewta/script/sql/ry_vue.sql` 的 `test_demo`、`ruoyi-modules/ruoyi-demo/**/TestDemo*`：新建项目自有业务表的乐观锁、审计字段、逻辑删除及 entity 映射基线。
@@ -49,7 +49,7 @@
 
 - 依赖/缓存/构建输出：`.git/**`、`.pnpm-store/**`、`**/node_modules/**`、`**/dist/**`、`**/target/**`、`**/.flattened-pom.xml`、coverage 和工具缓存。
 - 生成声明：`plus-ui-namewta/apps/*/src/types/{auto-imports,components}.d.ts` 及同类 Vite 插件输出；修改生成器配置后重新生成，不手改结果。
-- 前端 `packages/api-contracts` 生成结果由 `tooling/openapi` 与已提交快照维护；`tooling/generators` 当前为 README-only 占位。模板资产统一位于父仓库 `docs/fm/**`，不再属于 `ruoyi-gen` classpath；后端 `ruoyi-modules/ruoyi-gen/**` 仍是待退役的可编辑生成器源码，不是生成物。
+- 前端 `packages/api-contracts` 生成结果由 `tooling/openapi` 与已提交快照维护；`tooling/generators` 当前为 README-only 占位。运行时代码生成器及其前端管理面已从基座物理删除；CRUD 实现参考父仓库 `docs/fm/**` 静态模板，不存在 `ruoyi-gen` classpath 或可编辑运行源码。
 - 上游冻结分支：后端 `6.X`、前端 `6.X-Vue` 只允许 fast-forward，不承载业务提交；产品变更进入各自 `main`。
 - 上游基线标签 `namewta-base-upstream-6x`、`namewta-base-upstream-6x-vue` 不移动。
 - `ruoyi-vue-plus-namewta/script/sql/ry_vue.sql` 是上游初始化脚本；NAMEWTA 增量写入 `script/sql/namewta/**`，不得回写上游脚本。

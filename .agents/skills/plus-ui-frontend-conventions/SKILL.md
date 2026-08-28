@@ -47,4 +47,4 @@ description: 为 plus-ui-namewta 多 App monorepo 提供当前架构、实现落
 | 架构检查 | `tooling/architecture/src/**`、`tooling/architecture/baseline.json` |
 | OpenAPI 合同 | `packages/api-contracts/**`、`tooling/openapi/**` |
 
-当前标准模板资产位于父仓库 `docs/fm`；现有后端生成运行实现仍在待退役的 `ruoyi-gen`，前端 `gen` domain/web-domain 只负责调用和呈现该能力。
+当前标准 CRUD 静态模板资产位于父仓库 `docs/fm`，供 AI 与开发者参考实现。后端 `ruoyi-gen` 运行模块和前端 `gen` domain/web-domain 已从基座物理删除，不存在生成器页面、service 或 manifest 注册。

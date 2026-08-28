@@ -68,6 +68,6 @@ Level: MUST
 
 Source: `repository-fact` + manual discovery correction
 
-Rule: 前端根级 `gen/**` 已退役；`tooling/generators` 当前只是 README 占位。标准模板资产统一位于父仓库 `docs/fm/**`；后端 `ruoyi-modules/ruoyi-gen/**` 是待退役的可编辑运行实现，不再拥有模板。`target/**`、`.flattened-pom.xml`、App 自动导入声明和 `packages/api-contracts` 生成结果是生成物，应通过源配置、OpenAPI 快照或生成器修复，不直接手改。
+Rule: 运行时代码生成器、后端 `ruoyi-gen` 模块和前端 `gen` domain/web-domain 已物理删除；`tooling/generators` 当前只是 README 占位。标准 CRUD 静态模板统一位于父仓库 `docs/fm/**`，供 AI 与开发者参考实现。`target/**`、`.flattened-pom.xml`、App 自动导入声明和 `packages/api-contracts` 生成结果是生成物，应通过源配置或 OpenAPI 工具修复，不直接手改。
 
 Verification: review 文件头、插件配置和生成来源；`git diff` 不含意外 build output；修改生成结果时同时指出源模板和生成命令。

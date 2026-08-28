@@ -272,7 +272,7 @@
 
 直接：`ruoyi-common-doc`、`ruoyi-common-social`、`ruoyi-common-mail`、`ruoyi-common-notify`、`ruoyi-common-mcp`。
 
-业务模块由 profile 组装：默认 `bundle-full` 包含 `ruoyi-job`、`ruoyi-ai`、`ruoyi-demo`、`ruoyi-workflow`、`ruoyi-gen`；显式 `bundle-core` 只保留 `ruoyi-api`、`ruoyi-system` 与直接 common 依赖。
+业务模块由 profile 组装：默认 `bundle-full` 包含 `ruoyi-job`、`ruoyi-ai`、`ruoyi-demo`、`ruoyi-workflow`；显式 `bundle-core` 只保留 `ruoyi-api`、`ruoyi-system` 与直接 common 依赖。运行时代码生成器已从 reactor 和两个 bundle 删除。
 
 因此 `bundle-full` admin 进程还会装入（POM 图推断）：system 的 14 个、workflow 的 10 个、job 的 `ruoyi-common-json`+`ruoyi-common-job`（`ruoyi-modules/ruoyi-job/pom.xml`）、ai 的 `ruoyi-common-core`+`ruoyi-common-ai`+`ruoyi-common-satoken`+`ruoyi-common-web`（`ruoyi-modules/ruoyi-ai/pom.xml`）、demo 额外的 `ruoyi-common-redis`+`ruoyi-common-elasticsearch`+`ruoyi-common-mqtt`+`ruoyi-common-mcp` 等（`ruoyi-modules/ruoyi-demo/pom.xml`）。social / mcp 主要由 admin 直接引入；elasticsearch / mqtt 主要由 demo 引入。需要 ES/MQTT 时看 demo POM，不要写进 system/workflow POM。
 

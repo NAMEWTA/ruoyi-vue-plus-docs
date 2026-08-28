@@ -7,7 +7,6 @@
 | `ruoyi-common/ruoyi-common-*` | 按能力拆分的基础设施、工具和稳定 SPI |
 | `ruoyi-modules/ruoyi-system` | 用户、Client、角色、菜单、权限、组织、资源和监控 |
 | `ruoyi-modules/ruoyi-workflow` | 流程定义、任务、实例和业务审批 |
-| `ruoyi-modules/ruoyi-gen` | 待退役的代码生成器运行实现，不再拥有模板资产 |
 | `ruoyi-modules/{ruoyi-demo,ruoyi-ai,ruoyi-job}` | 对应业务能力 |
 | `ruoyi-extend` | Monitor、SnailJob、SnailAI 等独立部署应用 |
 

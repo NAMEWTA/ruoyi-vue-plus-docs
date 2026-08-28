@@ -38,7 +38,7 @@
     "history": []
   },
   "created_at": "2026-08-28T22:49:06+08:00",
-  "updated_at": "2026-08-29T01:48:03+08:00",
+  "updated_at": "2026-08-29T01:56:27+08:00",
   "completed_at": null,
   "archived": false,
   "archive_path": null,
@@ -94,42 +94,42 @@
       "implementation_owner": "codex:/root",
       "integration_owner": "codex:/root",
       "provider": "git",
-      "base_sha": "f52caf5f033d4105be1d1a5fbce6d53f1228d488",
+      "base_sha": "095a42aa935f820808d0bafab6dd03ca20a63b51",
       "parent_branch": "main",
       "branch": "main",
       "workspace_ref": "current",
-      "source_checkpoint": null,
+      "source_checkpoint": "a350c1a3205a3648d1ff0c50c9c436202bdcff61",
       "integration": {
-        "status": "pending",
+        "status": "passed",
         "parent_ref": "main",
-        "parent_before_sha": "f52caf5f033d4105be1d1a5fbce6d53f1228d488",
-        "source_sha": null,
+        "parent_before_sha": "095a42aa935f820808d0bafab6dd03ca20a63b51",
+        "source_sha": "a350c1a3205a3648d1ff0c50c9c436202bdcff61",
         "candidate_sha": null,
         "candidate_tree_sha": null,
         "candidate_branch": null,
         "candidate_workspace_ref": null,
-        "result_sha": null,
+        "result_sha": "a350c1a3205a3648d1ff0c50c9c436202bdcff61",
         "method": "direct-parent",
         "conflict_paths": [],
-        "verification": "pending",
+        "verification": "passed",
         "full_suite": {
           "required": true,
-          "status": "pending",
+          "status": "passed",
           "reason": null,
-          "evidence": null
+          "evidence": "<Path>{roots.state}/specdev/changes/2026-08-28-retire-runtime-code-generator/evidence/T-02.md</Path>"
         },
         "e2e": {
           "required": false,
           "status": "not-required",
           "reason": "前端 architecture、组合测试、lint、typecheck 与 build 直接证明删除边界",
-          "evidence": null
+          "evidence": "<Path>{roots.state}/specdev/changes/2026-08-28-retire-runtime-code-generator/evidence/T-02.md</Path>"
         },
         "evidence": "<Path>{roots.state}/specdev/changes/2026-08-28-retire-runtime-code-generator/evidence/T-02.md</Path>",
-        "attempts": 0,
-        "promotion_status": "pending"
+        "attempts": 1,
+        "promotion_status": "applied"
       },
-      "status": "planned",
-      "updated_at": "2026-08-29T01:48:03+08:00"
+      "status": "integrated",
+      "updated_at": "2026-08-29T01:56:27+08:00"
     },
     {
       "ticket_id": "T-03",

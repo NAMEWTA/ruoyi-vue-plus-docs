@@ -16,7 +16,7 @@
 
 | 层级 | 当前 owner | 必须保持的不变量 |
 |---|---|---|
-| App | `apps/admin-web`、`apps/client-web` | 显式选择领域 manifest 与 Client；拥有布局、品牌、启动和终端组合，不重复实现领域 API |
+| App | `apps/admin-web`；`apps/{client-web,mobile-web,miniapp-taro}` 为占位 | 激活 App 显式选择领域 manifest 与 Client，拥有布局、品牌、启动和终端组合；占位目录保持 README-only |
 | Domain | `packages/domains/{admin,system,workflow,demo,gen,ai}` | 按后端模块及 Controller 资源组织 `api.ts`、`types.ts`；headless，不依赖 Vue、DOM 或具体 adapter |
 | Web-domain | `packages/web-domains/{admin,system,workflow,demo,gen,ai}` | 拥有领域页面、Web hooks、组件、语言与 manifest；不拥有 App 壳层，不深层导入 domain |
 | Platform | `packages/platform/{contracts,auth,http,permission,app-runtime}` | 提供跨领域端口和运行时合同；不反向依赖 App/domain，不实现具体浏览器技术 |
@@ -50,7 +50,7 @@
 |---|---|---|
 | 登录、Token、Client、菜单、权限 | 后端 auth/system；前端 admin/system、platform/auth、permission、App access | 后端定向测试；前端 architecture、unit、E2E |
 | Controller、DTO、OpenAPI | 对应 domain 资源、mapper、`api-contracts` | OpenAPI drift、typecheck、相关 API/unit |
-| Vue、Router、Axios、状态管理 | App 组合、web-domain、browser adapter | lint、typecheck、unit、双 App build |
+| Vue、Router、Axios、状态管理 | App 组合、web-domain、browser adapter | lint、typecheck、unit、激活工作区 build |
 | SQL、ORM、数据权限 | 后端模块与 NAMEWTA DDL/DML | 模块测试、全量 test、full/core package |
 | OSS、通知、工作流、外部 URL | 后端公开合同与前端对应 domain/web-domain | 安全定向测试、unit、E2E |
 | Web Filter、异常处理、日志配置 | `ruoyi-common-web` 系统日志、应用 Logback、敏感信息边界 | 日志定向测试、后端全量 test |

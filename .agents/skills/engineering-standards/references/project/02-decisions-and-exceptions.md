@@ -79,7 +79,7 @@
 | ID | Current | Target | Migration / Verification |
 |---|---|---|---|
 | `MIG-TS-STRICT` | `strict: true` 但 `noImplicitAny`、`strictNullChecks`、`strictFunctionTypes` 关闭；lint 允许多类 any | 新/修改的 API、存储、环境变量和第三方响应边界使用精确类型、`unknown` + narrowing，不新增无理由 any | 变更文件 Ratchet；review、`pnpm lint` 与完整 `pnpm typecheck` 已是 active gate |
-| `MIG-FE-TEST` | 根级 `pnpm test` 聚合各激活 App/包的 Vitest，Playwright 覆盖多 App 关键浏览器流程 | 新增纯逻辑、状态、权限或复杂交互时在 domain、web-domain、App 或 E2E 的正确层级扩展测试 | 本地与 CI 运行 architecture/lint/typecheck/unit/build，按风险运行 E2E；覆盖率阈值仍待决策 |
+| `MIG-FE-TEST` | 根级 `pnpm test` 聚合当前激活 App/包的 Vitest，Playwright 覆盖 Admin 关键浏览器流程 | 新增纯逻辑、状态、权限或复杂交互时在 domain、web-domain、App 或 E2E 的正确层级扩展测试；第二个 App 激活时恢复跨 App 隔离场景 | 本地与 CI 运行 architecture/lint/typecheck/unit/build，按风险运行 E2E；覆盖率阈值仍待决策 |
 | `MIG-BE-TEST` | 44 个 JUnit 测试源码文件；root 默认执行测试，Redis/MySQL/MinIO 用例通过属性门控接入真实服务 job | 认证、权限、事务、SQL 和公共 API 变更有回归测试，并在合并门禁执行 | `./mvnw test` 为默认门禁；core 产物因排除 demo/workflow 而在已测试后用 `-Dmaven.test.skip=true` 组装；真实服务由 CI 补证 |
 | `MIG-BE-DS-TX` | 业务代码同时存在 Spring `@Transactional` 与 dynamic-datasource `@DSTransactional` | 新建或实质修改的业务事务统一使用 `@DSTransactional`，事务事件使用匹配的 `@DsTxEventListener` | 按变更文件 Ratchet；迁移时验证代理调用、回滚、数据源切换和提交阶段事件；不发动无需求证据的全仓替换 |
 | `MIG-BE-DDL-BASE` | 历史、上游、第三方及部分 NAMEWTA 表未统一具备 `version/create_dept/create_time/create_by/update_time/update_by/del_flag` | 每个新建项目自有表均具备七个基础字段，并与 `BaseEntity`、`@Version`、`@TableLogic` 映射一致 | 新表立即执行；触及存量项目自有表时评估兼容迁移，未经迁移设计不直接补列；上游冻结和第三方 schema 不做无关整治 |

@@ -5,7 +5,7 @@
 | ID | Path | Language / framework / runtime | Build | Source / test roots | Public entrypoint | Quality gates | Evidence |
 |---|---|---|---|---|---|---|---|
 | `workspace-parent` | `.` | Markdown、Git/Submodule 治理 | Git, GitHub Actions | `docs/**`, `scripts/ci/**` | `README.md` | submodule snapshot + frontend/backend/external-services jobs | `README.md`, `.gitmodules`, `.github/workflows/quality-gates.yml`; high |
-| `plus-ui` | `plus-ui-namewta` | TypeScript、Vue 3、Pinia、Browser，多 App monorepo | pnpm workspace、Vite、Oxlint、Vitest、Playwright | `apps/**/src`、`packages/**/src`、`tooling/**/src`、相邻 `*.test.ts`、`e2e/**` | `apps/admin-web/src/main.ts`、`apps/client-web/src/main.ts` | architecture check/test、lint、typecheck、workspace test、双模式 build、按风险 E2E | `package.json`、`pnpm-workspace.yaml`、`tooling/architecture/**`、`playwright.config.ts`; high |
+| `plus-ui` | `plus-ui-namewta` | TypeScript、Vue 3、Pinia、Browser，可扩展多 App monorepo | pnpm workspace、Vite、Oxlint、Vitest、Playwright | `apps/admin-web/src`、`packages/**/src`、`tooling/**/src`、相邻 `*.test.ts`、`e2e/**` | `apps/admin-web/src/main.ts` | architecture check/test、lint、typecheck、workspace test、双模式 build、按风险 E2E | `package.json`、`pnpm-workspace.yaml`、`tooling/architecture/**`、`playwright.config.ts`; high |
 | `backend-root` | `ruoyi-vue-plus-namewta` | Java 21, Spring Boot 4, JVM | Maven Wrapper | Maven modules below; 44 test source files | `ruoyi-admin` and three extension applications | default test; bundle-full + bundle-core package | root `pom.xml`, `ruoyi-admin/pom.xml`; high |
 
 ## 后端 Maven 模块
@@ -69,7 +69,7 @@
 
 | Scope | Baseline | Mature implementation evidence | Usage |
 |---|---|---|---|
-| 前端领域纵切片 | 后端 controller/BO/VO/OpenAPI 合同 | `packages/domains/demo/**`、`packages/web-domains/demo/**`、两个 App 的显式组合 | transport -> domain mapper/model/service -> web-domain 页面/manifest -> App 选择 |
+| 前端领域纵切片 | 后端 controller/BO/VO/OpenAPI 合同 | `packages/domains/demo/**`、`packages/web-domains/demo/**`、Admin 显式组合 | transport -> domain mapper/model/service -> web-domain 页面/manifest -> App 选择 |
 | 前端树表 CRUD | 后端业务合同，无本地根级模板 | `packages/domains/demo/**`、`packages/web-domains/demo/**` | 保持非分页列表、树转换、父节点选择和展开状态语义，并由领域测试与页面测试分别验证 |
 | 前端复用状态 | 无单一模板替代 | 各 `web-domain` 的局部 composable、稳定 `web-kit`、App 私有 hooks | 状态先留在真实 owner；只有多消费者形成稳定合同时才提取 |
 | 后端标准 CRUD | `ruoyi-gen/fm/java/**` | `ruoyi-modules/ruoyi-demo/**/TestDemo*` | 对照 entity/BO/VO/mapper/service/controller 全链路及数据权限覆盖 |

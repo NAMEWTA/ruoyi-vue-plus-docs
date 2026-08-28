@@ -18,6 +18,8 @@ NAMEWTA 是 RuoYi-Vue-Plus / Plus-UI 的增强发行线。上游仍是基础能�
 | `packages/web-kit/*` | 多个 Web 消费者共同使用的壳层、基础组件和设计 token |
 | `packages/api-contracts` | 可追溯、确定性生成的 OpenAPI 传输合同 |
 
+当前只激活 `admin-web`。`client-web`、移动 Web 和小程序仅保留 README 规划入口，不属于工作区包；多 App 分层是可扩展架构边界，不表示所有占位终端已经实现。
+
 domain 与后端模块一一对应为 `admin`、`system`、`workflow`、`demo`、`gen`、`ai`；包内第二层按 Controller 的稳定 HTTP 资源命名。由此可以从 `/system/client` 直接定位到 `domains/system/src/client`，再定位到 `web-domains/system/src/client` 的 Web 表现层。
 
 App 不重新实现后端接口和数据模型。新增 App 时只选择需要的公开 domain/web-domain，并实现该终端自己的适配和界面组合。未来移动端、小程序可以复用 headless domain 与 platform 合同，同时替换终端特有 UI、请求、存储和生命周期。
@@ -30,7 +32,7 @@ Admin 登录后恢复用户信息，按当前 Client 获取后端菜单，使用
 
 ### 工程质量
 
-前端使用 pnpm workspace/catalog 管理依赖，并以架构检查、OpenAPI 漂移检查、Oxlint、Oxfmt、TypeScript、Vitest、双 App 构建和 Playwright 验证包边界及关键流程。跨 App 导入、包深层导入、跨工作区相对导入和未声明依赖由门禁阻止。
+前端使用 pnpm workspace/catalog 管理依赖，并以架构检查、OpenAPI 漂移检查、Oxlint、Oxfmt、TypeScript、Vitest、工作区构建和 Playwright 验证包边界及关键流程。跨 App 导入、包深层导入、跨工作区相对导入和未声明依赖由门禁阻止；第二个 App 激活时必须恢复真实跨 App Client 与会话隔离验收。
 
 ## 后端增强
 

@@ -22,7 +22,7 @@ apps/admin-web/src/main.ts
 - 认证与菜单服务：`@namewta/domain-admin` 的公开入口，由 `apps/admin-web/src/application/services.ts` 注入 system identity port
 - 路由转换：`apps/admin-web/src/store/modules/permission.ts`
 - 组件清单：`apps/admin-web/src/router/adminManifestRegistry.ts`
-- Client 领域选择：`apps/client-web/src/composition.ts`
+- 未来终端领域选择：由激活规格创建的 App 组合入口；当前不存在第二个 App 源码入口
 
 Admin 本地 `views` glob 只为 App 自有静态页面兜底；领域页面必须来自 web-domain 的公开 manifest。
 

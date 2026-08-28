@@ -24,7 +24,7 @@ description: 为 plus-ui-namewta 多 App monorepo 提供目录命名、Vue/TypeS
 | 能力 | 源码路径 |
 |---|---|
 | Admin 入口与组合 | `apps/admin-web/src/main.ts`、`apps/admin-web/src/application/services.ts`、`apps/admin-web/src/router/adminManifestRegistry.ts` |
-| Client 入口与组合 | `apps/client-web/src/main.ts`、`apps/client-web/src/composition.ts` |
+| 未来终端占位 | `apps/client-web/README.md`、`apps/mobile-web/README.md`、`apps/miniapp-taro/README.md`；当前无源码入口 |
 | 动态菜单 | `apps/admin-web/src/permission.ts`、`apps/admin-web/src/application/services.ts`、`apps/admin-web/src/store/modules/permission.ts` |
 | 请求、会话与权限装配 | `apps/admin-web/src/application/http.ts`、`apps/admin-web/src/application/session.ts`、`apps/admin-web/src/application/access.ts` |
 | 权限指令 | `apps/admin-web/src/directive/permission/**` |

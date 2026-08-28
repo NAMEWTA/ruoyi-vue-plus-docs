@@ -14,7 +14,7 @@
 
 | 方向 | NAMEWTA 增强 | 直接收益 |
 |---|---|---|
-| 多 App 前端 | 将单体前端重构为 `apps + domains + web-domains + platform + adapters + web-kit` 的 pnpm monorepo | Admin、Client 及未来移动端/小程序可按需组合能力，不重复实现 API 与数据模型 |
+| 多 App 前端 | 将单体前端重构为 `apps + domains + web-domains + platform + adapters + web-kit` 的 pnpm monorepo | Admin 当前独立交付，未来 Client/移动端/小程序可按需组合能力而不重复实现 API 与数据模型 |
 | 前后端定位 | 前端 domain 按 `admin/system/workflow/demo/gen/ai` 后端模块组织，第二层按 Controller HTTP 资源命名 | 从 Controller、URL 到前端 API、类型、页面都有稳定查找路径 |
 | Client 身份域 | Client 可独立配置登录域、注册开关、默认角色和用户归属；密码、短信、邮件、社交、小程序登录统一执行准入 | 一套后端可安全服务多个产品入口和用户群体 |
 | RBAC 与会话 | 角色、菜单、按钮权限、动态路由、默认角色和会话按 `userId + Client 主键` 计算 | 防止跨 App 菜单、权限、Token 和会话串用 |
@@ -49,7 +49,7 @@ ruoyi-vue-plus-docs/
 | 终端 | 状态 | 说明 |
 |---|---|---|
 | `admin-web` | 已激活 | 完整后台管理端，组合六个业务领域及动态菜单权限 |
-| `client-web` | 已激活 | 独立 Client、会话、路由、布局和主题的第二个 Web App |
+| `client-web` | 规划占位 | 仅保留中文 README，旧实现已清理，等待独立规格重新激活 |
 | `mobile-web` | 规划占位 | 仅保留中文 README，等待独立规格确定技术栈与部署合同 |
 | `miniapp-taro` | 规划占位 | 仅保留中文 README，等待独立规格确定小程序能力边界 |
 

@@ -13,7 +13,7 @@
 - `README.md`、`.gitmodules`：父仓库只聚合 `plus-ui-namewta` 与 `ruoyi-vue-plus-namewta`，两个子模块独立开发和发布。
 - `docs/upstream/customization-map.md`：NAMEWTA 相对上游的认证、权限、Client、菜单、SQL 和前端契约权威清单。
 - `plus-ui-namewta/package.json`、`pnpm-workspace.yaml`、`pnpm-lock.yaml`、各包 `package.json`/`tsconfig.json`：Vue 3、TypeScript 6、Vite 8、Pinia 4、pnpm 10、Node `>=20.19.0` 的多 App monorepo。
-- `plus-ui-namewta/apps/admin-web/src/main.ts`、`apps/client-web/src/main.ts`：两个可独立构建和部署的浏览器 App；各自拥有 ClientContext、组合、路由、布局与会话命名空间。
+- `plus-ui-namewta/apps/admin-web/src/main.ts`：当前唯一可构建和部署的浏览器 App；`apps/client-web`、`mobile-web`、`miniapp-taro` 为 README-only 占位。
 - `plus-ui-namewta/packages/{domains,web-domains,platform,adapters,web-kit}/**`：headless domain、Vue Web 表现、平台端口、运行时适配器与共享 Web 机制的依赖方向。
 - `plus-ui-namewta/packages/api-contracts/**`、`tooling/openapi/**`：生成 transport、不可变快照、来源与漂移检查；domain model 由各领域独立拥有。
 - `plus-ui-namewta/tooling/architecture/**`：使用 AST/SFC/YAML 结构化检查工作区、公开入口、依赖方向、终端纯度、占位目录和基线漂移。
@@ -34,7 +34,7 @@
 | `module:plus-ui-namewta` | `plus-ui-namewta` | `pnpm lint` | 根配置与各激活工作区包的 Oxlint 检查 | `package.json`, `.oxlintrc.json`, package scripts | active local/CI gate |
 | `module:plus-ui-namewta` | `plus-ui-namewta` | `pnpm typecheck` | 各激活 App/包的 TypeScript/Vue 非写入式检查 | `package.json`, package scripts/tsconfig | active local/CI gate |
 | `module:plus-ui-namewta` | `plus-ui-namewta` | `pnpm test` | 各激活 App/包的 Vitest 测试 | `package.json`, `**/*.test.ts` | active local/CI gate |
-| `module:plus-ui-namewta` | `plus-ui-namewta` | `pnpm test:e2e` | Playwright 多 App 浏览器验收 | `playwright.config.ts`, `e2e/**` | risk-based local/CI gate |
+| `module:plus-ui-namewta` | `plus-ui-namewta` | `pnpm test:e2e` | Playwright Admin 浏览器验收；第二个 App 激活后扩展隔离场景 | `playwright.config.ts`, `e2e/**` | risk-based local/CI gate |
 | `module:plus-ui-namewta` | `plus-ui-namewta` | `pnpm build:dev` / `pnpm build:prod` | 开发配置和生产配置的工作区构建 | `package.json`, App/package scripts | active local gate |
 | `module:plus-ui-namewta` | `plus-ui-namewta` | `pnpm fmt` | Oxfmt 写入式格式化受管前端路径 | `package.json` | active tool, not a check gate |
 | `module:ruoyi-vue-plus-namewta` | `ruoyi-vue-plus-namewta` | `./mvnw test` | 默认执行 JUnit/Surefire 测试 | `pom.xml`, Maven Wrapper | active local/CI gate |

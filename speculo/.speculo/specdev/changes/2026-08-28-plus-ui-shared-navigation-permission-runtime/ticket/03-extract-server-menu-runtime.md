@@ -111,8 +111,8 @@ shared_path_owners: []
 
 ## 10. 验收标准
 
-- [ ] `AC-006`、`AC-007`、`AC-010`、`AC-012` 的纯运行时合同有正常与失败测试。
-- [ ] 包不导入 apps、Vue、DOM、Pinia、Vue Router 或 UI 消息实现。
-- [ ] 现有 App Runtime 测试与根公开入口保持绿色。
-- [ ] Evidence、commit、integration 和父分支结果写入 `<Path>{roots.state}/specdev/changes/2026-08-28-plus-ui-shared-navigation-permission-runtime/evidence/T-03.md</Path>`。
-- [ ] 未发生未批准偏差，Ticket、Map 与 Evidence 状态一致。
+- [x] `AC-006`、`AC-007`、`AC-010`、`AC-012` 的纯运行时合同有正常与失败测试。
+- [x] 包不导入 apps、Vue、DOM、Pinia、Vue Router 或 UI 消息实现。
+- [x] 现有 App Runtime 测试与根公开入口保持绿色。
+- [x] Evidence、commit、integration 和父分支结果写入 `<Path>{roots.state}/specdev/changes/2026-08-28-plus-ui-shared-navigation-permission-runtime/evidence/T-03.md</Path>`。
+- [x] 未发生未批准偏差，Ticket、Map 与 Evidence 状态一致。

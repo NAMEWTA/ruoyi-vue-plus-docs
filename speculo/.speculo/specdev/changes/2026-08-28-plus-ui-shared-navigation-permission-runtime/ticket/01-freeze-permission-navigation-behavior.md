@@ -110,9 +110,9 @@ shared_path_owners: []
 
 ## 10. 验收标准
 
-- [ ] `AC-005`、`AC-006`、`AC-008`、`AC-009`、`AC-011`、`AC-012` 的浏览器基线可重复执行。
-- [ ] fixture 不再依赖 App 本地动态 `views` 兜底。
-- [ ] 验证矩阵全部记录到 `<Path>{roots.state}/specdev/changes/2026-08-28-plus-ui-shared-navigation-permission-runtime/evidence/T-01.md</Path>`。
-- [ ] 修改未超出 `writable_paths`，并形成非空 implementation/source commit。
-- [ ] Lead 完成 direct-parent 或 parent-candidate E2E，记录 result SHA 与父分支包含关系。
-- [ ] 未发生未批准偏差，Ticket、Map 与 Evidence 状态一致。
+- [x] `AC-005`、`AC-006`、`AC-008`、`AC-009`、`AC-011`、`AC-012` 的浏览器基线可重复执行。
+- [x] fixture 不再依赖 App 本地动态 `views` 兜底。
+- [x] 验证矩阵全部记录到 `<Path>{roots.state}/specdev/changes/2026-08-28-plus-ui-shared-navigation-permission-runtime/evidence/T-01.md</Path>`。
+- [x] 修改未超出 `writable_paths`，并形成非空 implementation/source commit。
+- [x] Lead 完成 direct-parent 或 parent-candidate E2E，记录 result SHA 与父分支包含关系。
+- [x] 未发生未批准偏差，Ticket、Map 与 Evidence 状态一致。

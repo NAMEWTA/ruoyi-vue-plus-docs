@@ -111,8 +111,8 @@ Vue Web App 调用公开安装入口并提供一个动态 evaluator provider。�
 
 ## 10. 验收标准
 
-- [ ] `AC-001` 至 `AC-004` 和 `AC-012` 的包级合同通过。
-- [ ] 新包不依赖 apps、Pinia、Router 或 UI 消息单例。
-- [ ] Admin 依赖和锁文件由 T-02 一次性登记，其他 Ticket 不修改这些 shared paths。
-- [ ] 验证与 commit/integration 证据写入 `<Path>{roots.state}/specdev/changes/2026-08-28-plus-ui-shared-navigation-permission-runtime/evidence/T-02.md</Path>`。
-- [ ] 未发生未批准偏差，Ticket、Map 与 Evidence 状态一致。
+- [x] `AC-001` 至 `AC-004` 和 `AC-012` 的包级合同通过。
+- [x] 新包不依赖 apps、Pinia、Router 或 UI 消息单例。
+- [x] Admin 依赖和锁文件由 T-02 一次性登记，其他 Ticket 不修改这些 shared paths。
+- [x] 验证与 commit/integration 证据写入 `<Path>{roots.state}/specdev/changes/2026-08-28-plus-ui-shared-navigation-permission-runtime/evidence/T-02.md</Path>`。
+- [x] 未发生未批准偏差，Ticket、Map 与 Evidence 状态一致。

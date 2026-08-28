@@ -158,7 +158,7 @@ T-05 的父仓库文档与 submodule pointer 由 Lead 在当前聚合 workspace 
 | Local direct-parent verification and parent update | not-authorized | 不适用：当前计划选择 required/candidate-merge |
 | Local candidate integration and parent update | authorized | Lead-only；来源为本轮用户完成 Goal Plan 的明确指令 |
 | Push / PR / remote merge | not-authorized | 本计划不请求远程写入 |
-| Branch/worktree cleanup | not-authorized | 成功集成不自动继承；需单独授权 |
+| Branch/worktree cleanup | authorized | 用户于 2026-08-28 单独授权；T-01 至 T-05 source branch/worktree 已清理 |
 | Deploy / migration / production actions | not-authorized | 本变更不需要生产动作 |
 
 ### Evidence Return

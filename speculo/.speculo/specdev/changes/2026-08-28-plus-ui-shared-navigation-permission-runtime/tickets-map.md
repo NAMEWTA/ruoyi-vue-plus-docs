@@ -91,7 +91,7 @@ T-02 ────╲
 - **Wave 2 / Admin Migration Gate：** T-04 定向测试、静态门禁和 required E2E 绿色。
 - **Wave 3 / Contract Gate：** T-05 legacy 零匹配、架构反向验证、文档同步和全量 Gate 绿色。
 
-Goal Plan 使用 `required + candidate-merge`：前端 Ticket 使用独立 source worktree，Lead 串行集成 candidate。T-01 至 T-05 已全部集成，G-40 由完整根门禁、Playwright `39/39`、前端 result 与父仓库 pointer/docs commit 关闭。
+Goal Plan 使用 `required + candidate-merge`：前端 Ticket 使用独立 source worktree，Lead 串行集成 candidate。T-01 至 T-05 已全部集成，G-40 由完整根门禁、Playwright `39/39`、前端 result 与父仓库 pointer/docs commit 关闭；后续授权的 source branch/worktree 清理也已完成。
 
 ## 7. 横切契约与风险
 

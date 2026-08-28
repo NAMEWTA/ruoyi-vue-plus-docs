@@ -344,3 +344,15 @@
 - **约束或不变量：** Evidence 不记录凭据或 Token；生产 DML、部署、角色授权、push 与 worktree cleanup 未授权且未执行。
 - **后续：** 生产发布若另行批准，必须重新冻结 SHA、备份并按 T-08 发布/补偿合同执行。
 - **替代/被替代：** 完成 LOG-022 后续实现，不替代任何产品决定或永久 ADR。
+
+## LOG-024 — 2026-08-28T19:08:06+0800 — 完成审计补正 Ticket 提交祖先关系
+- **设计树节点：** 不适用
+- **轮次与依赖：** completion audit / LOG-023
+- **状态：** confirmed
+- **问题：** T-04 历史 source 与 result 虽然 parent/tree 相同，但 source 并非 result 祖先，不满足 required workspace 的提交可追溯合同。
+- **事实与来源：** source `29cf4dce083afe18aa59d68b44ae41885ee62cd9` 与 replay `966d426d0e94e5ff69cf62c8ec5a71018d911af6` 均以 `65dfb11f96c1ec2ee7a40927bf43fc4ced205ff1` 为父且 tree 同为 `24b503d87cbaaf1e06458e5b65e033ee6dacf6ca`；最终 backend tree 始终为 `a8ac9a101f1719f0df640a782491e9072b9388b3`。
+- **结论：** 创建双父 T-04 candidate `94b0fb7c61307bab073a6a273c1d2b4eba9e4f94`，并以最终 backend result `42e06c0f713e0d724813800505e5bb5b40ab563b` 显式包含所有 Ticket source/candidate；两次 merge 均为零产品 diff。
+- **验证：** 最终 tree 上 `./mvnw test` 为 190 tests、0 failure/error；full/core 两个 clean bundle 均通过；所有 backend source 与 T-04 candidate 的 `merge-base --is-ancestor` 均返回成功。
+- **影响工件：** T-04/T-08 Evidence / Goal Plan / Tickets Map / change status / parent backend gitlink
+- **约束或不变量：** 不改产品 tree，不吸收前后端和父仓无关 dirty 内容；不清理 worktree，不推送、部署或执行生产 DML。
+- **替代/被替代：** 补正 LOG-023 的最终 backend result 与提交拓扑，不改变其产品验收结论。

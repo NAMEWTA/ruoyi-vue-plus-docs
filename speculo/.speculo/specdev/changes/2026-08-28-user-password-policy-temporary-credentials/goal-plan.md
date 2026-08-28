@@ -229,7 +229,7 @@ source-worktree 只运行 Ticket 非 E2E checks；parent-candidate 才是 Redis/
 ### Current Status
 
 - Spec、8 张 Deep Ticket 与 Tickets Map 均已完成；`AC-001` 至 `AC-024` 全部由实际代码、自动测试或隔离环境演练闭合，无 deferred。
-- 八张 Ticket 均在 required source worktree 形成非空提交，经 clean candidate 验证后进入对应子模块 `main`；backend result 为 `98f1e76e7945b7bd003abf6833d0efecea416a12`，frontend result 为 `8aa184b353c5a37ee555feb8be808fe9ba885297`。
+- 八张 Ticket 均在 required source worktree 形成非空提交，经 clean candidate 验证后进入对应子模块 `main`；backend result 为 `42e06c0f713e0d724813800505e5bb5b40ab563b`，frontend result 为 `8aa184b353c5a37ee555feb8be808fe9ba885297`。
 - G-10 至 G-30 的真实 Redis/MySQL、双 JVM、多 Client、并发 CAS 和 HTTP 流程通过；G-40 的 OpenAPI、架构、单测、构建与浏览器场景通过；G-50 的 MySQL fresh/upgrade/重复/冲突/补偿及最终 48 项 Playwright 通过。
 - NAMEWTA DML 历史 15,370 字节前缀 SHA-256 保持 `637d6ab8aa4a813536597d2e2e49ac98f0a932284325a6023a77d09f8b86d8e6`；长期定制地图已同步策略、临时凭据、Client 精确失效与发布/回滚边界。
 - 父仓只组合本 change Speculo 工件、长期定制文档和两个已验证 gitlink；工作区既有其他暂存、未暂存和子仓 dirty 内容均保留。

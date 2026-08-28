@@ -112,7 +112,7 @@ T-02 + T-06 + T-07 ────────────────────�
 - **Wave 3-4 / G-40 Frontend Verticals：** T-06 唯一生成 OpenAPI并完成 App 私有 register/profile UI；T-07 再按 domain -> web-domain manifest -> App runtime composition 完成 Admin 凭据 UI 和敏感交互 E2E，架构门禁证明无静态业务路由回流。
 - **Wave 5 / G-50 Migration + Final（已关闭）：** T-08 在真实 MySQL 演练 fresh/upgrade/重复/冲突/补偿，backend full/core、frontend architecture/lint/typecheck/test/build 与 48 项 E2E 全绿；Lead 已更新长期文档和两个已验证 gitlink。
 
-Goal Plan 按 `required + candidate-merge` 完成。八张 Ticket 均有 clean source、通过的 candidate、Lead Evidence 和已晋级 result；最终 backend 为 `98f1e76e7945b7bd003abf6833d0efecea416a12`，frontend 为 `8aa184b353c5a37ee555feb8be808fe9ba885297`，G-00 至 G-50 全部关闭。
+Goal Plan 按 `required + candidate-merge` 完成。八张 Ticket 均有 clean source、通过的 candidate、Lead Evidence 和已晋级 result；最终 backend 为 `42e06c0f713e0d724813800505e5bb5b40ab563b`，frontend 为 `8aa184b353c5a37ee555feb8be808fe9ba885297`，G-00 至 G-50 全部关闭。
 
 ## 7. 横切契约与风险
 

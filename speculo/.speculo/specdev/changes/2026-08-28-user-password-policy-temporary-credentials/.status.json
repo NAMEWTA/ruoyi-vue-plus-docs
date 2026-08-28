@@ -39,8 +39,8 @@
     "history": []
   },
   "created_at": "2026-08-28T10:09:42+08:00",
-  "updated_at": "2026-08-28T19:02:00+08:00",
-  "completed_at": "2026-08-28T19:02:00+08:00",
+  "updated_at": "2026-08-28T19:08:06+08:00",
+  "completed_at": "2026-08-28T19:08:06+08:00",
   "archived": false,
   "archive_path": null,
   "blockers": [],
@@ -189,13 +189,13 @@
       "integration": {
         "status": "passed",
         "parent_ref": "refs/heads/main",
-        "parent_before_sha": "65dfb11f96c1ec2ee7a40927bf43fc4ced205ff1",
+        "parent_before_sha": "966d426d0e94e5ff69cf62c8ec5a71018d911af6",
         "source_sha": "29cf4dce083afe18aa59d68b44ae41885ee62cd9",
-        "candidate_sha": "966d426d0e94e5ff69cf62c8ec5a71018d911af6",
+        "candidate_sha": "94b0fb7c61307bab073a6a273c1d2b4eba9e4f94",
         "candidate_tree_sha": "24b503d87cbaaf1e06458e5b65e033ee6dacf6ca",
         "candidate_branch": "speculo/integration/2026-08-28-user-password-policy-temporary-credentials/T-04",
         "candidate_workspace_ref": "specdev-worktree/.integration/2026-08-28-user-password-policy-temporary-credentials/T-04",
-        "result_sha": "966d426d0e94e5ff69cf62c8ec5a71018d911af6",
+        "result_sha": "94b0fb7c61307bab073a6a273c1d2b4eba9e4f94",
         "method": "merge-commit",
         "conflict_paths": [],
         "verification": "passed",
@@ -212,11 +212,11 @@
           "evidence": "<Path>{roots.state}/specdev/changes/2026-08-28-user-password-policy-temporary-credentials/evidence/T-04.md</Path>"
         },
         "evidence": "<Path>{roots.state}/specdev/changes/2026-08-28-user-password-policy-temporary-credentials/evidence/T-04.md</Path>",
-        "attempts": 1,
+        "attempts": 2,
         "promotion_status": "applied"
       },
       "status": "integrated",
-      "updated_at": "2026-08-28T16:41:29+08:00"
+      "updated_at": "2026-08-28T19:08:06+08:00"
     },
     {
       "ticket_id": "T-05",
@@ -363,12 +363,12 @@
         "parent_ref": "refs/heads/main",
         "parent_before_sha": "afeb8a056dfc1b9fea0cf5dbc09de796db97be25",
         "source_sha": "98f1e76e7945b7bd003abf6833d0efecea416a12",
-        "candidate_sha": "98f1e76e7945b7bd003abf6833d0efecea416a12",
+        "candidate_sha": "42e06c0f713e0d724813800505e5bb5b40ab563b",
         "candidate_tree_sha": "a8ac9a101f1719f0df640a782491e9072b9388b3",
         "candidate_branch": "speculo/integration/2026-08-28-user-password-policy-temporary-credentials/T-08",
         "candidate_workspace_ref": "specdev-worktree/.integration/2026-08-28-user-password-policy-temporary-credentials/T-08",
-        "result_sha": "98f1e76e7945b7bd003abf6833d0efecea416a12",
-        "method": "fast-forward",
+        "result_sha": "42e06c0f713e0d724813800505e5bb5b40ab563b",
+        "method": "merge-commit",
         "conflict_paths": [],
         "verification": "passed",
         "full_suite": {
@@ -384,11 +384,11 @@
           "evidence": "<Path>{roots.state}/specdev/changes/2026-08-28-user-password-policy-temporary-credentials/evidence/T-08.md</Path>"
         },
         "evidence": "<Path>{roots.state}/specdev/changes/2026-08-28-user-password-policy-temporary-credentials/evidence/T-08.md</Path>",
-        "attempts": 1,
+        "attempts": 2,
         "promotion_status": "applied"
       },
       "status": "integrated",
-      "updated_at": "2026-08-28T18:52:00+08:00"
+      "updated_at": "2026-08-28T19:08:06+08:00"
     }
   ]
 }

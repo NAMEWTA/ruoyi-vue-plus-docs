@@ -55,6 +55,8 @@ ruoyi-vue-plus-docs/
 
 新增 App 时不复制 `admin-web/src/api`、业务类型或领域页面。App 从公开包入口选择所需 domain/web-domain，再提供本终端的请求、存储、加密、布局和路由适配。
 
+前端动态导航由 `packages/platform/app-runtime` 投影当前 Client 的服务端菜单，Admin 的 `navigation` Store 只维护 App 自有导航状态，页面解析严格使用已选择的 web-domain manifest。Vue 权限指令由 `packages/web-kit/permission` 提供，Admin 入口注入当前会话 evaluator；菜单和按钮可见性始终不替代后端鉴权。
+
 ## 获取项目
 
 递归克隆父仓库及两个子模块：

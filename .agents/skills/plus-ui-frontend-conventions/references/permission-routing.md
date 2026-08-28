@@ -1,44 +1,44 @@
 # 动态菜单、路由与权限
 
-## Admin 端到端路径
+## 正式恢复链路
 
 ```text
-apps/admin-web/src/main.ts
-  -> permission.ts 恢复受保护导航
-  -> user.getInfo()
-  -> permission store 调用 admin domain 的 identityAccessService.getMenus()
-  -> filterAsyncRouter / assembleServerRoutes
-  -> adminManifestRegistry 解析所选 Web 领域组件键
-  -> router.addRoute()
-  -> replace 当前目标
+router guard
+  -> restore identity
+  -> navigation Store 获取当前 Client 的服务端菜单
+  -> @namewta/platform-app-runtime 生成导航投影
+  -> Admin 所选 web-domain manifest 解析页面组件
+  -> Vue Router addRoute
+  -> replace 原目标
 ```
 
-后端菜单已经按 Client 和服务端权限裁剪。前端只组合当前 App 已选择的 domain/web-domain，不再进行跨 Client 菜单补偿。未知组件键、未选择领域、重复注册和缺少依赖均应失败关闭。
+后端菜单已经按 Client 和服务端权限裁剪。前端只组合当前 App 已选择的 domain/web-domain，不重新授权或补偿跨 Client 菜单。身份、菜单、投影或注册任一步失败时，不得继续替换到未注册目标。
 
-## 真实入口
+## 源码地图
 
-- 守卫：`apps/admin-web/src/permission.ts`
-- 领域服务装配：`apps/admin-web/src/application/services.ts`
-- 认证与菜单服务：`@namewta/domain-admin` 的公开入口，由 `apps/admin-web/src/application/services.ts` 注入 system identity port
-- 路由转换：`apps/admin-web/src/store/modules/permission.ts`
-- 组件清单：`apps/admin-web/src/router/adminManifestRegistry.ts`
-- 未来终端领域选择：由激活规格创建的 App 组合入口；当前不存在第二个 App 源码入口
+- 导航恢复守卫：`apps/admin-web/src/permission.ts`
+- 认证与菜单服务：`apps/admin-web/src/application/services.ts`
+- App 导航状态：`apps/admin-web/src/store/modules/navigation.ts`
+- 菜单纯投影与重复名称诊断：`packages/platform/app-runtime`
+- Admin manifest 组合：`apps/admin-web/src/router/adminManifestRegistry.ts`
+- 缺失组件与重复名称呈现：`apps/admin-web/src/router/manifestDiagnostic.ts`
+- 终端无关权限语义：`packages/platform/permission`
+- Vue 权限指令宿主：`packages/web-kit/permission`
+- Admin evaluator/provider：`apps/admin-web/src/application/access.ts`、`apps/admin-web/src/directive/index.ts`
 
-Admin 本地 `views` glob 只为 App 自有静态页面兜底；领域页面必须来自 web-domain 的公开 manifest。
+## 所有权
 
-## 按钮与命令式权限
+- Platform App Runtime 只处理不可变菜单投影、特殊组件解析接缝和结构化诊断，不依赖 Vue、DOM、Store、Router 或 UI。
+- Web Kit Permission 只注册 `v-hasPermi`、`v-hasRoles` 并调用注入的 evaluator provider，不读取 App Store。
+- Admin 拥有 manifest 选择、navigation Store、Router 注册、诊断呈现和会话 evaluator 装配。
+- web-domain manifest 拥有领域页面 registration；未知或未选择的组件键失败关闭。
+- 后端仍是最终授权者，前端路由和按钮权限只控制可见性与交互。
 
-- `v-hasPermi`、`v-hasRoles`：`apps/admin-web/src/directive/permission/**`
-- 命令式权限：`apps/admin-web/src/application/access.ts`
-- 统一访问评估：`@namewta/platform-permission` 与 admin domain 公开能力
+## 修改检查
 
-指令与命令式检查必须保持同一角色/权限语义。缺少会话、空值、未知角色或不匹配时失败关闭。前端隐藏按钮不是安全边界，后端接口必须独立鉴权。
-
-## 修改检查清单
-
-- 后端组件键与 manifest 注册是否完全一致。
-- App 是否同时选择对应 domain 和 web-domain。
-- 未选择 App 是否无法解析该能力并提供稳定诊断。
-- 登录恢复顺序、addRoute 和 replace 是否避免循环与空白页。
-- 权限指令、动态路由与页面内检查是否调用 `createAdminAccessEvaluator`。
-- 畸形 ClientContext、菜单或权限响应是否不会默认放行。
+- `getInfo -> getRouters -> addRoute -> replace` 顺序是否保持，失败时是否停止。
+- 新组件键是否由所属 manifest 公开并由 App 显式选择。
+- navigation Store 是否只维护导航投影，不扫描本地页面或复制共享算法。
+- 权限指令和命令式判断是否使用同一实时 evaluator。
+- Platform 是否保持无 Vue/DOM，Web Kit 是否保持无 App Store/Router 单例。
+- 涉及认证、菜单或权限时是否运行对应 Vitest 与 Playwright。

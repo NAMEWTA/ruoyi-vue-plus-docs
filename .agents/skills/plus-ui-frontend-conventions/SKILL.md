@@ -1,6 +1,6 @@
 ---
 name: plus-ui-frontend-conventions
-description: 为 plus-ui-namewta 多 App monorepo 提供目录命名、Vue/TypeScript 风格、Oxlint/Oxfmt、App 显式组合、动态菜单路由和权限源码地图。处理 apps、domains、web-domains、platform、adapters、web-kit、OpenAPI、filterAsyncRouter、addRoute、v-hasPermi、v-hasRoles 或新增终端时使用。
+description: 为 plus-ui-namewta 多 App monorepo 提供目录命名、Vue/TypeScript 风格、Oxlint/Oxfmt、App 显式组合、动态菜单路由和权限源码地图。处理 apps、domains、web-domains、platform、adapters、web-kit、OpenAPI、projectServerRoutes、addRoute、v-hasPermi、v-hasRoles 或新增终端时使用。
 ---
 
 # plus-ui-namewta 前端约定地图
@@ -25,9 +25,9 @@ description: 为 plus-ui-namewta 多 App monorepo 提供目录命名、Vue/TypeS
 |---|---|
 | Admin 入口与组合 | `apps/admin-web/src/main.ts`、`apps/admin-web/src/application/services.ts`、`apps/admin-web/src/router/adminManifestRegistry.ts` |
 | 未来终端占位 | `apps/client-web/README.md`、`apps/mobile-web/README.md`、`apps/miniapp-taro/README.md`；当前无源码入口 |
-| 动态菜单 | `apps/admin-web/src/permission.ts`、`apps/admin-web/src/application/services.ts`、`apps/admin-web/src/store/modules/permission.ts` |
+| 动态菜单 | `apps/admin-web/src/permission.ts`、`apps/admin-web/src/store/modules/navigation.ts`、`apps/admin-web/src/router/adminManifestRegistry.ts`、`packages/platform/app-runtime` |
 | 请求、会话与权限装配 | `apps/admin-web/src/application/http.ts`、`apps/admin-web/src/application/session.ts`、`apps/admin-web/src/application/access.ts` |
-| 权限指令 | `apps/admin-web/src/directive/permission/**` |
+| 权限指令 | `packages/web-kit/permission`；Admin provider 装配在 `apps/admin-web/src/directive/index.ts` |
 | 无界面业务 | `packages/domains/*/src/**` |
 | Vue 领域表现 | `packages/web-domains/*/src/**` |
 | 端口与组合运行时 | `packages/platform/*/src/**` |

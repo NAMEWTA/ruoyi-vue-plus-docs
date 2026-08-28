@@ -28,7 +28,7 @@ App 不重新实现后端接口和数据模型。新增 App 时只选择需要�
 
 每个 App 使用显式 ClientId 和独立会话命名空间。登录前先获取服务端 ClientContext；注册开关、登录域、请求加密和认证方式均由服务端上下文约束，失败或畸形数据按关闭处理。
 
-Admin 登录后恢复用户信息，按当前 Client 获取后端菜单，使用 App 已选择的 web-domain manifest 解析组件键，再通过 Vue Router `addRoute` 注册动态路由。菜单、`v-hasPermi`、`v-hasRoles` 与命令式检查消费同一权限状态；后端仍负责最终授权。
+Admin 登录后恢复用户信息，按当前 Client 获取后端菜单，由 `packages/platform/app-runtime` 生成确定导航投影，再使用 App 已选择的 web-domain manifest 解析组件键并通过 Vue Router `addRoute` 注册。Admin 自有 `navigation` Store 维护 sidebar、topbar、default 和 Router 投影；`packages/web-kit/permission` 安装的 `v-hasPermi`、`v-hasRoles` 与命令式检查消费同一实时 evaluator。后端仍负责最终授权。
 
 ### 工程质量
 

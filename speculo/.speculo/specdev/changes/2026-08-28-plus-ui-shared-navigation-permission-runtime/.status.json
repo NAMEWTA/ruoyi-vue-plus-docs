@@ -1,0 +1,265 @@
+{
+  "schema_version": 6,
+  "artifact": "change-status",
+  "change": "2026-08-28-plus-ui-shared-navigation-permission-runtime",
+  "change_status": "completed",
+  "current_work": null,
+  "works_run": [
+    "specdev/grill-with-docs",
+    "specdev/spec",
+    "specdev/tickets",
+    "specdev/goal-plan",
+    "specdev/implement"
+  ],
+  "claimed_investigations": [],
+  "execution_authorization": {
+    "implementation_commit": {
+      "status": "authorized",
+      "source": "USER-DECISION:2026-08-28-complete-goal-plan-and-all-tickets-with-actual-code",
+      "granted_at": "2026-08-28T12:50:04+08:00",
+      "scope": "Ticket implementation commits"
+    },
+    "local_candidate_integration": {
+      "status": "authorized",
+      "source": "USER-DECISION:2026-08-28-complete-goal-plan-and-all-tickets-with-actual-code",
+      "granted_at": "2026-08-28T12:50:04+08:00",
+      "scope": "Lead-owned local direct-parent or candidate integration and parent update"
+    },
+    "source_cleanup": {
+      "status": "not-authorized",
+      "source": null,
+      "granted_at": null,
+      "scope": "Source worktree and branch cleanup"
+    }
+  },
+  "leadership": {
+    "current": "codex",
+    "epoch": 1,
+    "assigned_at": "2026-08-28T10:10:35+08:00",
+    "history": []
+  },
+  "created_at": "2026-08-28T10:10:35+08:00",
+  "updated_at": "2026-08-28T13:53:45+08:00",
+  "completed_at": "2026-08-28T13:53:45+08:00",
+  "archived": false,
+  "archive_path": null,
+  "blockers": [],
+  "deviations": [],
+  "worktrees": [
+    {
+      "ticket_id": "T-01",
+      "owner": "codex:leadership-epoch-1",
+      "implementation_owner": "codex:leadership-epoch-1",
+      "integration_owner": "codex:leadership-epoch-1",
+      "provider": "git",
+      "base_sha": "d2961dbb444b9f036ad84c26ee8bcd69d973955c",
+      "parent_branch": "main",
+      "branch": "speculo/2026-08-28-plus-ui-shared-navigation-permission-runtime/T-01",
+      "workspace_ref": "specdev-worktree/2026-08-28-plus-ui-shared-navigation-permission-runtime/T-01",
+      "source_checkpoint": "9fc05687d6d283e024dcf08c013408f632b27472",
+      "integration": {
+        "status": "passed",
+        "parent_ref": "refs/heads/main",
+        "parent_before_sha": "d2961dbb444b9f036ad84c26ee8bcd69d973955c",
+        "source_sha": "9fc05687d6d283e024dcf08c013408f632b27472",
+        "candidate_sha": "9fc05687d6d283e024dcf08c013408f632b27472",
+        "candidate_tree_sha": "28ff2acd9cdd66697ed85bb39a8c7d4d86f9dd1b",
+        "candidate_branch": "speculo/integration/2026-08-28-plus-ui-shared-navigation-permission-runtime/T-01",
+        "candidate_workspace_ref": "specdev-worktree/.integration/2026-08-28-plus-ui-shared-navigation-permission-runtime/T-01",
+        "result_sha": "9fc05687d6d283e024dcf08c013408f632b27472",
+        "method": "fast-forward",
+        "conflict_paths": [],
+        "verification": "passed",
+        "full_suite": {
+          "required": false,
+          "status": "not-required",
+          "reason": "T-01 仅冻结单个 E2E 基线文件，Ticket 要求 lint/typecheck 与定向 Playwright，不要求全量 suite",
+          "evidence": "<Path>{roots.state}/specdev/changes/2026-08-28-plus-ui-shared-navigation-permission-runtime/evidence/T-01.md</Path>"
+        },
+        "e2e": {
+          "required": true,
+          "status": "passed",
+          "reason": "交付物是认证、权限与动态路由浏览器行为基线",
+          "evidence": "<Path>{roots.state}/specdev/changes/2026-08-28-plus-ui-shared-navigation-permission-runtime/evidence/T-01.md</Path>"
+        },
+        "evidence": "<Path>{roots.state}/specdev/changes/2026-08-28-plus-ui-shared-navigation-permission-runtime/evidence/T-01.md</Path>",
+        "attempts": 2,
+        "promotion_status": "applied"
+      },
+      "status": "integrated",
+      "updated_at": "2026-08-28T12:56:49+08:00"
+    },
+    {
+      "ticket_id": "T-02",
+      "owner": "codex:leadership-epoch-1",
+      "implementation_owner": "codex:leadership-epoch-1",
+      "integration_owner": "codex:leadership-epoch-1",
+      "provider": "git",
+      "base_sha": "9fc05687d6d283e024dcf08c013408f632b27472",
+      "parent_branch": "main",
+      "branch": "speculo/2026-08-28-plus-ui-shared-navigation-permission-runtime/T-02",
+      "workspace_ref": "specdev-worktree/2026-08-28-plus-ui-shared-navigation-permission-runtime/T-02",
+      "source_checkpoint": "a208063f468774a359594c0d1af156768628dc4f",
+      "integration": {
+        "status": "passed",
+        "parent_ref": "refs/heads/main",
+        "parent_before_sha": "9fc05687d6d283e024dcf08c013408f632b27472",
+        "source_sha": "a208063f468774a359594c0d1af156768628dc4f",
+        "candidate_sha": "a208063f468774a359594c0d1af156768628dc4f",
+        "candidate_tree_sha": "ee5c4bdf5d44a9a82379d172c576c63c3f67fd3c",
+        "candidate_branch": "speculo/integration/2026-08-28-plus-ui-shared-navigation-permission-runtime/T-02",
+        "candidate_workspace_ref": "specdev-worktree/.integration/2026-08-28-plus-ui-shared-navigation-permission-runtime/T-02",
+        "result_sha": "a208063f468774a359594c0d1af156768628dc4f",
+        "method": "fast-forward",
+        "conflict_paths": [],
+        "verification": "passed",
+        "full_suite": {
+          "required": false,
+          "status": "not-required",
+          "reason": "T-02 由包级与架构门禁完整覆盖，最终全量 suite 归 T-05",
+          "evidence": "<Path>{roots.state}/specdev/changes/2026-08-28-plus-ui-shared-navigation-permission-runtime/evidence/T-02.md</Path>"
+        },
+        "e2e": {
+          "required": false,
+          "status": "not-required",
+          "reason": "T-02 尚不迁移 App 生产消费者",
+          "evidence": "<Path>{roots.state}/specdev/changes/2026-08-28-plus-ui-shared-navigation-permission-runtime/evidence/T-02.md</Path>"
+        },
+        "evidence": "<Path>{roots.state}/specdev/changes/2026-08-28-plus-ui-shared-navigation-permission-runtime/evidence/T-02.md</Path>",
+        "attempts": 1,
+        "promotion_status": "applied"
+      },
+      "status": "integrated",
+      "updated_at": "2026-08-28T13:04:45+08:00"
+    },
+    {
+      "ticket_id": "T-03",
+      "owner": "codex:leadership-epoch-1",
+      "implementation_owner": "codex:leadership-epoch-1",
+      "integration_owner": "codex:leadership-epoch-1",
+      "provider": "git",
+      "base_sha": "9fc05687d6d283e024dcf08c013408f632b27472",
+      "parent_branch": "main",
+      "branch": "speculo/2026-08-28-plus-ui-shared-navigation-permission-runtime/T-03",
+      "workspace_ref": "specdev-worktree/2026-08-28-plus-ui-shared-navigation-permission-runtime/T-03",
+      "source_checkpoint": "49978706f8ed8243b23f2540bf3471d8db136b90",
+      "integration": {
+        "status": "passed",
+        "parent_ref": "refs/heads/main",
+        "parent_before_sha": "a208063f468774a359594c0d1af156768628dc4f",
+        "source_sha": "49978706f8ed8243b23f2540bf3471d8db136b90",
+        "candidate_sha": "aa0c93153e466ef00cbd4f09c2c43679388995de",
+        "candidate_tree_sha": "45a714dc80805cc436d01c1889146ff655749946",
+        "candidate_branch": "speculo/integration/2026-08-28-plus-ui-shared-navigation-permission-runtime/T-03",
+        "candidate_workspace_ref": "specdev-worktree/.integration/2026-08-28-plus-ui-shared-navigation-permission-runtime/T-03",
+        "result_sha": "aa0c93153e466ef00cbd4f09c2c43679388995de",
+        "method": "merge-commit",
+        "conflict_paths": [],
+        "verification": "passed",
+        "full_suite": {
+          "required": false,
+          "status": "not-required",
+          "reason": "T-03 由 App Runtime 包级与架构门禁完整覆盖，最终全量 suite 归 T-05",
+          "evidence": "<Path>{roots.state}/specdev/changes/2026-08-28-plus-ui-shared-navigation-permission-runtime/evidence/T-03.md</Path>"
+        },
+        "e2e": {
+          "required": false,
+          "status": "not-required",
+          "reason": "T-03 是无生产消费者变化的纯函数公共能力",
+          "evidence": "<Path>{roots.state}/specdev/changes/2026-08-28-plus-ui-shared-navigation-permission-runtime/evidence/T-03.md</Path>"
+        },
+        "evidence": "<Path>{roots.state}/specdev/changes/2026-08-28-plus-ui-shared-navigation-permission-runtime/evidence/T-03.md</Path>",
+        "attempts": 1,
+        "promotion_status": "applied"
+      },
+      "status": "integrated",
+      "updated_at": "2026-08-28T13:12:00+08:00"
+    },
+    {
+      "ticket_id": "T-04",
+      "owner": "codex:leadership-epoch-1",
+      "implementation_owner": "codex:leadership-epoch-1",
+      "integration_owner": "codex:leadership-epoch-1",
+      "provider": "git",
+      "base_sha": "aa0c93153e466ef00cbd4f09c2c43679388995de",
+      "parent_branch": "main",
+      "branch": "speculo/2026-08-28-plus-ui-shared-navigation-permission-runtime/T-04",
+      "workspace_ref": "specdev-worktree/2026-08-28-plus-ui-shared-navigation-permission-runtime/T-04",
+      "source_checkpoint": "4a8415eb08970226277dcde15c197faa7d789c3c",
+      "integration": {
+        "status": "passed",
+        "parent_ref": "refs/heads/main",
+        "parent_before_sha": "aa0c93153e466ef00cbd4f09c2c43679388995de",
+        "source_sha": "4a8415eb08970226277dcde15c197faa7d789c3c",
+        "candidate_sha": "7d3ef82516a8187cd1d594411282e84aff6ce884",
+        "candidate_tree_sha": "2e591d7d8087587d233f3d7f1bfa4c222152a11f",
+        "candidate_branch": "speculo/integration/2026-08-28-plus-ui-shared-navigation-permission-runtime/T-04",
+        "candidate_workspace_ref": "specdev-worktree/.integration/2026-08-28-plus-ui-shared-navigation-permission-runtime/T-04",
+        "result_sha": "7d3ef82516a8187cd1d594411282e84aff6ce884",
+        "method": "merge-commit",
+        "conflict_paths": [],
+        "verification": "passed",
+        "full_suite": {
+          "required": false,
+          "status": "not-required",
+          "reason": "T-04 使用定向 Admin 与根回归门禁，最终全量 suite 归 T-05",
+          "evidence": "<Path>{roots.state}/specdev/changes/2026-08-28-plus-ui-shared-navigation-permission-runtime/evidence/T-04.md</Path>"
+        },
+        "e2e": {
+          "required": true,
+          "status": "passed",
+          "reason": "Admin 认证、权限、Router 与布局跨边界发生生产迁移",
+          "evidence": "<Path>{roots.state}/specdev/changes/2026-08-28-plus-ui-shared-navigation-permission-runtime/evidence/T-04.md</Path>"
+        },
+        "evidence": "<Path>{roots.state}/specdev/changes/2026-08-28-plus-ui-shared-navigation-permission-runtime/evidence/T-04.md</Path>",
+        "attempts": 2,
+        "promotion_status": "applied"
+      },
+      "status": "integrated",
+      "updated_at": "2026-08-28T13:26:01+08:00"
+    },
+    {
+      "ticket_id": "T-05",
+      "owner": "codex:leadership-epoch-1",
+      "implementation_owner": "codex:leadership-epoch-1",
+      "integration_owner": "codex:leadership-epoch-1",
+      "provider": "git",
+      "base_sha": "7d3ef82516a8187cd1d594411282e84aff6ce884",
+      "parent_branch": "main",
+      "branch": "speculo/2026-08-28-plus-ui-shared-navigation-permission-runtime/T-05",
+      "workspace_ref": "specdev-worktree/2026-08-28-plus-ui-shared-navigation-permission-runtime/T-05",
+      "source_checkpoint": "efb8e0d7fae86cfd09c1f55204e8b486a499a3cc",
+      "integration": {
+        "status": "passed",
+        "parent_ref": "refs/heads/main",
+        "parent_before_sha": "7d3ef82516a8187cd1d594411282e84aff6ce884",
+        "source_sha": "efb8e0d7fae86cfd09c1f55204e8b486a499a3cc",
+        "candidate_sha": "efb8e0d7fae86cfd09c1f55204e8b486a499a3cc",
+        "candidate_tree_sha": "86cd36f407c7defa630650e076a1bcf762118626",
+        "candidate_branch": "speculo/integration/2026-08-28-plus-ui-shared-navigation-permission-runtime/T-05",
+        "candidate_workspace_ref": "specdev-worktree/.integration/2026-08-28-plus-ui-shared-navigation-permission-runtime/T-05",
+        "result_sha": "efb8e0d7fae86cfd09c1f55204e8b486a499a3cc",
+        "method": "fast-forward",
+        "conflict_paths": [],
+        "verification": "passed",
+        "full_suite": {
+          "required": true,
+          "status": "passed",
+          "reason": "T-05 承担最终 architecture、lint、typecheck、test 和双模式 build Gate",
+          "evidence": "<Path>{roots.state}/specdev/changes/2026-08-28-plus-ui-shared-navigation-permission-runtime/evidence/T-05.md</Path>"
+        },
+        "e2e": {
+          "required": true,
+          "status": "passed",
+          "reason": "T-05 承担完整 Admin Playwright 最终 Gate",
+          "evidence": "<Path>{roots.state}/specdev/changes/2026-08-28-plus-ui-shared-navigation-permission-runtime/evidence/T-05.md</Path>"
+        },
+        "evidence": "<Path>{roots.state}/specdev/changes/2026-08-28-plus-ui-shared-navigation-permission-runtime/evidence/T-05.md</Path>",
+        "attempts": 2,
+        "promotion_status": "applied"
+      },
+      "status": "integrated",
+      "updated_at": "2026-08-28T13:53:45+08:00"
+    }
+  ]
+}

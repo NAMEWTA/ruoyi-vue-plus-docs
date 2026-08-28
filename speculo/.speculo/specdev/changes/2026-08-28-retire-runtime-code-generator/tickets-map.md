@@ -2,7 +2,7 @@
 schema_version: 3
 artifact: tickets-map
 change: 2026-08-28-retire-runtime-code-generator
-status: in_progress
+status: completed
 ---
 
 # Tickets Map: 完整退役运行时代码生成器
@@ -25,7 +25,7 @@ status: in_progress
 | T-02 | `<Path>{roots.state}/specdev/changes/2026-08-28-retire-runtime-code-generator/ticket/02-remove-admin-generator-ui.md</Path>` | 前端包图和 Admin 组合无生成器 | — | deep | high | yes | codex:/root | AC-003, AC-004 | Wave 1 / G2 / seq 2 | done |
 | T-03 | `<Path>{roots.state}/specdev/changes/2026-08-28-retire-runtime-code-generator/ticket/03-hard-retire-generator-database.md</Path>` | MySQL 最终状态无生成器表、菜单和授权 | — | deep | critical | yes | codex:/root | AC-005, AC-006, AC-007 | Wave 1 / G3 / seq 3 | done |
 | T-04 | `<Path>{roots.state}/specdev/changes/2026-08-28-retire-runtime-code-generator/ticket/04-refresh-current-openapi-contract.md</Path>` | 当前 OpenAPI/TS 合同无生成器 | T-01 | deep | high | yes | codex:/root | AC-002, AC-008 | Wave 2 / G4 / seq 4 | done |
-| T-05 | `<Path>{roots.state}/specdev/changes/2026-08-28-retire-runtime-code-generator/ticket/05-align-current-facts-and-acceptance.md</Path>` | 当前事实一致且完整集成门禁通过 | T-01, T-02, T-03, T-04 | standard | medium | yes | codex:/root | AC-009, AC-010, AC-011, AC-012 | Wave 3 / G5 / seq 5 | ready |
+| T-05 | `<Path>{roots.state}/specdev/changes/2026-08-28-retire-runtime-code-generator/ticket/05-align-current-facts-and-acceptance.md</Path>` | 当前事实一致且完整集成门禁通过 | T-01, T-02, T-03, T-04 | standard | medium | yes | codex:/root | AC-009, AC-010, AC-011, AC-012 | Wave 3 / G5 / seq 5 | done |
 
 Ticket frontmatter 是状态、依赖、深度和路径访问契约的权威；本表是同步投影。
 
@@ -34,7 +34,7 @@ Ticket frontmatter 是状态、依赖、深度和路径访问契约的权威；�
 ```text
 T-01 [DONE] ───→ T-04 [DONE] ──┐
   └───────────────────────────────┤
-T-02 [DONE] ──────────────────────┼──→ T-05 [READY / FINAL GATE]
+T-02 [DONE] ──────────────────────┼──→ T-05 [DONE / G5 CLOSED]
 T-03 [DONE / DB E2E] ─────────────┘
 ```
 
@@ -65,7 +65,7 @@ T-03 [DONE / DB E2E] ─────────────┘
 - implementation subagent 上限来自 `<Path>{roots.state}/specdev/config.json</Path>`，当前为 3；是否使用 worktree/并行由后续 Goal Plan 与用户决定。
 - current 模式必须在当前 workspace 严格串行；required 模式才可把候选 Wave 1 投影为独立 Ticket worktrees。
 - Lead 始终拥有 SpecDev 状态、Evidence 和 direct-parent/parent-candidate integration。
-- T-01 唯一拥有后端全局 POM 与 Springdoc 配置；T-02 唯一拥有 Admin package/组合、architecture mapping 与 pnpm lockfile；T-03 唯一拥有 NAMEWTA DDL/DML；T-04 唯一拥有当前 OpenAPI；T-05 唯一拥有列出的当前事实文档。
+- T-01 唯一拥有后端全局 POM、Springdoc 与 bundle 校验脚本/说明；T-02 唯一拥有 Admin package/组合、architecture mapping、pnpm lockfile 与生成器专用 E2E；T-03 唯一拥有 NAMEWTA DDL/DML；T-04 唯一拥有当前 OpenAPI；T-05 唯一拥有列出的当前事实文档与恢复模板。
 
 | Ticket A | Ticket B | Writable 交集 | 真实依赖 | 处理 |
 |---|---|---|---|---|

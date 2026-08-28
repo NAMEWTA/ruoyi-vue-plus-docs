@@ -2,7 +2,7 @@
 schema_version: 6
 artifact: goal-plan
 change: 2026-08-28-retire-runtime-code-generator
-status: in_progress
+status: completed
 modes: [migration, high-assurance]
 orchestration: lead-directed
 lead: codex:/root
@@ -10,7 +10,7 @@ implementation_agent_limit: 1
 integration_attempt_limit: 7
 ticket_workspace_policy: current
 integration_gate: direct-parent
-ready_for_execution: true
+ready_for_execution: false
 ---
 
 # Goal Plan: 完整退役运行时代码生成器
@@ -71,11 +71,11 @@ G0 → T-01/G1 → T-02/G2 → T-03/G3 → T-04/G4 → T-05/G5
 
 | Wave | Ticket | 前置条件 | 项目写路径 | Shared owner | Gate/集成序号 |
 |---|---|---|---|---|---|
-| 1 | T-01 | G0；后端 `main` 与 dirty 基线复核 | 后端模块/POM/Springdoc | T-01 | G1 / 1 |
-| 1 | T-02 | G1；唯一 writer 释放 | 前端 gen packages/Admin/architecture/lockfile | T-02 | G2 / 2 |
+| 1 | T-01 | G0；后端 `main` 与 dirty 基线复核 | 后端模块/POM/Springdoc/bundle checks | T-01 | G1 / 1 |
+| 1 | T-02 | G1；唯一 writer 释放 | 前端 gen packages/Admin/architecture/lockfile/E2E | T-02 | G2 / 2 |
 | 1 | T-03 | G2；本地临时 MySQL 8.4 接缝可用 | NAMEWTA DDL/DML | T-03 | G3 / 3 |
 | 2 | T-04 | T-01 result；G3 后唯一 writer 释放 | 新 OpenAPI revision/current/generated | T-04 | G4 / 4 |
-| 3 | T-05 | T-01 至 T-04 result/Evidence | 列出的父级 Skills/README 与 Admin README | T-05 | G5 / 5 |
+| 3 | T-05 | T-01 至 T-04 result/Evidence | 列出的父级 Skills/README、Admin README 与恢复模板 | T-05 | G5 / 5 |
 
 逻辑 Wave 不授权并发。所有 Ticket 由 `codex:/root` 承担状态责任；执行时可以选择 Lead 自行实现或按 subagent-delivery 生成原生 Dispatch Packet，但同时只有一个 implementation owner 能写 current workspace。
 
@@ -114,11 +114,11 @@ G0 → T-01/G1 → T-02/G2 → T-03/G3 → T-04/G4 → T-05/G5
 
 | 合同或参考要求 | 覆盖 Ticket | 验证接缝 | Evidence | 状态 |
 |---|---|---|---|---|
-| AC-001/002 后端构建与 HTTP 合同消失 | T-01,T-04 | POM/源码/Maven/current OpenAPI | T-01,T-04 | planned-covered |
-| AC-003/004 前端包图、组合与可见能力消失 | T-02 | architecture、Vitest、文案、全构建 | T-02 | planned-covered |
-| AC-005/006/007 schema、菜单、权限与 fresh init | T-03 | append-only review、本地 MySQL 8.4 E2E/查询 | T-03 | planned-covered |
-| AC-008 当前 OpenAPI revision 与生成合同 | T-04 | fetch/generate/check、hash/provenance | T-04 | planned-covered |
-| AC-009/010/011/012 残留、模板、事实与完整质量 | T-05 | allowlist、validator、diff、全门禁 | T-05 | planned-covered |
+| AC-001/002 后端构建与 HTTP 合同消失 | T-01,T-04 | POM/源码/Maven/current OpenAPI | T-01,T-04 | passed |
+| AC-003/004 前端包图、组合与可见能力消失 | T-02 | architecture、Vitest、文案、全构建 | T-02 | passed |
+| AC-005/006/007 schema、菜单、权限与 fresh init | T-03 | append-only review、本地 MySQL 8.4 E2E/查询 | T-03 | passed |
+| AC-008 当前 OpenAPI revision 与生成合同 | T-04 | fetch/generate/check、hash/provenance | T-04 | passed |
+| AC-009/010/011/012 残留、模板、事实与完整质量 | T-05 | allowlist、validator、diff、全门禁 | T-05 | passed |
 
 ## 4. Execution and Integration Protocol
 
@@ -179,7 +179,7 @@ implementation 返回 Ticket ID、current locator、子仓库 commit、aggregate
 ### Verification Integrity
 
 - 判卷使用活动源码/POM/package/manifest、当前 OpenAPI、NAMEWTA final state、构建产物和当前事实文档；冻结历史只作为 allowlist，不证明当前支持。
-- 禁止删除测试、放宽 architecture/lint/typecheck、跳过失败模块、使用空包/stub/alias 或把静态 SQL review 代替 E2E。
+- 禁止为制造绿色而删除仍有效测试、放宽 architecture/lint/typecheck、跳过失败模块、使用空包/stub/alias 或把静态 SQL review 代替 E2E；随被退役能力一起删除的专用测试必须由对应 owner 和残留扫描证明。
 - T-03 当前机器无 Docker，但实测存在 Homebrew MySQL `8.4.11`；Lead 用全新临时 datadir/socket/port，按 Compose 的 `10/20/30/40/50/60` SQL 顺序执行。版本仍满足 AC-007 的 MySQL 8.4 合同。
 - Node `22.22.3`、pnpm `11.1.3`、Java `21.0.10`、Maven `3.9.12`、Redis `8.10.0` 已在 G0 实测；未运行的远程 CI、Docker Compose 或浏览器 E2E不得声明通过。
 - direct-parent 验证在同一 current workspace/result tree完成；T-03 E2E 只能由 Lead 声明。
@@ -209,13 +209,13 @@ implementation 返回 Ticket ID、current locator、子仓库 commit、aggregate
 
 ### Current Status
 
-- Goal Plan in progress；G0 至 G4 已关闭，T-04 OpenAPI result 为 `27da14a9c579d626fee1c6ea678efa4725bbf7d2`。
-- T-01、T-02、T-03、T-04 为 `done`；T-05 为 `ready`；下一执行项为 T-05。
+- Goal Plan completed；G0 至 G5 均已关闭，最终产品 result 为 `3ca516d1c2b35ab0d34e0bc38ff7c25c2d2c174d`。
+- T-01 至 T-05 全部为 `done`；12 条 AC 均有通过 Evidence。
 - 初始 Git vector 已记录；父仓库和两个子仓库均在 `main`，现有 dirty/staged 改动继续保留。
 
 ### Pending Decisions and Blockers
 
-无高影响未决问题。实际 implementation 开始前只需用户调用 `<Path>{roots.workflows}/specdev/I-implement/I-implement.md</Path>`；该调用不扩大远端、部署、生产或清理授权。
+无高影响未决问题或 blocker。未执行远端、部署、生产数据库、branch/worktree 清理或归档动作。
 
 ### Resume Protocol
 

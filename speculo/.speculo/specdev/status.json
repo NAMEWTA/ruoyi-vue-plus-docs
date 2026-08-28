@@ -79,11 +79,13 @@
     },
     {
       "change": "2026-08-28-retire-runtime-code-generator",
-      "current_work": "specdev/goal-plan",
+      "current_work": null,
       "works_run": [
         "specdev/grill-with-docs",
         "specdev/spec",
-        "specdev/tickets"
+        "specdev/tickets",
+        "specdev/goal-plan",
+        "specdev/implement"
       ],
       "claimed_investigations": []
     },

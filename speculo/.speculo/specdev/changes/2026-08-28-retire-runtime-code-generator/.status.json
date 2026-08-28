@@ -38,7 +38,7 @@
     "history": []
   },
   "created_at": "2026-08-28T22:49:06+08:00",
-  "updated_at": "2026-08-29T02:06:02+08:00",
+  "updated_at": "2026-08-29T02:16:00+08:00",
   "completed_at": null,
   "archived": false,
   "archive_path": null,
@@ -180,29 +180,29 @@
       "implementation_owner": "codex:/root",
       "integration_owner": "codex:/root",
       "provider": "git",
-      "base_sha": "f52caf5f033d4105be1d1a5fbce6d53f1228d488",
+      "base_sha": "f6b4648022f1b6b890ddce88065bc43c36969d3c",
       "parent_branch": "main",
       "branch": "main",
       "workspace_ref": "current",
-      "source_checkpoint": null,
+      "source_checkpoint": "27da14a9c579d626fee1c6ea678efa4725bbf7d2",
       "integration": {
-        "status": "pending",
+        "status": "passed",
         "parent_ref": "main",
-        "parent_before_sha": "f52caf5f033d4105be1d1a5fbce6d53f1228d488",
-        "source_sha": null,
+        "parent_before_sha": "f6b4648022f1b6b890ddce88065bc43c36969d3c",
+        "source_sha": "27da14a9c579d626fee1c6ea678efa4725bbf7d2",
         "candidate_sha": null,
         "candidate_tree_sha": null,
         "candidate_branch": null,
         "candidate_workspace_ref": null,
-        "result_sha": null,
+        "result_sha": "27da14a9c579d626fee1c6ea678efa4725bbf7d2",
         "method": "direct-parent",
         "conflict_paths": [],
-        "verification": "pending",
+        "verification": "passed",
         "full_suite": {
           "required": true,
-          "status": "pending",
+          "status": "passed",
           "reason": null,
-          "evidence": null
+          "evidence": "<Path>{roots.state}/specdev/changes/2026-08-28-retire-runtime-code-generator/evidence/T-04.md</Path>"
         },
         "e2e": {
           "required": false,
@@ -211,11 +211,11 @@
           "evidence": null
         },
         "evidence": "<Path>{roots.state}/specdev/changes/2026-08-28-retire-runtime-code-generator/evidence/T-04.md</Path>",
-        "attempts": 0,
-        "promotion_status": "pending"
+        "attempts": 1,
+        "promotion_status": "applied"
       },
-      "status": "planned",
-      "updated_at": "2026-08-29T01:48:03+08:00"
+      "status": "integrated",
+      "updated_at": "2026-08-29T02:16:00+08:00"
     },
     {
       "ticket_id": "T-05",

@@ -24,7 +24,7 @@ status: in_progress
 | T-01 | `<Path>{roots.state}/specdev/changes/2026-08-28-retire-runtime-code-generator/ticket/01-remove-backend-runtime-generator.md</Path>` | 后端构建图和运行源码无 `ruoyi-gen`/`/tool/gen` | — | deep | high | yes | codex:/root | AC-001, AC-002 | Wave 1 / G1 / seq 1 | done |
 | T-02 | `<Path>{roots.state}/specdev/changes/2026-08-28-retire-runtime-code-generator/ticket/02-remove-admin-generator-ui.md</Path>` | 前端包图和 Admin 组合无生成器 | — | deep | high | yes | codex:/root | AC-003, AC-004 | Wave 1 / G2 / seq 2 | done |
 | T-03 | `<Path>{roots.state}/specdev/changes/2026-08-28-retire-runtime-code-generator/ticket/03-hard-retire-generator-database.md</Path>` | MySQL 最终状态无生成器表、菜单和授权 | — | deep | critical | yes | codex:/root | AC-005, AC-006, AC-007 | Wave 1 / G3 / seq 3 | done |
-| T-04 | `<Path>{roots.state}/specdev/changes/2026-08-28-retire-runtime-code-generator/ticket/04-refresh-current-openapi-contract.md</Path>` | 当前 OpenAPI/TS 合同无生成器 | T-01 | deep | high | yes | codex:/root | AC-002, AC-008 | Wave 2 / G4 / seq 4 | ready |
+| T-04 | `<Path>{roots.state}/specdev/changes/2026-08-28-retire-runtime-code-generator/ticket/04-refresh-current-openapi-contract.md</Path>` | 当前 OpenAPI/TS 合同无生成器 | T-01 | deep | high | yes | codex:/root | AC-002, AC-008 | Wave 2 / G4 / seq 4 | done |
 | T-05 | `<Path>{roots.state}/specdev/changes/2026-08-28-retire-runtime-code-generator/ticket/05-align-current-facts-and-acceptance.md</Path>` | 当前事实一致且完整集成门禁通过 | T-01, T-02, T-03, T-04 | standard | medium | yes | codex:/root | AC-009, AC-010, AC-011, AC-012 | Wave 3 / G5 / seq 5 | ready |
 
 Ticket frontmatter 是状态、依赖、深度和路径访问契约的权威；本表是同步投影。
@@ -32,7 +32,7 @@ Ticket frontmatter 是状态、依赖、深度和路径访问契约的权威；�
 ## 3. 依赖 DAG
 
 ```text
-T-01 [DONE] ───→ T-04 [READY] ──┐
+T-01 [DONE] ───→ T-04 [DONE] ──┐
   └───────────────────────────────┤
 T-02 [DONE] ──────────────────────┼──→ T-05 [READY / FINAL GATE]
 T-03 [DONE / DB E2E] ─────────────┘

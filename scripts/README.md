@@ -93,8 +93,8 @@ scripts/ci/verify-submodules.sh
 
 | 参数 | 必须包含 | 业务模块要求 |
 | --- | --- | --- |
-| `full` | `ruoyi-system`、`ruoyi-common-notify`、`ruoyi-common-oss` | 必须包含 `ruoyi-job`、`ruoyi-ai`、`ruoyi-demo`、`ruoyi-workflow`、`ruoyi-gen`。 |
-| `core` | `ruoyi-system`、`ruoyi-common-notify`、`ruoyi-common-oss` | 必须排除上述五个业务模块。 |
+| `full` | `ruoyi-system`、`ruoyi-common-notify`、`ruoyi-common-oss` | 必须包含 `ruoyi-job`、`ruoyi-ai`、`ruoyi-demo`、`ruoyi-workflow`。 |
+| `core` | `ruoyi-system`、`ruoyi-common-notify`、`ruoyi-common-oss` | 必须排除上述四个业务模块。 |
 
 脚本使用 JDK 的 `jar tf` 读取
 `ruoyi-vue-plus-namewta/ruoyi-admin/target/ruoyi-admin.jar` 中的 `BOOT-INF/lib/` 条目。

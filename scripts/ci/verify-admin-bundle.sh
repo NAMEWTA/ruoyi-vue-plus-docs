@@ -19,7 +19,7 @@ fi
 
 entries=$(jar tf "$artifact")
 required=(ruoyi-system ruoyi-common-notify ruoyi-common-oss)
-optional=(ruoyi-job ruoyi-ai ruoyi-demo ruoyi-workflow ruoyi-gen)
+optional=(ruoyi-job ruoyi-ai ruoyi-demo ruoyi-workflow)
 
 contains_artifact() {
   [[ "$entries" == *"BOOT-INF/lib/$1-"* ]]

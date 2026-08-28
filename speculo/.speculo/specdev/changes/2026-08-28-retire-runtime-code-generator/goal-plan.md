@@ -209,8 +209,8 @@ implementation 返回 Ticket ID、current locator、子仓库 commit、aggregate
 
 ### Current Status
 
-- Goal Plan in progress；G0 至 G2 已关闭，T-02 前端 result 为 `a350c1a3205a3648d1ff0c50c9c436202bdcff61`。
-- T-01、T-02 为 `done`；T-03 至 T-05 为 `ready`，下一执行项为 T-03。
+- Goal Plan in progress；G0 至 G3 已关闭，T-03 数据库 result 为 `40df0cd25d41375979b5aa21dbc0dd209d578733`。
+- T-01、T-02、T-03 为 `done`；T-04、T-05 为 `ready`；下一执行项为 T-04。
 - 初始 Git vector 已记录；父仓库和两个子仓库均在 `main`，现有 dirty/staged 改动继续保留。
 
 ### Pending Decisions and Blockers

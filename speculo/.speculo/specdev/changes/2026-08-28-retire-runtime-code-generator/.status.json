@@ -38,7 +38,7 @@
     "history": []
   },
   "created_at": "2026-08-28T22:49:06+08:00",
-  "updated_at": "2026-08-29T01:56:27+08:00",
+  "updated_at": "2026-08-29T02:06:02+08:00",
   "completed_at": null,
   "archived": false,
   "archive_path": null,
@@ -137,42 +137,42 @@
       "implementation_owner": "codex:/root",
       "integration_owner": "codex:/root",
       "provider": "git",
-      "base_sha": "f52caf5f033d4105be1d1a5fbce6d53f1228d488",
+      "base_sha": "ae2d180eee05da1c5b335127abec78becb332516",
       "parent_branch": "main",
       "branch": "main",
       "workspace_ref": "current",
-      "source_checkpoint": null,
+      "source_checkpoint": "40df0cd25d41375979b5aa21dbc0dd209d578733",
       "integration": {
-        "status": "pending",
+        "status": "passed",
         "parent_ref": "main",
-        "parent_before_sha": "f52caf5f033d4105be1d1a5fbce6d53f1228d488",
-        "source_sha": null,
+        "parent_before_sha": "ae2d180eee05da1c5b335127abec78becb332516",
+        "source_sha": "40df0cd25d41375979b5aa21dbc0dd209d578733",
         "candidate_sha": null,
         "candidate_tree_sha": null,
         "candidate_branch": null,
         "candidate_workspace_ref": null,
-        "result_sha": null,
+        "result_sha": "40df0cd25d41375979b5aa21dbc0dd209d578733",
         "method": "direct-parent",
         "conflict_paths": [],
-        "verification": "pending",
+        "verification": "passed",
         "full_suite": {
           "required": true,
-          "status": "pending",
+          "status": "passed",
           "reason": null,
-          "evidence": null
+          "evidence": "<Path>{roots.state}/specdev/changes/2026-08-28-retire-runtime-code-generator/evidence/T-03.md</Path>"
         },
         "e2e": {
           "required": true,
-          "status": "pending",
+          "status": "passed",
           "reason": "必须在全新临时 MySQL 8.4 数据目录执行完整初始化和最终状态查询",
-          "evidence": null
+          "evidence": "<Path>{roots.state}/specdev/changes/2026-08-28-retire-runtime-code-generator/evidence/T-03.md</Path>"
         },
         "evidence": "<Path>{roots.state}/specdev/changes/2026-08-28-retire-runtime-code-generator/evidence/T-03.md</Path>",
-        "attempts": 0,
-        "promotion_status": "pending"
+        "attempts": 1,
+        "promotion_status": "applied"
       },
-      "status": "planned",
-      "updated_at": "2026-08-29T01:48:03+08:00"
+      "status": "integrated",
+      "updated_at": "2026-08-29T02:06:02+08:00"
     },
     {
       "ticket_id": "T-04",

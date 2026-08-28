@@ -1,6 +1,6 @@
 ---
 name: ruoyi-workflow-module-guide
-description: 提供 ruoyi-workflow（Warm-Flow）模块能力地图与业务接入范式：公开门面 WorkflowService、businessId 绑定、start process / complete task、ProcessEvent 状态回写、待办 REST、请假 leave1 样例。Use when 接入或修改工作流审批、启动流程（start process）、办理任务（complete task）、绑定 businessId、注入 WorkflowService、监听 ProcessEvent、复制请假 leave1、查询待办，或阅读/修改 ruoyi-modules/ruoyi-workflow。
+description: 提供 ruoyi-workflow（Warm-Flow）模块能力地图与业务接入范式，包括公开门面 WorkflowService、businessId 绑定、流程启动与任务办理、ProcessEvent 状态回写、待办 REST 和请假 leave1 样例。接入或修改工作流审批、注入 WorkflowService、监听流程事件、复制请假样例、查询待办或处理 ruoyi-modules/ruoyi-workflow 时使用。
 ---
 
 # ruoyi-workflow 能力地图

@@ -107,7 +107,7 @@ required 模式下每个 Wave 最多两个 implementation owner；实际峰值�
 
 ### Overall Definition of Done
 
-- 每个非 cancelled Ticket 有 clean、非空 source commit，通过的 candidate、子模块 `main` result SHA 与 Lead Evidence；成功集成后 source worktree 可保持 `integrated`，清理不属于完成前置。
+- 每个非 cancelled Ticket 有 clean、非空 source commit，通过的 candidate、子模块 `main` result SHA 与 Lead Evidence；后续经单独授权，全部 source/candidate worktree 与对应本地分支均已清理并记录为 `removed`。
 - backend result 包含 T-01 至 T-05 与 T-08；frontend result 包含 T-06/T-07；父仓库最终 result 只包含经批准的两个 gitlink、本 change Speculo 工件和 T-08 长期文档，不覆盖其他 dirty 内容。
 - 24 条 AC 无 deferred；真实 Redis/MySQL、跨 JVM、并发 CAS、多 Client、公开 API、浏览器和迁移 Gate 都有 cwd、checkpoint、命令、退出码和未运行项。
 - OpenAPI snapshot/current/generated 只由 T-06 从 G-30 已集成 backend result 生成，并记录 provenance；T-07 不改生成物。
@@ -180,7 +180,7 @@ T-08 跨 backend 与 workspace-parent：backend 源码/DML/test 在唯一 T-08 s
 | Local direct-parent verification and parent update | not-authorized | 不适用：当前计划固定 required/candidate-merge |
 | Local candidate integration and parent update | authorized | Lead-only；由完成 Goal Plan 指令授权并已完成 |
 | Push / PR / remote merge | not-authorized | 不从本地实施授权继承 |
-| Branch/worktree cleanup | not-authorized | 成功集成不自动继承，需单独授权 |
+| Branch/worktree cleanup | authorized / completed | 用户已明确授权全面清理；T-01 至 T-08 source/candidate worktree 与对应本地分支均已移除 |
 | Deploy / production DML / role grant | not-authorized | T-08 只编写并在隔离环境演练；逐动作另行批准 |
 
 ### Evidence Return
@@ -237,7 +237,7 @@ source-worktree 只运行 Ticket 非 E2E checks；parent-candidate 才是 Redis/
 ### Pending Decisions and Blockers
 
 - 无实现或本地集成 blocker。
-- source branch/worktree cleanup、push/PR、部署、生产 DML 和角色授权仍未授权；这些动作不属于本 change 的本地完成结果。
+- source branch/worktree cleanup 已单独授权并完成；push/PR、部署、生产 DML 和角色授权仍未授权。
 
 ### Resume Protocol
 
@@ -245,6 +245,6 @@ source-worktree 只运行 Ticket 非 E2E checks；parent-candidate 才是 Redis/
 
 ## Assumptions
 
-- 用户最新“根据 Goal Plan 完成 change 的所有功能需求”指令构成本 change 的实现、implementation commit、本地 candidate integration 与父分支更新授权；不扩展到 cleanup、远程或生产动作。
+- 用户“根据 Goal Plan 完成 change 的所有功能需求”指令构成本 change 的实现、implementation commit、本地 candidate integration 与父分支更新授权；后续“全面清理删除干净”指令独立授权并完成 source/candidate worktree 与本地分支清理，但不扩展到远程或生产动作。
 - implementation owner/provider 在每张 Ticket preflight 时动态选择，不改变已锁定路径、Gate、E2E owner 或 Lead 责任。
 - G-00 关闭时两个子模块 `main` 可定位到明确、clean 的 predecessor；若另一个 active change 仍在推进，Lead 等待其不可变 result 或把冲突升级为 ticket/deviation，不猜测基线。

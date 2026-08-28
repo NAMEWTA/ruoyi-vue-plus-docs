@@ -30,6 +30,7 @@
 
 ```text
 ruoyi-vue-plus-docs/
+├── .agents/skills/                    # 唯一项目开发 Skill 根目录
 ├── plus-ui-namewta/                 # 前端独立 Git 仓库
 │   ├── apps/                        # 可独立构建、部署的终端 App
 │   └── packages/                    # 领域、平台、适配器和 Web 共享包
@@ -43,6 +44,8 @@ ruoyi-vue-plus-docs/
 ```
 
 前后端通过 HTTP/JSON 合同协作并独立构建、测试和发布。前端 App 只负责 Client、布局、品牌和终端组合；可复用 API、类型、业务规则与 Web 页面分别归 domain 和 web-domain。后端 `ruoyi-admin` 只负责组装，跨业务模块通过 `ruoyi-api` 或明确的 common SPI 协作。
+
+项目开发 Skill 统一位于 [`.agents/skills`](.agents/skills)，由 [工程规范](.agents/skills/engineering-standards/SKILL.md)负责规则与质量门禁裁决，再按任务路由到前端、后端和具体模块 Skill。两个产品子仓库不维护工具专属的 `.claude` 或 `.codex` Skill 副本。
 
 ## 当前终端
 

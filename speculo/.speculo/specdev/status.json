@@ -43,34 +43,10 @@
       "claimed_investigations": []
     },
     {
-      "change": "2026-08-25-plus-ui-multi-app-domain-architecture",
+      "change": "2026-08-28-user-password-policy-temporary-credentials",
       "current_work": null,
       "works_run": [
         "specdev/grill-with-docs",
-        "specdev/spec",
-        "specdev/tickets",
-        "specdev/goal-plan",
-        "specdev/implement",
-        "specdev/eli5"
-      ],
-      "claimed_investigations": []
-    },
-    {
-      "change": "2026-08-26-current-log-system-eli5",
-      "current_work": "specdev/archive-and-consolidate",
-      "works_run": [
-        "specdev/eli5",
-        "specdev/grill-with-docs",
-        "specdev/spec",
-        "specdev/tickets",
-        "specdev/goal-plan"
-      ],
-      "claimed_investigations": []
-    },
-    {
-      "change": "2026-08-27-plus-ui-backend-aligned-domains",
-      "current_work": null,
-      "works_run": [
         "specdev/spec",
         "specdev/tickets",
         "specdev/goal-plan",
@@ -82,11 +58,32 @@
       "change": "2026-08-28-plus-ui-shared-navigation-permission-runtime",
       "current_work": null,
       "works_run": [
+        "specdev/eli5",
         "specdev/grill-with-docs",
         "specdev/spec",
         "specdev/tickets",
         "specdev/goal-plan",
-        "specdev/implement"
+        "specdev/implement",
+        "specdev/code-review",
+        "specdev/triage"
+      ],
+      "claimed_investigations": []
+    },
+    {
+      "change": "2026-08-28-observability-log-monitoring-eli5",
+      "current_work": null,
+      "works_run": [
+        "specdev/eli5"
+      ],
+      "claimed_investigations": []
+    },
+    {
+      "change": "2026-08-28-retire-runtime-code-generator",
+      "current_work": "specdev/goal-plan",
+      "works_run": [
+        "specdev/grill-with-docs",
+        "specdev/spec",
+        "specdev/tickets"
       ],
       "claimed_investigations": []
     },
@@ -102,6 +99,9 @@
     "2026-08-21-module-knowledge-skills",
     "2026-08-21-oss-direct-unified-notification",
     "2026-08-24-upstream-fork-upgrade-assessment",
-    "2026-08-24-upstream-fork-upgrade-remediation"
+    "2026-08-24-upstream-fork-upgrade-remediation",
+    "2026-08-25-plus-ui-multi-app-domain-architecture",
+    "2026-08-26-current-log-system-eli5",
+    "2026-08-27-plus-ui-backend-aligned-domains"
   ]
 }

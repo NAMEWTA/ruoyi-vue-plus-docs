@@ -149,3 +149,44 @@
 - **约束或不变量：** 本共识不构成实现授权，不自动修改前端源码。
 - **后续：** 下一 Work 为 `<Path>{roots.workflows}/specdev/S-spec/S-spec.md</Path>`。
 - **替代/被替代：** 无
+
+## LOG-011 — 2026-08-28T17:22:33+08:00 — CR-001 重新打开归档前整改
+- **设计树节点：** 无：实现后评审整改，不改变既有设计树共识
+- **轮次与依赖：** post-implementation review / CR-001
+- **状态：** confirmed
+- **问题：** T-01 至 T-05 已完成后，是否仍满足 completed 和 archive-ready。
+- **事实与来源：** `CR-001` 固定评审结果为 `request-changes`：权限指令异常路径未证明 DOM 失败关闭；菜单边界仍以宽泛 Record 和双重断言穿透；两条并发 E2E locator 曾导致完整套件 37/39。用户明确要求先更新文档且不要实施；`REVIEW:CR-001`；`USER-DECISION:2026-08-28-docs-only-no-implementation`。
+- **选项：** 忽略 review 并保持 completed；改写 Spec 降低验收；保留历史 Evidence 并新增整改 Ticket、重新打开状态。
+- **推荐：** 新增 T-06、T-07、T-08，并以 CR-002 approve 作为恢复 completed 的必要 Gate。
+- **结论：** T-01 至 T-05 保持历史 done；T-06 负责权限异常失败关闭，T-07 负责递归菜单领域边界和显式 Router adapter，T-08 负责 locator 稳定与最终全量验证。change 状态改为 blocked，等待新的实现与 candidate integration 授权。
+- **原因：** 三项整改都可由现有 `AC-002`、`AC-012`、`AC-015` 和工程标准判定，不需要改变产品目标或架构所有权；但未完成前不能归档。
+- **影响工件：** Source / Triage / Tickets / Tickets Map / Goal Plan / Status
+- **约束或不变量：** 本轮不修改产品代码、不创建实现 worktree、不形成实现 commit、不集成、不清理未来 source、不归档；不得改写 T-01 至 T-05 的历史 Evidence。
+- **后续：** 用户新授权后关闭 G-50，按 `T-06 || T-07 -> T-08 -> CR-002 -> reconcile -> archive dry-run` 执行。
+- **替代/被替代：** 替代“G-40 后无 blocker”的旧进度判断；不替代 ADR 或 Spec 合同。
+
+## LOG-012 — 2026-08-28T23:19:58+08:00 — CR-001 整改完成并恢复 completed
+- **设计树节点：** 无：实现后评审整改闭环，不改变既有设计树共识
+- **轮次与依赖：** post-implementation repair / T-06, T-07, T-08, CR-002
+- **状态：** confirmed
+- **问题：** CR-001 的三个 finding 是否已由固定实现、候选验证和独立复审充分关闭。
+- **事实与来源：** T-06 真实 Vue 生命周期证明异常路径先移除 DOM 再重抛；T-07 建立递归 `ServerMenuNode` 和显式 Admin Router adapter；T-08 的两个目标 E2E 为 2/2，完整 5-worker/0-retry suite 连续三轮各 48/48，标准 suite 48/48，根 architecture/lint/typecheck/test/build:dev/prod 全部通过。前端 `main` 为 `07962c7cad9ca4db168b3c423b9e3675f312a874`；`CR-002` 为 `approved`。
+- **选项：** 保持 active 等待重复验证；降低原验收要求；按固定证据关闭 finding 并恢复 completed。
+- **推荐：** 保留全部原合同和 Evidence，关闭 CR-001 blocker，恢复 completed。
+- **结论：** T-06 至 T-08 全部 done/integrated，AC-001 至 AC-015 全部 passed，change 恢复 completed；归档仍是独立动作。
+- **原因：** 所有 satisfied-when 条件均由直接测试接缝、固定 SHA 和同一 candidate 的完整质量矩阵证明，不依赖 retry、串行化、放宽断言或产品行为变更。
+- **影响工件：** T-08 / Evidence / CR-002 / Tickets Map / Goal Plan / Status
+- **约束或不变量：** T-06/T-07/T-08 transient candidate worktree 与 integration branch 已清理；source cleanup 未授权，三个 source worktree 与 branch 保留；不推送、不部署、不归档。
+- **后续：** 运行 SpecDev validator 和最终 Git 一致性核对；等待独立 archive/source-cleanup 授权。
+- **替代/被替代：** 关闭 LOG-011 的未决 blocker；不改写 CR-001 历史结论。
+
+## LOG-013 — 2026-08-28T23:42:03+08:00 — 已完成 worktree 全面清理
+- **设计树节点：** 不适用
+- **轮次与依赖：** post-completion cleanup / LOG-012
+- **状态：** confirmed
+- **问题：** 已完成 change 的 source/candidate worktree 与本地分支是否仍需保留。
+- **事实与来源：** 用户明确要求合并已完成 worktree 并全面清理；19 个 worktree 均 clean，且其 HEAD 均已被对应子仓库 `main` 包含。
+- **结论：** 无需创建空合并提交；移除 19 个 worktree 和 19 条对应本地分支，并清除空的 `specdev-worktree` 目录层级。
+- **验证：** 前后端 `git worktree list` 均仅剩各自 `main`；任务/集成分支零匹配；`specdev-worktree` 路径不存在。
+- **影响工件：** `.status.json` / Goal Plan / HANDOFF / T-06 至 T-08 Evidence
+- **约束或不变量：** 保留所有 source/candidate/result SHA 与验证 Evidence；不修改主检出的既有 dirty 内容，不推送、不部署、不归档。

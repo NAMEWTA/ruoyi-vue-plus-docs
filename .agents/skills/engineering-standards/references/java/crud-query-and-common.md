@@ -1,6 +1,6 @@
 # 后端 CRUD、查询与公共设施实现规范
 
-适用 `module:ruoyi-vue-plus-namewta` 中业务 CRUD、MyBatis 查询、树结构、翻译、缓存和导入导出。生成器定义标准骨架，demo 展示完整链路，system/workflow 展示复杂领域约束。
+适用 `module:ruoyi-vue-plus-namewta` 中业务 CRUD、MyBatis 查询、树结构、翻译、缓存和导入导出。父仓库 `docs/fm` 定义标准骨架，demo 展示完整链路，system/workflow 展示复杂领域约束。
 
 ### BE-CRUD-001 标准分层与实现基线
 
@@ -8,7 +8,7 @@ Scope: `path:ruoyi-vue-plus-namewta/ruoyi-modules/**`
 
 Level: MUST
 
-Source: `repository-fact` (`ruoyi-gen/src/main/resources/fm/java/**`, `ruoyi-demo/**/TestDemo*`)
+Source: `repository-fact` (`docs/fm/java/**`, `ruoyi-demo/**/TestDemo*`)
 
 Rule: 标准业务 CRUD 保持 entity、BO、VO、mapper、service/interface、service/impl、controller 的职责分离。生成器只建立骨架；修改 system/workflow 等成熟模块时，保留同模块已有的关系维护、权限、缓存、事务、导入导出和条件装配，不把复杂用例退化成模板 CRUD。
 
@@ -20,7 +20,7 @@ Scope: `path:ruoyi-vue-plus-namewta/ruoyi-modules/**/domain/**`
 
 Level: MUST
 
-Source: `repository-fact` (`TestDemo`, `TestDemoBo`, `TestDemoVo`, Java generator templates)
+Source: `repository-fact` (`TestDemo`, `TestDemoBo`, `TestDemoVo`, `docs/fm/java/**`)
 
 Rule: 项目自有业务 entity 映射表并继承 `BaseEntity` 取得 `createDept/createBy/createTime/updateBy/updateTime` 自动填充字段；表中 `version`、`del_flag` 分别映射为显式 `@Version`、`@TableLogic` 字段，完整 schema 基线遵循[数据源事务与建表](persistence-transactions-and-ddl.md)。BO 使用 `@AutoMapper(target=..., reverseConvertGenerate=false)`、Serializable 和 Add/Edit validation groups；VO 使用面向响应的 `@AutoMapper`，只在确有导出或翻译需求时添加 Excel/Translation 注解。跨层转换沿用 `MapstructUtils`，不得把持久化 entity 直接作为外部合同。
 
@@ -44,7 +44,7 @@ Scope: service query builders and `ruoyi-common-mybatis`
 
 Level: MUST
 
-Source: `repository-fact` (`QueryBuilder`, `BaseMapperPlus.lambda()`, `LambdaCrudChainWrapper`, Java service template)
+Source: `repository-fact` (`QueryBuilder`, `BaseMapperPlus.lambda()`, `LambdaCrudChainWrapper`, `docs/fm/java/serviceImpl.java.ftl`)
 
 Rule: 动态查询使用 `QueryBuilder.lambda`、`Wrappers.lambdaQuery` 或 mapper 的 fresh `lambda()`，根据类型选择 `eqIfPresent`、`eqIfText`、`likeIfText`、`betweenParams` 等条件，并给出确定排序。链式 wrapper 有可变查询/更新状态，不得跨请求、线程或独立操作缓存复用；每个操作取得新实例，复用同一实例时必须先明确 `clear()` 能否完整清除所用状态。
 
@@ -56,7 +56,7 @@ Scope: service implementations under `ruoyi-vue-plus-namewta/ruoyi-modules/**`
 
 Level: MUST
 
-Source: `repository-fact` (`TestDemoServiceImpl`, Java service template, system service implementations)
+Source: `repository-fact` (`TestDemoServiceImpl`, `docs/fm/java/serviceImpl.java.ftl`, system service implementations)
 
 Rule: service 负责 `buildQueryWrapper`、映射、领域不变量、唯一性和删除前校验。insert 成功后按合同回填生成主键；update/status/sort 只更新允许字段；唯一性检查在编辑时排除当前主键；无权限或违反不变量使用现有 `ServiceException` 合同失败，不以 mapper 返回 0 静默掩盖关键业务失败。
 
@@ -92,7 +92,7 @@ Scope: tree entities and services under `ruoyi-vue-plus-namewta/ruoyi-modules/**
 
 Level: MUST
 
-Source: `repository-fact` (Java tree service template and demo tree implementation)
+Source: `repository-fact` (`docs/fm/java/serviceImpl.java.ftl` tree branch and demo tree implementation)
 
 Rule: 树节点保存时统一处理 root value、parent existence、self-parent、ancestor path 和排序。移动节点必须拒绝选择自身或后代为父节点，并在同一一致性边界更新后代 ancestors；删除前检查或明确处理子节点。前后端对 root、id、parentId、children 的表示必须一致。
 
@@ -124,12 +124,12 @@ Verification: 合法/非法/部分失败导入、导出字段与权限测试；�
 
 ### BE-CRUD-011 生成模板演进
 
-Scope: `path:ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-gen/src/main/resources/fm/**`
+Scope: `path:docs/fm/**`
 
 Level: SHOULD
 
-Source: `repository-fact` (Java, Vue, XML and SQL generator templates) + `user-decision` (`API-005`)
+Source: `repository-fact` (`docs/fm` Java, Vue, React, XML and SQL templates) + `user-decision` (`API-005`)
 
-Rule: 会重复污染新模块的缺陷在生成模板修复，一次性领域行为留在业务模块。模板变化同时检查 Java/Vue/API/types/XML/SQL 关联输出，以及 CRUD/tree、unique、status、sort、between、dict、permission 分支；CRUD controller 与 Vue API 模板必须同步执行 [API-005](../rules/api-errors-resources.md)，查询只生成 GET，变更只生成 POST，且每个 POST controller 方法生成准确、安全的 `@Log`。生成结果必须能编译并保持前后端合同一致。
+Rule: 会重复污染新模块的缺陷在 `docs/fm` 修复，一次性领域行为留在业务模块。模板变化同时检查 Java/Vue/React/API/types/XML/SQL 关联输出，以及 CRUD/tree、unique、status、sort、between、dict、permission 分支；CRUD controller 与前端 service/API 模板必须同步执行 [API-005](../rules/api-errors-resources.md)，查询只生成 GET，变更只生成 POST，且每个 POST controller 方法生成准确、安全的 `@Log`。Vue 模板生成 domain/web-domain 资源切片，不自动覆盖共享 package 入口、manifest 或 App 组合文件。生成结果必须能编译并保持前后端合同一致。
 
-Verification: 用覆盖受影响条件的生成元数据产出样例并 diff；搜索生成的 controller 和 API，确认查询为 `@GetMapping`/`method: 'get'`，变更为 `@PostMapping`/`method: 'post'`，不存在 PUT/PATCH/DELETE，且每个 POST 方法均有准确的 `@Log`；前端 lint/type diagnostic/build；后端 compile/test；检查未选择分支无回归。
+Verification: 先运行 `node docs/fm/scripts/validate.mjs`；再用覆盖受影响条件的生成元数据产出样例并 diff；搜索生成的 controller 和 API，确认查询为 `@GetMapping`/`method: 'get'`，变更为 `@PostMapping`/`method: 'post'`，不存在 PUT/PATCH/DELETE，且每个 POST 方法均有准确的 `@Log`；前端 lint/type diagnostic/build；后端 compile/test；检查未选择分支无回归。

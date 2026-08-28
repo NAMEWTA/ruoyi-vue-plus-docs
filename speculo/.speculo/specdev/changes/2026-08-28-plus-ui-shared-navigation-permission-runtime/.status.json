@@ -5,31 +5,34 @@
   "change_status": "completed",
   "current_work": null,
   "works_run": [
+    "specdev/eli5",
     "specdev/grill-with-docs",
     "specdev/spec",
     "specdev/tickets",
     "specdev/goal-plan",
-    "specdev/implement"
+    "specdev/implement",
+    "specdev/code-review",
+    "specdev/triage"
   ],
   "claimed_investigations": [],
   "execution_authorization": {
     "implementation_commit": {
       "status": "authorized",
-      "source": "USER-DECISION:2026-08-28-complete-goal-plan-and-all-tickets-with-actual-code",
-      "granted_at": "2026-08-28T12:50:04+08:00",
-      "scope": "Ticket implementation commits"
+      "source": "user request: execute all latest review repair tickets to satisfy the change",
+      "granted_at": "2026-08-28T22:43:57+08:00",
+      "scope": "T-06 through T-08 implementation commits; T-01 through T-05 historical authorization was consumed"
     },
     "local_candidate_integration": {
       "status": "authorized",
-      "source": "USER-DECISION:2026-08-28-complete-goal-plan-and-all-tickets-with-actual-code",
-      "granted_at": "2026-08-28T12:50:04+08:00",
-      "scope": "Lead-owned local direct-parent or candidate integration and parent update"
+      "source": "user request: execute all latest review repair tickets to satisfy the change",
+      "granted_at": "2026-08-28T22:43:57+08:00",
+      "scope": "T-06 through T-08 Lead-owned local candidate integration and parent update"
     },
     "source_cleanup": {
       "status": "authorized",
-      "source": "USER-DECISION:2026-08-28-merge-related-worktrees-and-clean-them-up",
-      "granted_at": "2026-08-28T14:25:00+08:00",
-      "scope": "Source worktree and branch cleanup"
+      "source": "user request: merge completed worktrees and clean all worktrees",
+      "granted_at": "2026-08-28T23:42:03+08:00",
+      "scope": "All completed source and candidate worktrees and their local branches"
     }
   },
   "leadership": {
@@ -39,8 +42,8 @@
     "history": []
   },
   "created_at": "2026-08-28T10:10:35+08:00",
-  "updated_at": "2026-08-28T14:25:00+08:00",
-  "completed_at": "2026-08-28T13:53:45+08:00",
+  "updated_at": "2026-08-28T23:42:03+08:00",
+  "completed_at": "2026-08-28T23:19:58+08:00",
   "archived": false,
   "archive_path": null,
   "blockers": [],
@@ -260,6 +263,135 @@
       },
       "status": "removed",
       "updated_at": "2026-08-28T14:25:00+08:00"
+    },
+    {
+      "ticket_id": "T-06",
+      "owner": "codex:leadership-epoch-1",
+      "implementation_owner": "codex:leadership-epoch-1",
+      "integration_owner": "codex:leadership-epoch-1",
+      "provider": "git",
+      "base_sha": "8aa184b353c5a37ee555feb8be808fe9ba885297",
+      "parent_branch": "main",
+      "branch": "speculo/2026-08-28-plus-ui-shared-navigation-permission-runtime/T-06",
+      "workspace_ref": "specdev-worktree/2026-08-28-plus-ui-shared-navigation-permission-runtime/T-06",
+      "source_checkpoint": "7c77bec3f29bbebede554b9b0c91686cd6437d83",
+      "integration": {
+        "status": "passed",
+        "parent_ref": "refs/heads/main",
+        "parent_before_sha": "8aa184b353c5a37ee555feb8be808fe9ba885297",
+        "source_sha": "7c77bec3f29bbebede554b9b0c91686cd6437d83",
+        "candidate_sha": "7c77bec3f29bbebede554b9b0c91686cd6437d83",
+        "candidate_tree_sha": "eb20aa750069a1aea8d29e20a12991272b596bff",
+        "candidate_branch": "speculo/integration/2026-08-28-plus-ui-shared-navigation-permission-runtime/T-06",
+        "candidate_workspace_ref": "specdev-worktree/.integration/2026-08-28-plus-ui-shared-navigation-permission-runtime/T-06",
+        "result_sha": "7c77bec3f29bbebede554b9b0c91686cd6437d83",
+        "method": "fast-forward",
+        "conflict_paths": [],
+        "verification": "passed",
+        "full_suite": {
+          "required": false,
+          "status": "not-required",
+          "reason": "T-06 由真实 Vue 生命周期与包级门禁判卷，最终全量 suite 归 T-08",
+          "evidence": "<Path>{roots.state}/specdev/changes/2026-08-28-plus-ui-shared-navigation-permission-runtime/evidence/T-06.md</Path>"
+        },
+        "e2e": {
+          "required": false,
+          "status": "not-required",
+          "reason": "配置异常无稳定产品页面入口，真实 Vue 生命周期是直接接缝，完整浏览器回归归 T-08",
+          "evidence": "<Path>{roots.state}/specdev/changes/2026-08-28-plus-ui-shared-navigation-permission-runtime/evidence/T-06.md</Path>"
+        },
+        "evidence": "<Path>{roots.state}/specdev/changes/2026-08-28-plus-ui-shared-navigation-permission-runtime/evidence/T-06.md</Path>",
+        "attempts": 1,
+        "promotion_status": "applied"
+      },
+      "status": "removed",
+      "updated_at": "2026-08-28T23:42:03+08:00"
+    },
+    {
+      "ticket_id": "T-07",
+      "owner": "codex:leadership-epoch-1",
+      "implementation_owner": "codex:leadership-epoch-1",
+      "integration_owner": "codex:leadership-epoch-1",
+      "provider": "git",
+      "base_sha": "8aa184b353c5a37ee555feb8be808fe9ba885297",
+      "parent_branch": "main",
+      "branch": "speculo/2026-08-28-plus-ui-shared-navigation-permission-runtime/T-07",
+      "workspace_ref": "specdev-worktree/2026-08-28-plus-ui-shared-navigation-permission-runtime/T-07",
+      "source_checkpoint": "00f7c759b51c5c9a7e900a18a9e614b117a83b0c",
+      "integration": {
+        "status": "passed",
+        "parent_ref": "refs/heads/main",
+        "parent_before_sha": "7c77bec3f29bbebede554b9b0c91686cd6437d83",
+        "source_sha": "00f7c759b51c5c9a7e900a18a9e614b117a83b0c",
+        "candidate_sha": "720bcdafc487846b1260584d9ec2fd324f8db728",
+        "candidate_tree_sha": "a79e4bf540a52d2a4c34845e37b796b0e73be25b",
+        "candidate_branch": "speculo/integration/2026-08-28-plus-ui-shared-navigation-permission-runtime/T-07",
+        "candidate_workspace_ref": "specdev-worktree/.integration/2026-08-28-plus-ui-shared-navigation-permission-runtime/T-07",
+        "result_sha": "720bcdafc487846b1260584d9ec2fd324f8db728",
+        "method": "merge-commit",
+        "conflict_paths": [],
+        "verification": "passed",
+        "full_suite": {
+          "required": false,
+          "status": "not-required",
+          "reason": "T-07 运行 Domain、App Runtime、Admin 定向与架构门禁，最终全量 suite 归 T-08",
+          "evidence": "<Path>{roots.state}/specdev/changes/2026-08-28-plus-ui-shared-navigation-permission-runtime/evidence/T-07.md</Path>"
+        },
+        "e2e": {
+          "required": true,
+          "status": "passed",
+          "reason": "菜单解析、Platform 投影和真实 Admin Router 注册跨越生产边界",
+          "evidence": "<Path>{roots.state}/specdev/changes/2026-08-28-plus-ui-shared-navigation-permission-runtime/evidence/T-07.md</Path>"
+        },
+        "evidence": "<Path>{roots.state}/specdev/changes/2026-08-28-plus-ui-shared-navigation-permission-runtime/evidence/T-07.md</Path>",
+        "attempts": 1,
+        "promotion_status": "applied"
+      },
+      "status": "removed",
+      "updated_at": "2026-08-28T23:42:03+08:00"
+    },
+    {
+      "ticket_id": "T-08",
+      "owner": "codex:leadership-epoch-1",
+      "implementation_owner": "codex:leadership-epoch-1",
+      "integration_owner": "codex:leadership-epoch-1",
+      "provider": "git",
+      "base_sha": "720bcdafc487846b1260584d9ec2fd324f8db728",
+      "parent_branch": "main",
+      "branch": "speculo/2026-08-28-plus-ui-shared-navigation-permission-runtime/T-08",
+      "workspace_ref": "specdev-worktree/2026-08-28-plus-ui-shared-navigation-permission-runtime/T-08",
+      "source_checkpoint": "9d67923e9c59904fac292ce186eb5f776f90c954",
+      "integration": {
+        "status": "passed",
+        "parent_ref": "refs/heads/main",
+        "parent_before_sha": "720bcdafc487846b1260584d9ec2fd324f8db728",
+        "source_sha": "9d67923e9c59904fac292ce186eb5f776f90c954",
+        "candidate_sha": "07962c7cad9ca4db168b3c423b9e3675f312a874",
+        "candidate_tree_sha": "34b9d7aefbd3811bc7ce40d11dcb72c882ae90f0",
+        "candidate_branch": "speculo/integration/2026-08-28-plus-ui-shared-navigation-permission-runtime/T-08",
+        "candidate_workspace_ref": "specdev-worktree/.integration/2026-08-28-plus-ui-shared-navigation-permission-runtime/T-08",
+        "result_sha": "07962c7cad9ca4db168b3c423b9e3675f312a874",
+        "method": "merge-commit",
+        "conflict_paths": [],
+        "verification": "passed",
+        "full_suite": {
+          "required": true,
+          "status": "passed",
+          "reason": "CR-001 整改后的 architecture check 26/0、architecture tests 99/99、lint、typecheck、workspace test 和 dev/prod build 均在固定 candidate 通过",
+          "evidence": "<Path>{roots.state}/specdev/changes/2026-08-28-plus-ui-shared-navigation-permission-runtime/evidence/T-08.md</Path>"
+        },
+        "e2e": {
+          "required": true,
+          "status": "passed",
+          "reason": "目标场景 2/2；完整 Admin Playwright 在 5 workers、0 retries 下连续三轮各 48/48，随后标准 pnpm test:e2e 48/48",
+          "evidence": "<Path>{roots.state}/specdev/changes/2026-08-28-plus-ui-shared-navigation-permission-runtime/evidence/T-08.md</Path>"
+        },
+        "evidence": "<Path>{roots.state}/specdev/changes/2026-08-28-plus-ui-shared-navigation-permission-runtime/evidence/T-08.md</Path>",
+        "attempts": 1,
+        "promotion_status": "applied"
+      },
+      "status": "removed",
+      "updated_at": "2026-08-28T23:42:03+08:00"
     }
   ]
 }

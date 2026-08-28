@@ -5,7 +5,7 @@
 ### DEC-000 实现证据优先级
 
 - Scope: `path:plus-ui-namewta/apps/**`, `path:plus-ui-namewta/packages/**`, `path:ruoyi-vue-plus-namewta/ruoyi-modules/**`
-- Decision: 实现选择按“同 owner、同形态的成熟 domain/web-domain/App 实现 -> 当前公开平台/宿主合同 -> 后端或 OpenAPI 合同 -> 框架通用做法”排序。后端模板只作为接口行为参考，不决定前端目录，也不得覆盖复杂模块既有权限、事务、缓存、关系和交互合同。
+- Decision: 实现选择按“同 owner、同形态的成熟 domain/web-domain/App 实现 -> 当前公开平台/宿主合同 -> 后端或 OpenAPI 合同 -> 框架通用做法”排序。`docs/fm` 模板只提供当前标准骨架，不得覆盖复杂模块既有权限、事务、缓存、关系和交互合同。
 - Source: `repository-fact`
 - Rationale: 当前成熟模块包含模板没有覆盖的 Client 隔离、数据权限、关联写入、缓存失效、导入导出和条件装配。
 - Migration: 新前端能力按 transport -> domain -> web-domain -> App composition 纵切片落地；修改现有复杂功能只做满足需求的增量变化，除非另有经验证的重构任务。
@@ -14,11 +14,11 @@
 ### DEC-001 Canonical 与作用域
 
 - Scope: `repository`
-- Decision: 唯一工程规范位于 `.agents/skills/engineering-standards/`，覆盖父仓库与两个子模块；规则按路径路由。
+- Decision: 项目开发 Skill 的唯一根目录是父工作区 `.agents/skills/`；其中 `engineering-standards` 是覆盖父仓库与两个子模块的唯一规范裁决层，其他 Skill 只承载实现导航与模块事实。
 - Source: `user-decision` + `repository-fact`
-- Rationale: 用户明确指定 canonical 输出；仓库以 Submodule 聚合两个独立技术栈。
-- Migration: create；不创建旧 TypeScript 或 Claude 兼容入口。
-- Verification: Builder strict validator；检查 canonical 外不存在重复正文。
+- Rationale: 用户明确要求 Codex Skill 与 Claude Agent 收敛到同一父级目录；仓库以 Submodule 聚合两个独立技术栈，子仓库副本会产生漂移。
+- Migration: 将当前有效内容合并到父级 Skill，删除两个子仓库中的 `.claude`、`.codex` 目录；不创建工具专属兼容入口。
+- Verification: 对全部父级 Skill 运行 Skill Creator validator；检查活动项目文档不再引用子仓库 `.claude/.codex`，且 canonical 外不存在重复 Skill 正文。
 
 ### DEC-002 存量采用 Ratchet
 
@@ -80,7 +80,7 @@
 |---|---|---|---|
 | `MIG-TS-STRICT` | `strict: true` 但 `noImplicitAny`、`strictNullChecks`、`strictFunctionTypes` 关闭；lint 允许多类 any | 新/修改的 API、存储、环境变量和第三方响应边界使用精确类型、`unknown` + narrowing，不新增无理由 any | 变更文件 Ratchet；review、`pnpm lint` 与完整 `pnpm typecheck` 已是 active gate |
 | `MIG-FE-TEST` | 根级 `pnpm test` 聚合当前激活 App/包的 Vitest，Playwright 覆盖 Admin 关键浏览器流程 | 新增纯逻辑、状态、权限或复杂交互时在 domain、web-domain、App 或 E2E 的正确层级扩展测试；第二个 App 激活时恢复跨 App 隔离场景 | 本地与 CI 运行 architecture/lint/typecheck/unit/build，按风险运行 E2E；覆盖率阈值仍待决策 |
-| `MIG-BE-TEST` | 44 个 JUnit 测试源码文件；root 默认执行测试，Redis/MySQL/MinIO 用例通过属性门控接入真实服务 job | 认证、权限、事务、SQL 和公共 API 变更有回归测试，并在合并门禁执行 | `./mvnw test` 为默认门禁；core 产物因排除 demo/workflow 而在已测试后用 `-Dmaven.test.skip=true` 组装；真实服务由 CI 补证 |
+| `MIG-BE-TEST` | 63 个 JUnit 测试源码文件；root 默认执行测试，Redis/MySQL/MinIO 用例通过属性门控接入真实服务 job | 认证、权限、事务、SQL 和公共 API 变更有回归测试，并在合并门禁执行 | `./mvnw test` 为默认门禁；core 产物因排除 demo/workflow 而在已测试后用 `-Dmaven.test.skip=true` 组装；真实服务由 CI 补证 |
 | `MIG-BE-DS-TX` | 业务代码同时存在 Spring `@Transactional` 与 dynamic-datasource `@DSTransactional` | 新建或实质修改的业务事务统一使用 `@DSTransactional`，事务事件使用匹配的 `@DsTxEventListener` | 按变更文件 Ratchet；迁移时验证代理调用、回滚、数据源切换和提交阶段事件；不发动无需求证据的全仓替换 |
 | `MIG-BE-DDL-BASE` | 历史、上游、第三方及部分 NAMEWTA 表未统一具备 `version/create_dept/create_time/create_by/update_time/update_by/del_flag` | 每个新建项目自有表均具备七个基础字段，并与 `BaseEntity`、`@Version`、`@TableLogic` 映射一致 | 新表立即执行；触及存量项目自有表时评估兼容迁移，未经迁移设计不直接补列；上游冻结和第三方 schema 不做无关整治 |
 | `MIG-CI` | 已配置 `.github/workflows/quality-gates.yml`，含快照、前端、后端与真实服务四个 job | PR 稳定执行同源 lint/typecheck/test/build，并由分支保护设为 required checks | 本地完成静态验证；提交推送后观察首次 Actions 运行，再配置分支保护并记录远程证据 |

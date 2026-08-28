@@ -356,3 +356,14 @@
 - **影响工件：** T-04/T-08 Evidence / Goal Plan / Tickets Map / change status / parent backend gitlink
 - **约束或不变量：** 不改产品 tree，不吸收前后端和父仓无关 dirty 内容；不清理 worktree，不推送、部署或执行生产 DML。
 - **替代/被替代：** 补正 LOG-023 的最终 backend result 与提交拓扑，不改变其产品验收结论。
+
+## LOG-025 — 2026-08-28T23:42:03+0800 — 已完成 worktree 全面清理
+- **设计树节点：** 不适用
+- **轮次与依赖：** post-completion cleanup / LOG-024
+- **状态：** confirmed
+- **问题：** 已完成 change 的 source/candidate worktree 与本地分支是否仍需保留。
+- **事实与来源：** 用户明确要求合并已完成 worktree 并全面清理；本 change 的 16 个 source/candidate worktree 均 clean，且其 HEAD 均已被对应子仓库 `main` 包含。
+- **结论：** 无需创建空合并提交；移除 16 个 worktree 和 16 条对应本地分支。
+- **验证：** 前后端 `git worktree list` 均仅剩各自 `main`；任务/集成分支零匹配；`specdev-worktree` 路径不存在。
+- **影响工件：** `.status.json` / Goal Plan / T-01 至 T-08 Evidence
+- **约束或不变量：** 保留所有 source/candidate/result SHA 与验证 Evidence；不修改主检出的既有 dirty 内容，不推送、不部署、不归档。

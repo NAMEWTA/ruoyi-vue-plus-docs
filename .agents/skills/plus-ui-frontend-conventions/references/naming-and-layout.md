@@ -1,14 +1,8 @@
 # 文件、目录与命名
 
-## 所有权目录
+## 落位判断
 
-- `apps/<app>/src`：终端入口、Client、组合、路由、布局、主题和 App 私有页面/组件。
-- `packages/domains/<domain>/src`：模型、服务、映射器、端口和无界面工具。
-- `packages/web-domains/<domain>/src`：Vue 页面、局部组件、组合式函数、语言资源和 manifest。
-- `packages/platform/<capability>/src`：跨领域最小合同。
-- `packages/adapters/<runtime>/src`：平台合同的具体运行时实现。
-- `packages/web-kit/<capability>/src`：经多个真实消费者证明稳定的 Web 机制。
-- `tooling/<tool>/src`：构建期或仓库检查工具，不进入产品运行时。
+先判断代码是否依赖 Vue/DOM、是否只服务单一 App、是否属于单一业务领域、是否已有多个真实消费者。完整目录职责与依赖方向见 [architecture.md](architecture.md)。不能因为“可能复用”就提前放入 `platform` 或 `web-kit`。
 
 根级没有产品 `src` 或前端模板 `gen`。
 
@@ -23,7 +17,5 @@
 - 包只公开必要根入口或明确子路径，禁止 catch-all barrel 和深层导入。
 
 ## 新增文件决策
-
-先判断代码是否依赖 Vue/DOM、是否只服务单一 App、是否属于单一业务领域、是否已有多个消费者。不能因为“可能复用”就提前放入 `platform` 或 `web-kit`。
 
 移动 Web、小程序和 Taro 适配器在激活前只允许 README；真实包命名、源码与构建脚本必须在独立规格内确定。

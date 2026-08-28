@@ -3,8 +3,8 @@
 ## 正式恢复链路
 
 ```text
-router guard
-  -> restore identity
+router guard / restoreProtectedNavigation
+  -> getInfo 恢复 identity
   -> navigation Store 获取当前 Client 的服务端菜单
   -> @namewta/platform-app-runtime 生成导航投影
   -> Admin 所选 web-domain manifest 解析页面组件
@@ -33,6 +33,8 @@ router guard
 - Admin 拥有 manifest 选择、navigation Store、Router 注册、诊断呈现和会话 evaluator 装配。
 - web-domain manifest 拥有领域页面 registration；未知或未选择的组件键失败关闭。
 - 后端仍是最终授权者，前端路由和按钮权限只控制可见性与交互。
+
+非空权限/角色数组之外的指令绑定直接报错；权限或角色不匹配时移除元素。evaluator provider 在指令执行时读取当前会话，不缓存权限快照；页面需要命令式判断时也复用同一 evaluator。
 
 ## 修改检查
 

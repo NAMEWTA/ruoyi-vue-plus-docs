@@ -22,3 +22,12 @@
 
 - ./speculo/workflows/specdev/INDEX.md
 </SPECULO>
+
+<PROJECT_SKILLS>
+## 项目开发 Skill
+
+- 项目开发 Skill 的唯一根目录是 `./.agents/skills/`；两个子仓库不维护 `.claude` 或 `.codex` Skill/Agent 副本。
+- 处理代码、目录、测试、构建、依赖、API、数据库、权限、上游同步或交付变化前，先读取 `./.agents/skills/engineering-standards/SKILL.md`。
+- 再按任务加载最小充分的前端、后端、system、workflow、common 或 upstream Skill，不加载无关内容。
+- Skill 摘要与当前源码、配置、POM 或测试冲突时，以当前工作树证据为准，并同步修正父级 Skill。
+</PROJECT_SKILLS>

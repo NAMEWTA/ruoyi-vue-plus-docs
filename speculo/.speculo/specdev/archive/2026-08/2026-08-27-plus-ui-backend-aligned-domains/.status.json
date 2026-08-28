@@ -1,0 +1,94 @@
+{
+  "schema_version": 6,
+  "artifact": "change-status",
+  "change": "2026-08-27-plus-ui-backend-aligned-domains",
+  "change_status": "archived",
+  "current_work": null,
+  "works_run": [
+    "specdev/spec",
+    "specdev/tickets",
+    "specdev/goal-plan",
+    "specdev/implement",
+    "specdev/triage",
+    "specdev/archive-and-consolidate"
+  ],
+  "claimed_investigations": [],
+  "execution_authorization": {
+    "implementation_commit": {
+      "status": "authorized",
+      "source": "USER-DECISION:执行；延续已授权的 worktree 实现提交",
+      "granted_at": "2026-08-27T17:40:57+0800",
+      "scope": "T-01 frontend implementation commit"
+    },
+    "local_candidate_integration": {
+      "status": "authorized",
+      "source": "USER-DECISION:Lead 进行集成以及父分支推进",
+      "granted_at": "2026-08-27T17:40:57+0800",
+      "scope": "T-01 candidate integration and plus-ui-namewta main update"
+    },
+    "source_cleanup": {
+      "status": "not-authorized",
+      "source": null,
+      "granted_at": null,
+      "scope": "T-01 source worktree and branch cleanup"
+    }
+  },
+  "leadership": {
+    "current": "codex:/root",
+    "epoch": 1,
+    "assigned_at": "2026-08-27T17:40:57+0800",
+    "history": []
+  },
+  "created_at": "2026-08-27T17:40:57+0800",
+  "updated_at": "2026-08-28T09:51:07+0800",
+  "completed_at": "2026-08-27T18:40:47+0800",
+  "archived": true,
+  "archive_path": "<Path>{roots.state}/specdev/archive/2026-08/2026-08-27-plus-ui-backend-aligned-domains</Path>",
+  "blockers": [],
+  "deviations": [],
+  "worktrees": [
+    {
+      "ticket_id": "T-01",
+      "owner": "codex:/root",
+      "implementation_owner": "codex:/root",
+      "integration_owner": "codex:/root",
+      "provider": "git",
+      "base_sha": "8a5cd0dfb9bd56b7be94d78e29957a54cc218805",
+      "parent_branch": "main",
+      "branch": "speculo/2026-08-27-plus-ui-backend-aligned-domains/T-01",
+      "workspace_ref": "specdev-worktree/2026-08-27-plus-ui-backend-aligned-domains/T-01",
+      "source_checkpoint": "d60b807a195336e4430e92d830eef7b707df7f6f",
+      "integration": {
+        "status": "passed",
+        "parent_ref": "refs/heads/main",
+        "parent_before_sha": "8a5cd0dfb9bd56b7be94d78e29957a54cc218805",
+        "source_sha": "d60b807a195336e4430e92d830eef7b707df7f6f",
+        "candidate_sha": "d60b807a195336e4430e92d830eef7b707df7f6f",
+        "candidate_tree_sha": "f84b11a29e4a48cbd6d51186330e0f5b26043ce1",
+        "candidate_branch": "speculo/integration/2026-08-27-plus-ui-backend-aligned-domains/T-01",
+        "candidate_workspace_ref": "specdev-worktree/.integration/2026-08-27-plus-ui-backend-aligned-domains/T-01",
+        "result_sha": "d60b807a195336e4430e92d830eef7b707df7f6f",
+        "method": "fast-forward",
+        "conflict_paths": [],
+        "verification": "passed",
+        "full_suite": {
+          "required": true,
+          "status": "passed",
+          "reason": "破坏性包重命名和双 App 组合需要完整静态、类型、测试与构建验证",
+          "evidence": "<Path>{roots.state}/specdev/changes/2026-08-27-plus-ui-backend-aligned-domains/evidence/T-01.md</Path>"
+        },
+        "e2e": {
+          "required": true,
+          "status": "passed",
+          "reason": "登录、动态菜单、权限和全部页面注册跨浏览器边界",
+          "evidence": "<Path>{roots.state}/specdev/changes/2026-08-27-plus-ui-backend-aligned-domains/evidence/T-01.md</Path>"
+        },
+        "evidence": "<Path>{roots.state}/specdev/changes/2026-08-27-plus-ui-backend-aligned-domains/evidence/T-01.md</Path>",
+        "attempts": 2,
+        "promotion_status": "applied"
+      },
+      "status": "integrated",
+      "updated_at": "2026-08-27T18:40:47+0800"
+    }
+  ]
+}

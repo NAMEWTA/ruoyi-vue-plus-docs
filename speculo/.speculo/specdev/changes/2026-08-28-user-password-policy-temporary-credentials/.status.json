@@ -26,10 +26,10 @@
       "scope": "Lead-owned local direct-parent or candidate integration and parent update"
     },
     "source_cleanup": {
-      "status": "not-authorized",
-      "source": null,
-      "granted_at": null,
-      "scope": "Source worktree and branch cleanup"
+      "status": "authorized",
+      "source": "user request: merge completed worktrees and clean all worktrees",
+      "granted_at": "2026-08-28T23:42:03+08:00",
+      "scope": "All completed source and candidate worktrees and their local branches"
     }
   },
   "leadership": {
@@ -39,7 +39,7 @@
     "history": []
   },
   "created_at": "2026-08-28T10:09:42+08:00",
-  "updated_at": "2026-08-28T19:08:06+08:00",
+  "updated_at": "2026-08-28T23:42:03+08:00",
   "completed_at": "2026-08-28T19:08:06+08:00",
   "archived": false,
   "archive_path": null,
@@ -86,8 +86,8 @@
         "attempts": 1,
         "promotion_status": "applied"
       },
-      "status": "integrated",
-      "updated_at": "2026-08-28T15:18:45+08:00"
+      "status": "removed",
+      "updated_at": "2026-08-28T23:42:03+08:00"
     },
     {
       "ticket_id": "T-03",
@@ -129,8 +129,8 @@
         "attempts": 1,
         "promotion_status": "applied"
       },
-      "status": "integrated",
-      "updated_at": "2026-08-28T15:38:10+08:00"
+      "status": "removed",
+      "updated_at": "2026-08-28T23:42:03+08:00"
     },
     {
       "ticket_id": "T-02",
@@ -172,8 +172,8 @@
         "attempts": 1,
         "promotion_status": "applied"
       },
-      "status": "integrated",
-      "updated_at": "2026-08-28T16:04:40+08:00"
+      "status": "removed",
+      "updated_at": "2026-08-28T23:42:03+08:00"
     },
     {
       "ticket_id": "T-04",
@@ -215,8 +215,8 @@
         "attempts": 2,
         "promotion_status": "applied"
       },
-      "status": "integrated",
-      "updated_at": "2026-08-28T19:08:06+08:00"
+      "status": "removed",
+      "updated_at": "2026-08-28T23:42:03+08:00"
     },
     {
       "ticket_id": "T-05",
@@ -258,8 +258,8 @@
         "attempts": 1,
         "promotion_status": "applied"
       },
-      "status": "integrated",
-      "updated_at": "2026-08-28T17:11:35+08:00"
+      "status": "removed",
+      "updated_at": "2026-08-28T23:42:03+08:00"
     },
     {
       "ticket_id": "T-06",
@@ -301,8 +301,8 @@
         "attempts": 1,
         "promotion_status": "applied"
       },
-      "status": "integrated",
-      "updated_at": "2026-08-28T17:47:21+08:00"
+      "status": "removed",
+      "updated_at": "2026-08-28T23:42:03+08:00"
     },
     {
       "ticket_id": "T-07",
@@ -344,8 +344,8 @@
         "attempts": 1,
         "promotion_status": "applied"
       },
-      "status": "integrated",
-      "updated_at": "2026-08-28T18:46:00+08:00"
+      "status": "removed",
+      "updated_at": "2026-08-28T23:42:03+08:00"
     },
     {
       "ticket_id": "T-08",
@@ -387,8 +387,8 @@
         "attempts": 2,
         "promotion_status": "applied"
       },
-      "status": "integrated",
-      "updated_at": "2026-08-28T19:08:06+08:00"
+      "status": "removed",
+      "updated_at": "2026-08-28T23:42:03+08:00"
     }
   ]
 }

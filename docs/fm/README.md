@@ -1,0 +1,45 @@
+# NAMEWTA FreeMarker 模板
+
+本目录是项目代码模板的唯一权威位置，保存当前有效的 Java、Vue、React、MyBatis XML 与菜单 SQL 模板。历史版本通过 Git 查询，不在目录内保留副本。
+
+## 状态
+
+- 本目录是独立模板资产，不属于 `ruoyi-gen` 的 classpath 资源。
+- 现有 `ruoyi-gen` 未改为读取本目录；删除该模块前，不再把它作为模板运行器使用。
+- 新生成能力必须显式读取 [catalog.json](./catalog.json)，按 [context-contract.md](./context-contract.md) 提供上下文。
+- 模板只生成资源切片，不覆盖已有模块的共享入口、包清单或 App 组合文件。
+
+## Vue 输出
+
+Vue 模板面向 `plus-ui-namewta` 当前多 App 架构：
+
+```text
+packages/domains/<module>/src/<resource>/
+  index.ts
+  service.ts
+  transport.ts
+  types.ts
+
+packages/web-domains/<module>/src/<resource>/
+  <BusinessName>Page.vue
+  composables.ts
+  index.ts
+  registration.ts
+  runtime.ts
+```
+
+domain 保持无界面并通过 `HttpClient` 端口访问 HTTP；web-domain 通过类型化 runtime 获得 service、确认、反馈、字典、下载以及可选宿主组件。资源 registration 仍需由所属 web-domain manifest 汇总，并由目标 App 显式选择。
+
+## HTTP 合同
+
+- 列表、详情、树和选项等只读操作使用 GET。
+- 新增、修改、删除、状态和排序等业务变更使用 POST。
+- Java POST 业务接口生成准确的 `@Log`；修改与删除使用 `/edit`、`/remove/{ids}` 避免与新增和详情路径冲突。
+
+## 校验
+
+```bash
+node docs/fm/scripts/validate.mjs
+```
+
+校验模板清单、Vue 架构边界、CRUD method 和 Java POST 日志的静态合同。完整验收还必须使用代表性普通表与树表上下文渲染，再在目标前后端工程执行类型检查、测试和构建。

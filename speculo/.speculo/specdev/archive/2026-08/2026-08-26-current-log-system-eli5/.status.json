@@ -1,0 +1,82 @@
+{
+  "schema_version": 6,
+  "artifact": "change-status",
+  "change": "2026-08-26-current-log-system-eli5",
+  "change_status": "archived",
+  "current_work": null,
+  "works_run": ["specdev/eli5", "specdev/grill-with-docs", "specdev/spec", "specdev/tickets", "specdev/goal-plan", "specdev/implement", "specdev/triage", "specdev/archive-and-consolidate"],
+  "claimed_investigations": [],
+  "execution_authorization": {
+    "implementation_commit": {"status": "authorized", "source": "USER-DECISION:2026-08-28-remediate-and-archive-all", "granted_at": "2026-08-28T09:34:56+08:00", "scope": "Accept the combined implementation checkpoint and local Maven gate remediation required to complete this change"},
+    "local_candidate_integration": {"status": "authorized", "source": "USER-DECISION:2026-08-28-remediate-and-archive-all", "granted_at": "2026-08-28T09:34:56+08:00", "scope": "Close all three current-workspace Tickets against verified backend main result f88012eae14374bb6f59b0389e3e937345ccde7e"},
+    "source_cleanup": {"status": "not-authorized", "source": null, "granted_at": null, "scope": "Source worktree and branch cleanup"}
+  },
+  "leadership": {"current": "codex:/root", "epoch": 1, "assigned_at": "2026-08-26T10:07:03+08:00", "history": []},
+  "created_at": "2026-08-26T10:07:03+08:00",
+  "updated_at": "2026-08-28T09:51:07+08:00",
+  "completed_at": "2026-08-28T09:34:56+08:00",
+  "archived": true,
+  "archive_path": "<Path>{roots.state}/specdev/archive/2026-08/2026-08-26-current-log-system-eli5</Path>",
+  "blockers": [],
+  "deviations": [
+    {
+      "id": "DEV-COMP-001", "level": "goal-plan", "ticket_id": null, "status": "approved",
+      "trigger": "The implementation was delivered as one combined checkpoint a98d6edcc591550221dd983e293d43e3aac36d23 instead of three per-Ticket checkpoints required by the original Goal Plan.",
+      "decision": "Accept a98d6edcc591550221dd983e293d43e3aac36d23 as the shared source checkpoint for T-01 through T-03 and f88012eae14374bb6f59b0389e3e937345ccde7e as the final verified parent result. Do not rewrite published history to synthesize Ticket commits.",
+      "approved_by": "user", "approved_at": "2026-08-28T09:34:56+08:00", "authority": "User directed Codex to finish unmet archive conditions according to repository facts and continue the archive.",
+      "impact": "Checkpoint granularity differs from the original orchestration contract; behavior, reviewability, coverage, and final result traceability remain intact."
+    },
+    {
+      "id": "DEV-COMP-002", "level": "ticket", "ticket_id": "T-03", "status": "approved",
+      "trigger": "The 2026-08-28 repeat process probe wrote 602 sys-console lines but stopped because local MySQL on port 3306 was unavailable; the 2026-08-26 process-level HTTP and startup-summary probe had already passed.",
+      "decision": "Reuse the prior successful E2E because every runtime logging and controller path is unchanged from a98d6edcc to the final result. Supplement it with the current clean reactor test, clean full/core packages, bundle checks, and failed-start sys-console write proof.",
+      "approved_by": "codex:/root", "approved_at": "2026-08-28T09:34:56+08:00", "authority": "Lead evidence assessment under the user's remediation authorization.",
+      "impact": "No product or test contract is weakened; current repetition is limited only by an unavailable local database dependency."
+    },
+    {
+      "id": "DEV-COMP-003", "level": "goal-plan", "ticket_id": "T-03", "status": "approved",
+      "trigger": "Full reactor test failed in modules without test sources because inherited Surefire tag filters had no JUnit engine on their test classpath; the original Ticket paths excluded the root POM.",
+      "decision": "Add the version-managed JUnit Jupiter engine as a root test dependency so inherited Surefire filtering works across all modules.",
+      "approved_by": "codex:/root", "approved_at": "2026-08-28T09:34:56+08:00", "authority": "Required build-gate remediation under the user's completion instruction.",
+      "impact": "Build/test classpath only; no runtime artifact behavior changes."
+    }
+  ],
+  "worktrees": [
+    {
+      "ticket_id": "T-01", "owner": "codex:/root", "implementation_owner": "codex:/root", "integration_owner": "codex:/root", "provider": "git",
+      "base_sha": "336134c5ff6e80bb8775617b64c4e04bf6c9d222", "parent_branch": "main", "branch": "main", "workspace_ref": "current", "source_checkpoint": "f88012eae14374bb6f59b0389e3e937345ccde7e",
+      "integration": {
+        "status": "passed", "parent_ref": "refs/heads/main", "parent_before_sha": "e8bbdf0d9bfd608828cfd8977d524d178e50c7d4", "source_sha": "f88012eae14374bb6f59b0389e3e937345ccde7e",
+        "candidate_sha": null, "candidate_tree_sha": null, "candidate_branch": null, "candidate_workspace_ref": null, "result_sha": "f88012eae14374bb6f59b0389e3e937345ccde7e", "method": "direct-parent", "conflict_paths": [], "verification": "passed",
+        "full_suite": {"required": true, "status": "passed", "reason": "Shared common-web HTTP logging affects the complete backend reactor.", "evidence": "2026-08-28 clean reactor test passed all 41 modules; common-web ran 15 tests with zero failures, errors, or skips."},
+        "e2e": {"required": false, "status": "not-required", "reason": "Servlet, crypto, async, failure, and configuration boundaries are covered by module and admin integration tests.", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-26-current-log-system-eli5/evidence/T-01.md</Path>"},
+        "evidence": "<Path>{roots.state}/specdev/changes/2026-08-26-current-log-system-eli5/evidence/T-01.md</Path>", "attempts": 1, "promotion_status": "applied"
+      },
+      "status": "integrated", "updated_at": "2026-08-28T09:34:56+08:00"
+    },
+    {
+      "ticket_id": "T-02", "owner": "codex:/root", "implementation_owner": "codex:/root", "integration_owner": "codex:/root", "provider": "git",
+      "base_sha": "336134c5ff6e80bb8775617b64c4e04bf6c9d222", "parent_branch": "main", "branch": "main", "workspace_ref": "current", "source_checkpoint": "f88012eae14374bb6f59b0389e3e937345ccde7e",
+      "integration": {
+        "status": "passed", "parent_ref": "refs/heads/main", "parent_before_sha": "e8bbdf0d9bfd608828cfd8977d524d178e50c7d4", "source_sha": "f88012eae14374bb6f59b0389e3e937345ccde7e",
+        "candidate_sha": null, "candidate_tree_sha": null, "candidate_branch": null, "candidate_workspace_ref": null, "result_sha": "f88012eae14374bb6f59b0389e3e937345ccde7e", "method": "direct-parent", "conflict_paths": [], "verification": "passed",
+        "full_suite": {"required": true, "status": "passed", "reason": "Admin Logback packaging and optional-module profiles require full and core artifact verification.", "evidence": "2026-08-28 clean full and bundle-core packages passed; verify-admin-bundle reported full/core contents verified."},
+        "e2e": {"required": false, "status": "not-required", "reason": "A real isolated Logback context and physical temporary file integration cover the persistence boundary.", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-26-current-log-system-eli5/evidence/T-02.md</Path>"},
+        "evidence": "<Path>{roots.state}/specdev/changes/2026-08-26-current-log-system-eli5/evidence/T-02.md</Path>", "attempts": 1, "promotion_status": "applied"
+      },
+      "status": "integrated", "updated_at": "2026-08-28T09:34:56+08:00"
+    },
+    {
+      "ticket_id": "T-03", "owner": "codex:/root", "implementation_owner": "codex:/root", "integration_owner": "codex:/root", "provider": "git",
+      "base_sha": "336134c5ff6e80bb8775617b64c4e04bf6c9d222", "parent_branch": "main", "branch": "main", "workspace_ref": "current", "source_checkpoint": "f88012eae14374bb6f59b0389e3e937345ccde7e",
+      "integration": {
+        "status": "passed", "parent_ref": "refs/heads/main", "parent_before_sha": "e8bbdf0d9bfd608828cfd8977d524d178e50c7d4", "source_sha": "f88012eae14374bb6f59b0389e3e937345ccde7e",
+        "candidate_sha": null, "candidate_tree_sha": null, "candidate_branch": null, "candidate_workspace_ref": null, "result_sha": "f88012eae14374bb6f59b0389e3e937345ccde7e", "method": "direct-parent", "conflict_paths": [], "verification": "passed",
+        "full_suite": {"required": true, "status": "passed", "reason": "Startup summary and root endpoint are part of the assembled backend application.", "evidence": "2026-08-28 clean reactor test and clean full/core packages passed; root JUnit engine remediation is f88012eae14374bb6f59b0389e3e937345ccde7e."},
+        "e2e": {"required": true, "status": "passed", "reason": "The Ticket requires a real WebServer address and physical sys-console startup summary.", "evidence": "The 2026-08-26 port 18081 process probe passed and runtime paths are unchanged through f88012eae; the 2026-08-28 retry proved the clean core jar writes sys-console before stopping on unavailable local MySQL."},
+        "evidence": "<Path>{roots.state}/specdev/changes/2026-08-26-current-log-system-eli5/evidence/T-03.md</Path>", "attempts": 2, "promotion_status": "applied"
+      },
+      "status": "integrated", "updated_at": "2026-08-28T09:34:56+08:00"
+    }
+  ]
+}

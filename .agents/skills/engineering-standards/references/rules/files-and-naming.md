@@ -20,7 +20,7 @@ Level: MUST
 
 Source: `repository-fact` + `user-decision` (`DEC-003`)
 
-Rule: 前端保持 `api/views/components/hooks/store` 与业务域子目录，后端保持 Maven 模块和模块内 controller/domain/mapper/service 主轴。只有形成稳定职责、独立生命周期、所有权或依赖方向时新增目录/模块；`index`/barrel 只用于已有公开入口或框架/生成器合同。
+Rule: 前端保持 `apps`、`packages/domains`、`packages/web-domains`、`packages/platform`、`packages/adapters`、`packages/web-kit`、`packages/api-contracts` 与 `tooling` 的所有权主轴，后端保持 Maven 模块和模块内 controller/domain/mapper/service 主轴。只有形成稳定职责、独立生命周期、所有权或依赖方向时新增目录/模块；`index`/barrel 只用于已有公开入口或框架/生成器合同。
 
 Verification: module map review；检查新增目录的 owner、依赖和导航价值；前端运行 `pnpm lint`、`pnpm typecheck`、`pnpm build:prod`，后端运行适用 Maven 门禁。
 

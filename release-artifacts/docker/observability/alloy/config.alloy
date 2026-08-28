@@ -1,0 +1,20 @@
+local.file_match "ruoyi_logs" {
+  path_targets = [
+    { "__path__" = "/var/log/ruoyi/server1/*.log", "service" = "ruoyi-admin", "instance" = "server1", "job" = "ruoyi" },
+    { "__path__" = "/var/log/ruoyi/server2/*.log", "service" = "ruoyi-admin", "instance" = "server2", "job" = "ruoyi" },
+    { "__path__" = "/var/log/ruoyi/monitor/**/*.log", "service" = "ruoyi-monitor-admin", "instance" = "monitor", "job" = "ruoyi" },
+    { "__path__" = "/var/log/ruoyi/snailjob/**/*.log", "service" = "ruoyi-snailjob-server", "instance" = "snailjob", "job" = "ruoyi" },
+    { "__path__" = "/var/log/ruoyi/snailai/**/*.log", "service" = "ruoyi-snailai-server", "instance" = "snailai", "job" = "ruoyi" },
+  ]
+}
+
+loki.source.file "ruoyi_logs" {
+  targets    = local.file_match.ruoyi_logs.targets
+  forward_to = [loki.write.local.receiver]
+}
+
+loki.write "local" {
+  endpoint {
+    url = "http://loki:3100/loki/api/v1/push"
+  }
+}

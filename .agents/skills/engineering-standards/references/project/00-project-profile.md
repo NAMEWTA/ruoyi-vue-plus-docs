@@ -5,20 +5,19 @@
 - Project: `ruoyi-vue-plus-docs`
 - Repository root: 当前包含本 Skill 的 Git 工作区根目录
 - Topology: 多根、多语言聚合仓库；父仓库通过 Git Submodule 管理两个独立产品仓库
-- Inventory schema: `1.0.0`
-- Discovery baseline: Builder 确定性扫描访问 2338 个文件、识别 964 个源码文件，未截断
 
 ## 事实来源
 
 - `README.md`、`.gitmodules`：父仓库只聚合 `plus-ui-namewta` 与 `ruoyi-vue-plus-namewta`，两个子模块独立开发和发布。
+- `.agents/skills/**`、`AGENTS.md`：项目开发 Skill 只在父工作区集中维护；两个产品子仓库不保留 `.claude` 或 `.codex` Skill/Agent 副本。
 - `docs/upstream/customization-map.md`：NAMEWTA 相对上游的认证、权限、Client、菜单、SQL 和前端契约权威清单。
 - `plus-ui-namewta/package.json`、`pnpm-workspace.yaml`、`pnpm-lock.yaml`、各包 `package.json`/`tsconfig.json`：Vue 3、TypeScript 6、Vite 8、Pinia 4、pnpm 10、Node `>=20.19.0` 的多 App monorepo。
 - `plus-ui-namewta/apps/admin-web/src/main.ts`：当前唯一可构建和部署的浏览器 App；`apps/client-web`、`mobile-web`、`miniapp-taro` 为 README-only 占位。
 - `plus-ui-namewta/packages/{domains,web-domains,platform,adapters,web-kit}/**`：headless domain、Vue Web 表现、平台端口、运行时适配器与共享 Web 机制的依赖方向。
 - `plus-ui-namewta/packages/api-contracts/**`、`tooling/openapi/**`：生成 transport、不可变快照、来源与漂移检查；domain model 由各领域独立拥有。
 - `plus-ui-namewta/tooling/architecture/**`：使用 AST/SFC/YAML 结构化检查工作区、公开入口、依赖方向、终端纯度、占位目录和基线漂移。
-- `ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-gen/src/main/resources/fm/{java,vue}/**`：标准 CRUD、树结构、状态/排序和前后端合同的当前生成基线。
-- `ruoyi-vue-plus-namewta/pom.xml`、`mvnw`、各模块 `pom.xml`：Java 21、Spring Boot 4.1.0、Maven Wrapper、41 个 POM 描述符；根 reactor 始终构建 41 projects，`bundle-full/core` 控制最终 admin fat jar 的业务模块集合。
+- `docs/fm/**`：脱离 `ruoyi-gen` classpath 的标准 CRUD 模板资产，是 Java、Vue、React、XML、SQL、树结构、状态/排序和前后端合同的当前生成基线。
+- `ruoyi-vue-plus-namewta/pom.xml`、`mvnw`、各模块 `pom.xml`：Java 21、Spring Boot 4.1.0、Maven Wrapper、41 个 POM 描述符；根 reactor 构建 41 projects，`bundle-full/core` 控制最终 admin fat jar 的业务模块集合。
 - `ruoyi-vue-plus-namewta/ruoyi-admin/src/main/java/org/dromara/DromaraApplication.java`、`ruoyi-modules/ruoyi-demo/**` 及 `ruoyi-modules/ruoyi-system/**`：Spring MVC、BO/VO/entity、service、mapper、Bean Validation、数据权限、事务和 Sa-Token 主导实践。
 - `ruoyi-vue-plus-namewta/pom.xml`、`ruoyi-common/ruoyi-common-mybatis/**`：dynamic-datasource 4.5.0、`@DSTransactional`、`BaseEntity` 自动填充字段、VO mapper 与链式查询的公共基础设施合同。
 - `ruoyi-vue-plus-namewta/script/sql/ry_vue.sql` 的 `test_demo`、`ruoyi-modules/ruoyi-demo/**/TestDemo*`：新建项目自有业务表的乐观锁、审计字段、逻辑删除及 entity 映射基线。
@@ -50,7 +49,7 @@
 
 - 依赖/缓存/构建输出：`.git/**`、`.pnpm-store/**`、`**/node_modules/**`、`**/dist/**`、`**/target/**`、`**/.flattened-pom.xml`、coverage 和工具缓存。
 - 生成声明：`plus-ui-namewta/apps/*/src/types/{auto-imports,components}.d.ts` 及同类 Vite 插件输出；修改生成器配置后重新生成，不手改结果。
-- 前端 `packages/api-contracts` 生成结果由 `tooling/openapi` 与已提交快照维护；`tooling/generators` 当前为 README-only 占位。后端 `ruoyi-modules/ruoyi-gen/**` 是可编辑生成器源码，不是生成物。
+- 前端 `packages/api-contracts` 生成结果由 `tooling/openapi` 与已提交快照维护；`tooling/generators` 当前为 README-only 占位。模板资产统一位于父仓库 `docs/fm/**`，不再属于 `ruoyi-gen` classpath；后端 `ruoyi-modules/ruoyi-gen/**` 仍是待退役的可编辑生成器源码，不是生成物。
 - 上游冻结分支：后端 `6.X`、前端 `6.X-Vue` 只允许 fast-forward，不承载业务提交；产品变更进入各自 `main`。
 - 上游基线标签 `namewta-base-upstream-6x`、`namewta-base-upstream-6x-vue` 不移动。
 - `ruoyi-vue-plus-namewta/script/sql/ry_vue.sql` 是上游初始化脚本；NAMEWTA 增量写入 `script/sql/namewta/**`，不得回写上游脚本。

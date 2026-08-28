@@ -1,23 +1,35 @@
 ---
 name: plus-ui-frontend-conventions
-description: 为 plus-ui-namewta 多 App monorepo 提供目录命名、Vue/TypeScript 风格、Oxlint/Oxfmt、App 显式组合、动态菜单路由和权限源码地图。处理 apps、domains、web-domains、platform、adapters、web-kit、OpenAPI、projectServerRoutes、addRoute、v-hasPermi、v-hasRoles 或新增终端时使用。
+description: 为 plus-ui-namewta 多 App monorepo 提供当前架构、实现落位、目录命名、Vue/TypeScript 工具链、App 显式组合、动态菜单路由和权限源码导航。处理 apps、domains、web-domains、platform、adapters、web-kit、OpenAPI、projectServerRoutes、addRoute、v-hasPermi、v-hasRoles 或新增终端时使用。
 ---
 
-# plus-ui-namewta 前端约定地图
+# plus-ui-namewta 前端开发导航
 
-本 Skill 只描述当前前端仓库的真实结构和源码入口。MUST、Ratchet 与质量门禁由 `engineering-standards` 裁决；具体行为不明确时必须读取源码，不得用旧上游单体目录推断。
+本 Skill 是 `plus-ui-namewta` 的唯一项目级前端开发导航。MUST、Ratchet 与质量门禁由 `engineering-standards` 裁决；具体行为不明确时读取当前源码、包 README、`package.json` 和架构检查，不用摘要替代证据。
 
 ## 使用流程
 
-1. 确认变更归属 `plus-ui-namewta/`，并读取受影响包 README。
+1. 确认变更归属 `plus-ui-namewta/`，读取受影响包 README，并用源码确认真实入口。
 2. 按主题加载引用：
+   - 架构边界、依赖方向和当前 App 组合：[architecture.md](references/architecture.md)
    - 目录与命名：[naming-and-layout.md](references/naming-and-layout.md)
+   - 新增领域能力或终端：[implementation.md](references/implementation.md)
    - 工具链与编码：[coding-style.md](references/coding-style.md)
    - 注释：[comments.md](references/comments.md)
    - 动态路由与权限：[permission-routing.md](references/permission-routing.md)
-3. 涉及新增领域、App 组合或移动端占位时，再读取前端仓库 `.codex/skills/plus-ui-domain-development/SKILL.md`。
+3. 先由后端 Maven 模块确定一级 domain，再由 Controller base path 确定 `src` 下的 kebab-case 资源目录。
 4. 只从包 `exports` 公开入口导入；禁止深层导入、跨工作区相对导入和 App 互相导入。
-5. 修改后先跑包级检查，再按工程规范运行根级架构、lint、typecheck、test 和 build。
+5. App 在编译期显式选择 domain/web-domain；未选择、重复注册、未知组件或缺失依赖必须失败关闭。
+6. 修改后先跑受影响包测试，再按工程规范运行适用的根级架构、lint、typecheck、test、E2E 和 build 门禁。
+
+## 硬边界
+
+- `apps/*` 拥有 ClientContext、布局、品牌、路由装配、运行时适配器和部署配置。
+- `packages/domains/*` 不依赖 Vue、DOM、浏览器存储或具体请求实现。
+- `packages/web-domains/*` 不拥有 App 布局、全局路由器、请求单例或后端授权。
+- `platform` 只承载跨领域最小合同和组合运行时；`web-kit` 只承载已被多个真实消费者验证的 Web 机制。
+- 后端是最终授权者；前端菜单、路由和按钮权限只负责当前 App 的投影、可见性与失败关闭。
+- `client-web`、`mobile-web`、`miniapp-taro` 和 Taro 适配器在独立规格激活前保持 README-only。
 
 ## 当前仓库锚点
 
@@ -35,4 +47,4 @@ description: 为 plus-ui-namewta 多 App monorepo 提供目录命名、Vue/TypeS
 | 架构检查 | `tooling/architecture/src/**`、`tooling/architecture/baseline.json` |
 | OpenAPI 合同 | `packages/api-contracts/**`、`tooling/openapi/**` |
 
-后端代码生成能力归后端 `ruoyi-gen`；前端 `gen` domain/web-domain 只负责调用和呈现该能力。
+当前标准模板资产位于父仓库 `docs/fm`；现有后端生成运行实现仍在待退役的 `ruoyi-gen`，前端 `gen` domain/web-domain 只负责调用和呈现该能力。

@@ -11,9 +11,9 @@
 ## 配置事实
 
 - `.editorconfig`：UTF-8、LF、2 空格、文件末尾换行。
-- `.oxlintrc.json` 只忽略构建和覆盖率输出，不再忽略 `.claude`、`.codex` 或不存在的旧文档目录。
+- `.oxlintrc.json` 只忽略构建和覆盖率输出；项目开发 Skill 统一位于父工作区 `.agents/skills`，不在前端仓库维护工具专属 Skill 副本。
 - `.oxfmtrc.json` 忽略各 App 的自动生成声明和 OpenAPI 生成/快照文件；生成声明和生成合同应通过其配置或生成器更新。
-- 根 `tsconfig.json` 提供共享 TypeScript 配置，各 App/包拥有自己的 `tsconfig` 与路径边界；不要再假定根 `@/* -> ./src/*` 单体别名。
+- 根 `tsconfig.json` 提供共享 TypeScript 配置，各 App/包拥有自己的 `tsconfig` 与路径边界；导入按包 `exports` 和当前 App 的局部别名解析。
 
 ## 编码原则
 

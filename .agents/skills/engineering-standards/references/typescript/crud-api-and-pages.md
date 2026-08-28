@@ -1,6 +1,6 @@
 # 前端领域 CRUD 与页面实现规范
 
-适用 `packages/domains/**`、`packages/web-domains/**`、`packages/api-contracts/**` 及目标 App 的显式组合。后端模板只可作为接口行为参考，不再决定前端目录。
+适用 `packages/domains/**`、`packages/web-domains/**`、`packages/api-contracts/**` 及目标 App 的显式组合。当前模板基线位于父仓库 `docs/fm/vue/**`，按 domain/web-domain 目录生成资源切片，但不替代成熟实现与 App 显式组合。
 
 ### FE-CRUD-001 采用领域纵切片
 

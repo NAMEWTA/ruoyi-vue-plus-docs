@@ -43,33 +43,6 @@
       "claimed_investigations": []
     },
     {
-      "change": "2026-08-28-user-password-policy-temporary-credentials",
-      "current_work": null,
-      "works_run": [
-        "specdev/grill-with-docs",
-        "specdev/spec",
-        "specdev/tickets",
-        "specdev/goal-plan",
-        "specdev/implement"
-      ],
-      "claimed_investigations": []
-    },
-    {
-      "change": "2026-08-28-plus-ui-shared-navigation-permission-runtime",
-      "current_work": null,
-      "works_run": [
-        "specdev/eli5",
-        "specdev/grill-with-docs",
-        "specdev/spec",
-        "specdev/tickets",
-        "specdev/goal-plan",
-        "specdev/implement",
-        "specdev/code-review",
-        "specdev/triage"
-      ],
-      "claimed_investigations": []
-    },
-    {
       "change": "2026-08-28-observability-log-monitoring-eli5",
       "current_work": null,
       "works_run": [
@@ -78,13 +51,21 @@
       "claimed_investigations": []
     },
     {
-      "change": "2026-08-28-retire-runtime-code-generator",
+      "change": "2026-08-29-ruoyi-admin-system-classpath-build-failure",
       "current_work": null,
       "works_run": [
-        "specdev/grill-with-docs",
+        "specdev/diagnose-bugs",
         "specdev/spec",
-        "specdev/tickets",
-        "specdev/goal-plan",
+        "specdev/implement"
+      ],
+      "claimed_investigations": []
+    },
+    {
+      "change": "2026-08-29-login-password-policy-runtime-and-http-log-redaction",
+      "current_work": null,
+      "works_run": [
+        "specdev/diagnose-bugs",
+        "specdev/spec",
         "specdev/implement"
       ],
       "claimed_investigations": []
@@ -104,6 +85,9 @@
     "2026-08-24-upstream-fork-upgrade-remediation",
     "2026-08-25-plus-ui-multi-app-domain-architecture",
     "2026-08-26-current-log-system-eli5",
-    "2026-08-27-plus-ui-backend-aligned-domains"
+    "2026-08-27-plus-ui-backend-aligned-domains",
+    "2026-08-28-retire-runtime-code-generator",
+    "2026-08-28-user-password-policy-temporary-credentials",
+    "2026-08-28-plus-ui-shared-navigation-permission-runtime"
   ]
 }

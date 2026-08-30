@@ -1,0 +1,8 @@
+{
+  "java.compile.nullAnalysis.mode": "disabled",
+  "java.autobuild.enabled": false,
+  "java.debug.settings.forceBuildBeforeLaunch": true,
+  "java.debug.settings.onBuildFailureProceed": true,
+  "maven.executable.options": "-Plocal",
+  "typescript.tsdk": "plus-ui-namewta/node_modules/typescript/lib"
+}

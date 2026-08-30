@@ -68,6 +68,7 @@ jobs:
           java-version: 21
           cache: maven
           cache-dependency-path: ruoyi-vue-plus-namewta/pom.xml
+      - run: scripts/ci/verify-dev-build-guard.sh
       - working-directory: ruoyi-vue-plus-namewta
         run: ./mvnw test
       - working-directory: ruoyi-vue-plus-namewta

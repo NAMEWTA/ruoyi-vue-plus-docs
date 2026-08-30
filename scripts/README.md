@@ -1,7 +1,6 @@
 # scripts 目录说明
 
-该目录存放父仓库级别的自动化脚本。目前所有脚本都位于 `ci/` 目录，用于支撑
-`.github/workflows/quality-gates.yml` 中的质量门禁，也可以在满足前置条件时从仓库根目录手动执行。
+该目录存放父仓库级别的开发与质量门禁脚本，可以在满足前置条件时从仓库根目录手动执行。
 
 ## 目录结构
 
@@ -9,16 +8,20 @@
 scripts/
 ├── README.md
 ├── start-dev.sh
-└── ci/
-    ├── run-external-services.sh
-    ├── verify-admin-bundle.sh
-    └── verify-submodules.sh
+├── ci/
+│   ├── run-external-services.sh
+│   ├── verify-admin-bundle.sh
+│   ├── verify-dev-build-guard.sh
+│   └── verify-submodules.sh
+└── lib/
+    └── backend-build-guard.sh
 ```
 
 | 目录 | 作用 |
 | --- | --- |
 | `scripts/` | 父仓库自动化脚本的统一入口及说明文档。 |
 | `scripts/ci/` | CI 质量门禁脚本，负责子模块快照、后端打包内容和真实外部服务集成测试的验收。 |
+| `scripts/lib/` | 开发脚本复用模块；当前提供后端构建互斥和 Maven 模块 JAR 完整性校验。 |
 
 ## start-dev.sh
 
@@ -39,9 +42,11 @@ scripts/
 ```
 
 前端选项优先使用本机可直接调用的 `pnpm`，没有 `pnpm` 时回退到 `corepack pnpm`；依赖安装严格遵循 lockfile，随后运行固定端口且不自动打开浏览器的 `pnpm dev`。
-后端选项先通过 Maven Wrapper
-执行跳过自动测试的本地 reactor install，再以 `dev,local` profiles 启动 `ruoyi-admin`。该脚本用于启动
-人工测试环境，不能替代前后端自动测试和质量门禁。
+后端选项先取得按 canonical backend path 隔离的原子构建锁，再通过 Maven Wrapper 执行跳过自动测试的
+本地 reactor install。构建完成后，脚本会比较 `ruoyi-system/target/classes` 与 target JAR、
+`ruoyi-admin` 实际 Maven classpath 中已安装 JAR 的 class 集合，并检查 admin 登录链依赖的关键类型；全部
+通过后释放构建锁，再以 `dev,local` profiles 启动 `ruoyi-admin`。该脚本用于启动人工测试环境，不能替代
+前后端自动测试和质量门禁。
 
 ### 前置条件与保护
 
@@ -51,9 +56,40 @@ scripts/
 - 若本机提供 `lsof`，脚本会在启动前检查前端 `80` 或后端 `8080` 端口；端口被占用时只报告进程并退出，
   不会自动终止任何现有服务。
 - 脚本不会读取或输出本地配置中的账号、密码等敏感值。
+- 父工作区只版本化 `.vscode/settings.json` 并关闭 Red Hat Java 的自动构建，其他 `.vscode` 本地文件仍被
+  忽略；这可避免 JDT language server 与 Maven 同时写入 `target/generated-sources`。需要 IDE 编译时请
+  显式执行一次 Java build，不要在后端 reactor 运行中触发。
+- 同一后端工作区的第二个受管启动会立即失败，并显示持锁 PID；正常退出或 `Ctrl+C`/`TERM` 会清理锁，
+  owner PID 已不存在的 stale lock 会被安全替换。含未知内容或元数据不匹配的锁不会被递归删除。
+- 锁只协调 `start-dev.sh` 启动。运行后端启动时不要同时从其他终端或 IDE 对同一工作区执行 Maven
+  `clean/package/install`；这些外部进程不获取脚本锁，但构建后的 JAR 完整性门会阻止已发现的半成品继续启动。
 
-四个 Shell 脚本都启用了 `set -euo pipefail`：命令失败、使用未定义变量或管道中的任一命令失败时，
+所有可执行 Shell 入口都启用了 `set -euo pipefail`：命令失败、使用未定义变量或管道中的任一命令失败时，
 脚本都会立即以非零状态退出，使 CI 能够准确判定门禁失败。
+
+### 后端构建锁或 JAR 完整性失败的恢复
+
+1. 停止同一后端工作区中仍在运行的 Maven/IDE build；确认 VS Code 已应用工作区中的
+   `"java.autobuild.enabled": false`，不要删除仍有存活 owner PID 的锁。
+2. 重新执行 `./scripts/start-dev.sh` 并选择后端。stale lock 会自动清理，reactor 会重新 `clean install`。
+3. 若仍提示 class 集合或哨兵缺失，检查错误中显示的 target/installed JAR，确认没有外部构建持续写入；
+   然后再次串行启动。脚本不会在产物不完整时进入 Spring Boot。
+4. 若极端 `SIGKILL` 留下错误中显示的 `.reclaim` 目录，先核对其 `owner` PID 已不存在，再只删除该 owner 文件
+   与已变空的 `.reclaim` 目录；不得递归删除锁根目录或仍有活动 PID 的锁。
+
+## ci/verify-dev-build-guard.sh
+
+### 作用
+
+验证父工作区已关闭 Java 自动构建，并使用临时目录和临时 JAR 验证后端开发构建保护模块，覆盖活动 owner
+锁冲突、并发 stale lock 回收、stale lock 恢复、`TERM` 清理、完整 class 集合、残缺 JAR 和关键 class
+哨兵。测试只清理自己创建的临时目录，不访问产品配置或本地 Maven 仓库。
+
+### 使用方式
+
+```bash
+scripts/ci/verify-dev-build-guard.sh
+```
 
 ## ci/verify-submodules.sh
 

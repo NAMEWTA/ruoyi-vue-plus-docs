@@ -46,6 +46,17 @@
 - NAMEWTA 数据库增量仅维护 `script/sql/namewta/DDL.sql` 与 `DML.sql`，保持历史前缀不变并追加幂等增量；初始化顺序为 `ry_vue.sql -> DDL.sql -> DML.sql`。密码能力发布先执行并验证 DML，再发布后端、前端和角色授权；回滚只补偿配置、菜单及授权关系，绝不改写用户密码，配置变化后显式刷新缓存。
 - OSS、通知、工作流与权限修改必须同时验证 API 合同、数据隔离、失败语义和对应集成测试。
 - 完整 HTTP 系统日志必须保留 requestId 关联、同步/异步/异常终态、正文大小与媒体类型策略；日志采集失败不得改变业务响应。
+- OpenAPI 机器身份只有同时具备服务端验签 request attribute、`openapi` userType 和空 Client 字段时，才可跳过浏览器 Client 校验；普通 Token、伪造 header 和泄漏的内部 Token 均不得触发该分支。
+
+## OpenAPI 定制边界
+
+| 定制点 | 当前落位 | 上游同步必须保持的不变量 |
+|---|---|---|
+| 协议与装配 | `ruoyi-common-openapi`、`OpenApiAutoConfiguration`、`application.yml` | full/core 使用同一 common artifact；`openapi.enabled` 在所有环境默认 `false`；启用时 KEK、Redis、Sa-Token、MVC mapping、唯一 credential/authorization SPI 任一缺失或无效都必须阻止启动，不得回退到本地状态或空权限 |
+| 凭据、目录与失效 | `ruoyi-system` 的 OpenAPI credential/catalog Controller、Service、Mapper 和 RBAC/身份写后失效调用点 | secret 仅创建/重置时返回一次并以 KEK 加密保存；self/admin scope 在后端裁决；权限或身份写入成功前完成机器 Session 注销，失败不得静默成功 |
+| 数据与菜单 | `script/sql/namewta/{DDL,DML}.sql` | 只维护 additive、幂等的凭据表/索引、权限与菜单增量，不改写上游初始化 SQL；生产 DDL/DML 不随代码集成自动执行 |
+| 前端入口 | system domain `open-api`、system web-domain 的 `OpenApiWorkspace`/manifest、admin `system/openApi/index` 动态页和 profile 静态 tab | admin 入口显式选择目标用户，个人入口固定当前用户；权限隐藏不能替代后端授权；一次性 secret 在所有弹窗关闭路径清空，不写 storage、URL、缓存或日志 |
+| 发布与恢复 | common-openapi README、部署环境变量与发布 Evidence | 顺序固定为备份、批准并执行 additive SQL、部署默认关闭代码、配置 Redis/KEK、另行批准启用；恢复先置 `OPENAPI_ENABLED=false`。KEK 下发、生产启用、真实迁移和远程发布均不是代码集成动作 |
 
 ## 上游评估热点
 
@@ -56,7 +67,7 @@
 | Vue、Router、Axios、状态管理 | App 组合、web-domain、browser adapter | lint、typecheck、unit、激活工作区 build |
 | SQL、ORM、数据权限 | 后端模块与 NAMEWTA DDL/DML | 模块测试、全量 test、full/core package |
 | OSS、通知、工作流、外部 URL | 后端公开合同与前端对应 domain/web-domain | 安全定向测试、unit、E2E |
-| Web Filter、异常处理、日志配置 | `ruoyi-common-web` 系统日志、应用 Logback、敏感信息边界 | 日志定向测试、后端全量 test |
+| Web Filter、异常处理、日志配置 | `ruoyi-common-web` 系统日志、`ruoyi-common-security` 验签通道、应用 Logback、敏感信息边界 | 日志/网关定向测试、后端全量 test |
 | 构建和依赖 | 三仓库工具链、架构检查与发布门禁 | frozen install、全量构建、子模块校验 |
 
 评估结果只能基于冻结 SHA 和实际命令。文本可自动合并不代表业务语义安全；未执行的验证必须明确记为未执行。

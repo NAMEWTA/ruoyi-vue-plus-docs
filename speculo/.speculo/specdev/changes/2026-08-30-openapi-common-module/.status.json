@@ -2,24 +2,26 @@
   "schema_version": 6,
   "artifact": "change-status",
   "change": "2026-08-30-openapi-common-module",
-  "change_status": "active",
+  "change_status": "completed",
   "current_work": null,
   "works_run": [
     "specdev/spec",
-    "specdev/grill-with-docs"
+    "specdev/grill-with-docs",
+    "specdev/tickets",
+    "specdev/goal-plan"
   ],
   "claimed_investigations": [],
   "execution_authorization": {
     "implementation_commit": {
-      "status": "not-authorized",
-      "source": null,
-      "granted_at": null,
+      "status": "authorized",
+      "source": "USER-DECISION:2026-08-31-explicit-two-action-authorization",
+      "granted_at": "2026-08-31T16:06:26+08:00",
       "scope": "Ticket implementation commits"
     },
     "local_candidate_integration": {
-      "status": "not-authorized",
-      "source": null,
-      "granted_at": null,
+      "status": "authorized",
+      "source": "USER-DECISION:2026-08-31-explicit-two-action-authorization",
+      "granted_at": "2026-08-31T16:06:26+08:00",
       "scope": "Lead-owned local direct-parent or candidate integration and parent update"
     },
     "source_cleanup": {
@@ -36,11 +38,117 @@
     "history": []
   },
   "created_at": "2026-08-30T20:38:35+08:00",
-  "updated_at": "2026-08-31T10:07:41+08:00",
-  "completed_at": null,
+  "updated_at": "2026-08-31T21:30:39+08:00",
+  "completed_at": "2026-08-31T21:30:39+08:00",
   "archived": false,
   "archive_path": null,
   "blockers": [],
-  "deviations": [],
-  "worktrees": []
+  "deviations": [
+    {
+      "ticket_id": "T-06",
+      "kind": "integration-order",
+      "observed_at": "2026-08-31T18:13:23+08:00",
+      "detail": "The first fast-forward command ran in the parent workspace instead of the newly-created candidate, so parent main advanced before candidate verification and the first candidate test ran against the old base.",
+      "impact": "No source or tree divergence: the promoted commit had already passed source tests/package and was a direct child of the immutable parent base.",
+      "correction": "Candidate was immediately fast-forwarded to the exact source/result SHA and the combined credential plus machine-session reactor gate passed before T-06 was accepted; history was not rewritten."
+    },
+    {
+      "ticket_id": "T-09",
+      "kind": "integration-order",
+      "observed_at": "2026-08-31T20:17:00+08:00",
+      "detail": "The first broad candidate gate ran while the candidate still pointed at the T-08 base, and backend main had already advanced to the T-09 source before required candidate E2E verification.",
+      "impact": "The first gate was invalid as T-09 evidence, but source, candidate and result did not diverge and no history was rewritten.",
+      "correction": "Candidate was fast-forwarded to the exact source/result SHA; Lead then reran the explicit seven-case MockMvc E2E, the 45-test focused cross-module gate and the 36-module package gate before accepting T-09."
+    },
+    {
+      "ticket_id": "T-11",
+      "kind": "scope-contract",
+      "observed_at": "2026-08-31T20:27:00+08:00",
+      "detail": "T-10 exports createOpenApiService(http) as a standalone slice, while SystemService does not contain OpenAPI and T-11 originally marked the only App HTTP composition point read-only.",
+      "impact": "Without a narrow App composition amendment, the web-domain would need an illegal reverse dependency or a duplicate HTTP implementation.",
+      "correction": "T-11 writable scope now includes application/services.ts for the single service instance and adminManifestRegistry.ts only for SystemWebRuntime injection; manifest selection, resolver and route semantics remain unchanged."
+    },
+    {
+      "ticket_id": "T-12",
+      "kind": "verification-environment",
+      "observed_at": "2026-08-31T21:25:00+08:00",
+      "detail": "The first frontend architecture check ran from main, whose retained nested T-10/T-11 source worktrees were scanned as ordinary source and produced 329 paths exclusively below specdev-worktree.",
+      "impact": "The run was invalid as frontend release evidence and did not identify a violation in the verified main tree.",
+      "correction": "Without cleaning any unauthorized worktree, Lead reran architecture, test, typecheck, lint and production build from the clean T-11 integration candidate whose commit and tree exactly matched frontend main; all gates passed."
+    }
+  ],
+  "worktrees": [
+    {
+      "ticket_id": "T-01", "owner": "codex:/root", "implementation_owner": "codex:/root", "integration_owner": "codex:/root", "provider": "git",
+      "base_sha": "e5cef5a616cea273d52fd57d510983b37f29144c", "parent_branch": "main", "branch": "speculo/2026-08-30-openapi-common-module/T-01", "workspace_ref": "specdev-worktree/2026-08-30-openapi-common-module/T-01", "source_checkpoint": "40f1f0678e348512f2fd206b30e5e69494ca060d",
+      "integration": {"status": "passed", "parent_ref": "refs/heads/main", "parent_before_sha": "e5cef5a616cea273d52fd57d510983b37f29144c", "source_sha": "40f1f0678e348512f2fd206b30e5e69494ca060d", "candidate_sha": "40f1f0678e348512f2fd206b30e5e69494ca060d", "candidate_tree_sha": "7a03216e88b4b2e6f324ff71f83c0371f4c4236c", "candidate_branch": "speculo/integration/2026-08-30-openapi-common-module/T-01", "candidate_workspace_ref": "specdev-worktree/.integration/2026-08-30-openapi-common-module/T-01", "result_sha": "40f1f0678e348512f2fd206b30e5e69494ca060d", "method": "fast-forward", "conflict_paths": [], "verification": "passed", "full_suite": {"required": false, "status": "not-required", "reason": "T-01 runs module/reactor checks; the change-wide suite belongs to T-12", "evidence": null}, "e2e": {"required": false, "status": "not-required", "reason": "Pure protocol and shared-contract prefactor; T-09/T-12 own application-boundary E2E", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-30-openapi-common-module/evidence/T-01.md</Path>"}, "evidence": "<Path>{roots.state}/specdev/changes/2026-08-30-openapi-common-module/evidence/T-01.md</Path>", "attempts": 1, "promotion_status": "applied"},
+      "status": "integrated", "updated_at": "2026-08-31T16:22:00+08:00"
+    },
+    {
+      "ticket_id": "T-02", "owner": "codex:/root", "implementation_owner": "codex:/root", "integration_owner": "codex:/root", "provider": "git",
+      "base_sha": "40f1f0678e348512f2fd206b30e5e69494ca060d", "parent_branch": "main", "branch": "speculo/2026-08-30-openapi-common-module/T-02", "workspace_ref": "specdev-worktree/2026-08-30-openapi-common-module/T-02", "source_checkpoint": "5772a424a6e5e8e57775f2191eb1d40b7b7465d3",
+      "integration": {"status": "passed", "parent_ref": "refs/heads/main", "parent_before_sha": "40f1f0678e348512f2fd206b30e5e69494ca060d", "source_sha": "5772a424a6e5e8e57775f2191eb1d40b7b7465d3", "candidate_sha": "5772a424a6e5e8e57775f2191eb1d40b7b7465d3", "candidate_tree_sha": "8a8babac88e1da54dacf2f4fd88bea4cef6a4361", "candidate_branch": "speculo/integration/2026-08-30-openapi-common-module/T-02", "candidate_workspace_ref": "specdev-worktree/.integration/2026-08-30-openapi-common-module/T-02", "result_sha": "5772a424a6e5e8e57775f2191eb1d40b7b7465d3", "method": "fast-forward", "conflict_paths": [], "verification": "passed", "full_suite": {"required": false, "status": "not-required", "reason": "T-02 runs common-web tests; the change-wide suite belongs to T-12", "evidence": null}, "e2e": {"required": false, "status": "not-required", "reason": "Servlet filter behavior is covered by module tests and final assembly regression", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-30-openapi-common-module/evidence/T-02.md</Path>"}, "evidence": "<Path>{roots.state}/specdev/changes/2026-08-30-openapi-common-module/evidence/T-02.md</Path>", "attempts": 1, "promotion_status": "applied"},
+      "status": "integrated", "updated_at": "2026-08-31T16:28:00+08:00"
+    },
+    {
+      "ticket_id": "T-03", "owner": "codex:/root", "implementation_owner": "codex:/root", "integration_owner": "codex:/root", "provider": "git",
+      "base_sha": "5772a424a6e5e8e57775f2191eb1d40b7b7465d3", "parent_branch": "main", "branch": "speculo/2026-08-30-openapi-common-module/T-03", "workspace_ref": "specdev-worktree/2026-08-30-openapi-common-module/T-03", "source_checkpoint": "f77f09239ebf30142e5efc3443d6ebb929b62c28",
+      "integration": {"status": "passed", "parent_ref": "refs/heads/main", "parent_before_sha": "5772a424a6e5e8e57775f2191eb1d40b7b7465d3", "source_sha": "f77f09239ebf30142e5efc3443d6ebb929b62c28", "candidate_sha": "f77f09239ebf30142e5efc3443d6ebb929b62c28", "candidate_tree_sha": "23138f386bd05bb6e4acc637e3f2802cd31ded99", "candidate_branch": "speculo/integration/2026-08-30-openapi-common-module/T-03", "candidate_workspace_ref": "specdev-worktree/.integration/2026-08-30-openapi-common-module/T-03", "result_sha": "f77f09239ebf30142e5efc3443d6ebb929b62c28", "method": "fast-forward", "conflict_paths": [], "verification": "passed", "full_suite": {"required": false, "status": "not-required", "reason": "T-03 runs authorization reactor tests; the change-wide suite belongs to T-12", "evidence": null}, "e2e": {"required": false, "status": "not-required", "reason": "The stable seam is a read-only resolver without HTTP", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-30-openapi-common-module/evidence/T-03.md</Path>"}, "evidence": "<Path>{roots.state}/specdev/changes/2026-08-30-openapi-common-module/evidence/T-03.md</Path>", "attempts": 1, "promotion_status": "applied"},
+      "status": "integrated", "updated_at": "2026-08-31T16:39:00+08:00"
+    },
+    {
+      "ticket_id": "T-04", "owner": "codex:/root", "implementation_owner": "codex:/root", "integration_owner": "codex:/root", "provider": "git",
+      "base_sha": "825b89b2aa67a9286586eb17bd6dacd93df20445", "parent_branch": "main", "branch": "speculo/2026-08-30-openapi-common-module/T-04", "workspace_ref": "specdev-worktree/2026-08-30-openapi-common-module/T-04", "source_checkpoint": "baed00d2578c9fdbd6b71d00afe48050d27fc5a1",
+      "integration": {"status": "passed", "parent_ref": "refs/heads/main", "parent_before_sha": "825b89b2aa67a9286586eb17bd6dacd93df20445", "source_sha": "baed00d2578c9fdbd6b71d00afe48050d27fc5a1", "candidate_sha": "baed00d2578c9fdbd6b71d00afe48050d27fc5a1", "candidate_tree_sha": "0a9746b33185f6675c638c35a120823bc7440a42", "candidate_branch": "speculo/integration/2026-08-30-openapi-common-module/T-04", "candidate_workspace_ref": "specdev-worktree/.integration/2026-08-30-openapi-common-module/T-04", "result_sha": "baed00d2578c9fdbd6b71d00afe48050d27fc5a1", "method": "fast-forward", "conflict_paths": [], "verification": "passed", "full_suite": {"required": false, "status": "not-required", "reason": "T-04 runs registry/catalog checks; the change-wide suite belongs to T-12", "evidence": null}, "e2e": {"required": false, "status": "not-required", "reason": "Spring context and MockMvc contract tests cover this slice", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-30-openapi-common-module/evidence/T-04.md</Path>"}, "evidence": "<Path>{roots.state}/specdev/changes/2026-08-30-openapi-common-module/evidence/T-04.md</Path>", "attempts": 1, "promotion_status": "applied"},
+      "status": "integrated", "updated_at": "2026-08-31T17:33:14+08:00"
+    },
+    {
+      "ticket_id": "T-05", "owner": "codex:/root", "implementation_owner": "codex:/root", "integration_owner": "codex:/root", "provider": "git",
+      "base_sha": "f77f09239ebf30142e5efc3443d6ebb929b62c28", "parent_branch": "main", "branch": "speculo/2026-08-30-openapi-common-module/T-05", "workspace_ref": "specdev-worktree/2026-08-30-openapi-common-module/T-05", "source_checkpoint": "825b89b2aa67a9286586eb17bd6dacd93df20445",
+      "integration": {"status": "passed", "parent_ref": "refs/heads/main", "parent_before_sha": "f77f09239ebf30142e5efc3443d6ebb929b62c28", "source_sha": "825b89b2aa67a9286586eb17bd6dacd93df20445", "candidate_sha": "825b89b2aa67a9286586eb17bd6dacd93df20445", "candidate_tree_sha": "b4acd9527f27becaa2e320307530a121266aad0a", "candidate_branch": "speculo/integration/2026-08-30-openapi-common-module/T-05", "candidate_workspace_ref": "specdev-worktree/.integration/2026-08-30-openapi-common-module/T-05", "result_sha": "825b89b2aa67a9286586eb17bd6dacd93df20445", "method": "fast-forward", "conflict_paths": [], "verification": "passed", "full_suite": {"required": false, "status": "not-required", "reason": "T-05 runs Sa-Token bridge tests; the change-wide suite belongs to T-12", "evidence": null}, "e2e": {"required": false, "status": "not-required", "reason": "The stable seam is a Sa-Token module test; T-09 owns Servlet E2E", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-30-openapi-common-module/evidence/T-05.md</Path>"}, "evidence": "<Path>{roots.state}/specdev/changes/2026-08-30-openapi-common-module/evidence/T-05.md</Path>", "attempts": 1, "promotion_status": "applied"},
+      "status": "integrated", "updated_at": "2026-08-31T17:00:00+08:00"
+    },
+    {
+      "ticket_id": "T-06", "owner": "codex:/root", "implementation_owner": "codex:/root", "integration_owner": "codex:/root", "provider": "git",
+      "base_sha": "baed00d2578c9fdbd6b71d00afe48050d27fc5a1", "parent_branch": "main", "branch": "speculo/2026-08-30-openapi-common-module/T-06", "workspace_ref": "specdev-worktree/2026-08-30-openapi-common-module/T-06", "source_checkpoint": "4570eeadc4c795968fdcd7bb143847d4cee19368",
+      "integration": {"status": "passed", "parent_ref": "refs/heads/main", "parent_before_sha": "baed00d2578c9fdbd6b71d00afe48050d27fc5a1", "source_sha": "4570eeadc4c795968fdcd7bb143847d4cee19368", "candidate_sha": "4570eeadc4c795968fdcd7bb143847d4cee19368", "candidate_tree_sha": "b6be01c119230dd7f908345cc14f6a53430c581b", "candidate_branch": "speculo/integration/2026-08-30-openapi-common-module/T-06", "candidate_workspace_ref": "specdev-worktree/.integration/2026-08-30-openapi-common-module/T-06", "result_sha": "4570eeadc4c795968fdcd7bb143847d4cee19368", "method": "fast-forward", "conflict_paths": [], "verification": "passed", "full_suite": {"required": false, "status": "not-required", "reason": "T-06 runs credential and SQL checks; the change-wide suite belongs to T-12", "evidence": null}, "e2e": {"required": false, "status": "not-required", "reason": "User-approved lightweight gate; real MySQL uniqueness remains residual risk", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-30-openapi-common-module/evidence/T-06.md</Path>"}, "evidence": "<Path>{roots.state}/specdev/changes/2026-08-30-openapi-common-module/evidence/T-06.md</Path>", "attempts": 2, "promotion_status": "applied"},
+      "status": "integrated", "updated_at": "2026-08-31T18:15:34+08:00"
+    },
+    {
+      "ticket_id": "T-07", "owner": "codex:/root", "implementation_owner": "codex:/root", "integration_owner": "codex:/root", "provider": "git",
+      "base_sha": "4570eeadc4c795968fdcd7bb143847d4cee19368", "parent_branch": "main", "branch": "speculo/2026-08-30-openapi-common-module/T-07", "workspace_ref": "specdev-worktree/2026-08-30-openapi-common-module/T-07", "source_checkpoint": "05a3739a28b4678bee25878cee516e6591519f0a",
+      "integration": {"status": "passed", "parent_ref": "refs/heads/main", "parent_before_sha": "4570eeadc4c795968fdcd7bb143847d4cee19368", "source_sha": "05a3739a28b4678bee25878cee516e6591519f0a", "candidate_sha": "05a3739a28b4678bee25878cee516e6591519f0a", "candidate_tree_sha": "bdee1bce9b9569936649cace72b5b679c74bac08", "candidate_branch": "speculo/integration/2026-08-30-openapi-common-module/T-07", "candidate_workspace_ref": "specdev-worktree/.integration/2026-08-30-openapi-common-module/T-07", "result_sha": "05a3739a28b4678bee25878cee516e6591519f0a", "method": "fast-forward", "conflict_paths": [], "verification": "passed", "full_suite": {"required": false, "status": "not-required", "reason": "T-07 runs focused system/admin tests; the change-wide suite belongs to T-12", "evidence": null}, "e2e": {"required": false, "status": "not-required", "reason": "Service interaction tests cover the slice; real multi-node propagation remains residual risk", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-30-openapi-common-module/evidence/T-07.md</Path>"}, "evidence": "<Path>{roots.state}/specdev/changes/2026-08-30-openapi-common-module/evidence/T-07.md</Path>", "attempts": 1, "promotion_status": "applied"},
+      "status": "integrated", "updated_at": "2026-08-31T19:16:52+08:00"
+    },
+    {
+      "ticket_id": "T-08", "owner": "codex:/root", "implementation_owner": "codex:/root", "integration_owner": "codex:/root", "provider": "git",
+      "base_sha": "05a3739a28b4678bee25878cee516e6591519f0a", "parent_branch": "main", "branch": "speculo/2026-08-30-openapi-common-module/T-08", "workspace_ref": "specdev-worktree/2026-08-30-openapi-common-module/T-08", "source_checkpoint": "a5d9507d69189596864d297d60ba88f2ac6eb7a2",
+      "integration": {"status": "passed", "parent_ref": "refs/heads/main", "parent_before_sha": "05a3739a28b4678bee25878cee516e6591519f0a", "source_sha": "a5d9507d69189596864d297d60ba88f2ac6eb7a2", "candidate_sha": "a5d9507d69189596864d297d60ba88f2ac6eb7a2", "candidate_tree_sha": "97f4788ad4ed35628280682db9de5e73fb5dea70", "candidate_branch": "speculo/integration/2026-08-30-openapi-common-module/T-08", "candidate_workspace_ref": "specdev-worktree/.integration/2026-08-30-openapi-common-module/T-08", "result_sha": "a5d9507d69189596864d297d60ba88f2ac6eb7a2", "method": "fast-forward", "conflict_paths": [], "verification": "passed", "full_suite": {"required": false, "status": "not-required", "reason": "T-08 runs focused system/admin tests; the change-wide suite belongs to T-12", "evidence": null}, "e2e": {"required": false, "status": "not-required", "reason": "Service interaction tests cover the slice; real multi-node propagation remains residual risk", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-30-openapi-common-module/evidence/T-08.md</Path>"}, "evidence": "<Path>{roots.state}/specdev/changes/2026-08-30-openapi-common-module/evidence/T-08.md</Path>", "attempts": 1, "promotion_status": "applied"},
+      "status": "integrated", "updated_at": "2026-08-31T19:40:48+08:00"
+    },
+    {
+      "ticket_id": "T-09", "owner": "codex:/root", "implementation_owner": "codex:/root", "integration_owner": "codex:/root", "provider": "git",
+      "base_sha": "a5d9507d69189596864d297d60ba88f2ac6eb7a2", "parent_branch": "main", "branch": "speculo/2026-08-30-openapi-common-module/T-09", "workspace_ref": "specdev-worktree/2026-08-30-openapi-common-module/T-09", "source_checkpoint": "f5a381c5411b26870a6d63bf57e78cf091016386",
+      "integration": {"status": "passed", "parent_ref": "refs/heads/main", "parent_before_sha": "a5d9507d69189596864d297d60ba88f2ac6eb7a2", "source_sha": "f5a381c5411b26870a6d63bf57e78cf091016386", "candidate_sha": "f5a381c5411b26870a6d63bf57e78cf091016386", "candidate_tree_sha": "10bd4e1c9dbd13dc680e3356b0d200aa73bb2521", "candidate_branch": "speculo/integration/2026-08-30-openapi-common-module/T-09", "candidate_workspace_ref": "specdev-worktree/.integration/2026-08-30-openapi-common-module/T-09", "result_sha": "f5a381c5411b26870a6d63bf57e78cf091016386", "method": "fast-forward", "conflict_paths": [], "verification": "passed", "full_suite": {"required": false, "status": "not-required", "reason": "T-09 runs gateway tests; the final change-wide suite belongs to T-12", "evidence": null}, "e2e": {"required": true, "status": "passed", "reason": "Lead ran the seven-case MockMvc application-boundary gateway E2E with test doubles", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-30-openapi-common-module/evidence/T-09.md</Path>"}, "evidence": "<Path>{roots.state}/specdev/changes/2026-08-30-openapi-common-module/evidence/T-09.md</Path>", "attempts": 2, "promotion_status": "applied"},
+      "status": "integrated", "updated_at": "2026-08-31T20:21:20+08:00"
+    },
+    {
+      "ticket_id": "T-10", "owner": "codex:/root", "implementation_owner": "codex:/root", "integration_owner": "codex:/root", "provider": "git",
+      "base_sha": "381918e7c2c3e023c043adcdaf94b0476c501a2d", "parent_branch": "main", "branch": "speculo/2026-08-30-openapi-common-module/T-10", "workspace_ref": "specdev-worktree/2026-08-30-openapi-common-module/T-10", "source_checkpoint": "a0a1a1d788e1359dd1432e21b05c939f67ebc6f8",
+      "integration": {"status": "passed", "parent_ref": "refs/heads/main", "parent_before_sha": "381918e7c2c3e023c043adcdaf94b0476c501a2d", "source_sha": "a0a1a1d788e1359dd1432e21b05c939f67ebc6f8", "candidate_sha": "a0a1a1d788e1359dd1432e21b05c939f67ebc6f8", "candidate_tree_sha": "2872a045e65d86f44d6f1f891d8fae978ec10a38", "candidate_branch": "speculo/integration/2026-08-30-openapi-common-module/T-10", "candidate_workspace_ref": "specdev-worktree/.integration/2026-08-30-openapi-common-module/T-10", "result_sha": "a0a1a1d788e1359dd1432e21b05c939f67ebc6f8", "method": "fast-forward", "conflict_paths": [], "verification": "passed", "full_suite": {"required": false, "status": "not-required", "reason": "T-10 runs domain gates; the frontend-wide suite belongs to T-12", "evidence": null}, "e2e": {"required": false, "status": "not-required", "reason": "This Ticket delivers headless domain contracts", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-30-openapi-common-module/evidence/T-10.md</Path>"}, "evidence": "<Path>{roots.state}/specdev/changes/2026-08-30-openapi-common-module/evidence/T-10.md</Path>", "attempts": 1, "promotion_status": "applied"},
+      "status": "integrated", "updated_at": "2026-08-31T18:46:38+08:00"
+    },
+    {
+      "ticket_id": "T-11", "owner": "codex:/root", "implementation_owner": "codex:/root", "integration_owner": "codex:/root", "provider": "git",
+      "base_sha": "a0a1a1d788e1359dd1432e21b05c939f67ebc6f8", "parent_branch": "main", "branch": "speculo/2026-08-30-openapi-common-module/T-11", "workspace_ref": "specdev-worktree/2026-08-30-openapi-common-module/T-11", "source_checkpoint": "ea32aa1b1c9911e430f406631199e30589ba007b",
+      "integration": {"status": "passed", "parent_ref": "refs/heads/main", "parent_before_sha": "a0a1a1d788e1359dd1432e21b05c939f67ebc6f8", "source_sha": "ea32aa1b1c9911e430f406631199e30589ba007b", "candidate_sha": "ea32aa1b1c9911e430f406631199e30589ba007b", "candidate_tree_sha": "5aebefaebdc1418a05a9677b9298157d8aee6e78", "candidate_branch": "speculo/integration/2026-08-30-openapi-common-module/T-11", "candidate_workspace_ref": "specdev-worktree/.integration/2026-08-30-openapi-common-module/T-11", "result_sha": "ea32aa1b1c9911e430f406631199e30589ba007b", "method": "fast-forward", "conflict_paths": [], "verification": "passed", "full_suite": {"required": false, "status": "not-required", "reason": "T-11 runs affected frontend gates; the frontend-wide suite belongs to T-12", "evidence": null}, "e2e": {"required": false, "status": "not-required", "reason": "User-approved component and App integration gate; full Playwright remains residual risk", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-30-openapi-common-module/evidence/T-11.md</Path>"}, "evidence": "<Path>{roots.state}/specdev/changes/2026-08-30-openapi-common-module/evidence/T-11.md</Path>", "attempts": 1, "promotion_status": "applied"},
+      "status": "integrated", "updated_at": "2026-08-31T21:00:00+08:00"
+    },
+    {
+      "ticket_id": "T-12", "owner": "codex:/root", "implementation_owner": "codex:/root", "integration_owner": "codex:/root", "provider": "git",
+      "base_sha": "f5a381c5411b26870a6d63bf57e78cf091016386", "parent_branch": "main", "branch": "speculo/2026-08-30-openapi-common-module/T-12", "workspace_ref": "specdev-worktree/2026-08-30-openapi-common-module/T-12", "source_checkpoint": "bb80f15d48e80d46c4806091076d42b49522652d",
+      "integration": {"status": "passed", "parent_ref": "refs/heads/main", "parent_before_sha": "f5a381c5411b26870a6d63bf57e78cf091016386", "source_sha": "bb80f15d48e80d46c4806091076d42b49522652d", "candidate_sha": "bb80f15d48e80d46c4806091076d42b49522652d", "candidate_tree_sha": "780cd38c21558bf8ebf81b9d8ddbbf960d1c8dc5", "candidate_branch": "speculo/integration/2026-08-30-openapi-common-module/T-12", "candidate_workspace_ref": "specdev-worktree/.integration/2026-08-30-openapi-common-module/T-12", "result_sha": "bb80f15d48e80d46c4806091076d42b49522652d", "method": "fast-forward", "conflict_paths": [], "verification": "passed", "full_suite": {"required": true, "status": "passed", "reason": "Backend 41-project test/full/core gates and frontend architecture/test/typecheck/lint/build gates passed on exact candidates", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-30-openapi-common-module/evidence/T-12.md</Path>"}, "e2e": {"required": true, "status": "passed", "reason": "Lead ran seven-case assembly/context/disabled MockMvc, seven-case signed gateway MockMvc, and frontend component/App integration on candidates", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-30-openapi-common-module/evidence/T-12.md</Path>"}, "evidence": "<Path>{roots.state}/specdev/changes/2026-08-30-openapi-common-module/evidence/T-12.md</Path>", "attempts": 1, "promotion_status": "applied"},
+      "status": "integrated", "updated_at": "2026-08-31T21:30:39+08:00"
+    }
+  ]
 }

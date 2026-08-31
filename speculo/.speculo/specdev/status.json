@@ -72,8 +72,11 @@
     },
     {
       "change": "2026-08-30-openapi-common-module",
-      "current_work": "specdev/grill-with-docs",
-      "works_run": [],
+      "current_work": null,
+      "works_run": [
+        "specdev/spec",
+        "specdev/grill-with-docs"
+      ],
       "claimed_investigations": []
     }
   ],

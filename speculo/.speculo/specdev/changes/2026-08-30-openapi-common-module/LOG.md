@@ -505,3 +505,202 @@
 - **约束或不变量：** 预览是只读操作；目标用户是否已有凭据不改变其理论可调用目录，凭据状态只影响能否实际发起调用。
 - **后续：** D-018 仍需明确跨 Client 聚合与数据范围合并规则。
 - **替代/被替代：** 扩展 LOG-008 的当前用户目录语义，增加超级管理员按目标用户预览。
+
+## LOG-022 — 2026-08-31T00:19:25+08:00 — 管理页与个人开放应用 Tab
+- **设计树节点：** D-013, D-023, D-025
+- **轮次与依赖：** round 6 / D-005, D-009, D-013, D-023, D-024
+- **状态：** confirmed
+- **问题：** 管理员全量管理和用户本人创建密钥、查看授权接口与文档分别位于哪个前端入口。
+- **事实与来源：** 用户明确指定管理配置页面位于“系统管理”菜单下，个人能力位于用户个人信息中的“开放应用”Tab。当前 admin-web 个人信息源码已经使用同级 Tabs 组织基本资料、修改密码、第三方应用和在线设备。
+- **选项：** 全部放系统管理；全部放个人中心；系统管理管理员页 + 个人信息“开放应用”Tab。
+- **推荐：** 双入口、单领域能力、显式 owner scope。
+- **结论：** “系统管理 > 应用开放管理”用于超级管理员管理所有用户；“个人中心/个人信息 > 开放应用”Tab 用于当前用户管理自己的唯一凭据，并查看自己的可调用接口、详情和 OpenAPI 调用文档。个人入口是现有个人信息页同级 Tab，不新增动态菜单路由。
+- **原因：** 管理员与本人自助的 owner scope 不同，但凭据状态、接口目录和文档能力相同；复用同一 domain/web-domain 可避免两套前端实现和授权口径。
+- **影响工件：** CONTEXT / ADR / Spec / Ticket
+- **约束或不变量：** Tab 与命令受既有菜单/按钮权限控制，前端隐藏不是安全边界；后端独立校验 current user/target user scope。首期仍不交付前端页面。
+- **后续：** 未来独立前端 change 决定组件拆分和交互细节，本 change 的后端 API 应支持这两个稳定消费场景。
+- **替代/被替代：** 补充 LOG-005 的“首期不做前端”，不是推翻；细化 LOG-020 的管理面为两个浏览器入口。
+
+## Research: 2026-08-31 最新前后端实现对齐
+- Decision / target: 在生成 Spec 前，以已同步的父仓、前端和后端 HEAD 复核模块边界、安全缓存、日志与未来 UI 落位；目标工件为本 change 的 `spec.md`、`ADR.md`、`CONTEXT.md` 和设计树。
+- Scope / version: 父仓 `6de6884`、`plus-ui-namewta` `381918e`、`ruoyi-vue-plus-namewta` `e5cef5a61`。
+- Stop condition: 已识别会改变原设计事实、复用约束或验收接缝的最新实现，并保留仍需用户决策的高影响问题。
+
+### R-018
+- Claim: 标准 `LoginUser` 已位于 `ruoyi-api`，`common-satoken` 已直接依赖 `ruoyi-api`；`LoginHelper` 和 `SaPermissionImpl` 都消费这一类型，且权限读取只信任当前 TokenSession，不存在按 userId 的全局回退。
+- Type: code fact
+- Source: `CODE:<Path>ruoyi-vue-plus-namewta/ruoyi-api/src/main/java/org/dromara/system/api/model/LoginUser.java</Path>`；`CODE:<Path>ruoyi-vue-plus-namewta/ruoyi-common/ruoyi-common-satoken/pom.xml</Path>`；`CODE:<Path>ruoyi-vue-plus-namewta/ruoyi-common/ruoyi-common-satoken/src/main/java/org/dromara/common/satoken/utils/LoginHelper.java</Path>`；`CODE:<Path>ruoyi-vue-plus-namewta/ruoyi-common/ruoyi-common-satoken/src/main/java/org/dromara/common/satoken/core/service/SaPermissionImpl.java</Path>`。
+- Confidence: high
+- Limits: `SysLoginService.buildLoginUser` 仍位于 `ruoyi-admin` 且是单 Client 组装器，不能被 system/common 反向依赖，也不能直接表达全局并集。
+- Artifact impact: D-006、D-020、D-022、ADR-014、Spec REUSE。
+
+### R-019
+- Claim: `PlusSaTokenDao` 的写入和删除已统一经过 `ClusterCacheInvalidationCoordinator`；协调器用 key 指纹广播、等待全部订阅节点确认并失效各节点 Caffeine，因此旧 R-015 所述“只删 Redis 后可能继续读 5 秒本地旧值”已不符合当前 HEAD。
+- Type: code fact
+- Source: `CODE:<Path>ruoyi-vue-plus-namewta/ruoyi-common/ruoyi-common-satoken/src/main/java/org/dromara/common/satoken/core/dao/PlusSaTokenDao.java</Path>`；`CODE:<Path>ruoyi-vue-plus-namewta/ruoyi-common/ruoyi-common-redis/src/main/java/org/dromara/common/redis/cache/ClusterCacheInvalidationCoordinator.java</Path>`。
+- Confidence: high
+- Limits: 现有 `ClientSessionService` 只按 userType/client/user+client 匹配；OpenAPI 全局 Session 仍需一个按用户或机器通道的窄失效入口，并由所有相关授权写路径调用。
+- Artifact impact: D-021、ADR-009、ADR-016、Spec AC/NFR。
+
+### R-020
+- Claim: 当前 `common-web` HTTP 日志对请求和响应每方向默认最多采集 1 MiB，敏感头和 JSON 字段递归替换为 `[REDACTED]`；非法或截断 JSON 整体隐藏，业务正文不被修改。最新后端提交已明确禁止原始密码、Token、secret、API key、Cookie 和 Session 标识进入 HTTP 日志。
+- Type: code fact + accepted current behavior
+- Source: `CODE:<Path>ruoyi-vue-plus-namewta/ruoyi-common/ruoyi-common-web/src/main/java/org/dromara/common/web/config/SysLogProperties.java</Path>`；`CODE:<Path>ruoyi-vue-plus-namewta/ruoyi-common/ruoyi-common-web/src/main/java/org/dromara/common/web/logging/SysLogFilter.java</Path>`；`CODE:<Path>ruoyi-vue-plus-namewta/ruoyi-common/ruoyi-common-web/src/main/java/org/dromara/common/web/logging/SysLogBodySanitizer.java</Path>`；`CHANGE:<Path>speculo/.speculo/specdev/changes/2026-08-29-login-password-policy-runtime-and-http-log-redaction/spec.md</Path>`。
+- Confidence: high
+- Limits: OpenAPI 新增的 AppKey/签名头必须纳入敏感头集合或在 OpenAPI 接缝先行隐藏；multipart、二进制和流式正文不适合正文持久化。
+- Artifact impact: D-012、D-017、ADR-015、Spec NFR-001/NFR-004。
+
+### R-021
+- Claim: 当前前端 admin App 显式组合 `system` domain/web-domain，`gen` 已退出选择集合；系统动态页面由 system web-domain manifest 承接，而个人信息页是 App 自有静态页并已使用同级 `el-tabs` 组织个人能力。
+- Type: code fact + architecture rule
+- Source: `CODE:<Path>plus-ui-namewta/apps/admin-web/src/router/adminManifestRegistry.ts</Path>`；`CODE:<Path>plus-ui-namewta/apps/admin-web/src/views/system/user/profile/index.vue</Path>`；`CODE:<Path>plus-ui-namewta/packages/domains/system/README.md</Path>`；`CODE:<Path>plus-ui-namewta/packages/web-domains/system/README.md</Path>`；`ADR:<Path>speculo/.speculo/specdev/adr/0013-cross-terminal-domain-and-web-domain-separation.md</Path>`；`ADR:<Path>speculo/.speculo/specdev/adr/0021-manifest-only-dynamic-page-resolution.md</Path>`。
+- Confidence: high
+- Limits: 前端实现仍不属于本 change 首期范围；这里只约束后端合同的两个未来消费者和未来落位。
+- Artifact impact: D-013、D-025、ADR-013、ADR-014、Spec IN/OUT。
+
+## LOG-023 — 2026-08-31T00:35:01+08:00 — 以最新源码重新锚定复用边界
+- **设计树节点：** D-006, D-020, D-022, D-025
+- **轮次与依赖：** round 7 / D-006, D-013, D-020, D-022, D-025
+- **状态：** confirmed
+- **问题：** 远程同步后，原设计中的身份类型、模块依赖与未来前端路径是否仍准确。
+- **事实与来源：** R-018、R-021。
+- **结论：** OpenAPI 全局身份必须返回并缓存 `ruoyi-api` 已有 `LoginUser`；common-openapi 组合 common-satoken 与窄 system SPI，不复制身份模型，也不反向调用 admin 的单 Client 登录组装器。未来系统管理动态页归 system web-domain，个人“开放应用”Tab 由 App 静态个人信息壳组合同一 system web-domain 能力；不得恢复或依赖 gen。
+- **原因：** 这些边界与当前 Maven/前端组合完全一致，能最大限度复用现有安全链并降低 fork 上游冲突。
+- **影响工件：** CONTEXT / ADR / Spec / Ticket
+- **约束或不变量：** `LoginUser.getLoginId()` 需要非空 userType；机器身份必须使用与浏览器会话不碰撞的内部登录命名空间，且不得伪装某个前端 Client。
+
+## LOG-024 — 2026-08-31T00:35:01+08:00 — OpenAPI 正文审计服从最新脱敏边界
+- **设计树节点：** D-012, D-017
+- **轮次与依赖：** round 7 / D-012
+- **状态：** confirmed
+- **问题：** “记录完整请求与响应正文”是否允许原始凭据、无限正文或流式内容落日志。
+- **事实与来源：** R-020；最新已交付安全行为已明确禁止凭据原值日志。
+- **结论：** 完整正文解释为复用现有 HTTP 日志的有界、可安全记录 JSON：默认每方向 1 MiB，JSON 递归脱敏，非法或截断 JSON 失败关闭；密码、Token、Cookie、AppKey、AppSecret、签名和内部机器 Token 永不记录原值；非 JSON 文本、multipart、二进制、文件、音视频、SSE 和其他流式正文只记元数据。OpenAPI 调用事件只记录计量/审计元数据，不复制原始正文。
+- **原因：** 保留排障价值的同时遵守当前源码已实现的凭据保密边界，避免两套正文采集与脱敏规则漂移。
+- **影响工件：** CONTEXT / ADR / Spec / Ticket
+- **约束或不变量：** 日志或审计写入失败不得改变业务响应；新增签名头必须进入统一敏感头策略。
+- **替代/被替代：** 关闭 D-017；对本 change 而言，取代任何可被理解为“原样记录凭据正文”的旧文档表述。
+
+## LOG-025 — 2026-08-31T00:35:01+08:00 — 复用现有集群确认完成机器会话失效
+- **设计树节点：** D-021
+- **轮次与依赖：** round 7 / D-018, D-020
+- **状态：** confirmed
+- **问题：** 是否还需要额外的 Redis 授权 revision 来弥补多节点本地缓存窗口。
+- **事实与来源：** R-019；当前 Sa-Token DAO 删除已具备集群确认和本地缓存精确失效。
+- **结论：** 不新增平行授权 revision 缓存。复用现有会话注销与 Sa-Token DAO 集群失效：OpenAPI 为机器通道提供按 userId 精确注销的窄入口，凭据状态或 system 权威授权变化的既有写路径在写事务内完成权威变更后、提交成功响应前调用它；注销失败向写操作传播并可重试。下一次有效验签遇到 Session miss 后从权威关系重建。
+- **原因：** 当前基础设施已解决旧的本地缓存窗口，额外 revision 会形成第二套状态和每请求额外读；真正缺口只是全局机器 Session 的匹配与调用覆盖。
+- **影响工件：** CONTEXT / ADR / Spec / Ticket
+- **约束或不变量：** 禁止直接删 Redis key；禁用、删除、重置凭据先使旧机器 Session 失效；所有能改变全局快照的写路径必须纳入失效矩阵。
+- **替代/被替代：** 替代 R-015、R-017 Recommendation 中基于旧 HEAD 的 5 秒窗口与 revision 兜底建议；不改变 cache-aside 语义。
+
+## LOG-026 — 2026-08-31T00:35:01+08:00 — 生成同步当前实现的 Spec 草案
+- **设计树节点：** D-015
+- **轮次与依赖：** round 7 / all answered and open nodes
+- **状态：** draft
+- **问题：** 当前决策是否足以形成可核验规格，以及是否已经能安全拆 Ticket。
+- **结论：** 已生成覆盖后端首期范围、外部行为、复用边界、双未来 UI 消费者、数据与安全合同的 `spec.md`；因 D-011、D-018、D-019 仍会改变公开协议或授权语义，规格保持 `status: draft`、`ready_for_tickets: false`。
+- **影响工件：** Spec / `.status.json` / global status
+- **后续：** 返回 Grill 只确认三项高影响问题，再更新验收矩阵并进入 Ticket。
+
+## LOG-027 — 2026-08-31T09:20:55+08:00 — 防重放、重试与两级限流
+- **设计树节点：** D-011
+- **轮次与依赖：** round 8 / D-003, D-010
+- **状态：** confirmed
+- **问题：** OpenAPI v1 是否提供通用业务幂等与响应重放，以及如何限制单凭据和单接口流量。
+- **事实与来源：** 用户接受推荐 A。现有 `@RepeatSubmit` 使用普通 Sa-Token 请求头和方法参数摘要构造 key，不适合直接成为 OpenAPI 协议；现有 `RateLimiterAspect` 已提供 Redis/Redisson 令牌能力。
+- **选项：** nonce + 两级限流且业务自有幂等；再增加通用 Idempotency-Key/JSON 响应重放；只做 nonce。
+- **推荐：** nonce + 两级限流，首期不做通用响应重放。
+- **结论：** Redis 原子登记 `AppKey + nonce`，接受时间窗口和 nonce TTL 默认 60 秒；重试必须生成新的 timestamp、nonce 和签名。首期不实现框架级 `Idempotency-Key` 或响应重放，变更接口的幂等由接口自身显式定义。限流同时执行每 AppKey 1000 次/分钟和每 AppKey + 开放接口 100 次/分钟，阈值可配置；Redis 不可用时失败关闭。
+- **原因：** nonce 解决认证重放，不应冒充业务幂等；通用响应缓存无法安全覆盖任意事务、文件、流式和超大响应。两级限流可直接复用现有 Redis 能力并同时约束凭据总量与热点接口。
+- **影响工件：** CONTEXT / ADR / Spec / Ticket
+- **约束或不变量：** GET 等天然幂等请求可用新签名重试；写请求在未知执行结果后是否可重试由目标接口文档决定。nonce key 和日志不得包含原始 secret 或签名。
+- **后续：** Spec 固定 canonicalization、限流错误行为和测试向量；Ticket 复用 Redis 能力而不复用普通 Token 型 `@RepeatSubmit` key。
+- **替代/被替代：** 无。
+
+## LOG-028 — 2026-08-31T09:20:55+08:00 — 合法 Client 与全局权限聚合
+- **设计树节点：** D-018
+- **轮次与依赖：** round 8 / D-016
+- **状态：** confirmed
+- **问题：** 哪些 Client、默认/显式角色、菜单权限和数据权限进入 OpenAPI 全局 `LoginUser`。
+- **事实与来源：** 用户接受推荐 A。当前 `ClientUserTypeAccessService` 以活动 Client、活动登录域和用户登录域关系判定登录资格；`SysRoleServiceImpl` 会把 Client 默认角色隐式并入登录角色；`getDataScopeRoleMap` 按权限字符汇总实际角色 ID。
+- **选项：** 完整复用活动登录资格并聚合有效默认/显式授权；忽略登录域关系；只聚合显式 `sys_user_role`。
+- **推荐：** 只聚合用户确实可以合法登录的活动 Client，并包含其有效默认角色。
+- **结论：** 合法 Client 必须正常、已配置正常登录域且用户持有该登录域关系。每个合法 Client 纳入正常默认角色和用户显式分配的正常角色，只纳入正常菜单权限；角色字符和权限字符去重。`dataScopeRoleMap` 按权限汇总所有实际生效角色 ID，由现有数据权限链联合计算。超管继续使用 `superadmin` 与 `*:*:*`，在线 Session 不作为授权事实。
+- **原因：** 这与用户在每个前端 Client 中真正拥有的当前授权一致，既不会因“Client 已启用”就无条件授予默认权限，也不会漏掉登录时自动生效的默认角色。
+- **影响工件：** CONTEXT / ADR / Spec / Ticket
+- **约束或不变量：** 禁用用户、Client、登录域、角色或菜单不进入新快照；相关状态变化必须触发 ADR-016 的机器 Session 注销。不能复用当前缺少菜单状态过滤的查询而静默扩大 OpenAPI 权限。
+- **后续：** Spec 增加完整聚合矩阵和数据范围联合验证。
+- **替代/被替代：** 关闭 LOG-016、LOG-021 中保留的聚合细节后续项。
+
+## LOG-029 — 2026-08-31T09:20:55+08:00 — 仅开放 Client 无关方法
+- **设计树节点：** D-019
+- **轮次与依赖：** round 8 / D-004, D-016
+- **状态：** confirmed
+- **问题：** OpenAPI 全局身份遇到必须读取单一 `clientPk` 的下游能力时是否允许调用方选择或服务端推断 Client。
+- **事实与来源：** 用户接受推荐 A。当前 OSS 上传身份、上传票据和策略把 `clientPk` 作为授权组成，其他普通管理路径也直接读取当前 Client；全局 OpenAPI 身份没有唯一 Client 可安全填充。
+- **选项：** 首期禁止 Client 相关方法；签名携带目标 Client；服务端按权限命中推断 Client。
+- **推荐：** 首期只开放 Client 无关方法。
+- **结论：** OpenAPI `LoginUser.clientPk/clientKey` 保持为空；协议不接受 Client，服务端也不推断。必须读取单一 Client 的下游能力失败关闭且不得使用 `@OpenApi`。OSS 上传、Client 级路径/IP/业务策略等能力只有先在后续 change 形成明确 Client 无关合同，才可开放。
+- **原因：** 选择或推断 Client 都会重新引入已拒绝的 Client 绑定，且同一权限存在于多个 Client 时没有确定、安全的推断结果。
+- **影响工件：** CONTEXT / ADR / Spec / Ticket
+- **约束或不变量：** 不修改普通 Client 请求行为；OpenAPI 入口不得以默认值伪装某个 Client。代码评审与接口级测试必须证明首批标注方法不读取 Client 上下文。
+- **后续：** Spec 将 Client 相关能力列为稳定失败边界，并为首批开放接口建立负向测试。
+- **替代/被替代：** 关闭 ADR-008 中保留的 Client 相关接口后续项。
+
+### R-022
+- Claim: 当前 `admin-web` 已显式组合 system domain/web-domain；系统动态页面由 system manifest 注册，个人信息页则是 App 自有静态页并已有同级 `el-tabs`。因此 OpenAPI 管理页应新增 system domain/web-domain 资源，个人“开放应用”入口应由静态个人信息壳组合该 Web 领域的共享组件。
+- Type: code fact + architecture rule
+- Source: `CODE:<Path>plus-ui-namewta/apps/admin-web/src/router/adminManifestRegistry.ts</Path>`；`CODE:<Path>plus-ui-namewta/apps/admin-web/src/views/system/user/profile/index.vue</Path>`；`CODE:<Path>plus-ui-namewta/packages/domains/system/README.md</Path>`；`CODE:<Path>plus-ui-namewta/packages/web-domains/system/README.md</Path>`；`SKILL:<Path>.agents/skills/plus-ui-frontend-conventions/SKILL.md</Path>`。
+- Confidence: high
+- Limits: App 静态壳只负责入口组合，不得拥有或复制 OpenAPI transport、领域状态、owner-scope 规则和权限过滤。
+- Artifact impact: D-001、D-013、D-015、D-025、ADR-020、ADR-021、Spec IN/OUT 与 Ticket。
+
+## LOG-030 — 2026-08-31T09:46:39+08:00 — 首期范围修正为完整前后端平台
+- **设计树节点：** D-001
+- **轮次与依赖：** round 9 / 无
+- **状态：** superseded-and-confirmed
+- **问题：** 首期是否只交付后端，还是同时交付已经明确的管理端和个人入口。
+- **事实与来源：** 用户纠正此前范围，明确 `plus-ui-namewta/apps/admin-web` 需要增加个人部分和管理部分；R-022 确认当前组合与落位。
+- **结论：** 首期改为交付完整前后端开放平台：后端 common/system/admin 装配与前端两个入口均在本 change 范围内。
+- **原因：** 管理页和个人 Tab 不是未来占位，而是本次功能完整性的组成部分。
+- **影响工件：** CONTEXT / ADR / Spec / Ticket
+- **约束或不变量：** 前端加入范围不改变后端最终授权、每用户唯一凭据、全局机器身份和复用现有权限链等已确认合同。
+- **替代/被替代：** 替代 LOG-001 中“首期不交付前端”的结论；LOG-001 保留为讨论历史。
+
+## LOG-031 — 2026-08-31T09:46:39+08:00 — 首期交付两个前端入口
+- **设计树节点：** D-013
+- **轮次与依赖：** round 9 / D-001, D-005, D-009
+- **状态：** superseded-and-confirmed
+- **问题：** 本 change 中前端管理能力实际落在哪些入口和模块。
+- **事实与来源：** 用户明确两个前端部分都需要实现；R-022。
+- **结论：** system domain/web-domain 新增 OpenAPI 领域合同、服务、共享组件和动态管理页；`admin-web` 通过 system manifest 组合“系统管理 > 应用开放管理”，并在 App 自有个人信息静态页增加“开放应用”Tab 来组合共享组件。
+- **原因：** 这种落位遵守现有多 App 依赖方向，同时让 target-user 与 current-user 两种 owner scope 共享一份业务实现。
+- **影响工件：** CONTEXT / ADR / Spec / Ticket
+- **约束或不变量：** 不在 `apps/admin-web/src/api` 复制接口，不让 App 拥有 OpenAPI 领域状态，不把个人 Tab 改成动态菜单路由。
+- **替代/被替代：** 替代 LOG-005 中“首期不交付任何前端页面”的结论。
+
+## LOG-032 — 2026-08-31T09:46:39+08:00 — 双入口从未来消费者改为首期交付
+- **设计树节点：** D-025
+- **轮次与依赖：** round 9 / D-005, D-009, D-013, D-023, D-024
+- **状态：** superseded-and-confirmed
+- **问题：** 已确认的双入口信息架构是否仍只约束未来 change。
+- **事实与来源：** 用户明确本 change 需要实现这两个前端部分；R-022。
+- **结论：** “系统管理 > 应用开放管理”和个人信息“开放应用”Tab 均为首期交付项；原有双入口、单能力、显式 owner scope、既有菜单/按钮权限和后端独立鉴权合同不变。
+- **原因：** 只改变交付时点，不改变经过确认的信息架构和复用边界。
+- **影响工件：** CONTEXT / ADR / Spec / Ticket
+- **约束或不变量：** 管理页不得以管理员权限替代目标用户目录；个人入口不得选择其他用户；`gen` 不参与。
+- **替代/被替代：** 替代 LOG-022、LOG-023 中把前端描述为“未来实现”的范围限定，不替代其双入口设计。
+
+## LOG-033 — 2026-08-31T09:46:39+08:00 — 采用含前端验证的轻量模块级门禁
+- **设计树节点：** D-015
+- **轮次与依赖：** round 9 / all behavioral and architecture nodes
+- **状态：** confirmed
+- **问题：** 首期上线候选采用严格真实基础设施矩阵，还是轻量模块级门禁；前端纳入范围后如何验证。
+- **事实与来源：** 用户选择 B，并明确本 change 包含 `admin-web` 的管理页和个人 Tab。
+- **选项：** 严格真实 MySQL/Redis/多进程后端矩阵；轻量单元/模块门禁；无前端改动时仍执行全前端门禁。
+- **推荐：** 原推荐为严格后端门禁；因范围修正，前端至少应执行受影响包门禁。
+- **结论：** 后端采用单元/模块测试和测试替身，不把真实 MySQL、真实 Redis、多进程集群或全量 E2E 作为首期强制发布条件；仍覆盖签名、授权聚合、nonce/限流、凭据生命周期、接口目录、失败关闭和普通登录回归。前端强制执行 `pnpm architecture:check`，并对 `@namewta/domain-system`、`@namewta/web-domain-system`、`@namewta/admin-web` 执行 lint、test、typecheck 和 build，以聚焦组件/集成测试覆盖双入口、owner scope、权限失败关闭和个人信息页回归。
+- **原因：** 尊重用户选择的较低发布成本，同时避免前端已进入范围却完全没有自动化门禁。
+- **影响工件：** CONTEXT / ADR / Spec / Ticket
+- **约束或不变量：** 测试替身不能改变 Redis 故障失败关闭、唯一凭据并发收敛和权限拒绝的合同；真实基础设施与多节点风险必须在 Spec/Ticket 中显式记录为残余风险，而不能宣称已被验证。
+- **后续：** S-spec 将验收矩阵和 IN/OUT 范围同步到最新结论，再进入 Ticket 拆分。

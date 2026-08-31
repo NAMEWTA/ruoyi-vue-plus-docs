@@ -46,7 +46,8 @@
 3. 检查访问类型物理编码仅为 `0=PRIVATE`、`2=PUBLIC_READ`。旧 `0/1/2` 和未知值在升级时都必须先按 PRIVATE 解释。
 4. 先配置 PRIVATE configKey 并保持默认；再配置非默认 PUBLIC_READ configKey。存在对象引用的配置不得原地修改 Bucket 或访问类型。
 5. 后端以公共策略默认关闭的配置部署。readiness 必须同时确认所有 upload policy、存量 service 和活动迁移 configKey。
-6. 后端健康且 OpenAPI 固定点无 drift 后再发布配对前端；旧前端不得恢复 custom/public-write 或旧 PUT/DELETE 配置命令。
+6. 确认 `oss.readiness.refresh-interval` 严格小于 `max-snapshot-age`；默认分别为 1 分钟和 5 分钟。至少跨两个刷新周期观察 `checkedAt` 持续推进，禁止依赖重启或配置变更续期。
+7. 后端健康且 OpenAPI 固定点无 drift 后再发布配对前端；旧前端不得恢复 custom/public-write 或旧 PUT/DELETE 配置命令。
 
 ## 5. 发布候选验证
 
@@ -95,7 +96,7 @@ pnpm exec playwright test e2e/system-resources.spec.ts e2e/oss-config-access-pol
 
 至少按 configKey、policy 和 Provider 监控：
 
-- readiness 状态、原因、快照年龄和所需 configKey 集合；
+- readiness 状态、原因、快照年龄、`checkedAt` 周期推进和所需 configKey 集合；
 - upload init/sign/complete 失败率、Ticket 过期和落点不一致；
 - access-url 解析失败、PUBLIC/PRIVATE 分类、签名到期失败和 Provider 4xx/5xx；
 - 公共匿名 GET/HEAD 探测与匿名写拒绝探测；

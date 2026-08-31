@@ -39,8 +39,8 @@
     "history": []
   },
   "created_at": "2026-08-30T20:38:35+08:00",
-  "updated_at": "2026-08-31T21:30:39+08:00",
-  "completed_at": "2026-08-31T21:30:39+08:00",
+  "updated_at": "2026-08-31T22:07:35+08:00",
+  "completed_at": "2026-08-31T22:07:35+08:00",
   "archived": false,
   "archive_path": null,
   "blockers": [],
@@ -76,6 +76,14 @@
       "detail": "The first frontend architecture check ran from main, whose retained nested T-10/T-11 source worktrees were scanned as ordinary source and produced 329 paths exclusively below specdev-worktree.",
       "impact": "The run was invalid as frontend release evidence and did not identify a violation in the verified main tree.",
       "correction": "Without cleaning any unauthorized worktree, Lead reran architecture, test, typecheck, lint and production build from the clean T-11 integration candidate whose commit and tree exactly matched frontend main; all gates passed."
+    },
+    {
+      "ticket_id": "T-12",
+      "kind": "sql-contract-audit",
+      "observed_at": "2026-08-31T22:02:33+08:00",
+      "detail": "The committed but never executed OpenAPI DDL/DML blocks used legacy logical identifiers in the change-marker field instead of the PERSIST-006 generated Asia/Shanghai timestamp format, and the DDL audit-field order drifted from the seven-field baseline.",
+      "impact": "No database or production state was changed, but preserving the unexecuted text would leave the release candidate out of compliance with an engineering contract that predated T-06.",
+      "correction": "Before any migration, Lead preserved the logical block IDs as comments, generated a compliant timestamp with the repository script, restored the seven-field order, strengthened the SQL contract test, committed 412c2bf1e394042aa841f719a0348b645a26680d, and reran the complete backend test and clean full/core bundle gates. This one-time correction is explicitly recorded as an append-only deviation."
     }
   ],
   "worktrees": [
@@ -147,9 +155,9 @@
     },
     {
       "ticket_id": "T-12", "owner": "codex:/root", "implementation_owner": "codex:/root", "integration_owner": "codex:/root", "provider": "git",
-      "base_sha": "f5a381c5411b26870a6d63bf57e78cf091016386", "parent_branch": "main", "branch": "speculo/2026-08-30-openapi-common-module/T-12", "workspace_ref": "specdev-worktree/2026-08-30-openapi-common-module/T-12", "source_checkpoint": "bb80f15d48e80d46c4806091076d42b49522652d",
-      "integration": {"status": "passed", "parent_ref": "refs/heads/main", "parent_before_sha": "f5a381c5411b26870a6d63bf57e78cf091016386", "source_sha": "bb80f15d48e80d46c4806091076d42b49522652d", "candidate_sha": "bb80f15d48e80d46c4806091076d42b49522652d", "candidate_tree_sha": "780cd38c21558bf8ebf81b9d8ddbbf960d1c8dc5", "candidate_branch": "speculo/integration/2026-08-30-openapi-common-module/T-12", "candidate_workspace_ref": "specdev-worktree/.integration/2026-08-30-openapi-common-module/T-12", "result_sha": "bb80f15d48e80d46c4806091076d42b49522652d", "method": "fast-forward", "conflict_paths": [], "verification": "passed", "full_suite": {"required": true, "status": "passed", "reason": "Backend 41-project test/full/core gates and frontend architecture/test/typecheck/lint/build gates passed on exact candidates", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-30-openapi-common-module/evidence/T-12.md</Path>"}, "e2e": {"required": true, "status": "passed", "reason": "Lead ran seven-case assembly/context/disabled MockMvc, seven-case signed gateway MockMvc, and frontend component/App integration on candidates", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-30-openapi-common-module/evidence/T-12.md</Path>"}, "evidence": "<Path>{roots.state}/specdev/changes/2026-08-30-openapi-common-module/evidence/T-12.md</Path>", "attempts": 1, "promotion_status": "applied"},
-      "status": "integrated", "updated_at": "2026-08-31T21:30:39+08:00"
+      "base_sha": "f5a381c5411b26870a6d63bf57e78cf091016386", "parent_branch": "main", "branch": "speculo/2026-08-30-openapi-common-module/T-12", "workspace_ref": "specdev-worktree/2026-08-30-openapi-common-module/T-12", "source_checkpoint": "412c2bf1e394042aa841f719a0348b645a26680d",
+      "integration": {"status": "passed", "parent_ref": "refs/heads/main", "parent_before_sha": "f5a381c5411b26870a6d63bf57e78cf091016386", "source_sha": "412c2bf1e394042aa841f719a0348b645a26680d", "candidate_sha": "412c2bf1e394042aa841f719a0348b645a26680d", "candidate_tree_sha": "46ee107ba80046b98c5b698a596a917f4c761a7e", "candidate_branch": "speculo/integration/2026-08-30-openapi-common-module/T-12", "candidate_workspace_ref": "specdev-worktree/.integration/2026-08-30-openapi-common-module/T-12", "result_sha": "412c2bf1e394042aa841f719a0348b645a26680d", "method": "fast-forward", "conflict_paths": [], "verification": "passed", "full_suite": {"required": true, "status": "passed", "reason": "Backend 41-project test and clean full/core bundle gates plus frontend architecture/test/typecheck/lint/build gates passed on exact result trees", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-30-openapi-common-module/evidence/T-12.md</Path>"}, "e2e": {"required": true, "status": "passed", "reason": "Lead ran seven-case assembly/context/disabled MockMvc, seven-case signed gateway MockMvc, and frontend component/App integration on candidates", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-30-openapi-common-module/evidence/T-12.md</Path>"}, "evidence": "<Path>{roots.state}/specdev/changes/2026-08-30-openapi-common-module/evidence/T-12.md</Path>", "attempts": 2, "promotion_status": "applied"},
+      "status": "integrated", "updated_at": "2026-08-31T22:07:35+08:00"
     }
   ]
 }

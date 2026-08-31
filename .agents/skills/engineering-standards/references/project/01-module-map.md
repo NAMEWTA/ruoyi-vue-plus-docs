@@ -33,6 +33,7 @@
 | `ruoyi-common/ruoyi-common-mcp` | MCP 集成 | package surface | none |
 | `ruoyi-common/ruoyi-common-mqtt` | Spring MQTT 集成 | package surface | none |
 | `ruoyi-common/ruoyi-common-mybatis` | Spring/MyBatis 数据访问基础 | package surface | none |
+| `ruoyi-common/ruoyi-common-openapi` | 默认关闭的机器调用协议、注册表、网关与 Sa-Token Session 桥 | `@OpenApi`, OpenAPI SPI, auto-configuration | `src/test/java`; protocol/registry/gateway/assembly tests |
 | `ruoyi-common/ruoyi-common-oss` | 对象存储适配 | package surface | none |
 | `ruoyi-common/ruoyi-common-push` | Spring 推送/WebSocket/SSE 基础 | package surface | none |
 | `ruoyi-common/ruoyi-common-redis` | Spring/Redis 缓存、锁与限流 | package surface | none |

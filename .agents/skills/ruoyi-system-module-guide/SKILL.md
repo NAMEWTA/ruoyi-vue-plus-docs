@@ -1,6 +1,6 @@
 ---
 name: ruoyi-system-module-guide
-description: 映射 ruoyi-system 对外能力与调用边界：ruoyi-api 的 UserService、DeptService、RoleService、PostService、ConfigService、OssService、MessageService、TaskAssigneeService；common SPI（DictService、PermissionService、SensitiveService）；以及仅供前端的 /system、/resource、/monitor HTTP。处理 ruoyi-system、UserService、字典、部门、OSS、角色菜单、或其他模块如何调用 system 时使用。规范裁决不走本 Skill。
+description: 映射 ruoyi-system 对外能力与调用边界：ruoyi-api 的 UserService、DeptService、RoleService、PostService、ConfigService、OssService、MessageService、TaskAssigneeService；common SPI（含 OpenAPI 授权/凭据）；以及仅供前端的 /system、/resource、/monitor HTTP。处理 ruoyi-system、UserService、OpenAPI、字典、部门、OSS、角色菜单、或其他模块如何调用 system 时使用。规范裁决不走本 Skill。
 ---
 
 # ruoyi-system 能力地图

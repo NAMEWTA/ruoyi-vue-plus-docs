@@ -18,8 +18,8 @@
 |---|---|
 | Maven 模块 | `ruoyi-modules/ruoyi-system/pom.xml`（`org.dromara:ruoyi-system`，父模块 `ruoyi-modules`） |
 | 直接 POM 依赖方 | 仅 `ruoyi-admin/pom.xml` 声明 `ruoyi-system` |
-| 自身依赖 | 仅 common 能力 + `ruoyi-api`，见 `ruoyi-modules/ruoyi-system/pom.xml`：`ruoyi-common-core`、`ruoyi-api`、`ruoyi-common-doc`、`ruoyi-common-mybatis`、`ruoyi-common-translation`、`ruoyi-common-oss`、`ruoyi-common-log`、`ruoyi-common-excel`、`ruoyi-common-sms`、`ruoyi-common-security`、`ruoyi-common-web`、`ruoyi-common-sensitive`、`ruoyi-common-encrypt`、`ruoyi-common-push` |
-| 包根 | `ruoyi-modules/ruoyi-system/src/main/java/org/dromara/system/`：`controller/system`、`controller/monitor`、`service`、`service/impl`、`domain`、`domain/bo`、`domain/vo`、`domain/constant`、`mapper`、`event`、`listener`、`runner` |
+| 自身依赖 | 仅 common 能力 + `ruoyi-api`，见 `ruoyi-modules/ruoyi-system/pom.xml`：`ruoyi-common-core`、`ruoyi-api`、`ruoyi-common-doc`、`ruoyi-common-mybatis`、`ruoyi-common-translation`、`ruoyi-common-oss`、`ruoyi-common-notify`、`ruoyi-common-log`、`ruoyi-common-excel`、`ruoyi-common-sms`、`ruoyi-common-security`、`ruoyi-common-web`、`ruoyi-common-sensitive`、`ruoyi-common-encrypt`、`ruoyi-common-push`、`ruoyi-common-openapi` |
+| 包根 | `ruoyi-modules/ruoyi-system/src/main/java/org/dromara/system/`：`controller/system`、`controller/monitor`、`service`、`service/impl`、`domain`、`domain/bo`、`domain/vo`、`domain/constant`、`mapper`、`event`、`listener`、`runner`、`openapi` |
 | Mapper XML | `ruoyi-modules/ruoyi-system/src/main/resources/mapper/system/` |
 | 租户 | 无 `tenant` 包或类 |
 
@@ -86,6 +86,8 @@
 | `DictService` | `ruoyi-common/ruoyi-common-core/src/main/java/org/dromara/common/core/service/DictService.java` | `service/impl/SysDictTypeServiceImpl.java`（`implements ISysDictTypeService, DictService`）。方法：`getDictLabel` / `getDictValue`（含分隔符重载）、`getAllDictByDictType`、`getDictType`、`getDictData` |
 | `PermissionService` | `ruoyi-common/ruoyi-common-core/src/main/java/org/dromara/common/core/service/PermissionService.java` | `service/impl/SysPermissionServiceImpl.java`（`implements ISysPermissionService, PermissionService`）。方法：`getRolePermission(userId, clientId)`、`getMenuPermission(userId, clientId)` |
 | `SensitiveService` | `ruoyi-common/ruoyi-common-sensitive/src/main/java/org/dromara/common/sensitive/core/SensitiveService.java` | `service/impl/SysSensitiveServiceImpl.java`。`isSensitive(roleKey[], perms[])`：未登录要脱敏；角色/权限命中或超管则不脱敏 |
+| `OpenApiAuthorizationResolver` | `ruoyi-common/ruoyi-common-openapi/src/main/java/org/dromara/common/openapi/spi/OpenApiAuthorizationResolver.java` | `openapi/authorization/SystemOpenApiAuthorizationResolver.java`：只读聚合所有合法 Client 下的有效授权快照 |
+| `OpenApiCredentialResolver` | `ruoyi-common/ruoyi-common-openapi/src/main/java/org/dromara/common/openapi/spi/OpenApiCredentialResolver.java` | `openapi/credential/service/SystemOpenApiCredentialResolver.java`：读取启用且未过期凭据并解密一次调用所需 secret |
 
 字典校验：`ruoyi-common/ruoyi-common-core/src/main/java/org/dromara/common/core/validate/dicts/DictPatternValidator.java` 经 `SpringUtils.getBean(DictService.class).getDictLabel(...)` 判断值是否合法。注解 `DictPattern.java` 同目录。
 
@@ -114,6 +116,7 @@
 | `/system/client` | `SysClientController` | `controller/system/SysClientController.java` |
 | `/system/social` | `SysSocialController` | `controller/system/SysSocialController.java` |
 | `/system/notice` | `SysNoticeController` | `controller/system/SysNoticeController.java`（同时注入 `DictService` 与 `MessageService`，新增公告后广播） |
+| `/system/openApi` | `SysOpenApiCredentialController` / `SysOpenApiCatalogController` | `controller/system/openapi/`；本人凭据、管理员目标用户凭据与按目标授权过滤的接口目录 |
 | `/system/userType` | `SysUserTypeController` | `controller/system/SysUserTypeController.java` |
 | `/resource/oss` | `SysOssController` | `controller/system/SysOssController.java` |
 | `/resource/oss/config` | `SysOssConfigController` | `controller/system/SysOssConfigController.java` |

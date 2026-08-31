@@ -6,7 +6,7 @@
 
 1. [父模块与 BOM](#父模块与-bom)
 2. [如何选依赖](#如何选依赖)
-3. [26 个子模块](#26-个子模块)
+3. [27 个子模块](#27-个子模块)
 4. [common 内部依赖分层](#common-内部依赖分层)
 5. [消费方显式依赖](#消费方显式依赖)
 6. [SPI 接口 vs system 实现](#spi-接口-vs-system-实现)
@@ -16,13 +16,13 @@
 | 项 | 路径 / 事实 |
 |---|---|
 | 父聚合 | `ruoyi-common/pom.xml`：`artifactId=ruoyi-common`，`packaging=pom`，description「common 通用模块」，`groupId=org.dromara`。自身不是 jar。 |
-| 子模块全集 | 同文件 `<modules>` **26** 项（顺序与 POM 一致）：bom、social、core、doc、excel、job、log、notify、mail、mybatis、oss、redis、satoken、security、sms、elasticsearch、web、translation、sensitive、json、encrypt、push、liteflow、mqtt、ai、mcp。 |
-| BOM | `ruoyi-common/ruoyi-common-bom/pom.xml`：`packaging=pom`，description「ruoyi-common-bom common依赖项」。`<dependencyManagement>` 纳入其余 **25** 个 jar（不含 BOM 自身），版本均为 `${revision}`（BOM 内写死 `revision=6.0.0`）。 |
+| 子模块全集 | 同文件 `<modules>` **27** 项（顺序与 POM 一致）：bom、social、core、doc、excel、job、log、notify、mail、mybatis、oss、redis、satoken、security、sms、elasticsearch、web、translation、sensitive、json、encrypt、push、liteflow、mqtt、ai、mcp、openapi。 |
+| BOM | `ruoyi-common/ruoyi-common-bom/pom.xml`：`packaging=pom`，description「ruoyi-common-bom common依赖项」。`<dependencyManagement>` 纳入其余 **26** 个 jar（不含 BOM 自身），版本均为 `${revision}`（BOM 内写死 `revision=6.0.0`）。 |
 | 根工程 | `pom.xml` `revision=6.0.0`，Java 21，Spring Boot 4.1.0。 |
 
 加 BOM ≠ 自动获得全部 common 能力。业务模块仍须按需显式声明子 artifact。
 
-23 个模块有 `src/main/resources/META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports`。**excel / oss / bom 没有该文件**。elasticsearch 另有 `ruoyi-common/ruoyi-common-elasticsearch/src/main/resources/META-INF/spring.factories` 注册 `EnvironmentPostProcessor`。
+24 个模块有 `src/main/resources/META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports`。**excel / oss / bom 没有该文件**。elasticsearch 另有 `ruoyi-common/ruoyi-common-elasticsearch/src/main/resources/META-INF/spring.factories` 注册 `EnvironmentPostProcessor`。
 
 ## 如何选依赖
 
@@ -38,10 +38,11 @@
 | 渠道无关通知、幂等、附件快照 | `ruoyi-common-notify` | `NotifyDispatcher`、`NotifyClient`、`NotifyChannelAdapter` |
 | 邮件 | `ruoyi-common-mail` | `MailBuilder` |
 | 推送 | `ruoyi-common-push` | `PushHelper` |
+| 机器调用协议、显式开放注册表、签名网关与机器 Session | `ruoyi-common-openapi` | `@OpenApi`、`OpenApiCanonicalizer`、OpenAPI SPI；默认关闭，业务凭据与授权实现位于 system |
 | 字典标签 / 角色菜单权限 / 是否脱敏 | 注入 SPI，不要在 common 找实现 | 见 [SPI](#spi-接口-vs-system-实现) |
 | 定时任务 / AI / ES | 对应薄包装模块 | 业务 API 在第三方 starter |
 
-## 26 个子模块
+## 27 个子模块
 
 下列「关键公开类型」是业务最常直接引用的入口，不是该模块全部 class。源码根已给出；条目不清时直接读该目录。
 
@@ -221,6 +222,13 @@
 - AutoConfiguration.imports：`config/McpAutoConfiguration.java`
 - 入口：`config/McpAutoConfiguration.java`；`core/McpClientTemplate.java`（「MCP Client 通用操作模板。」）；`core/McpToolCallResult.java`；`core/McpResourceReadResult.java`
 
+### 27. ruoyi-common-openapi
+
+- POM：`ruoyi-common/ruoyi-common-openapi/pom.xml`，description「ruoyi-common-openapi machine invocation runtime」。显式 common：`ruoyi-common-core`、`ruoyi-common-redis`、`ruoyi-common-satoken`、`ruoyi-common-doc`。
+- 源码根：`ruoyi-common/ruoyi-common-openapi/src/main/java/org/dromara/common/openapi/`
+- AutoConfiguration.imports：`config/OpenApiAutoConfiguration.java`；由 `openapi.enabled=true` 条件启用，配置或必要 SPI 无效时失败关闭。
+- 入口：`annotation/OpenApi.java`；`protocol/OpenApiCanonicalizer.java`、`OpenApiSigner.java`；`registry/OpenApiOperationRegistry.java`；`session/OpenApiMachineSessionBridge.java`、`OpenApiMachineSessionInvalidator.java`；`spi/OpenApiAuthorizationResolver.java`、`OpenApiCredentialResolver.java`、`OpenApiCallEventPublisher.java`。
+
 ## common 内部依赖分层
 
 来源：各子模块 `ruoyi-common/*/pom.xml` 中显式 `<artifactId>ruoyi-common-*</artifactId>`。第三方 starter 传递树未展开。
@@ -243,6 +251,7 @@
 | mqtt | core + json |
 | sms | redis + notify |
 | social | redis |
+| openapi | core + redis + satoken + doc |
 
 新业务若只需工具类，依赖 `ruoyi-common-core`（及需要的 json/redis）即可；Web CRUD 通常再加 mybatis + web + security。
 
@@ -250,11 +259,11 @@
 
 均为 `groupId=org.dromara`，无版本号，走 BOM。satoken / redis / json 等常通过 web/security/mybatis 传递进入，不一定出现在业务 POM。未跑 `mvn dependency:tree`。
 
-### ruoyi-system（14 个 common）
+### ruoyi-system（15 个 common）
 
 路径：`ruoyi-modules/ruoyi-system/pom.xml`
 
-`ruoyi-common-core`、`ruoyi-common-doc`、`ruoyi-common-mybatis`、`ruoyi-common-translation`、`ruoyi-common-oss`、`ruoyi-common-notify`、`ruoyi-common-log`、`ruoyi-common-excel`、`ruoyi-common-sms`、`ruoyi-common-security`、`ruoyi-common-web`、`ruoyi-common-sensitive`、`ruoyi-common-encrypt`、`ruoyi-common-push`。另有 `ruoyi-api`（非 common）。
+`ruoyi-common-core`、`ruoyi-common-doc`、`ruoyi-common-mybatis`、`ruoyi-common-translation`、`ruoyi-common-oss`、`ruoyi-common-notify`、`ruoyi-common-log`、`ruoyi-common-excel`、`ruoyi-common-sms`、`ruoyi-common-security`、`ruoyi-common-web`、`ruoyi-common-sensitive`、`ruoyi-common-encrypt`、`ruoyi-common-push`、`ruoyi-common-openapi`。另有 `ruoyi-api`（非 common）。
 
 未显式依赖 satoken / redis / json / mail / social / job / ai / mcp / mqtt / elasticsearch / liteflow。
 
@@ -266,24 +275,27 @@
 
 未显式依赖 `ruoyi-common-core` / oss / mail / sms / sensitive / encrypt。相对 system 多了 liteflow，少了 core/oss/sms/sensitive/encrypt；邮件/短信能力通过统一通知 adapter 解耦，不再由 workflow 直接依赖。
 
-### ruoyi-admin（5 个直接 common + 业务模块并集）
+### ruoyi-admin（6 个直接 common + 业务模块并集）
 
 路径：`ruoyi-admin/pom.xml`
 
-直接：`ruoyi-common-doc`、`ruoyi-common-social`、`ruoyi-common-mail`、`ruoyi-common-notify`、`ruoyi-common-mcp`。
+直接：`ruoyi-common-doc`、`ruoyi-common-social`、`ruoyi-common-mail`、`ruoyi-common-notify`、`ruoyi-common-mcp`、`ruoyi-common-openapi`。
 
 业务模块由 profile 组装：默认 `bundle-full` 包含 `ruoyi-job`、`ruoyi-ai`、`ruoyi-demo`、`ruoyi-workflow`；显式 `bundle-core` 只保留 `ruoyi-api`、`ruoyi-system` 与直接 common 依赖。运行时代码生成器已从 reactor 和两个 bundle 删除。
 
-因此 `bundle-full` admin 进程还会装入（POM 图推断）：system 的 14 个、workflow 的 10 个、job 的 `ruoyi-common-json`+`ruoyi-common-job`（`ruoyi-modules/ruoyi-job/pom.xml`）、ai 的 `ruoyi-common-core`+`ruoyi-common-ai`+`ruoyi-common-satoken`+`ruoyi-common-web`（`ruoyi-modules/ruoyi-ai/pom.xml`）、demo 额外的 `ruoyi-common-redis`+`ruoyi-common-elasticsearch`+`ruoyi-common-mqtt`+`ruoyi-common-mcp` 等（`ruoyi-modules/ruoyi-demo/pom.xml`）。social / mcp 主要由 admin 直接引入；elasticsearch / mqtt 主要由 demo 引入。需要 ES/MQTT 时看 demo POM，不要写进 system/workflow POM。
+因此 `bundle-full` admin 进程还会装入（POM 图推断）：system 的 15 个、workflow 的 10 个、job 的 `ruoyi-common-json`+`ruoyi-common-job`（`ruoyi-modules/ruoyi-job/pom.xml`）、ai 的 `ruoyi-common-core`+`ruoyi-common-ai`+`ruoyi-common-satoken`+`ruoyi-common-web`（`ruoyi-modules/ruoyi-ai/pom.xml`）、demo 额外的 `ruoyi-common-redis`+`ruoyi-common-elasticsearch`+`ruoyi-common-mqtt`+`ruoyi-common-mcp` 等（`ruoyi-modules/ruoyi-demo/pom.xml`）。openapi / social / mcp 由 admin 直接引入；elasticsearch / mqtt 主要由 demo 引入。需要 ES/MQTT 时看 demo POM，不要写进 system/workflow POM。
 
 ## SPI 接口 vs system 实现
 
-common 只定义接口。实现类在 `ruoyi-system`：
+下列跨边界 SPI 在 common 声明合同；业务实现位于 `ruoyi-system`，可选扩展点可由组装应用提供：
 
 | SPI | 接口路径 | system 实现 |
 |---|---|---|
 | `DictService` | `ruoyi-common/ruoyi-common-core/src/main/java/org/dromara/common/core/service/DictService.java`（「通用 字典服务」；`getDictLabel` / `getDictValue` / `getAllDictByDictType` / `getDictType` / `getDictData`） | `ruoyi-modules/ruoyi-system/src/main/java/org/dromara/system/service/impl/SysDictTypeServiceImpl.java`（`implements ISysDictTypeService, DictService`） |
 | `PermissionService` | `ruoyi-common/ruoyi-common-core/src/main/java/org/dromara/common/core/service/PermissionService.java`（「用户权限处理」；`getRolePermission` / `getMenuPermission`） | `.../service/impl/SysPermissionServiceImpl.java`（`implements ISysPermissionService, PermissionService`） |
 | `SensitiveService` | `ruoyi-common/ruoyi-common-sensitive/src/main/java/org/dromara/common/sensitive/core/SensitiveService.java`（「脱敏服务」；`isSensitive(roleKey[], perms[])`） | `.../service/impl/SysSensitiveServiceImpl.java` |
+| `OpenApiAuthorizationResolver` | `ruoyi-common/ruoyi-common-openapi/src/main/java/org/dromara/common/openapi/spi/OpenApiAuthorizationResolver.java` | `.../openapi/authorization/SystemOpenApiAuthorizationResolver.java` |
+| `OpenApiCredentialResolver` | `ruoyi-common/ruoyi-common-openapi/src/main/java/org/dromara/common/openapi/spi/OpenApiCredentialResolver.java` | `.../openapi/credential/service/SystemOpenApiCredentialResolver.java` |
+| `OpenApiCallEventPublisher` | `ruoyi-common/ruoyi-common-openapi/src/main/java/org/dromara/common/openapi/spi/OpenApiCallEventPublisher.java` | 组装层可覆盖；common auto-configuration 提供 no-op 缺省实现 |
 
 调用约定与方法语义见 [ruoyi-system-module-guide](../../ruoyi-system-module-guide/SKILL.md)，不要在本 Skill 复制。

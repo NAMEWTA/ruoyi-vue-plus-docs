@@ -134,14 +134,14 @@ G-00 authorization + repository baseline
 
 | 合同或参考要求 | 覆盖 Ticket | 验证接缝 | Evidence | 状态 |
 |---|---|---|---|---|
-| AC-001 至 AC-007：开放/协议/nonce/限流 | T-01,T-04,T-09,T-12 | fixed vectors + registry + MockMvc | T-01/T-04/T-09/T-12 | planned |
-| AC-008 至 AC-011：唯一凭据生命周期 | T-06,T-10 | service/controller/domain | T-06/T-10 | planned |
-| AC-012 至 AC-019：授权快照与 Session | T-03,T-05,T-07,T-08,T-09,T-12 | authorization/session/invalidation matrices | T-03/T-05/T-07/T-08/T-09/T-12 | planned |
-| AC-020 至 AC-022：真实目录 | T-04,T-10 | HandlerMapping/SpringDoc/domain | T-04/T-10 | planned |
-| AC-023 至 AC-027：双 UI 与 owner scope | T-06,T-10,T-11,T-12 | controller/component/App integration | T-06/T-10/T-11/T-12 | planned |
-| AC-028 至 AC-029：日志安全 | T-02,T-12 | captured HTTP/operation logs | T-02/T-12 | planned |
-| AC-030：普通请求兼容 | T-05,T-07,T-08,T-09,T-12 | backend/frontend security regression | T-05/T-07/T-08/T-09/T-12 | planned |
-| NAMEWTA v1 reference conformance | T-01,T-04,T-09 | immutable vectors + generated cURL/Java + real invocation | T-01/T-04/T-09 | planned |
+| AC-001 至 AC-007：开放/协议/nonce/限流 | T-01,T-04,T-09,T-12 | fixed vectors + registry + MockMvc | T-01/T-04/T-09/T-12 | verified |
+| AC-008 至 AC-011：唯一凭据生命周期 | T-06,T-10 | service/controller/domain | T-06/T-10 | verified |
+| AC-012 至 AC-019：授权快照与 Session | T-03,T-05,T-07,T-08,T-09,T-12 | authorization/session/invalidation matrices | T-03/T-05/T-07/T-08/T-09/T-12 | verified |
+| AC-020 至 AC-022：真实目录 | T-04,T-10 | HandlerMapping/SpringDoc/domain | T-04/T-10 | verified |
+| AC-023 至 AC-027：双 UI 与 owner scope | T-06,T-10,T-11,T-12 | controller/component/App integration | T-06/T-10/T-11/T-12 | verified |
+| AC-028 至 AC-029：日志安全 | T-02,T-12 | captured HTTP/operation logs | T-02/T-12 | verified |
+| AC-030：普通请求兼容 | T-05,T-07,T-08,T-09,T-12 | backend/frontend security regression | T-05/T-07/T-08/T-09/T-12 | verified |
+| NAMEWTA v1 reference conformance | T-01,T-04,T-09 | immutable vectors + generated cURL/Java + real invocation | T-01/T-04/T-09 | verified |
 
 ## 4. Execution and Integration Protocol
 

@@ -8,7 +8,8 @@
     "specdev/spec",
     "specdev/grill-with-docs",
     "specdev/tickets",
-    "specdev/goal-plan"
+    "specdev/goal-plan",
+    "specdev/implement"
   ],
   "claimed_investigations": [],
   "execution_authorization": {

@@ -4,7 +4,7 @@ artifact: ticket
 change: 2026-08-31-account-profile-verification
 id: T-06
 title: 交付个人隐私探测、审核后换绑、本人解绑与通知
-status: in_progress
+status: done
 planning_depth: deep
 planning_depth_reason: 不控制旧手机号的个人换绑涉及账户接管、隐私枚举、版本竞态和事务后通知。
 ready: true
@@ -117,6 +117,6 @@ shared_path_owners: []
 
 ## 10. 验收标准
 
-- [ ] AC-009 至 AC-017 的隐私、事务和通知矩阵通过。
-- [ ] required E2E、Evidence、提交和父分支结果完整。
-- [ ] 无企业换绑、旧手机 OTP 或敏感日志偏差。
+- [x] AC-009 至 AC-017 的隐私、事务和通知矩阵通过。
+- [x] required E2E、Evidence、提交和父分支结果完整。
+- [x] 无企业换绑、旧手机 OTP 或敏感日志偏差。

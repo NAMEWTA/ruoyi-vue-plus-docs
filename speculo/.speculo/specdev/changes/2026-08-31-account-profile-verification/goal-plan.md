@@ -186,7 +186,7 @@ W1  T-01 ─┐
 | T-08 | backend `d07a94635` | `{change}/T-08` | 43 enterprise/transfer tests passed | `01ba4b479` | Redis+notify+DB required/passed | `7635e962b` |
 | T-09 | backend `7635e962b` | `{change}/T-09` | person 62 + enterprise 46 tests passed | `a850f288d` | workflow+DB+OSS required/passed | `12192f90a` |
 | T-10 | frontend `a2d79cf7b` | `{change}/T-10` | 13 contract + 100 architecture tests passed | `f6c4d3329` | package/admin integration passed，E2E not-required | `1162bf650` |
-| T-11 | frontend T-10 result | `{change}/T-11` | component+lint+typecheck | required/pending | web-domain integration，E2E not-required | pending |
+| T-11 | frontend `1162bf650` | `{change}/T-11` | 7 web-domain tests + lint/typecheck passed | `333d9e0c5` | web-domain integration passed，E2E not-required | `f19ad1c48` |
 | T-12 | frontend T-10 result | `{change}/T-12` | component+lint+typecheck | required/pending | web-domain integration，E2E not-required | pending |
 | T-13 | frontend T-10 result | `{change}/T-13` | component+lint+typecheck | required/pending | web-domain integration，E2E not-required | pending |
 | T-14 | frontend G6 result | `{change}/T-14` | registry/admin/E2E source compile | required/pending | 全栈 E2E+build+system/log/SQL Gate | pending |

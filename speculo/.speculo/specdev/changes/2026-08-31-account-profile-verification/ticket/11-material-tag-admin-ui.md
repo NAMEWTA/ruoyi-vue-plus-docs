@@ -4,14 +4,14 @@ artifact: ticket
 change: 2026-08-31-account-profile-verification
 id: T-11
 title: 交付材料分类与标签管理页面
-status: ready
+status: done
 planning_depth: standard
 planning_depth_reason: 页面边界单一，树层级和系统必传标签约束已由后端及公共合同锁定。
 ready: true
 risk: medium
 blocked_by: [T-10]
 contract_ids: [AC-032, AC-033, AC-034, AC-035, AC-040]
-owner: unassigned
+owner: codex:/root
 expected_changes:
   - "<Path>plus-ui-namewta/packages/web-domains/profile/src/material-tag/**</Path>"
 writable_paths:
@@ -114,6 +114,6 @@ shared_path_owners: []
 
 ## 10. 验收标准
 
-- [ ] 合法树操作、系统必传约束和引用冲突都有自动化覆盖。
-- [ ] 无身份明文、物理删除或 package 共享路径修改。
-- [ ] Evidence 和集成结果完整。
+- [x] 合法树操作、系统必传约束和引用冲突都有自动化覆盖。
+- [x] 无身份明文、物理删除或 package 共享路径修改。
+- [x] Evidence 和集成结果完整。

@@ -22,6 +22,11 @@ upstream snailai_server {
     server ruoyi-snailai-server:8900;
 }
 
+upstream nacos_server {
+    server nacos:8848;
+    keepalive 16;
+}
+
 server {
     listen 80 default_server;
     server_name ${LB_SERVER_NAME};
@@ -83,6 +88,20 @@ server {
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection $connection_upgrade;
+        proxy_read_timeout 86400s;
+        proxy_buffering off;
+    }
+
+    location /nacos/ {
+        proxy_pass http://nacos_server/nacos/;
+        proxy_http_version 1.1;
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection $connection_upgrade;
+        proxy_connect_timeout 5s;
         proxy_read_timeout 86400s;
         proxy_buffering off;
     }

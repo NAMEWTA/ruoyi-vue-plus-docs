@@ -2,7 +2,7 @@
 
 > 调查与修复日期：2026-09-01
 >
-> CDE 状态：已修复并通过真实登录验证，改动当前位于 CDE 工作树
+> CDE 状态：已修复并通过真实登录验证，提交 `c5ebafd` 已同步 GitHub/Gitea
 >
 > 基座状态：同源风险已确认，`plus-ui-namewta` 尚待同步修复
 >
@@ -384,7 +384,7 @@ meta: {
 git diff --check
 ```
 
-结果通过。本次修复涉及 4 个前端文件，共 78 行新增、21 行删除；未创建或保留临时 Playwright 配置。
+结果通过。本次修复涉及 4 个前端文件，共 78 行新增、21 行删除；未创建或保留临时 Playwright 配置。修复提交为 `c5ebafd fix(frontend): handle nullable menu metadata`。
 
 ## 8. 为什么选择前端兼容，而不是只改后端
 
@@ -462,7 +462,7 @@ ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-system/src/main/java/org/dromara/syst
 
 ## 12. 后续建议
 
-1. 将 CDE 四个相关文件作为一个聚焦提交交付，避免混入当前工作树的其他改动。
+1. 保持 CDE 修复提交 `c5ebafd` 的聚焦边界，后续同步时避免混入其他工作树改动。
 2. 在基座实施等价修复，并记录基座提交与 CDE 吸收关系。
 3. 决定后端空值策略：省略空属性，或在 OpenAPI 中明确 nullable。
 4. 增加运行时 JSON 与 OpenAPI 的合同测试，防止 optional/nullable 再次漂移。

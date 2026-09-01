@@ -2,7 +2,7 @@
 schema_version: 3
 artifact: tickets-map
 change: 2026-08-31-optional-nacos-dynamic-config
-status: ready
+status: completed
 ---
 
 # Tickets Map: 可选 Nacos 动态配置
@@ -25,12 +25,12 @@ status: ready
 
 | ID | Ticket | 可观察产出 | Blocked By | Depth | Risk | Ready | Owner | Contract IDs | Wave/Gate | Status |
 |---|---|---|---|---|---|---|---|---|---|---|
-| T-01 | `<Path>{roots.state}/specdev/changes/{change}/ticket/01-nacos-config-runtime.md</Path>` | 默认关闭且可降级的稀疏覆盖、原子状态与实例观测 | — | deep | high | yes | Lead | AC-001..009, AC-011..014, AC-022..023 | W1 / G1 / 1 | in_progress |
-| T-04 | `<Path>{roots.state}/specdev/changes/{change}/ticket/04-nacos-console-menu.md</Path>` | 系统管理菜单、权限和安全 external target | — | deep | high | yes | Lead / dynamic dispatch | AC-015, AC-016, AC-022, AC-024 | W1 / G1 / 2 | ready |
-| T-02 | `<Path>{roots.state}/specdev/changes/{change}/ticket/02-safe-live-refresh.md</Path>` | Captcha、Notify、OSS 三组配置即时生效 | T-01 | deep | high | yes | Lead / dynamic dispatch | AC-009..013, AC-022 | W2 / G2 / 3 | ready |
-| T-03 | `<Path>{roots.state}/specdev/changes/{change}/ticket/03-nacos-docker-infrastructure.md</Path>` | 固定镜像、鉴权、独立 DB、持久化和 optional override | T-01 | deep | high | yes | Lead / dynamic dispatch | AC-006, AC-018..021, AC-024 | W2 / G2 / 4 | ready |
-| T-05 | `<Path>{roots.state}/specdev/changes/{change}/ticket/05-nacos-same-origin-proxy.md</Path>` | `/nacos/` 同源 iframe 与官方独立登录 | T-03, T-04 | standard | medium | yes | Lead / dynamic dispatch | AC-016, AC-017, AC-022 | W3 / G3 / 5 | ready |
-| T-06 | `<Path>{roots.state}/specdev/changes/{change}/ticket/06-nacos-release-convergence.md</Path>` | 全链路双实例、故障与发布验收门禁 | T-02, T-03, T-05 | deep | high | yes | Lead / dynamic dispatch | AC-001..024 | W4 / G4 / 6 | ready |
+| T-01 | `<Path>{roots.state}/specdev/changes/{change}/ticket/01-nacos-config-runtime.md</Path>` | 默认关闭且可降级的稀疏覆盖、原子状态与实例观测 | — | deep | high | yes | Lead | AC-001..009, AC-011..014, AC-022..023 | W1 / G1 / 1 | done |
+| T-04 | `<Path>{roots.state}/specdev/changes/{change}/ticket/04-nacos-console-menu.md</Path>` | 系统管理菜单、权限和安全 external target | — | deep | high | yes | Lead / dynamic dispatch | AC-015, AC-016, AC-022, AC-024 | W1 / G1 / 2 | done |
+| T-02 | `<Path>{roots.state}/specdev/changes/{change}/ticket/02-safe-live-refresh.md</Path>` | Captcha、Notify、OSS 三组配置即时生效 | T-01 | deep | high | yes | Lead / dynamic dispatch | AC-009..013, AC-022 | W2 / G2 / 3 | done |
+| T-03 | `<Path>{roots.state}/specdev/changes/{change}/ticket/03-nacos-docker-infrastructure.md</Path>` | 固定镜像、鉴权、独立 DB、持久化和 optional override | T-01 | deep | high | yes | Lead / dynamic dispatch | AC-006, AC-018..021, AC-024 | W2 / G2 / 4 | done |
+| T-05 | `<Path>{roots.state}/specdev/changes/{change}/ticket/05-nacos-same-origin-proxy.md</Path>` | `/nacos/` 同源 iframe 与官方独立登录 | T-03, T-04 | standard | medium | yes | Lead / dynamic dispatch | AC-016, AC-017, AC-022 | W3 / G3 / 5 | done |
+| T-06 | `<Path>{roots.state}/specdev/changes/{change}/ticket/06-nacos-release-convergence.md</Path>` | 全链路双实例、故障与发布验收门禁 | T-02, T-03, T-05 | deep | high | yes | Lead / dynamic dispatch | AC-001..024 | W4 / G4 / 6 | done |
 
 Ticket frontmatter 是状态、依赖、深度和路径访问契约的权威；本表是同步投影。
 
@@ -106,7 +106,7 @@ T-04 [menu + external target] ───────────────┘  
 - **Wave 3：** T-05；G3 在统一入口运行 Nginx + Playwright required E2E。
 - **Wave 4：** T-06；G4 在最终 parent current workspace 串行运行所有构建、真实双实例故障矩阵和 secret scan。
 
-Goal Plan 已选择 `current` + `direct-parent`，固定串行顺序 `T-01 -> T-04 -> T-02 -> T-03 -> T-05 -> T-06`；当前因授权与 dirty 基线保持 blocked。
+Goal Plan 已选择 `current` + `direct-parent`，固定串行顺序 `T-01 -> T-04 -> T-02 -> T-03 -> T-05 -> T-06`；六个 Ticket 与最终 G4 均已关闭。
 
 ## 7. 横切契约与风险
 

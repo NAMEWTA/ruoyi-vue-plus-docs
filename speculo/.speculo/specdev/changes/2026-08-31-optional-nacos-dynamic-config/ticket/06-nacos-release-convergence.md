@@ -4,7 +4,7 @@ artifact: ticket
 change: 2026-08-31-optional-nacos-dynamic-config
 id: T-06
 title: 固化 Nacos 双实例发布与故障验收
-status: ready
+status: done
 planning_depth: deep
 planning_depth_reason: 汇合后端、前端、数据库、Nginx 与官方服务，覆盖双实例收敛、网络故障、持久化和 secret 边界，并形成可重复发布门禁。
 ready: true
@@ -127,7 +127,7 @@ Lead 使用一次性测试环境先启动无 Nacos 的应用并证明默认关�
 
 ## 10. 验收标准
 
-- [ ] AC-001..AC-024 均在本 Ticket 或引用的前置 Evidence 中有可执行结果，无 `uncovered`。
-- [ ] 双实例、离线重启无 snapshot、原子拒绝、同源登录和持久化由真实环境证明。
-- [ ] full/core、默认关闭、旧 external/release 回归和 secret 扫描全部通过。
-- [ ] required E2E、final implementation commit、direct-parent result SHA 与清理结果完整记录。
+- [x] AC-001..AC-024 均在本 Ticket 或引用的前置 Evidence 中有可执行结果，无 `uncovered`。
+- [x] 双实例、离线重启无 snapshot、原子拒绝、同源登录和持久化由真实环境证明。
+- [x] full/core、默认关闭、旧 external/release 回归和 secret 扫描全部通过。
+- [x] required E2E、final implementation commit、direct-parent result SHA 与清理结果完整记录。

@@ -4,7 +4,7 @@ artifact: ticket
 change: 2026-08-31-optional-nacos-dynamic-config
 id: T-03
 title: 交付鉴权持久化的 Nacos Docker 基础设施
-status: ready
+status: done
 planning_depth: deep
 planning_depth_reason: 固定第三方服务版本、创建独立数据库最小权限、处理必填 secret 与新旧数据卷初始化，并协调双实例健康启动门。
 ready: true

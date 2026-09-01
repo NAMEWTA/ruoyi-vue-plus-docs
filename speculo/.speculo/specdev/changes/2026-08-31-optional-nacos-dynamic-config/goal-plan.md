@@ -2,7 +2,7 @@
 schema_version: 6
 artifact: goal-plan
 change: 2026-08-31-optional-nacos-dynamic-config
-status: in_progress
+status: completed
 modes: [migration, high-assurance, reference-conformance, release-coordination]
 orchestration: lead-directed
 lead: codex:/root
@@ -10,7 +10,7 @@ implementation_agent_limit: 3
 integration_attempt_limit: null
 ticket_workspace_policy: current
 integration_gate: direct-parent
-ready_for_execution: true
+ready_for_execution: false
 ---
 
 # Goal Plan: 可选 Nacos 动态配置
@@ -123,14 +123,14 @@ Ticket frontmatter 的真实依赖保持：T-02/T-03 只依赖 T-01，T-05 依�
 
 | 合同或参考要求 | 覆盖 Ticket | 验证接缝 | Evidence | 状态 |
 |---|---|---|---|---|
-| AC-001..AC-009, AC-011..AC-014, AC-023 | T-01,T-02,T-06 | Boot/config state、业务行为、full/core、双实例 | T-01,T-02,T-06 | planned |
-| AC-010..AC-013 | T-02,T-06 | Captcha/Notify/Oss 两阶段行为与真实发布 | T-02,T-06 | planned |
-| AC-015..AC-017 | T-04,T-05,T-06 | menu/domain/manifest、Nginx、Playwright | T-04,T-05,T-06 | planned |
-| AC-018..AC-021, AC-024 | T-03,T-04,T-06 | Compose、MySQL、auth、persistence、DML | T-03,T-04,T-06 | planned |
-| AC-022 | T-01..T-06 | log/info/DOM/build/test secret scan | 全部 Evidence | planned |
-| ADR-001..ADR-012（ADR-003 superseded） | T-01..T-06 | Ticket contract 与 Gate | 全部 Evidence | planned |
+| AC-001..AC-009, AC-011..AC-014, AC-023 | T-01,T-02,T-06 | Boot/config state、业务行为、full/core、双实例 | T-01,T-02,T-06 | passed |
+| AC-010..AC-013 | T-02,T-06 | Captcha/Notify/Oss 两阶段行为与真实发布 | T-02,T-06 | passed |
+| AC-015..AC-017 | T-04,T-05,T-06 | menu/domain/manifest、Nginx、Playwright | T-04,T-05,T-06 | passed |
+| AC-018..AC-021, AC-024 | T-03,T-04,T-06 | Compose、MySQL、auth、persistence、DML | T-03,T-04,T-06 | passed |
+| AC-022 | T-01..T-06 | log/info/DOM/build/test secret scan | 全部 Evidence | passed |
+| ADR-001..ADR-012（ADR-003 superseded） | T-01..T-06 | Ticket contract 与 Gate | 全部 Evidence | passed |
 | CDE Nacos 参考 | T-01,T-02 | 生命周期/YAML 复用；显式反证不兼容默认 | T-01,T-02 | reference-only |
-| Nacos 2.5.4 官方 auth/Docker/schema | T-03,T-05,T-06 | fixed image、官方配置、真实容器 | T-03,T-05,T-06 | planned |
+| Nacos 2.5.4 官方 auth/Docker/schema | T-03,T-05,T-06 | fixed image、官方配置、真实容器 | T-03,T-05,T-06 | passed |
 
 ## 4. Execution and Integration Protocol
 
@@ -150,12 +150,12 @@ Ticket frontmatter 的真实依赖保持：T-02/T-03 只依赖 T-01，T-05 依�
 
 | Ticket | Parent/base | Workspace/branch | Source checks | Implementation commit | Integration checks/E2E | Parent result |
 |---|---|---|---|---|---|---|
-| T-01 | G0 固定 backend + aggregate result | `current` / 各自 `main` | Nacos JUnit、Maven reactor、full/core | backend 非空 commit + aggregate gitlink/result commit，pending authorization | Lead 跑 default-off 与受影响回归；E2E not-required | pending |
-| T-04 | T-01 aggregate result；重读 backend/frontend | `current` / 各自 `main` | domain/manifest/Vitest、SQL contract、typecheck/build | backend + frontend 非空 commits；aggregate 含两 gitlink/60-DML commit，pending | Lead 跑菜单/权限/镜像一致；E2E not-required | pending |
-| T-02 | T-04 aggregate result；T-01 backend contract | `current` / 各自 `main` | Captcha/Notify/Oss JUnit 与 bundles | backend 非空 commit + aggregate gitlink commit，pending | Lead 跑三域原子/回归；E2E not-required | pending |
-| T-03 | T-02 aggregate result | `current` / parent `main` | release static/shell/Compose config | aggregate parent 非空 commit，pending | Lead 跑 real MySQL/Nacos required E2E | pending |
-| T-05 | T-03 aggregate result；T-04 frontend result | `current` / 各自 `main` | Nginx static、frontend lint/typecheck/build | frontend E2E commit + aggregate LB/test/gitlink commit，pending | Lead 跑 real Nginx/Nacos/Playwright required E2E | pending |
-| T-06 | T-05 aggregate result | `current` / parent `main` | harness static、全项目非 E2E regression | aggregate parent 非空 commit，pending | Lead 跑 full real-stack required E2E 与 final regression | pending |
+| T-01 | G0 固定 backend + aggregate result | `current` / 各自 `main` | Nacos JUnit、Maven reactor、full/core | backend `344c1bed`；aggregate `62d1aca` | default-off 与受影响回归通过；E2E not-required | passed |
+| T-04 | T-01 aggregate result；重读 backend/frontend | `current` / 各自 `main` | domain/manifest/Vitest、SQL contract、typecheck/build | backend `3161aa`；frontend `da5318e`；aggregate `f8470f7` | 菜单/权限/镜像一致通过；E2E not-required | passed |
+| T-02 | T-04 aggregate result；T-01 backend contract | `current` / 各自 `main` | Captcha/Notify/Oss JUnit 与 bundles | backend `c68cb55`；aggregate `a8f993e` | 三域原子/回归通过；E2E not-required | passed |
+| T-03 | T-02 aggregate result | `current` / parent `main` | release static/shell/Compose config | aggregate `2cfc2cb` | real MySQL/Nacos required E2E 通过 | passed |
+| T-05 | T-03 aggregate result；T-04 frontend result | `current` / 各自 `main` | Nginx static、frontend lint/typecheck/build | frontend `7462ffe`；aggregate `e43671c` | real Nginx/Nacos/Playwright required E2E 通过 | passed |
+| T-06 | T-05 aggregate result | `current` / parent `main` | harness static、全项目非 E2E regression | aggregate `e37e542` | full real-stack required E2E 与 final regression 通过 | passed |
 
 多仓库 Ticket 的 implementation checkpoint 是不可分割集合：所有被修改子仓 commit 先形成并保持 clean，随后聚合 parent commit 只包含该 Ticket 的 parent-owned 文件与精确 gitlink。Lead 在同一 current workspace 核对每层 ancestry、diff 和 dirty 状态；parent result 是该 Ticket 聚合 commit SHA，Evidence 同时记录 child SHA。缺少任一层 commit 不得关闭 Ticket。
 
@@ -165,10 +165,10 @@ Ticket frontmatter 的真实依赖保持：T-02/T-03 只依赖 T-01，T-05 依�
 
 | 动作 | 状态 | 目标与条件 |
 |---|---|---|
-| Current workspace Ticket changes | not-authorized | 用户本次只要求 S/T/P 规划；实施前需明确授权并保证唯一 writer |
+| Current workspace Ticket changes | authorized | 用户已明确要求执行 Goal Plan；保持 current workspace 唯一 writer 与精确路径边界 |
 | Ticket worktree local changes | not-authorized | 本计划选择 current，不创建 Ticket worktree |
-| Implementation commit | not-authorized | 每 Ticket/每被修改仓库必需；`.status.json` 尚未授权 |
-| Local direct-parent verification and parent update | not-authorized | current 模式必需；对应 `local_candidate_integration` 状态未授权 |
+| Implementation commit | authorized | 每 Ticket/每被修改仓库必需；授权已记录于 `.status.json` |
+| Local direct-parent verification and parent update | authorized | current 模式必需；授权已记录于 `.status.json` |
 | Local candidate integration and parent update | not-authorized | 本计划不使用 candidate-merge |
 | Push / PR / remote merge | not-authorized | 不从本地实现授权继承 |
 | Branch/worktree cleanup | not-authorized | 不处理当前用户分支、gitlink 或工作树改动 |
@@ -222,23 +222,26 @@ T-01/T-02 的 fake SDK/Spring tests 只能证明解析、状态机和业务读�
 
 ### Current Status
 
-- Grill 已 consensus；Spec `ready_for_tickets=true`，validator `0 error(s), 0 warning(s)`。
-- 六个 Ticket 全部 ready，AC-001 至 AC-024 covered，DAG/路径 validator `0 error(s), 0 warning(s)`。
-- Goal Plan 已选择默认 `current` + `direct-parent`，固定 Lead、四种 planning mode、串行顺序、Gate 和多仓库 checkpoint 合同。
-- 尚未修改任何产品文件、创建 implementation commit、运行 required E2E 或写 Ticket Evidence。
+- T-01、T-04、T-02 已按固定顺序完成并集成，分别有 implementation/result checkpoint 与 Lead Evidence。
+- T-03 已以 `2cfc2cbfe80bed5e18556694c22ce2158ffead05` 完成并集成；15 项 release tests、Compose 5.5.0 正反向 config、Shell/YAML/schema 与双轴审查通过。
+- 用户提供并授权远程中间件服务器后，Lead 在隔离目录完成 fresh/existing MySQL、官方 Nacos 2.5.4、鉴权、最小权限、持久化、重启与 secret scan required E2E；G2 已关闭。
+- T-05 已以 frontend `7462ffece02a48f64288847c907a644c646e1944`、aggregate `e43671ce1b67873ad363512a3be69d5074c4a1a5` 完成；HTTP/TLS 真实 LB、21 个资源、权限、同源 iframe、官方登录、故障恢复与 secret scan 均通过。
+- T-06 以 aggregate `e37e542f1b9f8990bdd84ae4fb22fa2ca2c77d0e` 完成；真实双实例、原子拒绝、断连、离线本地基线、恢复、MySQL 持久化、secret scan 与清理全部通过。
+- full/core、admin-web build/lint/typecheck/test、release static gate 和 T-05 Chromium 同源登录 Evidence 全部闭合；24 个 AC 无 uncovered。
 
 ### Pending Decisions and Blockers
 
 - 用户于 2026-09-01 明确要求执行本 Goal Plan 并以实际代码完成全部要求，因此 implementation commits、Deep Ticket 实施与 local direct-parent 推进已授权，G0 的授权门关闭。
 - 聚合仓库既有 dirty 与 gitlink 漂移按用户指定的“当前工作树为权威”作为执行输入；所有提交使用精确 path staging，Evidence 区分 pre-existing dirty 与本 change 修改，不回退或夹带无关文件。
 - Push/PR、远程合并、生产迁移/部署、角色授权、真实 secret、卷删除和 cleanup 继续未授权；这些不阻止隔离本地 E2E，但不会随实施授权自动发生。
+- 当前无 blocker。所有 `namewta-nacos-t03-*`、`namewta-nacos-t05-*`、`namewta-nacos-e2e-*` 与专用 specdev 测试目录均已精确清理；既有 CDE Nacos 和 NAMEWTA MySQL/Redis/MinIO 保持运行。
 
 ### Resume Protocol
 
-恢复时先读取本 Goal Plan、Tickets Map、最小未完成 Ticket、`.status.json` 和最新 Evidence；重读聚合/backend/frontend branch、HEAD、gitlink、status 和所有正在运行的隔离容器。只有 BLOCK-G0-001/002 获明确授权、BLOCK-G0-003 有可复查 clean checkpoint、唯一 writer 可保证后，才将 G0 关闭并开始 T-01。之后从最小未完成集成序号继续；任何 checkpoint 漂移先标记 stale 并重新确认归属，不复用旧测试结论。
+本 Goal 已完成。后续生产发布另行执行 DB/schema -> Nacos/auth/password -> namespace/config -> backend enable -> proxy/frontend -> 角色授权；发布前从 final aggregate result 重跑 `verify-release.sh` 与隔离 `verify-nacos.sh`，不得复用本次已清理的临时环境。
 
 ## Assumptions
 
 - 用户未回复此前的 worktree 选择提示，因此按工作流推荐默认值采用 `current`；这是本 Goal Plan 局部选择，不修改全局配置。若用户改选 worktree，必须把 policy 改为 `required`、gate 改为 `candidate-merge` 并重新校验 Ticket workspace 合同。
 - 后端/前端 `main` 与聚合 `main` 是预期本地父分支，但规划时的 SHA 只用于识别当前漂移；G0 关闭时必须重新固定实际 base。
-- 本机后续可提供 Docker 与隔离端口/data root；若真实 MySQL/Nacos/Nginx/浏览器环境不可用，T-03/T-05/T-06 保持 blocked，不以 mock 降级 required E2E。
+- 用户提供的远程 Docker 主机与隔离 data root 是当前 T-03/T-05/T-06 required E2E 环境；任何真实环境不可用时保持对应 Ticket blocked，不以 mock 降级。

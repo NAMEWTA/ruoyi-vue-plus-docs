@@ -4,7 +4,7 @@ artifact: ticket
 change: 2026-08-31-optional-nacos-dynamic-config
 id: T-05
 title: 通过 Nginx 同源代理加载 Nacos 控制台
-status: ready
+status: done
 planning_depth: standard
 planning_depth_reason: 修改 HTTP/TLS 统一入口并验证 iframe、静态资源、登录和安全响应头，范围集中但跨浏览器与容器边界。
 ready: true

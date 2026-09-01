@@ -4,7 +4,7 @@ artifact: ticket
 change: 2026-08-31-optional-nacos-dynamic-config
 id: T-01
 title: 建立可选 Nacos 稀疏覆盖运行时
-status: in_progress
+status: done
 planning_depth: deep
 planning_depth_reason: 新增共享 common artifact、启动期 PropertySource、远程版本原子状态机和脱敏观测合同，影响所有应用配置且具有较高事故半径。
 ready: true
@@ -135,8 +135,8 @@ shared_path_owners: []
 
 ## 10. 验收标准
 
-- [ ] 所列 AC 的运行时、失败、状态与 bundle 合同通过自动化验证。
-- [ ] `ruoyi-common-nacos` 不包含 Server、服务发现、Spring Cloud 或自建管理 API。
-- [ ] 输出扫描不含假 secret、正文或键值。
-- [ ] 验证、implementation commit 和 direct-parent 结果写入 `<Path>{roots.state}/specdev/changes/{change}/evidence/T-01.md</Path>`。
-- [ ] 修改未超出可写路径，无未批准偏差。
+- [x] 所列 AC 的运行时、失败、状态与 bundle 合同通过自动化验证。
+- [x] `ruoyi-common-nacos` 不包含 Server、服务发现、Spring Cloud 或自建管理 API。
+- [x] 输出扫描不含假 secret、正文或键值。
+- [x] 验证、implementation commit 和 direct-parent 结果写入 `<Path>{roots.state}/specdev/changes/{change}/evidence/T-01.md</Path>`。
+- [x] 修改未超出可写路径，无未批准偏差。

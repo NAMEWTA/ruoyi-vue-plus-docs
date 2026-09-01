@@ -4,7 +4,7 @@ artifact: ticket
 change: 2026-08-31-optional-nacos-dynamic-config
 id: T-02
 title: 让三组安全配置即时生效
-status: ready
+status: done
 planning_depth: deep
 planning_depth_reason: 跨 common-web、common-notify、ruoyi-system 三个运行路径建立并发安全的两阶段配置切换，错误会影响登录、幂等和 OSS 签名行为。
 ready: true
@@ -17,6 +17,9 @@ expected_changes:
   - "<Path>ruoyi-vue-plus-namewta/ruoyi-common/ruoyi-common-notify/**</Path>"
   - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-system/src/main/java/org/dromara/system/oss/**</Path>"
 writable_paths:
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-common/ruoyi-common-nacos/src/main/java/org/dromara/common/nacos/NacosConfigParticipant.java</Path>"
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-common/ruoyi-common-nacos/src/main/java/org/dromara/common/nacos/NacosConfigManager.java</Path>"
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-common/ruoyi-common-nacos/src/test/java/org/dromara/common/nacos/NacosConfigManagerTest.java</Path>"
   - "<Path>ruoyi-vue-plus-namewta/ruoyi-common/ruoyi-common-web/pom.xml</Path>"
   - "<Path>ruoyi-vue-plus-namewta/ruoyi-common/ruoyi-common-web/src/main/java/org/dromara/common/web/**</Path>"
   - "<Path>ruoyi-vue-plus-namewta/ruoyi-common/ruoyi-common-notify/pom.xml</Path>"
@@ -101,6 +104,7 @@ shared_path_owners: []
 - **预计修改点/可写范围：** 仅三个消费域、必要 POM、CaptchaController 和定向测试。
 - **只读上下文：** T-01 的配置快照与参与者合同；不得修改其实现。
 - **共享路径：** 无跨 Ticket 共同写路径。
+- **T-01 接缝修正：** OSS 清单项是精确键而非前缀；允许为参与者 SPI 增加向后兼容的 `exactKeys()` 默认方法并修正分类测试，除此之外 `ruoyi-common-nacos` 保持只读。
 - **保留或不动：** Nacos 核心状态机、application YAML、其他配置属性和公共业务 API。
 
 ## 8. 验证矩阵
@@ -127,7 +131,7 @@ shared_path_owners: []
 
 ## 10. 验收标准
 
-- [ ] AC-009..AC-013 的合法、删除、混合和原子拒绝行为成立。
-- [ ] 即时清单没有扩展到三组之外，Nacos 关闭回归通过。
-- [ ] 并发调用只观察完整旧/新快照，输出扫描无值泄露。
-- [ ] Evidence、implementation commit 与 direct-parent 结果记录完整。
+- [x] AC-009..AC-013 的合法、删除、混合和原子拒绝行为成立。
+- [x] 即时清单没有扩展到三组之外，Nacos 关闭回归通过。
+- [x] 并发调用只观察完整旧/新快照，输出扫描无值泄露。
+- [x] Evidence、implementation commit 与 direct-parent 结果记录完整。

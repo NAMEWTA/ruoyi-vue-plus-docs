@@ -78,6 +78,18 @@
         "specdev/grill-with-docs"
       ],
       "claimed_investigations": []
+    },
+    {
+      "change": "2026-08-31-optional-nacos-dynamic-config",
+      "current_work": null,
+      "works_run": [
+        "specdev/grill-with-docs",
+        "specdev/spec",
+        "specdev/tickets",
+        "specdev/goal-plan",
+        "specdev/implement"
+      ],
+      "claimed_investigations": []
     }
   ],
   "archived": [

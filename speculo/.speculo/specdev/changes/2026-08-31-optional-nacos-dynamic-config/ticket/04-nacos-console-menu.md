@@ -4,7 +4,7 @@ artifact: ticket
 change: 2026-08-31-optional-nacos-dynamic-config
 id: T-04
 title: 在系统管理中提供 Nacos 官方控制台入口
-status: ready
+status: done
 planning_depth: deep
 planning_depth_reason: 跨动态菜单持久数据、前端领域权限、manifest 和环境 URL 建立双权限边界，错误可能泄露管理入口或绕过前端授权。
 ready: true
@@ -130,7 +130,7 @@ shared_path_owners: []
 
 ## 10. 验收标准
 
-- [ ] AC-015/016/022/024 的权限、URL、独立登录边界和幂等菜单合同通过。
-- [ ] `system:nacos:console` 是唯一 RuoYi 入口权限，未新增 `/system/nacos` API 或配置编辑器。
-- [ ] 旧 external targets 与构建不回归，DML 与发布镜像一致。
-- [ ] Evidence 与 backend/frontend implementation/direct-parent 结果完整。
+- [x] AC-015/016/022/024 的权限、URL、独立登录边界和幂等菜单合同通过。
+- [x] `system:nacos:console` 是唯一 RuoYi 入口权限，未新增 `/system/nacos` API 或配置编辑器。
+- [x] 旧 external targets 与构建不回归，DML 与发布镜像一致。
+- [x] Evidence 与 backend/frontend implementation/direct-parent 结果完整。

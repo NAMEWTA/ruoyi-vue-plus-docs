@@ -39,7 +39,7 @@ status: ready
 | T-09 | `<Path>{roots.state}/specdev/changes/{change}/ticket/09-admin-profile-operations.md</Path>` | 管理查询、审核上下文和高风险覆盖命令 | T-01,T-04,T-05,T-07 | deep | critical | yes | codex:/root | AC-024-031,039,041-044 | W4 | done |
 | T-10 | `<Path>{roots.state}/specdev/changes/{change}/ticket/10-profile-frontend-contracts.md</Path>` | Profile domain、transport、runtime 与 package 合同 | T-04,T-05,T-06,T-07,T-08,T-09 | deep | high | yes | codex:/root | AC-009,010,024,031,032,034,038-041 | W5 / frontend foundation | done |
 | T-11 | `<Path>{roots.state}/specdev/changes/{change}/ticket/11-material-tag-admin-ui.md</Path>` | 材料分类与标签树管理页 | T-10 | standard | medium | yes | codex:/root | AC-032-035,040 | W6 | done |
-| T-12 | `<Path>{roots.state}/specdev/changes/{change}/ticket/12-person-profile-admin-ui.md</Path>` | 个人档案列表、详情、审核和管理操作 | T-10 | deep | high | yes | unassigned | AC-010-017,024-031,039-041 | W6 | ready |
+| T-12 | `<Path>{roots.state}/specdev/changes/{change}/ticket/12-person-profile-admin-ui.md</Path>` | 个人档案列表、详情、审核和管理操作 | T-10 | deep | high | yes | codex:/root | AC-010-017,024-031,039-041 | W6 | done |
 | T-13 | `<Path>{roots.state}/specdev/changes/{change}/ticket/13-enterprise-profile-admin-ui.md</Path>` | 企业档案列表、详情、审核和负责人操作 | T-10 | deep | high | yes | unassigned | AC-018-031,039-041 | W6 | ready |
 | T-14 | `<Path>{roots.state}/specdev/changes/{change}/ticket/14-admin-composition-and-release-gate.md</Path>` | admin-web 显式组合、assembly 与真实发布 Gate | T-02,T-11,T-12,T-13 | deep | critical | yes | unassigned | AC-001,002,005,007,024,025,031,034,038-044 | W7 / release Gate | ready |
 

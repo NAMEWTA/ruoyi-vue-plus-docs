@@ -187,7 +187,7 @@ W1  T-01 ─┐
 | T-09 | backend `7635e962b` | `{change}/T-09` | person 62 + enterprise 46 tests passed | `a850f288d` | workflow+DB+OSS required/passed | `12192f90a` |
 | T-10 | frontend `a2d79cf7b` | `{change}/T-10` | 13 contract + 100 architecture tests passed | `f6c4d3329` | package/admin integration passed，E2E not-required | `1162bf650` |
 | T-11 | frontend `1162bf650` | `{change}/T-11` | 7 web-domain tests + lint/typecheck passed | `333d9e0c5` | web-domain integration passed，E2E not-required | `f19ad1c48` |
-| T-12 | frontend T-10 result | `{change}/T-12` | component+lint+typecheck | required/pending | web-domain integration，E2E not-required | pending |
+| T-12 | frontend `f19ad1c48` | `{change}/T-12` | 15 component/logic tests + lint/typecheck passed | `f501b33d2` | candidate/admin integration passed，E2E not-required | `ee35471d1` |
 | T-13 | frontend T-10 result | `{change}/T-13` | component+lint+typecheck | required/pending | web-domain integration，E2E not-required | pending |
 | T-14 | frontend G6 result | `{change}/T-14` | registry/admin/E2E source compile | required/pending | 全栈 E2E+build+system/log/SQL Gate | pending |
 
@@ -278,6 +278,10 @@ source 测试只证明局部实现；required E2E 只在 Lead-owned parent-candi
 - T-08 已完成并集成：source `01ba4b479324420b7f0f9dfb635a9c5f45b2ad81`，candidate/result `7635e962bfb12e3718c52741ea05433ca3d98b06`；43 个 enterprise/transfer 测试和 4 个真实 MySQL/Redis/notify/current-user E2E 通过，core bundle 与 JAR 装配核验通过，临时资源残留为零。
 - T-08 集成顺序偏差已在 Evidence 如实记录：父 merge commit 因当前目录错误先创建，候选随后快进到完全相同 SHA/tree 并在候选树完成全部 Gate；未 reset/revert，最终 result tree 无额外差异。
 - T-09 source worktree 已从 backend `7635e962bfb12e3718c52741ea05433ca3d98b06` 创建，状态为 active；实现限定在 person/enterprise admin 独立子树。
+- T-09 已完成并集成：backend source/result `a850f288d` / `12192f90a`；person 62 + enterprise 46 测试及 workflow/MySQL/OSS 管理闭环通过。
+- T-10 已完成并集成：frontend source/result `f6c4d3329` / `1162bf650`；13 项 profile 合同与 100 项架构测试通过。
+- T-11 已完成并集成：frontend source/result `333d9e0c5` / `f19ad1c48`；材料标签树 7 项测试与 admin 类型检查通过。
+- T-12 已完成并集成：frontend source/result `f501b33d2` / `ee35471d1`；个人档案 15 项逻辑/组件合同、profile lint/typecheck、架构与 admin 类型检查通过。
 
 ### Pending Decisions and Blockers
 

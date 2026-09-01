@@ -4,14 +4,14 @@ artifact: ticket
 change: 2026-08-31-account-profile-verification
 id: T-12
 title: 交付个人档案管理列表、详情与审核操作
-status: ready
+status: done
 planning_depth: deep
 planning_depth_reason: 页面同时呈现明文身份、不可变历史、材料与 workflow，并承载覆盖决定和注销等高风险命令。
 ready: true
 risk: high
 blocked_by: [T-10]
 contract_ids: [AC-010, AC-011, AC-012, AC-013, AC-014, AC-015, AC-016, AC-017, AC-024, AC-025, AC-026, AC-027, AC-028, AC-029, AC-030, AC-031, AC-039, AC-040, AC-041]
-owner: unassigned
+owner: codex:/root
 expected_changes:
   - "<Path>plus-ui-namewta/packages/web-domains/profile/src/person/**</Path>"
 writable_paths:
@@ -117,6 +117,6 @@ shared_path_owners: []
 
 ## 10. 验收标准
 
-- [ ] 个人管理状态/权限/明文/材料/高风险命令矩阵通过。
-- [ ] revoked 只读、无导出、无物理删除和失败回刷符合合同。
-- [ ] Evidence 和集成结果完整。
+- [x] 个人管理状态/权限/明文/材料/高风险命令矩阵通过。
+- [x] revoked 只读、无导出、无物理删除和失败回刷符合合同。
+- [x] Evidence 和集成结果完整。

@@ -2,8 +2,8 @@
   "schema_version": 6,
   "artifact": "change-status",
   "change": "2026-09-01-admin-runtime-capability-reconciliation",
-  "change_status": "active",
-  "current_work": "specdev/implement",
+  "change_status": "completed",
+  "current_work": null,
   "works_run": [
     "specdev/diagnose-bugs",
     "specdev/spec",
@@ -39,8 +39,8 @@
     "history": []
   },
   "created_at": "2026-09-01T15:22:59+08:00",
-  "updated_at": "2026-09-01T16:35:00+08:00",
-  "completed_at": null,
+  "updated_at": "2026-09-01T17:49:30+08:00",
+  "completed_at": "2026-09-01T17:49:30+08:00",
   "archived": false,
   "archive_path": null,
   "blockers": [],
@@ -60,6 +60,30 @@
       "detail": "DBX rejected the explicit START TRANSACTION statement before the first persistent DML statement.",
       "impact": "No menu write had started; the DDL preflight and empty-table retirement had already completed.",
       "correction": "The Lead used the same pinned DBX session with autocommit=0, reran the committed DML preflight and statements, restored autocommit=1 to commit once, and repeated the same method for the idempotency replay."
+    },
+    {
+      "ticket_id": "T-02",
+      "kind": "actuator-handler-mapping-ambiguity",
+      "observed_at": "2026-09-01T16:55:00+08:00",
+      "detail": "The first correctly targeted OpenAPI-enabled server1 candidate entered a restart loop because Actuator contributed a second RequestMappingHandlerMapping candidate.",
+      "impact": "The candidate could not start; server1 was restored and server2 was not advanced.",
+      "correction": "OpenAPI auto-configuration now qualifies the business requestMappingHandlerMapping, an eight-case assembly regression covers the dual-candidate runtime, and the corrected candidate passed both instances."
+    },
+    {
+      "ticket_id": "T-02",
+      "kind": "missing-credential-ui-contract",
+      "observed_at": "2026-09-01T17:25:00+08:00",
+      "detail": "Authenticated browser verification showed that R.ok(null) for a missing credential was interpreted as OpenAPI capability unavailable.",
+      "impact": "The route and catalog were available, but the profile UI displayed the wrong failure state.",
+      "correction": "Missing credential queries now return business 404 with a focused red-green controller contract; the final browser shows the expected uncreated-credential empty state."
+    },
+    {
+      "ticket_id": "T-02",
+      "kind": "frontend-context-path-rollout",
+      "observed_at": "2026-09-01T17:15:00+08:00",
+      "detail": "The first frontend archive used root base / and a later immediate load-balancer probe observed a transient 502 during replacement.",
+      "impact": "The root-base build stalled at the loader and the first prefixed attempt automatically restored its rollback directory.",
+      "correction": "The frontend was rebuilt with /namewta/ context and API prefixes, rollout waited for load-balancer connectivity, and the final index hash plus browser navigation passed; rollback assets were retained."
     }
   ],
   "worktrees": [
@@ -116,38 +140,38 @@
       "parent_branch": "main",
       "branch": "main",
       "workspace_ref": "current",
-      "source_checkpoint": "97d67cf3aac1ce0dfdd38a5c8e3b1b235c7f3e8d",
+      "source_checkpoint": "ae3689ec419fb97e0a216e4ab44b85a3517d3bd9",
       "integration": {
-        "status": "pending",
+        "status": "passed",
         "parent_ref": "main",
-        "parent_before_sha": null,
-        "source_sha": null,
+        "parent_before_sha": "5a52ff9e94335522396b623811d509e2fbd604c2",
+        "source_sha": "ae3689ec419fb97e0a216e4ab44b85a3517d3bd9",
         "candidate_sha": null,
         "candidate_tree_sha": null,
         "candidate_branch": null,
         "candidate_workspace_ref": null,
-        "result_sha": null,
-        "method": null,
+        "result_sha": "ae3689ec419fb97e0a216e4ab44b85a3517d3bd9",
+        "method": "direct-parent",
         "conflict_paths": [],
-        "verification": "pending",
+        "verification": "passed",
         "full_suite": {
           "required": true,
-          "status": "pending",
-          "reason": "T-02 owns the release configuration, Spring assembly, frontend, and change-wide release gates",
-          "evidence": null
+          "status": "passed",
+          "reason": "Release 18/18, OpenAPI assembly 8/8, credential contract 4/4, final 330-test Admin reactor, frontend tests/typecheck/build, target Compose parsing and secret-safe audit passed",
+          "evidence": "<Path>{roots.state}/specdev/changes/2026-09-01-admin-runtime-capability-reconciliation/evidence/T-02.md</Path>"
         },
         "e2e": {
           "required": true,
-          "status": "pending",
-          "reason": "Dual-instance rollout and authenticated Admin browser verification are required after T-01",
-          "evidence": null
+          "status": "passed",
+          "reason": "Both Admin instances are healthy with zero restarts and identical OpenAPI configuration; authenticated browser verified credential/catalog semantics and all requested menu outcomes",
+          "evidence": "<Path>{roots.state}/specdev/changes/2026-09-01-admin-runtime-capability-reconciliation/evidence/T-02.md</Path>"
         },
         "evidence": "<Path>{roots.state}/specdev/changes/2026-09-01-admin-runtime-capability-reconciliation/evidence/T-02.md</Path>",
-        "attempts": 0,
-        "promotion_status": "pending"
+        "attempts": 3,
+        "promotion_status": "applied"
       },
-      "status": "active",
-      "updated_at": "2026-09-01T16:35:00+08:00"
+      "status": "integrated",
+      "updated_at": "2026-09-01T17:49:30+08:00"
     }
   ]
 }

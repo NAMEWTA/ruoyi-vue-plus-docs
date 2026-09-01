@@ -2,7 +2,7 @@
 schema_version: 6
 artifact: goal-plan
 change: 2026-09-01-admin-runtime-capability-reconciliation
-status: ready
+status: completed
 modes: [migration, high-assurance, release-coordination]
 orchestration: lead-directed
 lead: codex:/root
@@ -10,7 +10,7 @@ implementation_agent_limit: 3
 integration_attempt_limit: null
 ticket_workspace_policy: current
 integration_gate: direct-parent
-ready_for_execution: true
+ready_for_execution: false
 ---
 
 # Goal Plan: Admin 运行能力与开发环境收敛
@@ -107,11 +107,11 @@ T-02 release config + static/runtime regression
 
 | 合同或参考要求 | 覆盖 Ticket | 验证接缝 | Evidence | 状态 |
 |---|---|---|---|---|
-| AC-005..AC-011、AC-013 | T-01 | static SQL、isolated MySQL、target DB | T-01 | planned |
-| AC-001..AC-004、AC-012 | T-02 | Node/Compose、Spring assembly、real HTTP/log | T-02 | planned |
-| AC-014、AC-016 | T-02 | Vitest/build + Admin browser | T-02 | planned |
-| AC-015 | T-02 | takeover rollout | T-02 | planned |
-| ADR-001..ADR-005 | T-01,T-02 | Ticket constraints + Gates | T-01,T-02 | planned |
+| AC-005..AC-011、AC-013 | T-01 | static SQL、isolated MySQL、target DB | T-01 | passed |
+| AC-001..AC-004、AC-012 | T-02 | Node/Compose、Spring assembly、real HTTP/log | T-02 | passed |
+| AC-014、AC-016 | T-02 | Vitest/build + Admin browser | T-02 | passed |
+| AC-015 | T-02 | takeover rollout | T-02 | passed |
+| ADR-001..ADR-005 | T-01,T-02 | Ticket constraints + Gates | T-01,T-02 | passed |
 
 ## 4. Execution and Integration Protocol
 
@@ -131,8 +131,8 @@ T-02 release config + static/runtime regression
 
 | Ticket | Parent/base | Workspace/branch | Source checks | Implementation commit | Integration checks/E2E | Parent result |
 |---|---|---|---|---|---|---|
-| T-01 | G0 parent/backend refs | `current` / parent+backend `main` | SQL contract、isolated MySQL、admin reactor | backend 非空 commit；aggregate 精确 gitlink commit | Lead 核对历史前缀、无备份批准、DB upgrade/final state | pending |
-| T-02 | T-01 aggregate result | `current` / parent `main` | Node/Compose、Spring、Vitest/typecheck/build | aggregate 非空 commit | Lead 逐实例 rollout/HTTP/log + browser | pending |
+| T-01 | G0 parent/backend refs | `current` / parent+backend `main` | SQL contract、isolated MySQL、admin reactor | backend 非空 commit；aggregate 精确 gitlink commit | Lead 核对历史前缀、无备份批准、DB upgrade/final state | `a21d0fdb7fa8782cfd83afa9237c74a5311cfa45` |
+| T-02 | T-01 aggregate result | `current` / parent `main` | Node/Compose、Spring、Vitest/typecheck/build | aggregate 非空 commit | Lead 逐实例 rollout/HTTP/log + browser | `ae3689ec419fb97e0a216e4ab44b85a3517d3bd9` |
 
 多仓库 T-01 先形成 clean backend commit，再由 aggregate commit 精确记录 backend gitlink；T-02 只修改 parent-owned release 文件。每个 Ticket 的 result 等于通过 direct-parent 与适用 E2E 后的 aggregate implementation commit。失败时不开始下一 Ticket，不把其他范围混入修正 commit；父/子 HEAD 漂移则 checkpoint stale，重读归属和验证。
 
@@ -201,13 +201,14 @@ JUnit 静态解析不代替真实 MySQL；隔离 MySQL 不代替当前混合目�
 - 工作区策略采用推荐默认 `current/direct-parent`；两个 Ticket 严格串行，由 Lead 直接实施。
 - T-01 已完成：G1 由 backend `9f5d382ada11e4bbc01bb7b49ca8ed4c6770f6ef` 与 aggregate `1bae24677e601b6313820a3198fc0e8690ab8248` 关闭；无备份 follow-up 为 backend `c7e926c8ac663b1fc83e1df2abf39ffcebbecef3`、aggregate result `a21d0fdb7fa8782cfd83afa9237c74a5311cfa45`。
 - G2 已关闭：目标库写前 0-row/身份/冲突检查通过，DDL/DML 最终态四项全真，重放前后指纹一致且普通角色授权增量为 0。
-- T-02 source checkpoint `97d67cf3aac1ce0dfdd38a5c8e3b1b235c7f3e8d` 已形成；Node 18/18、Spring 7/7、Admin 41 tests、system web-domain 23 tests、两包 typecheck 与 Admin build 通过。本机无 Docker，G3 仍等待目标 Compose parsing；G4 等待双实例与浏览器。
+- T-02 已完成：release Node `18/18`、Spring assembly `8/8`、凭据合同 `4/4`、最终 Admin reactor `330` 项、前端测试/typecheck/build 和目标 Compose parse 全部通过；aggregate result 为 `ae3689ec419fb97e0a216e4ab44b85a3517d3bd9`。
+- G3/G4 已关闭：两实例最终镜像一致、healthy/0 重启、OpenAPI 配置一致且日志扫描为 0；登录浏览器确认个人 OpenAPI 空态、OpenAPI管理、Nacos配置中心和生成器入口退役全部符合合同。
 - 用户明确决定本次目标开发库“无需备份”，已由 `ADR-005` 接管恢复边界；该决定不降低其他 Gate。
 
 ### Pending Decisions and Blockers
 
-- 无产品或实现决定 blocker。
-- 首次远端连接前按部署工具合同需要用户选择“后台执行”或“可见终端”；该选择不改变方案，仅决定接管动作的展示方式，届时暂停远端动作并询问。
+- 无产品、实现或运行 blocker；change 已完成。
+- 用户选择可见终端后又明确要求直接 SSH 连接，最终接管与滚动均在可见会话中完成。
 - 远程 push、生产/CDE、角色授权、cleanup 持续未授权且不阻止本 change。
 
 ### Resume Protocol

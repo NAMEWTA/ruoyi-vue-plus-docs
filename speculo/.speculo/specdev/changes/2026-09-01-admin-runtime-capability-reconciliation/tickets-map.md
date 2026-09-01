@@ -2,7 +2,7 @@
 schema_version: 3
 artifact: tickets-map
 change: 2026-09-01-admin-runtime-capability-reconciliation
-status: in_progress
+status: completed
 ---
 
 # Tickets Map: Admin 运行能力收敛
@@ -24,7 +24,7 @@ status: in_progress
 | ID | Ticket | 可观察产出 | Blocked By | Depth | Risk | Ready | Owner | Contract IDs | Wave/Gate | Status |
 |---|---|---|---|---|---|---|---|---|---|---|
 | T-01 | `<Path>{roots.state}/specdev/changes/{change}/ticket/01-reconcile-admin-runtime-database.md</Path>` | OpenAPI/Nacos/生成器 schema/menu 收敛 | — | deep | critical | yes | codex:/root | AC-005..011,013 | W1/G1-G2 | done |
-| T-02 | `<Path>{roots.state}/specdev/changes/{change}/ticket/02-enable-openapi-release-and-verify-admin.md</Path>` | 双实例 OpenAPI 显式启用与 Admin 最终体验 | T-01 | deep | critical | yes | codex:/root | AC-001..004,012,014..016 | W2/G3-G4 | in_progress |
+| T-02 | `<Path>{roots.state}/specdev/changes/{change}/ticket/02-enable-openapi-release-and-verify-admin.md</Path>` | 双实例 OpenAPI 显式启用与 Admin 最终体验 | T-01 | deep | critical | yes | codex:/root | AC-001..004,012,014..016 | W2/G3-G4 | done |
 
 Ticket frontmatter 是状态、依赖、深度和路径访问契约的权威；本表是同步投影。
 
@@ -69,7 +69,7 @@ G0 Spec/authorization/baseline
 
 - Goal Plan 采用 current workspace，两个 Ticket 严格串行，当前同时 implementation writer 固定为 1。
 - config 的 implementation subagent 上限为 3，但本次协作约束和用户未要求派单，因此 Lead 自行实施，不创建 subagent。
-- T-01 独占 backend NAMEWTA DDL/DML；T-02 独占 parent release Compose/env/test，并拥有 OpenAPI HandlerMapping 选择及其 assembly 回归测试。两者无 writable 交集。
+- T-01 独占 backend NAMEWTA DDL/DML；T-02 独占 parent release Compose/env/test，并拥有 OpenAPI HandlerMapping 选择、缺失凭据语义及其 Admin 回归测试。两者无 writable 交集。
 - Lead 是 SpecDev 状态、Evidence、direct-parent、E2E 与开发环境接管的唯一 owner。
 
 | Ticket A | Ticket B | Writable 交集 | 真实依赖 | 处理 |

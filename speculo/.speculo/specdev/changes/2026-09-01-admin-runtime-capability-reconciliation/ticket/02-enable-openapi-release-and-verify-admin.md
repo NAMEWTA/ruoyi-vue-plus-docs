@@ -4,7 +4,7 @@ artifact: ticket
 change: 2026-09-01-admin-runtime-capability-reconciliation
 id: T-02
 title: 显式启用 OpenAPI 发布配置并验收 Admin 最终体验
-status: in_progress
+status: done
 planning_depth: deep
 planning_depth_reason: 变更双实例安全配置透传并在现有开发环境滚动启用涉及共享 KEK、启动失败关闭、运行可用性与真实浏览器权限投影。
 ready: true
@@ -62,7 +62,7 @@ shared_path_owners:
 - **目标：** 让受管发布显式、同源地为两个 admin 实例提供 OpenAPI 配置，同时保留未配置安装的 default-off 安全模型，并证明最终 Admin 页面/菜单行为。
 - **可观察产出：** Compose 两实例接收相同的 `OPENAPI_ENABLED`、`OPENAPI_KEK_VERSION`、`OPENAPI_KEK`；公开示例只有关闭默认值和占位符；目标开发环境滚动启用后本人接口目录不再业务 404，侧栏与个人设置符合最新产品决定。
 - **来源：** `US-001`、`US-002`、`US-003`、`US-004`、`US-006`、`AC-001` 至 `AC-004`、`AC-012`、`AC-014` 至 `AC-016`、`ADR-001`、`DIAG-001`。
-- **当前事实：** backend application 已支持环境变量且自动配置/Controller 由 `openapi.enabled=true` 条件装配；release Compose 原先未透传三项变量，目标实例因默认 false 返回业务 404；首次 server1 启用探测进一步发现 Actuator 引入第二个 `RequestMappingHandlerMapping` 时自动配置注入歧义，实例已恢复上一配置且未推进 server2。
+- **当前事实：** release Compose 已同源透传三项变量，Actuator 双 `RequestMappingHandlerMapping` 注入歧义与缺失凭据语义均已回归修复；目标两实例运行最终镜像且 healthy/0 重启，登录浏览器四项体验全部通过。
 - **Planning Depth 原因：** KEK 配置与双实例一致性直接影响凭据可解密性和启动安全，最终验收跨 Compose、Spring、DB、Redis、动态菜单和浏览器。
 
 ## 2. 决策状态
@@ -149,11 +149,11 @@ shared_path_owners:
 
 ## 10. 验收标准
 
-- [ ] `AC-001` 至 `AC-004`、`AC-012`、`AC-014` 至 `AC-016` 全部有 Lead 可复查 Evidence。
-- [ ] Compose 两实例共享三项 OpenAPI 配置，公开默认关闭且无真实 secret。
-- [ ] 目标两个实例逐个启用并通过健康、路由和脱敏日志门禁。
-- [ ] Admin 实际页面和菜单与用户四项问题全部一致。
-- [ ] 验证矩阵全部执行并记录到 `<Path>{roots.state}/specdev/changes/{change}/evidence/T-02.md</Path>`。
-- [ ] 实际项目修改未超出 `writable_paths`，shared path 仅由 T-02 修改。
-- [ ] 非空 implementation commit、direct-parent result 和 E2E result 已记录。
-- [ ] 未发生未批准的远程 push、CDE、生产、权限或 secret 偏差。
+- [x] `AC-001` 至 `AC-004`、`AC-012`、`AC-014` 至 `AC-016` 全部有 Lead 可复查 Evidence。
+- [x] Compose 两实例共享三项 OpenAPI 配置，公开默认关闭且无真实 secret。
+- [x] 目标两个实例逐个启用并通过健康、路由和脱敏日志门禁。
+- [x] Admin 实际页面和菜单与用户四项问题全部一致。
+- [x] 验证矩阵全部执行并记录到 `<Path>{roots.state}/specdev/changes/{change}/evidence/T-02.md</Path>`。
+- [x] 实际项目修改未超出 `writable_paths`，shared path 仅由 T-02 修改。
+- [x] 非空 implementation commit、direct-parent result 和 E2E result 已记录。
+- [x] 未发生未批准的远程 push、CDE、生产、权限或 secret 偏差。

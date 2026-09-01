@@ -21,3 +21,8 @@
 - T-01 Evidence 完成并标记 `done/integrated`；T-02 依赖 Gate 关闭并进入 `in_progress`。
 - T-02 先以 Node 合同测试确认共享锚点缺少 OpenAPI 变量的红灯，再在三个 writable release path 中补齐 default-off 双实例同源透传和公开占位符；aggregate source checkpoint 为 `97d67cf3aac1ce0dfdd38a5c8e3b1b235c7f3e8d`。
 - T-02 本地门通过 Node `18/18`、Spring assembly `7/7`、Admin `41` tests、system web-domain `23` tests、两包 typecheck 和 Admin production build；本机无 Docker CLI，Compose parsing 明确留给目标只读 Gate，未虚报 G3 完成。
+- T-02 首轮真实启用暴露 Actuator 第二个 `RequestMappingHandlerMapping` 注入歧义；server1 恢复且未推进 server2。backend `b694dd4b84dd442f7f2e3247c57a184aa2698e50` 与 aggregate `22941077a547bdf3afc86c93fedf704e55cd2b42` 以 qualifier 和 `8/8` assembly 回归完成纠偏。
+- 第二轮登录浏览器发现缺失凭据的 `R.ok(null)` 被误判为能力不可用；backend `1300301098d0b27805f4224ef83e5b49262e4ef5` 以业务 404 和 `4/4` Controller contract 修复，最终 Admin reactor 为 `330` 项、0 失败、23 项环境型跳过。
+- aggregate final result `ae3689ec419fb97e0a216e4ab44b85a3517d3bd9` 构建镜像并按 server1 -> server2 滚动；两实例同镜像、healthy/0 重启、配置一致、未认证路由业务 401、关键日志扫描 0，目标四文件 Compose parse 通过。
+- 正确 `/namewta/` 前端构建经连接等待窗口发布，最终 index 哈希与资源前缀通过；错误 root-base 构建、瞬时 502 rollback、旧镜像和失败候选均保留为恢复资产，未执行未授权 cleanup。
+- 全新登录浏览器确认本人凭据业务 404 与目录业务 200 被正确组合为“尚未创建凭据”空态；OpenAPI管理位于系统管理、Nacos配置中心位于系统监控，系统工具/代码生成均不存在。T-02、G3/G4 与 change 全部完成。

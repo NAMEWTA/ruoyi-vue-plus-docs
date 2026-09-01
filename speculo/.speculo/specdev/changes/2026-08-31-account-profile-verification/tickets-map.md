@@ -35,7 +35,7 @@ status: ready
 | T-05 | `<Path>{roots.state}/specdev/changes/{change}/ticket/05-person-application-workflow.md</Path>` | 个人申请、快照与 workflow 发布闭环 | T-03,T-04 | deep | critical | yes | codex:/root | AC-001,003-008,014,015,038 | W3 | done |
 | T-06 | `<Path>{roots.state}/specdev/changes/{change}/ticket/06-person-rebind-unbind-notify.md</Path>` | 个人隐私探测、换绑、解绑和安全通知 | T-05 | deep | critical | yes | codex:/root | AC-009-014,016,017 | W4 | done |
 | T-07 | `<Path>{roots.state}/specdev/changes/{change}/ticket/07-enterprise-application-workflow.md</Path>` | 企业申请、快照和唯一负责人发布 | T-03,T-04 | deep | critical | yes | codex:/root | AC-002-008,018,023,038 | W3 | done |
-| T-08 | `<Path>{roots.state}/specdev/changes/{change}/ticket/08-enterprise-transfer-challenge.md</Path>` | 企业解绑与短信挑战负责人转移 | T-05,T-07 | deep | critical | yes | unassigned | AC-019-023 | W4 | ready |
+| T-08 | `<Path>{roots.state}/specdev/changes/{change}/ticket/08-enterprise-transfer-challenge.md</Path>` | 企业解绑与短信挑战负责人转移 | T-05,T-07 | deep | critical | yes | codex:/root | AC-019-023 | W4 | in_progress |
 | T-09 | `<Path>{roots.state}/specdev/changes/{change}/ticket/09-admin-profile-operations.md</Path>` | 管理查询、审核上下文和高风险覆盖命令 | T-01,T-04,T-05,T-07 | deep | critical | yes | unassigned | AC-024-031,039,041-044 | W4 | ready |
 | T-10 | `<Path>{roots.state}/specdev/changes/{change}/ticket/10-profile-frontend-contracts.md</Path>` | Profile domain、transport、runtime 与 package 合同 | T-04,T-05,T-06,T-07,T-08,T-09 | deep | high | yes | unassigned | AC-009,010,024,031,032,034,038-041 | W5 / frontend foundation | ready |
 | T-11 | `<Path>{roots.state}/specdev/changes/{change}/ticket/11-material-tag-admin-ui.md</Path>` | 材料分类与标签树管理页 | T-10 | standard | medium | yes | unassigned | AC-032-035,040 | W6 | ready |

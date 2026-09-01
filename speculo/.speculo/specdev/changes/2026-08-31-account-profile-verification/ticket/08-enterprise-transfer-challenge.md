@@ -4,14 +4,14 @@ artifact: ticket
 change: 2026-08-31-account-profile-verification
 id: T-08
 title: 交付企业本人解绑与短信挑战负责人转移
-status: ready
+status: in_progress
 planning_depth: deep
 planning_depth_reason: 短信 credential、实名匹配、Redis 一次性状态和负责人原子切换属于认证安全边界。
 ready: true
 risk: critical
 blocked_by: [T-05, T-07]
 contract_ids: [AC-019, AC-020, AC-021, AC-022, AC-023]
-owner: unassigned
+owner: codex:/root
 expected_changes: ["<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/ruoyi-profile-enterprise/src/main/java/org/dromara/profile/enterprise/transfer/**</Path>"]
 writable_paths:
   - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/ruoyi-profile-enterprise/src/main/java/org/dromara/profile/enterprise/transfer/**</Path>"

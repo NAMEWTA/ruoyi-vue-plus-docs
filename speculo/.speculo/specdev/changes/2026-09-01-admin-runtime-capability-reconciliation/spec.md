@@ -52,12 +52,12 @@ OpenAPI、Nacos 和已退役代码生成器的源码、发布配置、数据库 
 
 ### 解决方案摘要
 
-保留 OpenAPI default-off 安全模型，为受管发布补齐显式配置透传；用新的 NAMEWTA append-only DDL/DML 尾部块将 fresh 与已有混合数据库收敛到相同菜单/schema 最终态；在开发环境完成备份后执行新块、逐实例滚动启用 OpenAPI，并以真实 HTTP、数据库查询和 Admin 菜单验收关闭问题。
+保留 OpenAPI default-off 安全模型，为受管发布补齐显式配置透传；用新的 NAMEWTA append-only DDL/DML 尾部块将 fresh 与已有混合数据库收敛到相同菜单/schema 最终态；按用户明确的无备份决定在开发环境执行新块、逐实例滚动启用 OpenAPI，并以真实 HTTP、数据库查询和 Admin 菜单验收关闭问题。
 
 ### 主要流程
 
 1. 发布维护者为目标环境生成或取得合法 32-byte Base64 KEK 和非敏感版本标识，将三项 OpenAPI 配置写入权限受限且被忽略的部署配置。
-2. 升级前保存当前发布定位、数据库 schema/menu 备份和回滚步骤，确认生成器表为 0 行。
+2. 升级前保存当前发布定位，记录用户明确的无备份决定，并确认生成器表为 0 行且对象身份匹配。
 3. 执行本 change 新增的 DDL/DML 块：移除生成器数据库面、补齐 OpenAPI 菜单、移动并重命名 Nacos 菜单。
 4. 逐个滚动两个后端实例；每个实例启动和 OpenAPI 路由验证通过后才继续下一个。
 5. 刷新登录/菜单状态，验证个人 OpenAPI、系统管理菜单、系统监控菜单以及生成器入口消失。
@@ -105,14 +105,14 @@ Nacos menu: 系统管理/配置中心 -> 系统监控/Nacos配置中心
 | AC-005 | fresh 或缺菜单的已有库 | 执行新 DML | 固定六条 OpenAPI 菜单存在；主菜单为“OpenAPI管理”且位于系统管理 | SQL contract + MySQL |
 | AC-006 | 固定 Nacos 菜单为历史或缺失状态 | 执行新 DML | 唯一菜单为“Nacos配置中心”，父菜单是系统监控，component/permission 不变 | SQL contract + MySQL |
 | AC-007 | 生成器菜单完整历史状态或已删除 | 执行新 DML | 九个固定菜单和全部对应角色关系为 0 | MySQL upgrade/replay |
-| AC-008 | `gen_table*` 存在且升级前已备份 | 执行新 DDL | 两张生成器表不存在 | MySQL upgrade/replay |
+| AC-008 | `gen_table*` 存在、用户批准无备份且两表为 0 行 | 执行新 DDL | 两张生成器表不存在 | MySQL upgrade/replay |
 | AC-009 | 当前数据库混合状态 | 执行本 change 两个新块 | OpenAPI、Nacos、生成器四项最终态全为真 | 诊断 SQL |
 | AC-010 | 已达到目标最终态 | 重复执行两个新块 | 成功且计数、菜单和非目标数据不变 | MySQL replay |
 | AC-011 | 现有数据与固定 ID/component/permission 冲突 | 执行 DML | 在任何目标删除或覆盖前失败 | 冲突哨兵测试 |
 | AC-012 | 发布 Compose 与 env 示例 | 解析静态配置 | 三个 OpenAPI 变量被两个实例统一透传，默认仍为 false且无真实 secret | Node release config test |
 | AC-013 | 普通角色没有显式授权 | 执行迁移 | 不新增 OpenAPI/Nacos `sys_role_menu` 行 | SQL contract + DB query |
 | AC-014 | 当前前端构建和目标菜单数据 | 恢复动态导航 | OpenAPI/Nacos component 都可解析；旧 `tool/gen` 继续失败关闭且不显示 | Vitest + Admin browser smoke |
-| AC-015 | 已备份并登记当前发布 | 滚动启用两个实例 | 每个实例依次通过启动、路由和日志脱敏检查；失败不推进下一实例 | takeover deployment evidence |
+| AC-015 | 已登记当前发布且数据库最终态通过 | 滚动启用两个实例 | 每个实例依次通过启动、路由和日志脱敏检查；失败不推进下一实例 | takeover deployment evidence |
 | AC-016 | 登录超级管理员与目标最终态 | 打开个人设置和侧栏 | 个人 OpenAPI 可用，系统管理出现 OpenAPI管理，系统监控出现 Nacos配置中心，无系统工具 | Playwright/人工浏览器验收 |
 
 ## 5. 范围
@@ -121,7 +121,7 @@ Nacos menu: 系统管理/配置中心 -> 系统监控/Nacos配置中心
 
 - NAMEWTA append-only DDL/DML 收敛块及其 Java/MySQL 合同测试。
 - 发布 Compose、公开 env 示例和 release 静态测试中的 OpenAPI 配置透传。
-- 目标开发环境的数据库备份、迁移、双实例显式启用和真实验收。
+- 目标开发环境按用户无备份决定执行数据库迁移、双实例显式启用和真实验收。
 - 必要的发布/升级说明和 SpecDev Evidence。
 
 ### REUSE
@@ -144,9 +144,9 @@ Nacos menu: 系统管理/配置中心 -> 系统监控/Nacos配置中心
 - **DEC-001**：OpenAPI 代码与样例默认关闭，目标环境显式启用。来源：`ADR-001`。
 - **DEC-002**：只通过新的 append-only 尾部块收敛 fresh/upgrade，不修改历史 SQL。来源：`ADR-002`。
 - **DEC-003**：菜单显示固定为“OpenAPI管理”和“系统监控 > Nacos配置中心”，稳定 component/permission 不变。来源：`ADR-003`。
-- **DEC-004**：生成器数据库面在备份后物理删除，不保留兼容层。来源：`ADR-004`。
+- **DEC-004**：生成器数据库面在 0 行与身份校验通过后物理删除，不保留兼容层。来源：`ADR-004`、`ADR-005`。
 - **DEC-005**：两个后端实例使用同一 KEK/version；KEK 只能进入被忽略且 `0600` 的部署 secret 配置，不写入 SpecDev/Evidence/终端输出。
-- **DEC-006**：数据库外部写入前必须有可读备份、当前发布定位和精确恢复步骤；不使用 `docker compose down -v`。
+- **DEC-006**：用户明确豁免本次目标开发库备份；外部写入前仍必须确认目标、0 行、对象身份与菜单冲突，失败只前向修复；不使用 `docker compose down -v`。来源：`ADR-005`。
 
 ## 7. 数据、接口与兼容
 
@@ -154,7 +154,7 @@ Nacos menu: 系统管理/配置中心 -> 系统监控/Nacos配置中心
 - **数据模型与持久化：** 删除已退役且当前为空的 `gen_table_column`、`gen_table`；收敛固定 `sys_menu`/`sys_role_menu` 行；不改变 OpenAPI 凭据表结构。
 - **兼容要求：** 未显式配置的安装保持 default-off；前端 component key 与 permission 不变；Nacos URL/独立登录不变。
 - **迁移要求：** fresh 固定执行完整 DDL 后 DML；已有环境只执行本 change 新块。新块可重放，并在冲突状态下先失败。
-- **发布或运维影响：** 目标开发环境需要私密 KEK、数据库备份、逐实例重建和菜单/会话刷新；上一活动发布与回滚命令必须在执行前登记。
+- **发布或运维影响：** 目标开发环境需要私密 KEK、无备份风险确认、逐实例重建和菜单/会话刷新；上一活动发布与实例回滚命令必须在执行前登记。
 
 ## 8. 非功能要求
 
@@ -180,7 +180,7 @@ Nacos menu: 系统管理/配置中心 -> 系统监控/Nacos配置中心
 
 ### 风险
 
-- 生成器表删除不可通过应用回滚恢复；必须先验证备份可读。
+- 生成器表删除不可通过应用回滚恢复，且本次没有迁移前备份；失败只允许停止 rollout 并前向修复。
 - 当前发布报告没有登记上一版本和精确回滚命令；这是部署前硬门。
 - 两实例若使用不同 KEK，会造成凭据加解密不一致；配置必须同源并逐实例验证。
 - 菜单缓存和已有登录会话可能暂时保留旧投影；迁移后需要按现有机制刷新或重新登录。

@@ -39,12 +39,21 @@
     "history": []
   },
   "created_at": "2026-09-01T15:22:59+08:00",
-  "updated_at": "2026-09-01T16:08:00+08:00",
+  "updated_at": "2026-09-01T16:15:00+08:00",
   "completed_at": null,
   "archived": false,
   "archive_path": null,
   "blockers": [],
-  "deviations": [],
+  "deviations": [
+    {
+      "ticket_id": "T-01",
+      "kind": "development-database-no-backup",
+      "observed_at": "2026-09-01T16:14:48+08:00",
+      "detail": "After G1, the user explicitly instructed that no migration backup is required for the target development database.",
+      "impact": "The retired generator tables and pre-migration menu state have no change-owned data-level rollback copy.",
+      "correction": "ADR-005 records the accepted forward-only recovery boundary; zero-row, object identity, menu conflict, no-force, target final-state, and rollout gates remain mandatory."
+    }
+  ],
   "worktrees": [
     {
       "ticket_id": "T-01",
@@ -56,7 +65,7 @@
       "parent_branch": "main",
       "branch": "main",
       "workspace_ref": "current",
-      "source_checkpoint": null,
+      "source_checkpoint": "1bae24677e601b6313820a3198fc0e8690ab8248",
       "integration": {
         "status": "pending",
         "parent_ref": "main",
@@ -73,13 +82,13 @@
         "full_suite": {
           "required": true,
           "status": "pending",
-          "reason": "T-01 requires SQL contracts, the admin reactor, isolated MySQL, and the backed-up development database gate",
+          "reason": "T-01 requires SQL contracts, the admin reactor, isolated MySQL, and the explicitly no-backup development database gate",
           "evidence": null
         },
         "e2e": {
           "required": true,
           "status": "pending",
-          "reason": "The development MySQL backup, migration, replay, and final-state diagnostics remain pending",
+          "reason": "The development MySQL zero-row/identity checks, migration, replay, and final-state diagnostics remain pending under ADR-005",
           "evidence": null
         },
         "evidence": "<Path>{roots.state}/specdev/changes/2026-09-01-admin-runtime-capability-reconciliation/evidence/T-01.md</Path>",
@@ -87,7 +96,7 @@
         "promotion_status": "pending"
       },
       "status": "active",
-      "updated_at": "2026-09-01T16:08:00+08:00"
+      "updated_at": "2026-09-01T16:15:00+08:00"
     },
     {
       "ticket_id": "T-02",

@@ -29,7 +29,7 @@ ready_for_execution: true
 
 ### Success and False Completion
 
-成功要求 AC-001..AC-016 全部有 Lead 可复查 Evidence；T-01/T-02 均有非空 implementation commit 和 direct-parent result；SQL fresh/upgrade/replay/conflict、release/Spring/frontend gates、开发库备份后迁移、双实例滚动和登录浏览器验收全部通过。
+成功要求 AC-001..AC-016 全部有 Lead 可复查 Evidence；T-01/T-02 均有非空 implementation commit 和 direct-parent result；SQL fresh/upgrade/replay/conflict、release/Spring/frontend gates、用户明确无备份的开发库迁移、双实例滚动和登录浏览器验收全部通过。
 
 以下均是伪完成：只改源码不修目标数据库；只改菜单不启用 Controller；把 OpenAPI 默认改为 true；只验证一个实例；只看截图不验证 HTTP/DB；删除菜单但保留生成器表；将真实 KEK 写入 Git/Evidence；用静态测试替代真实目标环境。
 
@@ -41,7 +41,7 @@ ready_for_execution: true
 
 | 优先级 | 来源 | 负责内容 | 冲突处理 |
 |---|---|---|---|
-| 1 | `USER-DECISION:2026-09-01-menu-corrections` 与 `USER-DECISION:2026-09-01-execute-confirmed-plan` | 最终菜单语义、实现/开发环境执行授权 | 更新真正拥有该决定的工件；不从开发授权推断生产权限 |
+| 1 | `USER-DECISION:2026-09-01-menu-corrections`、`USER-DECISION:2026-09-01-execute-confirmed-plan` 与 `USER-DECISION:2026-09-01-no-backup` | 最终菜单语义、实现/开发环境执行授权、本次目标库无备份决定 | 更新真正拥有该决定的工件；不从开发授权推断生产权限 |
 | 2 | `<Path>{roots.state}/specdev/changes/{change}/ADR.md</Path>` 与 `<Path>{roots.state}/specdev/changes/{change}/CONTEXT.md</Path>` | default-off、append-only、物理收缩与领域语义 | 返回上游 ADR/CONTEXT 处理，不由 Ticket 改写 |
 | 3 | `<Path>{roots.state}/specdev/changes/{change}/spec.md</Path>` | 外部行为、范围、AC 与安全约束 | 下游不得降级或扩展 |
 | 4 | `<Path>{roots.state}/specdev/changes/{change}/ticket/</Path>` | 单 Ticket 实现、路径、验证和恢复合同 | Goal Plan 只编排跨 Ticket 顺序 |
@@ -58,7 +58,7 @@ G0 ready spec + authorization + clean product baseline
   v
 T-01 append-only SQL + migration tests
   -> G1 isolated fresh/upgrade/replay/conflict + direct-parent result
-  -> G2 readable backup + development DB final state
+  -> G2 explicit no-backup approval + development DB final state
        |
        v
 T-02 release config + static/runtime regression
@@ -79,7 +79,7 @@ T-02 release config + static/runtime regression
 
 | ID | 可观察产出 | Dependencies | Workspace | Implementation owner | E2E disposition | Evidence |
 |---|---|---|---|---|---|---|
-| T-01 | OpenAPI/Nacos/生成器数据库最终态 | — | `current` / parent+backend `main` | Lead `codex:/root` | required：隔离 MySQL 与备份后的开发库升级 | `<Path>{roots.state}/specdev/changes/{change}/evidence/T-01.md</Path>` |
+| T-01 | OpenAPI/Nacos/生成器数据库最终态 | — | `current` / parent+backend `main` | Lead `codex:/root` | required：隔离 MySQL 与用户明确无备份的开发库升级 | `<Path>{roots.state}/specdev/changes/{change}/evidence/T-01.md</Path>` |
 | T-02 | 双实例显式 OpenAPI 与 Admin 最终体验 | T-01 | `current` / parent `main` | Lead `codex:/root` | required：目标双实例 HTTP/log 与登录浏览器 | `<Path>{roots.state}/specdev/changes/{change}/evidence/T-02.md</Path>` |
 
 ## 3. Gates and Completion Evidence
@@ -88,7 +88,7 @@ T-02 release config + static/runtime regression
 
 - AC-001..AC-016 全部 passed，无未批准 deferred。
 - T-01 backend child/aggregate 与 T-02 aggregate 都有非空 commit，Lead 核对 diff、路径、dirty、ancestry 和 result SHA。
-- 历史 SQL 前缀不变；新块 fresh/upgrade/replay 收敛、冲突写前失败；目标库备份可读且最终诊断全真。
+- 历史 SQL 前缀不变；新块 fresh/upgrade/replay 收敛、冲突写前失败；用户无备份批准已记录且目标库最终诊断全真。
 - release/Spring/frontend 回归通过；公开配置 default-off 且无 secret；目标两实例同 KEK/version 并逐个通过健康、路由和日志门。
 - 登录 Admin 可观察到个人 OpenAPI、系统管理 OpenAPI管理、系统监控 Nacos配置中心，无系统工具/代码生成。
 - change/Ticket/Map/Plan/Evidence 与实际 Git/运行状态一致，无未归属项目修改或未验证 secret 暴露。
@@ -99,7 +99,7 @@ T-02 release config + static/runtime regression
 |---|---|---|---|---|---|
 | G0 执行与基线 | Spec/Tickets/Plan ready | 用户执行决定；current/direct-parent 授权；parent `82cd80bf990a6182e4fd16a6884f402511098998`、backend `7864237127a1ab7644ec03706f930c6856987f0e`、frontend `a2d79cf7bc3e95f69b4aa2fc814e4ba0156687e2`；product trees clean | 全部 | Lead / 用户 | 不开始项目写入；重新归属漂移 |
 | G1 SQL candidate | G0 | T-01 static + isolated MySQL matrix、historical prefix、backend/aggregate result SHA | 开发库写入、T-02 | Lead；Deep 已由用户批准 | 修正 T-01，不执行目标迁移 |
-| G2 开发库最终态 | G1 | 当前发布定位；可读 backup + hash/size；恢复命令；0-row 复核；新块成功；final diagnostic 与 role query | T-02 | Lead / 用户授权已条件化生效 | 停止 rollout；按 backup 恢复或前向修复 |
+| G2 开发库最终态 | G1 | 当前目标定位；用户无备份批准；0-row/对象身份复核；新块成功；final diagnostic 与 role query | T-02 | Lead / 用户明确批准无备份执行 | 停止 rollout；保持 OpenAPI disabled，修正后前向重放 |
 | G3 发布候选 | G2 | T-02 Node/Compose、Spring assembly、Vitest/typecheck/build、secret scan 与 aggregate result SHA | 远端配置/滚动 | Lead | 修正 T-02；目标实例不变 |
 | G4 运行最终态 | G3 | server1/server2 逐个 health/HTTP/log；配置一致；登录浏览器四项断言；DB final query | change 完成 | Lead；目标开发环境已授权 | 在失败实例关闭 OpenAPI/恢复上一配置；不推进下一实例 |
 
@@ -111,7 +111,7 @@ T-02 release config + static/runtime regression
 | AC-001..AC-004、AC-012 | T-02 | Node/Compose、Spring assembly、real HTTP/log | T-02 | planned |
 | AC-014、AC-016 | T-02 | Vitest/build + Admin browser | T-02 | planned |
 | AC-015 | T-02 | takeover rollout | T-02 | planned |
-| ADR-001..ADR-004 | T-01,T-02 | Ticket constraints + Gates | T-01,T-02 | planned |
+| ADR-001..ADR-005 | T-01,T-02 | Ticket constraints + Gates | T-01,T-02 | planned |
 
 ## 4. Execution and Integration Protocol
 
@@ -131,7 +131,7 @@ T-02 release config + static/runtime regression
 
 | Ticket | Parent/base | Workspace/branch | Source checks | Implementation commit | Integration checks/E2E | Parent result |
 |---|---|---|---|---|---|---|
-| T-01 | G0 parent/backend refs | `current` / parent+backend `main` | SQL contract、isolated MySQL、admin reactor | backend 非空 commit；aggregate 精确 gitlink commit | Lead 核对历史前缀、DB backup/upgrade/final state | pending |
+| T-01 | G0 parent/backend refs | `current` / parent+backend `main` | SQL contract、isolated MySQL、admin reactor | backend 非空 commit；aggregate 精确 gitlink commit | Lead 核对历史前缀、无备份批准、DB upgrade/final state | pending |
 | T-02 | T-01 aggregate result | `current` / parent `main` | Node/Compose、Spring、Vitest/typecheck/build | aggregate 非空 commit | Lead 逐实例 rollout/HTTP/log + browser | pending |
 
 多仓库 T-01 先形成 clean backend commit，再由 aggregate commit 精确记录 backend gitlink；T-02 只修改 parent-owned release 文件。每个 Ticket 的 result 等于通过 direct-parent 与适用 E2E 后的 aggregate implementation commit。失败时不开始下一 Ticket，不把其他范围混入修正 commit；父/子 HEAD 漂移则 checkpoint stale，重读归属和验证。
@@ -145,7 +145,7 @@ T-02 release config + static/runtime regression
 | Implementation commit | authorized | 每 Ticket/每被修改仓库必需；已记录于 `.status.json` |
 | Local direct-parent verification and parent update | authorized | current 模式必需；已记录于 `.status.json` |
 | Local candidate integration | not-authorized | 本计划不使用 candidate-merge |
-| Development DB backup/migration | authorized-with-conditions | 仅目标 NAMEWTA 开发库；G1、可读备份、0-row 与恢复命令全部通过 |
+| Development DB migration without backup | authorized-with-conditions | 仅目标 NAMEWTA 开发库；用户明确批准无备份，仍要求 G1、0-row、对象身份与 SQL preflight 全部通过 |
 | Development private config/rollout | authorized-with-conditions | 仅目标两个 admin 实例；G2/G3 关闭，逐实例验证，不操作 CDE |
 | Push / PR / remote merge | not-authorized | 不从本地实现或部署授权继承 |
 | Production/CDE/destructive volume actions | not-authorized | 不使用 `down -v`，不碰 CDE/生产/广泛目录 |
@@ -153,7 +153,7 @@ T-02 release config + static/runtime regression
 
 ### Evidence Return
 
-Lead 记录每个仓库的 parent-before/implementation/result SHA、实际路径、clean/dirty、命令结果、E2E 环境和未运行项。数据库 backup 只记录权限安全的 locator、size/hash/readability 和恢复步骤；HTTP/log/browser 输出先脱敏，任何 KEK、Token、AppSecret、数据库/Redis 凭据都不写入 Evidence。
+Lead 记录每个仓库的 parent-before/implementation/result SHA、实际路径、clean/dirty、命令结果、E2E 环境和未运行项。数据库 Evidence 记录用户无备份批准、目标定位、写前计数/身份与最终态，不记录凭据或数据正文；HTTP/log/browser 输出先脱敏，任何 KEK、Token、AppSecret、数据库/Redis 凭据都不写入 Evidence。
 
 ## 5. Constraints, Risk and Recovery
 
@@ -162,7 +162,7 @@ Lead 记录每个仓库的 parent-before/implementation/result SHA、实际路�
 - 只追加 NAMEWTA SQL 新块，历史前缀和冻结上游 SQL不变。
 - OpenAPI default-off；目标环境显式 enable；错误配置 fail closed。
 - 固定菜单 ID 与 component/path/permissions 不变；不自动授予普通角色。
-- 生成器只删除精确冻结目标；表非空、备份不可读或冲突状态立即停止。
+- 生成器只删除精确冻结目标；表非空、对象身份不符或冲突状态立即停止；本次不创建迁移前备份。
 - 两实例 KEK/version 同源；真实 secret 只在忽略且 `0600` 的远端私密配置。
 - 数据库先于 rollout；server1 通过后才推进 server2；同机 CDE、生产和远端 Git 始终排除。
 
@@ -173,7 +173,7 @@ JUnit 静态解析不代替真实 MySQL；隔离 MySQL 不代替当前混合目�
 ### Migration or Release Sequence
 
 1. T-01 red tests -> append-only DDL/DML -> static/isolated MySQL -> backend/aggregate commits。
-2. 只读接管目标环境，登记发布/image/compose 与恢复命令，创建并验证数据库备份，复核生成器表 0 行。
+2. 只读确认目标环境与用户无备份批准，复核生成器表 0 行、主键身份和菜单冲突前置。
 3. 仅执行新 DDL/DML，验证菜单/schema/role 最终态并按现有机制刷新菜单缓存。
 4. T-02 red Node test -> Compose/env change -> release/Spring/frontend checks -> aggregate commit。
 5. 定位私密 `.env`，安全生成/注入同一 KEK/version，确认权限和 Compose rendering 不泄密。
@@ -182,7 +182,7 @@ JUnit 静态解析不代替真实 MySQL；隔离 MySQL 不代替当前混合目�
 
 ### Risks, Monitoring and Recovery
 
-- **不可逆表删除：** 以 backup readability/0-row/preflight 为硬门；失败从 backup 恢复或前向修复，不制造空兼容表。
+- **不可逆表删除：** 用户已批准无备份；以 0-row/对象身份/preflight 为硬门，失败只停止 rollout 并前向修复，不制造空兼容表。
 - **权限投影错误：** 监控固定菜单字段、重复 component/perms 和 role-menu 增量；冲突写前停止。
 - **KEK 不一致/泄露：** Compose rendering 只检查 key 存在和变量引用；运行检查脱敏。泄露即停止、轮换 KEK 并审计凭据，不继续 rollout。
 - **双实例分歧：** 逐实例健康、路由和日志；首实例失败恢复 disabled/上一配置，第二实例不动。
@@ -199,7 +199,8 @@ JUnit 静态解析不代替真实 MySQL；隔离 MySQL 不代替当前混合目�
 
 - G0 已关闭：Spec、Tickets、Goal Plan ready；用户已授权执行、implementation commits 和 local direct-parent；product 子仓 clean。
 - 工作区策略采用推荐默认 `current/direct-parent`；两个 Ticket 严格串行，由 Lead 直接实施。
-- T-01 已进入 `in_progress`，当前执行测试先行的 SQL contract；G1/G2/G3/G4 均未关闭。
+- T-01 已进入 `in_progress`；G1 已由 backend `9f5d382ada11e4bbc01bb7b49ca8ed4c6770f6ef` 与 aggregate `1bae24677e601b6313820a3198fc0e8690ab8248` 关闭，G2 等待目标库硬检查与迁移；G3/G4 未关闭。
+- 用户明确决定本次目标开发库“无需备份”，已由 `ADR-005` 接管恢复边界；该决定不降低其他 Gate。
 
 ### Pending Decisions and Blockers
 
@@ -209,7 +210,7 @@ JUnit 静态解析不代替真实 MySQL；隔离 MySQL 不代替当前混合目�
 
 ### Resume Protocol
 
-恢复时依次读取 Goal Plan、当前 Ticket、最新 Evidence、parent/backend/frontend HEAD/dirty 和目标环境最近 Gate。只从最后 passed aggregate result 或当前 Ticket implementation checkpoint 继续；若目标环境/backup/instance 状态漂移，先重新打开对应 Gate，不重放破坏性步骤。
+恢复时依次读取 Goal Plan、当前 Ticket、最新 Evidence、parent/backend/frontend HEAD/dirty 和目标环境最近 Gate。只从最后 passed aggregate result 或当前 Ticket implementation checkpoint 继续；若目标环境/instance 状态漂移，先重新打开对应 Gate，不盲目重放破坏性步骤。
 
 ## Assumptions
 

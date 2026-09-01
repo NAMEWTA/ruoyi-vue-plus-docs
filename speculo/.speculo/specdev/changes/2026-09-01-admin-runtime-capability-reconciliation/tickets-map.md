@@ -15,7 +15,7 @@ status: in_progress
 
 ## 1. 目标与拆分策略
 
-两个 Ready/Deep Ticket 共同修复 `US-001..US-006`：T-01 先交付可重复、冲突安全且可恢复的数据库最终态，T-02 再通过受管发布显式启用既有 OpenAPI 能力并验收真实 Admin 体验。拆分边界按可观察发布阶段而不是前后端水平层划分；数据库备份/迁移是双实例启用的真实前置，因此 `T-01 -> T-02`。
+两个 Ready/Deep Ticket 共同修复 `US-001..US-006`：T-01 先交付可重复、冲突安全且具备明确前向恢复边界的数据库最终态，T-02 再通过受管发布显式启用既有 OpenAPI 能力并验收真实 Admin 体验。拆分边界按可观察发布阶段而不是前后端水平层划分；用户明确无备份的数据库迁移与最终态仍是双实例启用的真实前置，因此 `T-01 -> T-02`。
 
 不需要 prefactor 或 expand-contract：既有 OpenAPI/Nacos 前后端能力和生成器退役源码都已存在。SQL 采用新的 append-only contract 块完成历史状态到最终态的收缩。
 
@@ -34,13 +34,13 @@ Ticket frontmatter 是状态、依赖、深度和路径访问契约的权威；�
 G0 Spec/authorization/baseline
   -> T-01 database reconciliation
        -> G1 isolated SQL contract
-       -> G2 backed-up development DB final state
+       -> G2 explicitly no-backup development DB final state
             -> T-02 release enablement
                  -> G3 static/runtime release readiness
                  -> G4 dual-instance + Admin browser final state
 ```
 
-关键路径是 `T-01 -> T-02`。依赖边表示真实发布开始条件：T-02 的开发环境滚动不得在数据库备份和最终态之前执行。
+关键路径是 `T-01 -> T-02`。依赖边表示真实发布开始条件：T-02 的开发环境滚动不得在用户无备份批准登记、数据库硬检查和最终态之前执行。
 
 ## 4. 合同覆盖矩阵
 
@@ -87,18 +87,18 @@ G0 Spec/authorization/baseline
 
 | Wave | 可执行 Ticket | 进入条件 | 行为/集成 Gate |
 |---|---|---|---|
-| W1 | T-01 | G0 Spec/授权/clean child baseline | G1 SQL 矩阵与 commit；G2 备份后的开发库最终态 |
+| W1 | T-01 | G0 Spec/授权/clean child baseline | G1 SQL 矩阵与 commit；G2 用户明确无备份的开发库最终态 |
 | W2 | T-02 | G2 关闭 | G3 release/Spring/frontend gates；G4 双实例与浏览器最终验收 |
 
 Goal Plan 固定 `ticket_workspace_policy: current`、`integration_gate: direct-parent`、Lead `codex:/root`。implementation commit 与本地 direct-parent 已授权；开发环境数据库/配置/滚动动作仅在 Ticket 批准点满足后授权。远程 push、CDE、生产和 cleanup 未授权。
 
 ## 7. 横切契约与风险
 
-- **数据：** 固定 ID 精确收敛；冲突先失败；生成器物理删除前必须有可读备份并仍为 0 行。
+- **数据：** 固定 ID 精确收敛；冲突先失败；用户已豁免备份，生成器物理删除前仍必须为 0 行且对象身份匹配。
 - **安全：** OpenAPI 默认关闭；真实 KEK 只在权限受限私密配置；普通角色不自动授权；输出全部脱敏。
 - **兼容：** HTTP/path/component/permission 不变；fresh 执行完整 SQL，upgrade 只执行新块；默认部署无需 secret。
 - **发布：** 数据库先于 backend enable；双实例逐个滚动；第一个失败不推进；同机 CDE 始终排除。
-- **恢复：** DML/schema 从备份恢复，OpenAPI rollout 可先关闭开关并恢复上一实例配置，优先前向修复。
+- **恢复：** 数据库无本 change 备份，只允许停止 rollout 并前向修复；OpenAPI rollout 可先关闭开关并恢复上一实例配置。
 
 ## 8. 同步规则
 
@@ -106,4 +106,4 @@ Goal Plan 固定 `ticket_workspace_policy: current`、`integration_gate: direct-
 - Goal Plan 是 Wave、Gate、Lead 和授权边界的编排权威。
 - 每个 Ticket 必须形成非空 implementation commit、direct-parent result 和 Lead Evidence。
 - 依赖、合同、路径或状态变化后重新运行 Speculo validator。
-- 内部工件继续使用完整根变量 Path 标签；secret 与原始备份内容禁止写入工件。
+- 内部工件继续使用完整根变量 Path 标签；secret、连接凭据和数据正文禁止写入工件。

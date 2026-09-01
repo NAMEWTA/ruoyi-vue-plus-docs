@@ -159,7 +159,7 @@ Lead 直接实现、独立核对 Git/测试并写 Evidence；不向其他 Agent 
 
 ### Current Status
 
-G0 已关闭：计划获用户批准，当前进入 T-01；外部副作用未授权。
+G1 已关闭：T-01 result `560f6f9`，Node `10/10`；当前进入 T-02。外部副作用未授权。
 
 ### Pending Decisions and Blockers
 

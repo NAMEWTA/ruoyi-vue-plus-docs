@@ -4,7 +4,7 @@ artifact: ticket
 change: 2026-09-01-harden-namewta-full-stack-deployment-skill
 id: T-01
 title: 版本化完整发布配置合同
-status: ready
+status: done
 planning_depth: standard
 planning_depth_reason: profile 公共 JSON 合同跨校验器与模板，必须保持 v1 读取兼容并为 v2 提供严格失败行为
 ready: true

@@ -272,6 +272,7 @@ source 测试只证明局部实现；required E2E 只在 Lead-owned parent-candi
 - T-07 已完成并集成：source `1ad938d67d634b6ea880c40d85621333c8209fc0`，candidate/result `f41c792bcb3782ece300d256317825fd1a7a8c87`；31 个 enterprise 测试和 3 个真实 MySQL HTTP/ProcessEvent/事务/唯一竞态 E2E 通过，full/core bundle 与 JAR 装配核验通过。
 - T-07 发现 Spec 已锁定的企业邮箱、注册资本、行业、网站未进入 T-02 schema；已按偏差控制把 `50-namewta-ddl.sql` 纳入最小可写范围，为五张企业事实表增加 nullable 列并完成申请到版本全链持久化，DML 和已有约束不变。
 - G3 已关闭；T-06、T-08、T-09 可进入 W4，后端父结果为 `f41c792bcb3782ece300d256317825fd1a7a8c87`。
+- T-06 source worktree 已从 backend `f41c792bcb3782ece300d256317825fd1a7a8c87` 创建，状态为 active；实现保持在 person rebind/notification 独立子树。
 
 ### Pending Decisions and Blockers
 

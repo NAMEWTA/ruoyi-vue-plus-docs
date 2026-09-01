@@ -39,7 +39,7 @@
     "history": []
   },
   "created_at": "2026-08-31T18:06:59+08:00",
-  "updated_at": "2026-09-01T22:22:00+08:00",
+  "updated_at": "2026-09-01T22:25:00+08:00",
   "completed_at": null,
   "archived": false,
   "archive_path": null,
@@ -156,9 +156,9 @@
     },
     {
       "ticket_id": "T-06", "owner": "codex:/root", "implementation_owner": "codex:/root", "integration_owner": "codex:/root", "provider": "git",
-      "base_sha": "ebc2fef99d4ee33121de298d68a75781cbd2109c", "parent_branch": "main", "branch": "speculo/2026-08-31-account-profile-verification/T-06", "workspace_ref": "specdev-worktree/2026-08-31-account-profile-verification/T-06", "source_checkpoint": null,
+      "base_sha": "f41c792bcb3782ece300d256317825fd1a7a8c87", "parent_branch": "main", "branch": "speculo/2026-08-31-account-profile-verification/T-06", "workspace_ref": "specdev-worktree/2026-08-31-account-profile-verification/T-06", "source_checkpoint": null,
       "integration": {"status": "pending", "parent_ref": "refs/heads/main", "parent_before_sha": null, "source_sha": null, "candidate_sha": null, "candidate_tree_sha": null, "candidate_branch": null, "candidate_workspace_ref": null, "result_sha": null, "method": null, "conflict_paths": [], "verification": "pending", "full_suite": {"required": false, "status": "not-required", "reason": "Person rebind ticket runs focused checks; the change-wide suite belongs to T-14", "evidence": null}, "e2e": {"required": true, "status": "pending", "reason": "Workflow, database switching and notification behavior require integration verification", "evidence": null}, "evidence": "<Path>{roots.state}/specdev/changes/2026-08-31-account-profile-verification/evidence/T-06.md</Path>", "attempts": 0, "promotion_status": "pending"},
-      "status": "planned", "updated_at": "2026-09-01T11:30:00+08:00"
+      "status": "active", "updated_at": "2026-09-01T22:25:00+08:00"
     },
     {
       "ticket_id": "T-07", "owner": "codex:/root", "implementation_owner": "codex:/root", "integration_owner": "codex:/root", "provider": "git",

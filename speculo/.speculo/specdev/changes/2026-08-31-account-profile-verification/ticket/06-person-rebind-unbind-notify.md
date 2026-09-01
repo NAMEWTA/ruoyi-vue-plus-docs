@@ -4,14 +4,14 @@ artifact: ticket
 change: 2026-08-31-account-profile-verification
 id: T-06
 title: 交付个人隐私探测、审核后换绑、本人解绑与通知
-status: ready
+status: in_progress
 planning_depth: deep
 planning_depth_reason: 不控制旧手机号的个人换绑涉及账户接管、隐私枚举、版本竞态和事务后通知。
 ready: true
 risk: critical
 blocked_by: [T-05]
 contract_ids: [AC-009, AC-010, AC-011, AC-012, AC-013, AC-014, AC-016, AC-017]
-owner: unassigned
+owner: codex:/root
 expected_changes: ["<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/ruoyi-profile-person/src/main/java/org/dromara/profile/person/rebind/**</Path>"]
 writable_paths:
   - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/ruoyi-profile-person/src/main/java/org/dromara/profile/person/rebind/**</Path>"

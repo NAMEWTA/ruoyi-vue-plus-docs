@@ -14,9 +14,87 @@ function credential(value, managedText = '由托管凭据工具保管，当前�
 
 function serviceRows(state) {
   const rows = Object.entries(state.services ?? {}).map(([name, item]) =>
-    `| ${markdownCell(name)} | ${markdownCell(item.status)} | ${markdownCell(item.version ?? item.image ?? '未记录')} |`
+    `| ${markdownCell(name)} | ${markdownCell(item.status)} | ${markdownCell(item.version ?? item.image ?? '未记录')} | ${markdownCell(item.imageId ?? '不适用')} | ${markdownCell(item.restartCount ?? '未记录')} | ${markdownCell(item.environmentDigest ?? '未记录')} |`
   );
-  return ['| 服务 | 状态 | 版本或镜像 |', '|---|---|---|', ...rows].join('\n');
+  return ['| 服务 | 状态 | 版本或镜像 | Image ID | 重启数 | 环境摘要 |', '|---|---|---|---|---|---|', ...rows].join('\n');
+}
+
+function composeSection(profile, state) {
+  const compose = state.compose ?? {};
+  const files = Array.isArray(compose.files) && compose.files.length
+    ? compose.files.map((item, index) => `${index + 1}. \`${markdownCell(item)}\``).join('\n')
+    : '- 未记录';
+  return [
+    `- 身份已确认：\`${compose.identityConfirmed === true}\``,
+    `- Project：\`${markdownCell(compose.project ?? '未记录')}\``,
+    `- Env file：\`${markdownCell(compose.envFile ?? '未记录')}\``,
+    `- Config 已渲染：\`${compose.rendered === true}\``,
+    `- 后端目标服务：\`${markdownCell(profile.release?.compose?.backendServices?.join(', ') ?? 'v1 未声明')}\``,
+    `- 前端目标服务：\`${markdownCell(profile.release?.compose?.frontendServices?.join(', ') ?? 'v1 未声明')}\``,
+    '',
+    'Compose 文件（顺序即执行身份）：',
+    '',
+    files
+  ].join('\n');
+}
+
+function artifactSection(profile, state) {
+  const openApi = state.capabilities?.openApi ?? {};
+  return [
+    `- 后端候选镜像：\`${markdownCell(profile.release?.images?.admin ?? 'v1 未声明')}\``,
+    `- 前端 index SHA-256：\`${markdownCell(state.frontend?.indexSha256 ?? '未记录')}\``,
+    `- 前端资源：\`${markdownCell(state.frontend?.observedAssetPaths?.join(', ') ?? '未记录')}\``,
+    `- OpenAPI：启用=\`${openApi.enabled === true}\`，KEK version=\`${markdownCell(openApi.kekVersion ?? '未记录')}\`，KEK presence=\`${openApi.kekPresent === true}\``,
+    `- OpenAPI 双实例摘要：\`${markdownCell(openApi.backendDigests?.join(', ') ?? '未记录')}\``
+  ].join('\n');
+}
+
+function rolloutSection(state) {
+  const rows = (state.rollout?.attempts ?? []).map((item, index) => {
+    const identity = item.imageId ?? item.artifactSha256 ?? item.image ?? '未记录';
+    return `| ${index + 1} | ${markdownCell(item.target)} | ${markdownCell(item.result)} | ${markdownCell(identity)} | ${markdownCell(item.restartCount ?? '不适用')} | ${markdownCell(item.reason ?? '无')} | ${markdownCell(item.recovery ?? '不适用')} |`;
+  });
+  return [
+    '| 顺序 | 目标 | 结果 | 镜像或构件身份 | 重启数 | 原因 | 恢复结果 |',
+    '|---|---|---|---|---|---|---|',
+    ...(rows.length ? rows : ['| - | 未记录 | 未记录 | 未记录 | 未记录 | 未记录 | 未记录 |'])
+  ].join('\n');
+}
+
+function frontendSection(state) {
+  const frontend = state.frontend ?? {};
+  const stable = frontend.stableWindow ?? {};
+  return [
+    `- Context path：\`${markdownCell(frontend.contextPath ?? '未记录')}\``,
+    `- Base API：\`${markdownCell(frontend.baseApi ?? '未记录')}\``,
+    `- Asset prefix：\`${markdownCell(frontend.assetPrefix ?? '未记录')}\``,
+    `- 连续成功：\`${markdownCell(stable.observedConsecutiveSuccesses ?? '未记录')} / ${markdownCell(stable.requiredConsecutiveSuccesses ?? '未记录')}\``,
+    `- 窗口：\`${markdownCell(stable.elapsedSeconds ?? '未记录')}s / ${markdownCell(stable.timeoutSeconds ?? '未记录')}s\``,
+    `- 瞬时失败：\`${markdownCell(JSON.stringify(stable.transientFailures ?? []))}\``
+  ].join('\n');
+}
+
+function dataProtectionSection(state) {
+  const database = state.database ?? {};
+  const backup = database.backup ?? {};
+  const waiver = database.waiver;
+  const lines = [
+    `- 执行数据库迁移：\`${database.migrationPerformed === true}\``,
+    `- 备份状态：\`${markdownCell(backup.status ?? '未记录')}\``,
+    `- 备份证据：\`${markdownCell(backup.evidence ?? '未记录')}\``
+  ];
+  if (!waiver) return [...lines, '- 无备份 waiver：`未使用`'].join('\n');
+  return [
+    ...lines,
+    `- 无备份 waiver：授权=\`${waiver.authorized === true}\`，来源=\`${markdownCell(waiver.source ?? '未记录')}\`，范围=\`${markdownCell(waiver.scope ?? '未记录')}\``,
+    `- Waiver preflight：zeroRow=\`${waiver.preflight?.zeroRow === true}\`，objectIdentity=\`${waiver.preflight?.objectIdentity === true}\`，conflictsAbsent=\`${waiver.preflight?.conflictsAbsent === true}\``,
+    `- 恢复模式：\`${markdownCell(waiver.recoveryMode ?? '未记录')}\``
+  ].join('\n');
+}
+
+function retainedArtifactSection(state) {
+  const items = state.rollout?.retainedArtifacts ?? [];
+  return items.length ? items.map((item) => `- \`${markdownCell(item)}\``).join('\n') : '- 未记录';
 }
 
 try {
@@ -31,7 +109,11 @@ try {
   if (args.secrets) secrets = readJson(path.resolve(args.secrets));
   else if (args['env-file']) secrets = secretsFromEnv(readEnv(path.resolve(args['env-file'])));
 
-  const verificationErrors = verifyState(state);
+  const strictReport = profile.schemaVersion === 2 && state.schemaVersion === 2;
+  const verificationErrors = strictReport ? verifyState(state, { profile }) : verifyState(state);
+  const compatibilityNotice = strictReport
+    ? null
+    : '当前为兼容审计：严格发布报告要求 profile/state 均为 schemaVersion=2；升级前不得据此宣称发布通过。';
   const host = profile.server.host;
   const ports = profile.network.ports;
   const base = `${profile.network.tlsEnabled ? 'https' : 'http'}://${profile.network.serverName}:${profile.network.tlsEnabled ? ports.ingressHttps : ports.ingressHttp}`;
@@ -70,7 +152,9 @@ try {
     mode: profile.deployment.mode,
     environment: profile.deployment.environment,
     releaseId: profile.deployment.releaseId,
-    verificationStatus: verificationErrors.length ? '未通过' : (state.risks?.length ? '有条件通过（存在待复核项）' : '通过'),
+    verificationStatus: compatibilityNotice
+      ? '兼容审计（必须升级 v2）'
+      : (verificationErrors.length ? '未通过' : (state.risks?.length ? '有条件通过（存在待复核项）' : '通过')),
     serverSection: [
       `- 服务器：\`${profile.server.sshUser}@${host}:${profile.server.sshPort}\``,
       `- 授权根目录：\`${profile.server.root}\``,
@@ -80,22 +164,34 @@ try {
     ].join('\n'),
     endpointSection: ['| 用途 | 地址 | 端口 |', '|---|---|---|', ...endpointRows].join('\n'),
     credentialSection: ['> 本文件包含敏感信息，仅限本机保存，权限必须为 `0600`。', '', '| 系统 | 账号 | 密码或保管位置 |', '|---|---|---|', ...credentialRows].join('\n'),
+    composeSection: composeSection(profile, state),
     serviceSection: serviceRows(state),
-    verificationSection: verificationErrors.length
-      ? verificationErrors.map((item) => `- 未通过：${item}`).join('\n')
-      : '- 全部自动化状态门禁通过。\n- 详细采集时间：`' + markdownCell(state.capturedAt ?? '未记录') + '`',
+    artifactSection: artifactSection(profile, state),
+    rolloutSection: rolloutSection(state),
+    frontendSection: frontendSection(state),
+    dataProtectionSection: dataProtectionSection(state),
+    retainedArtifactSection: retainedArtifactSection(state),
+    verificationSection: [
+      compatibilityNotice ? `- ${compatibilityNotice}` : null,
+      ...(verificationErrors.length
+        ? verificationErrors.map((item) => `- 未通过：${item}`)
+        : ['- 全部自动化状态门禁通过。']),
+      '- 详细采集时间：`' + markdownCell(state.capturedAt ?? '未记录') + '`'
+    ].filter(Boolean).join('\n'),
     upgradeSection: [
       '1. 记录当前清单、Schema、配置摘要与活动指针。',
       '2. 备份配置、数据库、对象存储元数据和当前发布，并验证备份。',
       '3. 构建前后端，生成清单与 SHA-256，传输到新暂存目录。',
-      '4. 先执行兼容迁移，再逐个滚动后端，最后发布前端。',
+      '4. 先执行兼容迁移，再按 server1 -> server2 滚动后端，最后原子切换前端。',
       '5. 重跑登录、业务 API、OSS 签名、Nacos、入口和监控门禁。',
       '6. 提升活动指针并生成新的升级记录。'
     ].join('\n'),
     rollbackSection: [
       `- 上一发布：\`${markdownCell(state.rollback?.previousReleaseId ?? '未登记')}\``,
       `- 回滚命令：\`${markdownCell(state.rollback?.command ?? '未登记，发布前必须补齐')}\``,
+      '- 按失败实例或前端静态目录独立恢复；未失败组件不扩大回滚。',
       '- Schema 兼容时先回滚应用与配置；恢复数据必须单独授权。',
+      '- 保留失败候选、旧镜像和 rollback 目录；清理必须独立授权。',
       '- 禁止执行 `docker compose down -v`。'
     ].join('\n'),
     riskSection: (state.risks?.length ? state.risks : ['当前无已登记风险']).map((item) => `- ${markdownCell(item)}`).join('\n')

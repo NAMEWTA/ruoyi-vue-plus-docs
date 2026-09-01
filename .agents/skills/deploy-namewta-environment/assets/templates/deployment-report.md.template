@@ -10,6 +10,10 @@
 
 {{serverSection}}
 
+## Compose 身份
+
+{{composeSection}}
+
 ## 入口与端口
 
 {{endpointSection}}
@@ -21,6 +25,26 @@
 ## 服务与版本
 
 {{serviceSection}}
+
+## 发布构件
+
+{{artifactSection}}
+
+## Rollout 尝试
+
+{{rolloutSection}}
+
+## 前端发布
+
+{{frontendSection}}
+
+## 数据保护
+
+{{dataProtectionSection}}
+
+## 保留与恢复资产
+
+{{retainedArtifactSection}}
 
 ## 验证证据
 

@@ -137,6 +137,30 @@ test('committed env file contains placeholders instead of runtime secrets', () =
   }
 });
 
+test('both admin instances inherit a default-off OpenAPI secret contract', () => {
+  const backend = read('docker/docker-compose-backend.yml');
+  const sharedAdminEnvironment = backend.split('\nservices:\n')[0];
+  const env = read('.env.example');
+
+  assert.equal((backend.match(/<<: \*admin-environment/g) ?? []).length, 2);
+  for (const [key, expression] of [
+    ['OPENAPI_ENABLED', '\\$\\{OPENAPI_ENABLED:-false\\}'],
+    ['OPENAPI_KEK_VERSION', '\\$\\{OPENAPI_KEK_VERSION:-\\}'],
+    ['OPENAPI_KEK', '\\$\\{OPENAPI_KEK:-\\}'],
+  ]) {
+    assert.equal(
+      (sharedAdminEnvironment.match(new RegExp(`^  ${key}: "${expression}"$`, 'gm')) ?? []).length,
+      1,
+      `${key} must be declared exactly once in x-admin-environment`,
+    );
+  }
+
+  assert.match(env, /^OPENAPI_ENABLED=false$/m);
+  assert.match(env, /^OPENAPI_KEK_VERSION=replace-with-an-openapi-kek-version$/m);
+  assert.match(env, /^OPENAPI_KEK=replace-with-a-32-byte-base64-openapi-kek$/m);
+  assert.doesNotMatch(env, /^OPENAPI_ENABLED=true$/m);
+});
+
 test('Nacos infrastructure is optional, pinned, authenticated, and locally bound', () => {
   const compose = read('docker/docker-compose-infrastructure.yml');
   assert.match(compose, /^  nacos:$/m);

@@ -9,6 +9,9 @@ x-admin-environment: &admin-environment
   SPRING_PROFILES_ACTIVE: "${SPRING_PROFILES_ACTIVE:-prod}"
   SPRING_APPLICATION_NAME: namewta-admin
   JAVA_OPTS: "${JAVA_OPTS:--Xms512m -Xmx1024m}"
+  OPENAPI_ENABLED: "${OPENAPI_ENABLED:-false}"
+  OPENAPI_KEK_VERSION: "${OPENAPI_KEK_VERSION:-}"
+  OPENAPI_KEK: "${OPENAPI_KEK:-}"
   SPRING_DATASOURCE_DYNAMIC_DATASOURCE_MASTER_URL: "jdbc:mysql://mysql:3306/${MYSQL_DATABASE:-ry-namewta}?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=GMT%2B8&autoReconnect=true&rewriteBatchedStatements=true&allowPublicKeyRetrieval=true&nullCatalogMeansCurrent=true"
   SPRING_DATASOURCE_DYNAMIC_DATASOURCE_MASTER_USERNAME: "${MYSQL_APP_USER:?MYSQL_APP_USER is required}"
   SPRING_DATASOURCE_DYNAMIC_DATASOURCE_MASTER_PASSWORD: "${MYSQL_APP_PASSWORD:?MYSQL_APP_PASSWORD is required}"

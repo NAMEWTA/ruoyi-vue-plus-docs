@@ -12,14 +12,17 @@ risk: critical
 blocked_by: [T-03, T-04]
 contract_ids: [AC-002, AC-003, AC-004, AC-005, AC-006, AC-007, AC-008, AC-018, AC-023, AC-038]
 owner: codex:/root
-expected_changes: ["<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/ruoyi-profile-enterprise/src/main/java/org/dromara/profile/enterprise/application/**</Path>"]
+expected_changes:
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/ruoyi-profile-enterprise/src/main/java/org/dromara/profile/enterprise/application/**</Path>"
+  - "<Path>release-artifacts/docker/infrastructure/mysql/init/50-namewta-ddl.sql</Path>"
 writable_paths:
   - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/ruoyi-profile-enterprise/src/main/java/org/dromara/profile/enterprise/application/**</Path>"
   - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/ruoyi-profile-enterprise/src/main/java/org/dromara/profile/enterprise/persistence/**</Path>"
   - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/ruoyi-profile-enterprise/src/test/java/org/dromara/profile/enterprise/application/**</Path>"
+  - "<Path>release-artifacts/docker/infrastructure/mysql/init/50-namewta-ddl.sql</Path>"
 read_only_paths:
   - "<Path>ruoyi-vue-plus-namewta/ruoyi-api/**</Path>"
-  - "<Path>release-artifacts/docker/infrastructure/mysql/init/**</Path>"
+  - "<Path>release-artifacts/docker/infrastructure/mysql/init/60-namewta-dml.sql</Path>"
   - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/ruoyi-profile-enterprise/src/main/java/org/dromara/profile/enterprise/material/**</Path>"
 shared_paths: []
 shared_path_owners: []
@@ -121,3 +124,8 @@ shared_path_owners: []
 - [ ] 所列 AC 与企业字段/材料/唯一负责人矩阵通过。
 - [ ] required E2E、Evidence、提交和父分支结果完整。
 - [ ] 无普通申请顶替或资料预填偏差。
+
+## 11. 执行偏差
+
+- Spec 已锁定企业邮箱、注册资本、行业和网站为可选档案字段，但 T-02 schema 未在企业工作副本、提交快照、主体、版本和管理员来源表中为其建列；仅写 `field_snapshot_json` 会在发布后丢失这四项。
+- T-07 接管聚合仓库 `50-namewta-ddl.sql` 的最小 DDL 修正，在上述五张表增加 nullable 字段；不修改已有列、索引、DML、业务数据库或生产环境。源码在申请、快照、主体和版本全链持久化，管理员来源由 T-09 继续消费同一 schema。

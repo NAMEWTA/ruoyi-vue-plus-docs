@@ -39,7 +39,7 @@
     "history": []
   },
   "created_at": "2026-08-31T18:06:59+08:00",
-  "updated_at": "2026-09-01T21:45:00+08:00",
+  "updated_at": "2026-09-01T22:04:16+08:00",
   "completed_at": null,
   "archived": false,
   "archive_path": null,
@@ -76,6 +76,14 @@
       "detail": "T-04 的共享材料实现只允许从 WORKING 建立不可变副本，无法执行 T-05 已锁定的 SUBMISSION 到 VERSION 材料发布；工作材料写入也未验证申请处于 DRAFT/BACK/CANCEL。",
       "impact": "若不修正，档案版本缺少审核时材料证据，且 WAITING 期间仍可能变更工作材料，破坏不可变快照和只读状态合同。",
       "correction": "由 T-05 临时接管 person 叶模块内四个共享材料实现文件、一个聚焦测试及受状态门禁影响的既有 MySQL E2E 夹具，仅增加工作副本可编辑状态校验及受来源关系约束的 SUBMISSION 到 VERSION 复制；不修改公开 ProfileMaterialPort、schema 或 OSS 生命周期。"
+    },
+    {
+      "ticket_id": "T-07",
+      "kind": "optional-enterprise-fields-omitted-from-schema",
+      "observed_at": "2026-09-01T22:04:16+08:00",
+      "detail": "Spec 将企业邮箱、注册资本、行业和网站锁定为可选档案字段，但 T-02 schema 未在企业申请、提交快照、主体、版本和管理员来源表中建列。",
+      "impact": "若只保存在 field_snapshot_json，workflow 发布后主体与不可变版本会丢失四项信息，管理员来源也无法保持同构合同。",
+      "correction": "将聚合仓库 50-namewta-ddl.sql 纳入 T-07 最小可写范围，为五张企业事实表增加 nullable 列，并在申请到版本链完整持久化；不改已有列、索引、DML、业务库或生产环境。"
     }
   ],
   "worktrees": [

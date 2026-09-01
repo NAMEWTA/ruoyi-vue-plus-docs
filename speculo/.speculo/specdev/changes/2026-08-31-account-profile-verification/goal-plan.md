@@ -270,6 +270,7 @@ source 测试只证明局部实现；required E2E 只在 Lead-owned parent-candi
 - T-05 发现材料发布接缝缺口并按偏差控制接管最小共享实现：补齐工作副本状态写保护与 `SUBMISSION -> VERSION` 关系约束复制，不改变公开端口、schema 或 OSS 生命周期。
 - T-05 的完整 Warm-Flow 引擎/流程定义启动链保留给 T-14 全栈 Gate；本 Ticket 已覆盖生产 WorkflowService gateway 合同、持久化 instanceVariable fence，以及生产 ProcessEvent 监听与真实 MySQL 原子发布。
 - T-07 source worktree 从 backend `8393756b0973ccecc4bf73a6669c0c1d6c0b0b1e` 创建，状态为 active。
+- T-07 发现 Spec 已锁定的企业邮箱、注册资本、行业、网站未进入 T-02 schema；已按偏差控制把 `50-namewta-ddl.sql` 纳入最小可写范围，为五张企业事实表增加 nullable 列，DML 和已有约束不变。
 
 ### Pending Decisions and Blockers
 

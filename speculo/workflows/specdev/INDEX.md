@@ -165,7 +165,7 @@ Change 从 active/blocked 转为 completed 时加载 `<Path>{roots.workflows}/sp
 
 `active[].change` 必须唯一，且不得同时出现在 `archived`。开始 Work 时设置 `current_work`；暂停或可恢复阻塞时保留；成功完成时加入 `works_run` 并清空；取消时清空但不加入。逐次时间、结果和审计证据由 change 自有状态、Work 主产物、Evidence 或 LOG 承载，不写入全局索引。
 
-`<Path>{roots.state}/specdev/config.json</Path>` 的 `execution.max_implementation_agents`、`max_integration_attempts` 和 planning 原型变体字段均为可配置正整数，初始化时写入默认值；仅 implementation subagent 受前者约束且不含 Lead，current workspace 仍保持单 writer 串行安全不变量；只读 review/research/test-observation agent 不设 SpecDev 数字上限。
+`<Path>{roots.state}/specdev/config.json</Path>` 的 `execution.max_implementation_agents` 和 planning 原型变体字段为可配置正整数；`max_integration_attempts` 可为正整数，或以 `null` 明确表示不设次数上限。初始化写入有限默认值；仅 implementation subagent 受前者约束且不含 Lead，current workspace 仍保持单 writer 串行安全不变量；只读 review/research/test-observation agent 不设 SpecDev 数字上限。集成不限次数不取消失败停止、偏差升级、授权或父分支保护。
 
 `<Path>{roots.state}/specdev/changes/{change}/.status.json</Path>` 的 `worktrees` 保存 Ticket 级 `base_sha`、父分支、workspace/implementation/integration owner、workspace locator、implementation/source checkpoint、适用 candidate/result SHA、验证、E2E disposition 与生命周期状态。current 记录使用 `workspace_ref=current` 和 direct-parent；required 记录使用 source/parent-candidate。每个实现 Ticket 都有一条记录；父分支只有在对应策略的验证通过后推进。`removed` 是 required 集成后来源 branch/worktree 完成清理的终态，必须保留全部集成与 E2E 证据。
 

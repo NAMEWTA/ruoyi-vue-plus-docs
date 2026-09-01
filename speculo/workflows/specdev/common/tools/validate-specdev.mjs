@@ -701,23 +701,39 @@ function validateExecutionContractAssets(root) {
 
   const configSchema = JSON.parse(readText(configSchemaPath));
   const limit = configSchema.properties?.execution?.properties?.max_implementation_agents;
+  const integrationLimit = configSchema.properties?.execution?.properties?.max_integration_attempts;
+  const integrationLimitAllowsPositiveInteger = integrationLimit?.anyOf?.some(
+    (variant) => variant?.type === "integer" && variant?.minimum === 1,
+  );
+  const integrationLimitAllowsUnlimited = integrationLimit?.anyOf?.some(
+    (variant) => variant?.type === "null",
+  );
   if (
     configSchema.$id !== "urn:speculo:specdev:config:v5" ||
     configSchema.properties?.schema_version?.const !== CONFIG_SCHEMA_VERSION ||
     limit?.minimum !== 1 ||
-    configSchema.properties?.execution?.properties?.max_integration_attempts?.minimum !== 1 ||
+    !integrationLimitAllowsPositiveInteger ||
+    !integrationLimitAllowsUnlimited ||
     configSchema.additionalProperties !== false
   ) {
     errors.push("config.schema.json must define the strict SpecDev config v5 execution contract");
   }
 
   const goalPlanSchema = JSON.parse(readText(goalPlanSchemaPath));
+  const goalPlanIntegrationLimit = goalPlanSchema.properties?.integration_attempt_limit;
+  const goalPlanLimitAllowsPositiveInteger = goalPlanIntegrationLimit?.anyOf?.some(
+    (variant) => variant?.type === "integer" && variant?.minimum === 1,
+  );
+  const goalPlanLimitAllowsUnlimited = goalPlanIntegrationLimit?.anyOf?.some(
+    (variant) => variant?.type === "null",
+  );
   if (
     goalPlanSchema.$id !== "urn:speculo:specdev:goal-plan:v6" ||
     goalPlanSchema.properties?.schema_version?.const !== GOAL_PLAN_SCHEMA_VERSION ||
     goalPlanSchema.properties?.orchestration?.const !== "lead-directed" ||
     goalPlanSchema.properties?.implementation_agent_limit?.minimum !== 1 ||
-    goalPlanSchema.properties?.integration_attempt_limit?.minimum !== 1 ||
+    !goalPlanLimitAllowsPositiveInteger ||
+    !goalPlanLimitAllowsUnlimited ||
     !["current", "required"].every((value) => goalPlanSchema.properties?.ticket_workspace_policy?.enum?.includes(value)) ||
     !["direct-parent", "candidate-merge"].every((value) => goalPlanSchema.properties?.integration_gate?.enum?.includes(value)) ||
     goalPlanSchema.additionalProperties !== false
@@ -1379,8 +1395,11 @@ function validateGoalPlan(path, errors) {
   if (!Number.isInteger(meta.implementation_agent_limit) || meta.implementation_agent_limit < 1) {
     errors.push(`${basename(path)}: implementation_agent_limit must be a positive integer`);
   }
-  if (!Number.isInteger(meta.integration_attempt_limit) || meta.integration_attempt_limit < 1) {
-    errors.push(`${basename(path)}: integration_attempt_limit must be a positive integer`);
+  if (
+    meta.integration_attempt_limit !== null &&
+    (!Number.isInteger(meta.integration_attempt_limit) || meta.integration_attempt_limit < 1)
+  ) {
+    errors.push(`${basename(path)}: integration_attempt_limit must be null (unlimited) or a positive integer`);
   }
   if (!new Set(["current", "required"]).has(meta.ticket_workspace_policy)) {
     errors.push(`${basename(path)}: ticket_workspace_policy must be current or required`);
@@ -1437,15 +1456,23 @@ function validateGoalPlanRuntimeLimits(path, change, goalPlan, errors) {
     return;
   }
   const configuredAgents = positiveConfigLimit(config, "max_implementation_agents", 0);
-  const configuredAttempts = positiveConfigLimit(config, "max_integration_attempts", 0);
-  if (config.schema_version !== CONFIG_SCHEMA_VERSION || configuredAgents === 0 || configuredAttempts === 0) {
-    errors.push(`${basename(path)}: SpecDev config.json must use schema v${CONFIG_SCHEMA_VERSION} with positive execution limits`);
+  const configuredAttempts = config?.execution?.max_integration_attempts;
+  const configuredAttemptsValid = configuredAttempts === null ||
+    (Number.isInteger(configuredAttempts) && configuredAttempts >= 1);
+  if (config.schema_version !== CONFIG_SCHEMA_VERSION || configuredAgents === 0 || !configuredAttemptsValid) {
+    errors.push(`${basename(path)}: SpecDev config.json must use schema v${CONFIG_SCHEMA_VERSION} with a positive implementation limit and null-or-positive integration limit`);
     return;
   }
   if (goalPlan.meta.implementation_agent_limit > configuredAgents) {
     errors.push(`${basename(path)}: implementation_agent_limit ${goalPlan.meta.implementation_agent_limit} exceeds config max_implementation_agents ${configuredAgents}`);
   }
-  if (goalPlan.meta.integration_attempt_limit > configuredAttempts) {
+  if (goalPlan.meta.integration_attempt_limit === null && configuredAttempts !== null) {
+    errors.push(`${basename(path)}: unlimited integration attempts exceed configured max_integration_attempts ${configuredAttempts}`);
+  } else if (
+    Number.isInteger(goalPlan.meta.integration_attempt_limit) &&
+    Number.isInteger(configuredAttempts) &&
+    goalPlan.meta.integration_attempt_limit > configuredAttempts
+  ) {
     errors.push(`${basename(path)}: integration_attempt_limit ${goalPlan.meta.integration_attempt_limit} exceeds config max_integration_attempts ${configuredAttempts}`);
   }
 }

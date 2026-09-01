@@ -9,7 +9,8 @@
     "specdev/spec",
     "specdev/tickets",
     "specdev/goal-plan",
-    "specdev/implement"
+    "specdev/implement",
+    "specdev/eli5"
   ],
   "claimed_investigations": [],
   "execution_authorization": {
@@ -39,7 +40,7 @@
     "history": []
   },
   "created_at": "2026-08-31T22:30:39+08:00",
-  "updated_at": "2026-09-01T11:02:23+08:00",
+  "updated_at": "2026-09-01T11:42:50+08:00",
   "completed_at": "2026-09-01T11:02:23+08:00",
   "archived": false,
   "archive_path": null,

@@ -1,15 +1,15 @@
-local.file_match "ruoyi_logs" {
+local.file_match "namewta_logs" {
   path_targets = [
-    { "__path__" = "/var/log/ruoyi/server1/*.log", "service" = "ruoyi-admin", "instance" = "server1", "job" = "ruoyi" },
-    { "__path__" = "/var/log/ruoyi/server2/*.log", "service" = "ruoyi-admin", "instance" = "server2", "job" = "ruoyi" },
-    { "__path__" = "/var/log/ruoyi/monitor/**/*.log", "service" = "ruoyi-monitor-admin", "instance" = "monitor", "job" = "ruoyi" },
-    { "__path__" = "/var/log/ruoyi/snailjob/**/*.log", "service" = "ruoyi-snailjob-server", "instance" = "snailjob", "job" = "ruoyi" },
-    { "__path__" = "/var/log/ruoyi/snailai/**/*.log", "service" = "ruoyi-snailai-server", "instance" = "snailai", "job" = "ruoyi" },
+    { "__path__" = "/var/log/ruoyi/server1/*.log", "service" = "namewta-admin", "instance" = "server1", "job" = "namewta" },
+    { "__path__" = "/var/log/ruoyi/server2/*.log", "service" = "namewta-admin", "instance" = "server2", "job" = "namewta" },
+    { "__path__" = "/var/log/ruoyi/monitor/**/*.log", "service" = "namewta-monitor-admin", "instance" = "monitor", "job" = "namewta" },
+    { "__path__" = "/var/log/ruoyi/snailjob/**/*.log", "service" = "namewta-snailjob-server", "instance" = "snailjob", "job" = "namewta" },
+    { "__path__" = "/var/log/ruoyi/snailai/**/*.log", "service" = "namewta-snailai-server", "instance" = "snailai", "job" = "namewta" },
   ]
 }
 
-loki.source.file "ruoyi_logs" {
-  targets    = local.file_match.ruoyi_logs.targets
+loki.source.file "namewta_logs" {
+  targets    = local.file_match.namewta_logs.targets
   forward_to = [loki.write.local.receiver]
 }
 

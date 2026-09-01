@@ -333,4 +333,26 @@ if [[ "${start_conflict_output}" == *"正在刷新后端本地 Maven reactor"* ]
   exit 1
 fi
 
+mkdir -p "${start_backend}/ruoyi-admin/src/main/resources"
+printf 'spring:\n  config:\n    activate:\n      on-profile: local\n' >"${start_backend}/ruoyi-admin/src/main/resources/application-local.yml"
+git -C "${start_backend}" init -q
+git -C "${start_backend}" add -- ruoyi-admin/src/main/resources/application-local.yml
+
+set +e
+tracked_config_output=$(printf '2\n' | PATH="${fake_bin}:${PATH}" "${start_workspace}/scripts/start-dev.sh" 2>&1)
+tracked_config_status=$?
+set -e
+if [[ ${tracked_config_status} -eq 0 ]]; then
+  echo "start-dev tracked-config fixture unexpectedly completed" >&2
+  exit 1
+fi
+if [[ "${tracked_config_output}" == *"本地后端配置未被 Git 忽略"* ]]; then
+  echo "start-dev rejected a tracked local backend config: ${tracked_config_output}" >&2
+  exit 1
+fi
+if [[ "${tracked_config_output}" != *"正在刷新后端本地 Maven reactor"* ]]; then
+  echo "start-dev did not accept a tracked local backend config: ${tracked_config_output}" >&2
+  exit 1
+fi
+
 echo "workspace Java auto build, backend lock lifecycle, and module JAR class-set verification passed"

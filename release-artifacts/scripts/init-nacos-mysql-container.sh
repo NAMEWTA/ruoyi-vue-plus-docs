@@ -5,7 +5,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 RELEASE_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 ENV_FILE="${RELEASE_ROOT}/.env"
 SCHEMA_FILE="${RELEASE_ROOT}/docker/infrastructure/mysql/init/nacos/mysql-schema.sql"
-MYSQL_CONTAINER="ruoyi-namewta-mysql"
+MYSQL_CONTAINER="namewta-mysql"
 EXPECTED_TABLES=10
 EXPECTED_TABLE_NAMES="'config_info','config_info_gray','config_tags_relation','group_capacity','his_config_info','tenant_capacity','tenant_info','users','roles','permissions'"
 

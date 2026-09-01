@@ -3,7 +3,6 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 RELEASE_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
-REPO_ROOT="$(cd "${RELEASE_ROOT}/.." && pwd)"
 ENV_FILE="${RELEASE_ENV_FILE:-${RELEASE_ROOT}/.env.example}"
 
 info() { printf '[INFO] %s\n' "$*" >&2; }
@@ -19,7 +18,7 @@ node --test "${RELEASE_ROOT}/tests/release-config.test.mjs"
 
 info "执行 Nginx Skill 台账检查"
 python3 "${RELEASE_ROOT}/skills/ruoyi-namewta-nginx-config/scripts/add_app.py" \
-  --repo-root "${REPO_ROOT}" --list >/dev/null
+  --repo-root "${RELEASE_ROOT}" --list >/dev/null
 
 if command -v docker >/dev/null 2>&1 && docker compose version >/dev/null 2>&1; then
   info "校验四类 Docker Compose"

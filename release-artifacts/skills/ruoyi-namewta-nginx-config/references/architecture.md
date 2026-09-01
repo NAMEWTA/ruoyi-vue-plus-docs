@@ -4,15 +4,15 @@
 
 ```text
 HTTP/TLS
-  -> nginx-lb
+  -> namewta-nginx-lb
        /<prefix>/ -> nginx-<app>:80（剥离 prefix）
-       /admin/     -> ruoyi-monitor-admin:9090
-       /snail-job/ -> ruoyi-snailjob-server:8800
-       /snail-ai/  -> ruoyi-snailai-server:8900
+       /admin/     -> namewta-monitor-admin:9090
+       /snail-job/ -> namewta-snailjob-server:8800
+       /snail-ai/  -> namewta-snailai-server:8900
 
 nginx-<app>:80
   /                     -> SPA 静态文件
-  /<env>-api/*          -> ruoyi-server1/2
+  /<env>-api/*          -> namewta-server1/2
   /<prefix>/*           -> 独立端口访问时剥离 prefix
   /<prefix>/<env>-api/* -> 独立端口访问时剥离 prefix 与 env-api
 ```
@@ -51,8 +51,8 @@ Vite 会优先使用进程环境，因此无需修改 App 的 `.env.development`
 
 ## TLS
 
-- 默认 `nginx-lb` 只监听 HTTP。
-- `tls` profile 启动 `nginx-lb-tls`，读取 `cert/lb/fullchain.pem` 与 `privkey.pem`。
+- 默认 `namewta-nginx-lb` 只监听 HTTP。
+- `tls` profile 启动 `namewta-nginx-lb-tls`，读取 `cert/lb/fullchain.pem` 与 `privkey.pem`。
 - `error_page 497` 不得携带内部监听端口。
 - 保留 `absolute_redirect off`、`port_in_redirect off`、`server_name_in_redirect off`。
 - 单 App 独立 TLS 应增加独立 service/template/宿主机端口，不能让多个容器争用同一宿主机 443。

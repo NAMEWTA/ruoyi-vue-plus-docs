@@ -51,8 +51,9 @@ scripts/
 ### 前置条件与保护
 
 - 前端需要可用的 Node.js、Corepack，以及完整的 `plus-ui-namewta/package.json` 和 lockfile。
-- 后端需要 Git、Java 21、可执行的 Maven Wrapper，以及非空且被 Git 忽略的
-  `ruoyi-vue-plus-namewta/ruoyi-admin/src/main/resources/application-local.yml`。
+- 后端需要 Java 21、可执行的 Maven Wrapper，以及非空的
+  `ruoyi-vue-plus-namewta/ruoyi-admin/src/main/resources/application-local.yml`；该配置允许纳入 Git 跟踪，
+  启动脚本不校验其忽略状态。
 - 若本机提供 `lsof`，脚本会在启动前检查前端 `80` 或后端 `8080` 端口；端口被占用时只报告进程并退出，
   不会自动终止任何现有服务。
 - 脚本不会读取或输出本地配置中的账号、密码等敏感值。

@@ -73,7 +73,7 @@ env_value() {
 
 ensure_network() {
   local network_name
-  network_name="$(env_value NAMEWTA_NETWORK ruoyi-namewta-network)"
+  network_name="$(env_value NAMEWTA_NETWORK namewta-network)"
   if ! docker network inspect "${network_name}" >/dev/null 2>&1; then
     info "创建共享网络: ${network_name}"
     docker network create "${network_name}" >/dev/null
@@ -85,7 +85,7 @@ compose_command() {
   shift
   docker compose \
     --env-file "${ENV_FILE}" \
-    -p "ruoyi-namewta-${category}" \
+    -p "namewta-${category}" \
     -f "$(compose_file "${category}")" \
     "$@"
 }
@@ -131,7 +131,7 @@ build_images() {
   info "构建后端应用镜像"
   compose_command backend build
   info "构建 Monitor Admin 镜像"
-  compose_command observability build ruoyi-monitor-admin
+  compose_command observability build namewta-monitor-admin
 }
 
 show_logs() {

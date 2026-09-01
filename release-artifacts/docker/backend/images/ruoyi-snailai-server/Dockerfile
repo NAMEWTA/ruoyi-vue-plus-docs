@@ -1,6 +1,6 @@
 FROM bellsoft/liberica-openjdk-rocky:21.0.12-cds
 
-LABEL org.opencontainers.image.title="ruoyi-snailai-server" \
+LABEL org.opencontainers.image.title="namewta-snailai-server" \
       org.opencontainers.image.vendor="NAMEWTA"
 
 RUN mkdir -p /ruoyi/snailai/logs

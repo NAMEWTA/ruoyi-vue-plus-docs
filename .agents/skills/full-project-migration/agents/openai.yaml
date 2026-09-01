@@ -1,0 +1,7 @@
+interface:
+  display_name: "基座全量迁移"
+  short_description: "将基座完整迁移为用户品牌的独立业务项目"
+  default_prompt: "使用 $full-project-migration，在不修改源基座的前提下，将其完整复制为已重命名并全面采用用户品牌的业务 monorepo。"
+
+policy:
+  allow_implicit_invocation: false

@@ -46,7 +46,12 @@ ROUTE_MARKER = "    # APP_ROUTES: add_app.py 在此处追加 App 路由。"
 
 
 def release_root(repo: Path) -> Path:
-    return repo / "release-artifacts"
+    nested = repo / "release-artifacts"
+    if nested.is_dir():
+        return nested
+    if (repo / "docker" / "docker-compose-frontend.yml").is_file():
+        return repo
+    return nested
 
 
 def docker_root(repo: Path) -> Path:
@@ -115,7 +120,7 @@ def allocate_port(repo: Path) -> int:
 def configured_apps(repo: Path) -> list[str]:
     config_dir = nginx_root(repo) / "apps"
     return sorted(
-        path.name.removeprefix("nginx-").removesuffix(".conf.template")
+        path.name[len("nginx-"):-len(".conf.template")]
         for path in config_dir.glob("nginx-*.conf.template")
     )
 
@@ -171,14 +176,14 @@ def patch_compose(repo: Path, app: str, port: int, writer: Writer) -> None:
         env_line = f'      {lb_env_key}: "${{{prefix_key}:?{prefix_key} is required}}"'
         text = text.replace(anchor, f"{anchor}\n{env_line}")
 
-    service_name = f"nginx-{app}"
+    service_name = f"namewta-nginx-{app}"
     if f"  {service_name}:\n" not in text:
         marker = "\nnetworks:\n"
         if marker not in text:
             raise ValueError("Compose 缺少 networks 锚点，拒绝自动修改")
         service = f'''\n  {service_name}:
     image: "${{NGINX_IMAGE:-nginx:1.31.1}}"
-    container_name: ruoyi-namewta-nginx-{app}
+    container_name: namewta-nginx-{app}
     environment:
       TZ: Asia/Shanghai
       APP_PREFIX: "${{{prefix_key}:?{prefix_key} is required}}"
@@ -209,7 +214,7 @@ def patch_lb_template(path: Path, app: str, writer: Writer) -> None:
             raise ValueError(f"{path} 缺少 upstream 锚点")
         upstream = (
             f"upstream app_{key} {{\n"
-            f"    server nginx-{app}:80;\n"
+            f"    server namewta-nginx-{app}:80;\n"
             "    keepalive 32;\n"
             "}\n\n"
         )

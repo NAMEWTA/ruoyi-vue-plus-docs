@@ -81,7 +81,7 @@ ready_for_execution: false
 |---|---|---|
 | Lead | `<owner-or-session-locator>` | 唯一 SpecDev 状态、Evidence 与父分支 owner |
 | Implementation subagents | `<implementation_agent_limit>`，Lead 不计入 | Goal Plan 快照、依赖和平台能力的最小值 |
-| Integration attempts | `<integration_attempt_limit>` | Goal Plan 创建时从 config 快照 |
+| Integration attempts | `<integration_attempt_limit>`；`null` 表示 unlimited | Goal Plan 创建时从 config 快照；不限次数仍受停止条件和偏差控制约束 |
 | Read-only agents | 无 SpecDev 数字上限 | review/research/test-observation，不写状态 |
 | Dispatch | execution-time dynamic | provider/模型/派单按 Ticket 事实选择 |
 

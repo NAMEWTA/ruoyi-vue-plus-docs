@@ -479,7 +479,7 @@ bundle_release() {
   stage_release "${env_name}"
   require_cmd tar
   timestamp="$(date +%Y%m%d%H%M%S)"
-  bundle_name="ruoyi-namewta-${env_name}-${timestamp}"
+  bundle_name="namewta-${env_name}-${timestamp}"
   bundle_path="${BUNDLES_DIR}/${bundle_name}.tar.gz"
   temp_dir="$(mktemp -d "${BUNDLES_DIR}/.bundle.XXXXXX")"
   package_root="${temp_dir}/${bundle_name}"

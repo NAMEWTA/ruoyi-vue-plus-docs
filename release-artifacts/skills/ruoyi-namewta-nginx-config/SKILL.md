@@ -5,7 +5,7 @@ description: 维护 ruoyi-vue-plus-docs 的 release-artifacts 多 App Nginx 部�
 
 # NAMEWTA 多 App Nginx 配置
 
-统一入口 `nginx-lb` 按 App 路径前缀剥离后转发到每个 App 的独立 HTTP Nginx。每个 App 容器同时支持 LB 根路径请求和独立宿主机端口的带前缀访问。
+统一入口 `namewta-nginx-lb` 按 App 路径前缀剥离后转发到每个 App 的独立 HTTP Nginx。每个 App 容器同时支持 LB 根路径请求和独立宿主机端口的带前缀访问。
 
 修改前读取：
 
@@ -66,6 +66,6 @@ bash release-artifacts/scripts/docker-manage.sh up frontend
 bash release-artifacts/scripts/verify-release.sh
 docker compose --env-file release-artifacts/.env \
   -f release-artifacts/docker/docker-compose-frontend.yml config --quiet
-docker exec ruoyi-namewta-nginx-admin-web nginx -t
-docker exec ruoyi-namewta-nginx-lb nginx -t
+docker exec namewta-nginx-admin-web nginx -t
+docker exec namewta-nginx-lb nginx -t
 ```

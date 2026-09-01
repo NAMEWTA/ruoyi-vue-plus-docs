@@ -21,7 +21,12 @@
     "orchestration": {"const": "lead-directed"},
     "lead": {"type": "string", "minLength": 1},
     "implementation_agent_limit": {"type": "integer", "minimum": 1},
-    "integration_attempt_limit": {"type": "integer", "minimum": 1},
+    "integration_attempt_limit": {
+      "anyOf": [
+        {"type": "integer", "minimum": 1},
+        {"type": "null"}
+      ]
+    },
     "ticket_workspace_policy": {"enum": ["current", "required"]},
     "integration_gate": {"enum": ["direct-parent", "candidate-merge"]},
     "ready_for_execution": {"type": "boolean"}

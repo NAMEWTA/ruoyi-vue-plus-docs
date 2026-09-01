@@ -82,7 +82,7 @@ NACOS_E2E_CONFIRM=1 \
 | 后端 | `docker-compose-backend.yml` | 双实例 Admin、SnailJob、SnailAI |
 | 前端 | `docker-compose-frontend.yml` | Nginx LB、各 App 独立 Nginx、可选 LB TLS |
 
-四类 Compose 共享 external bridge network `ruoyi-namewta-network`，管理脚本会在启动前幂等创建。默认宿主机端口只绑定 `127.0.0.1`；需要内网访问时显式设置 `NAMEWTA_BIND_HOST`。
+四类 Compose 共享 external bridge network `namewta-network`，管理脚本会在启动前幂等创建。默认宿主机端口只绑定 `127.0.0.1`；需要内网访问时显式设置 `NAMEWTA_BIND_HOST`。
 
 ```bash
 # 校验全部配置
@@ -130,10 +130,10 @@ bash release-artifacts/scripts/init-mysql-container.sh \
 
 ```text
 浏览器 /<app-prefix>/
-  -> nginx-lb 剥离 App 前缀
+  -> namewta-nginx-lb 剥离 App 前缀
   -> nginx-<app> 根路径静态资源
   -> /dev-api 或 /prod-api 再剥离
-  -> ruoyi-server1 / ruoyi-server2
+  -> namewta-server1 / namewta-server2
 ```
 
 每个 App Nginx 也映射独立宿主机端口，可直接访问 `http://<host>:<app-port>/<app-prefix>/`。证书只允许运维投放到 `docker/frontend/nginx/cert/`，不得提交私钥。
@@ -148,7 +148,7 @@ bash release-artifacts/scripts/release-manage.sh stage-mysql
 bash release-artifacts/scripts/docker-manage.sh up infrastructure --profile nacos
 docker compose --env-file release-artifacts/.env \
   -f release-artifacts/docker/docker-compose-backend.yml \
-  -f release-artifacts/docker/overrides/nacos-enabled.yml up -d ruoyi-server1 ruoyi-server2
+  -f release-artifacts/docker/overrides/nacos-enabled.yml up -d namewta-server1 namewta-server2
 ```
 
 首次启动后必须在受信网络内调用 Nacos 的管理员初始化接口设置强密码，再创建与当前

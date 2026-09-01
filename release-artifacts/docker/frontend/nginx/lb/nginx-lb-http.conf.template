@@ -4,22 +4,22 @@ map $http_upgrade $connection_upgrade {
 }
 
 upstream app_admin_web {
-    server nginx-admin-web:80;
+    server namewta-nginx-admin-web:80;
     keepalive 32;
 }
 
 # APP_UPSTREAMS: add_app.py 在此处追加 App upstream。
 
 upstream monitor_admin {
-    server ruoyi-monitor-admin:9090;
+    server namewta-monitor-admin:9090;
 }
 
 upstream snailjob_server {
-    server ruoyi-snailjob-server:8800;
+    server namewta-snailjob-server:8800;
 }
 
 upstream snailai_server {
-    server ruoyi-snailai-server:8900;
+    server namewta-snailai-server:8900;
 }
 
 upstream nacos_server {

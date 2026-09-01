@@ -177,8 +177,8 @@ for filename in "${SQL_FILES[@]}"; do
   mysql_root --database="${database}" --show-warnings < "${SQL_DIR}/${filename}"
 done
 
-info "updating runtime MinIO configuration"
-printf "UPDATE sys_oss_config SET access_key='%s', secret_key='%s', bucket_name='%s', endpoint='%s', is_https='N', access_policy='2' WHERE config_key IN ('minio','image');\n" \
+info "updating runtime MinIO configuration with a private default"
+printf "UPDATE sys_oss_config SET access_key='%s', secret_key='%s', bucket_name='%s', endpoint='%s', is_https='N', access_policy='0', status=CASE WHEN config_key='minio' THEN 'Y' ELSE 'N' END WHERE config_key IN ('minio','image');\n" \
   "${minio_user}" "${minio_password}" "${minio_bucket}" "${minio_endpoint}" \
   | mysql_root --database="${database}"
 
@@ -190,8 +190,17 @@ table_count="$(mysql_root --batch --skip-column-names --database="${database}" -
 }
 
 oss_rows="$(mysql_root --batch --skip-column-names --database="${database}" --execute \
-  "SELECT COUNT(*) FROM sys_oss_config WHERE config_key IN ('minio','image') AND bucket_name='${minio_bucket}' AND endpoint='${minio_endpoint}' AND access_policy='2'")"
-[[ "${oss_rows}" == 2 ]] || { error "runtime MinIO rows were not updated"; exit 1; }
+  "SELECT COUNT(*) FROM sys_oss_config WHERE config_key IN ('minio','image') AND bucket_name='${minio_bucket}' AND endpoint='${minio_endpoint}' AND access_policy='0'")"
+[[ "${oss_rows}" == 2 ]] || { error "runtime MinIO rows were not updated as PRIVATE"; exit 1; }
+
+private_default_count="$(mysql_root --batch --skip-column-names --database="${database}" --execute \
+  "SELECT COUNT(*) FROM sys_oss_config WHERE status='Y' AND config_key='minio' AND access_policy='0'")"
+default_count="$(mysql_root --batch --skip-column-names --database="${database}" --execute \
+  "SELECT COUNT(*) FROM sys_oss_config WHERE status='Y'")"
+[[ "${private_default_count}" == 1 && "${default_count}" == 1 ]] || {
+  error "OSS configuration must have exactly one PRIVATE default named minio"
+  exit 1
+}
 
 trap - EXIT
 info "MySQL initialization completed: database=${database}, tables=${table_count}"

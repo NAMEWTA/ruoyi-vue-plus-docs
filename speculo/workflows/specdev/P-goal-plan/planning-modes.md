@@ -10,7 +10,7 @@
 - Tickets Map 与全部 Ticket 存在、Ready、DAG 无环；
 - 每个验收合同被 Ticket 覆盖；
 - writable/shared path 有唯一 owner，Wave 候选无写冲突；
-- config schema v5，`max_implementation_agents` 与 `max_integration_attempts` 为正整数；原型变体范围读取 planning 配置；
+- config schema v5，`max_implementation_agents` 为正整数，`max_integration_attempts` 为正整数或表示 unlimited 的 `null`；原型变体范围读取 planning 配置；
 - 父分支可定位，implementation commit 与本地 integration 已获授权；
 - Deep Ticket 的迁移、兼容、监控、恢复和不可逆批准点完整。
 - Ticket 与 `<Path>{roots.state}/specdev/changes/{change}/spec.md</Path>`、`<Path>{roots.state}/specdev/changes/{change}/ADR.md</Path>`、`<Path>{roots.state}/specdev/adr/</Path>`、`<Path>{roots.state}/specdev/context/</Path>` 和当前代码事实不存在未处理冲突；
@@ -37,7 +37,7 @@
 - 该选择只作用于当前 Goal Plan，不读取或修改全局配置；
 - `current` 模式下所有 Ticket 必须串行，并持有唯一 implementation writer 锁；
 - `required` 模式继续使用每 Ticket source worktree 和 Lead-owned candidate integration；
-- `orchestration` 固定为 `lead-directed`；implementation agent 与 integration attempt 上限读取 config，并可在本计划中进一步降低。
+- `orchestration` 固定为 `lead-directed`；implementation agent 上限读取 config；integration attempt 为正整数时可进一步降低，为 `null` 时表示 unlimited。
 
 ## 4. Ready 停止条件
 
@@ -53,7 +53,7 @@
 - 当前源码/工作区基线未实测，或外部合同版本仍然浮动；
 - Ticket 与 Spec、ADR、`<Path>{roots.state}/specdev/adr/</Path>`、`<Path>{roots.state}/specdev/context/</Path>` 或代码事实存在未处理冲突；
 - 迁移、发布、不可逆动作或恢复存在高影响未知项；
-- 实现 agent 或 integration attempt 上限超过 config 或平台能力。
+- 实现 agent 超过 config/平台能力，或有限 integration attempt 上限超过有限 config 上限；config 有限时 Plan 不得改为 unlimited。
 
 ## 5. 固定执行拓扑
 
@@ -61,7 +61,7 @@
 - `ticket_workspace_policy: current | required`；
 - `integration_gate: direct-parent | candidate-merge`；
 - `current` 与 `direct-parent` 必须成对；`required` 与 `candidate-merge` 必须成对；
-- `implementation_agent_limit` 不大于 config 与平台能力；`integration_attempt_limit` 不大于 config；current 模式保持单 writer 串行安全不变量；
+- `implementation_agent_limit` 不大于 config 与平台能力；`integration_attempt_limit` 为正整数或 `null`，且 config 有限时不得超过或改为 unlimited；current 模式保持单 writer 串行安全不变量；
 - Lead 不计入 implementation subagent 数量；
 - review/research/test-observation agent 无 SpecDev 固定数字上限，但必须保持只读且不竞争同一可变环境；
 - provider 与派单在执行期决定，不成为 Goal Plan 的静态枚举。

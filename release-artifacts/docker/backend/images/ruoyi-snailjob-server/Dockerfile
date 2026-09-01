@@ -1,6 +1,6 @@
 FROM bellsoft/liberica-openjdk-rocky:21.0.12-cds
 
-LABEL org.opencontainers.image.title="ruoyi-snailjob-server" \
+LABEL org.opencontainers.image.title="namewta-snailjob-server" \
       org.opencontainers.image.vendor="NAMEWTA"
 
 RUN mkdir -p /ruoyi/snailjob/logs

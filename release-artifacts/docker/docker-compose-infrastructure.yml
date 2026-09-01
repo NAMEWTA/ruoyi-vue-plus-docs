@@ -7,7 +7,7 @@ x-default-logging: &default-logging
 services:
   mysql:
     image: mysql:8.4.9
-    container_name: ruoyi-namewta-mysql
+    container_name: namewta-mysql
     environment:
       TZ: Asia/Shanghai
       MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:?MYSQL_ROOT_PASSWORD is required}"
@@ -40,7 +40,7 @@ services:
 
   nacos:
     image: nacos/nacos-server:v2.5.4
-    container_name: ruoyi-namewta-nacos
+    container_name: namewta-nacos
     profiles: [nacos]
     environment:
       TZ: Asia/Shanghai
@@ -54,6 +54,8 @@ services:
       MYSQL_SERVICE_PASSWORD: "${NACOS_DB_PASSWORD:-}"
       MYSQL_SERVICE_DB_PARAM: characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&useUnicode=true&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
       NACOS_AUTH_ENABLE: "true"
+      NACOS_AUTH_CACHE_ENABLE: "false"
+      JAVA_OPT: -Dnacos.core.auth.caching.enabled=false
       NACOS_AUTH_TOKEN: "${NACOS_AUTH_TOKEN:-}"
       NACOS_AUTH_IDENTITY_KEY: "${NACOS_AUTH_IDENTITY_KEY:-}"
       NACOS_AUTH_IDENTITY_VALUE: "${NACOS_AUTH_IDENTITY_VALUE:-}"
@@ -82,7 +84,7 @@ services:
 
   redis:
     image: redis:8.6.3
-    container_name: ruoyi-namewta-redis
+    container_name: namewta-redis
     environment:
       TZ: Asia/Shanghai
       REDIS_PASSWORD: "${REDIS_PASSWORD:?REDIS_PASSWORD is required}"
@@ -107,7 +109,7 @@ services:
 
   minio:
     image: pgsty/minio:RELEASE.2026-04-17T00-00-00Z
-    container_name: ruoyi-namewta-minio
+    container_name: namewta-minio
     environment:
       TZ: Asia/Shanghai
       MINIO_ROOT_USER: "${MINIO_ROOT_USER:?MINIO_ROOT_USER is required}"
@@ -132,7 +134,7 @@ services:
 
   elasticsearch:
     image: "${ELASTICSEARCH_IMAGE:-docker.elastic.co/elasticsearch/elasticsearch:9.4.2}"
-    container_name: ruoyi-namewta-elasticsearch
+    container_name: namewta-elasticsearch
     profiles: [ai]
     environment:
       TZ: Asia/Shanghai
@@ -160,4 +162,4 @@ services:
 networks:
   namewta:
     external: true
-    name: "${NAMEWTA_NETWORK:-ruoyi-namewta-network}"
+    name: "${NAMEWTA_NETWORK:-namewta-network}"

@@ -3,7 +3,7 @@
   "execution": {
     "deep_ticket_human_approval": true,
     "max_implementation_agents": 3,
-    "max_integration_attempts": 7,
+    "max_integration_attempts": null,
     "shared_path_owner": "explicit"
   },
   "git": {

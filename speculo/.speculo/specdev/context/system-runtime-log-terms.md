@@ -1,6 +1,7 @@
 # 系统运行日志术语
 
 - **Source:** `2026-08-26-current-log-system-eli5`
+- **Source:** `<Path>{roots.state}/specdev/archive/2026-08/2026-08-29-login-password-policy-runtime-and-http-log-redaction</Path>`
 - **Graduated:** 2026-08-28
 
 **系统运行日志（System Runtime Log）**：由 SLF4J/Logback 写入终端和文件、用于还原程序运行及 HTTP 调用过程的日志；ruoyi-admin 的唯一当前运行日志文件是 `sys-console.log`。
@@ -15,8 +16,8 @@ _Avoid_: 一个混合事件、依赖客户端 ID 作为主关联键
 **Filter 所见正文（Filter-observed Payload）**：日志 Filter 在调用链中实际观察到的正文；当前顺序下请求是解密后正文，响应是外层响应加密前正文。
 _Avoid_: Controller 返回值重建、客户端线路密文字节
 
-**业务正文原值（Original Business Payload）**：普通 JSON/文本正文不做字段级脱敏、替换或语义改写；认证凭证原值仅是专用 HTTP logger 的显式安全例外。
-_Avoid_: 把例外扩展到其他日志体系、静默增加字段遮盖
+**受控业务正文日志副本（Sanitized Business Payload Copy）**：普通 JSON/文本的日志副本保留非敏感字段；认证、会话、密码、token、secret、captcha 等凭据字段必须脱敏，非法或截断 JSON 整段隐藏；真实 request/response 正文不被改写。
+_Avoid_: 把日志副本等同于业务正文、持久化可重放凭据、脱敏失败后回退输出原文
 
 **单文件运行日志（Single Runtime Log File）**：INFO 及以上运行事件统一同步写入 `sys-console.log`，按天 gzip，最多保留 60 天且归档总量最多 40GB，任一上限先达到即清理更旧归档。
 _Avoid_: 同时维护 sys-console、sys-info、sys-error；把 60 天理解为最低保证

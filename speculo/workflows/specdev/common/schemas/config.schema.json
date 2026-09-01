@@ -21,7 +21,12 @@
       "required": ["max_implementation_agents", "max_integration_attempts", "deep_ticket_human_approval", "shared_path_owner"],
       "properties": {
         "max_implementation_agents": {"type": "integer", "minimum": 1},
-        "max_integration_attempts": {"type": "integer", "minimum": 1},
+        "max_integration_attempts": {
+          "anyOf": [
+            {"type": "integer", "minimum": 1},
+            {"type": "null"}
+          ]
+        },
         "deep_ticket_human_approval": {"type": "boolean"},
         "shared_path_owner": {"type": "string", "minLength": 1}
       },

@@ -18,8 +18,8 @@
 bash release-artifacts/scripts/verify-release.sh
 bash release-artifacts/scripts/docker-manage.sh config frontend
 bash release-artifacts/scripts/docker-manage.sh ps all
-docker exec ruoyi-namewta-nginx-admin-web nginx -t
-docker exec ruoyi-namewta-nginx-lb nginx -t
+docker exec namewta-nginx-admin-web nginx -t
+docker exec namewta-nginx-lb nginx -t
 curl -I http://127.0.0.1:41080/<prefix>/
 curl -I http://127.0.0.1:40080/<prefix>/
 ```

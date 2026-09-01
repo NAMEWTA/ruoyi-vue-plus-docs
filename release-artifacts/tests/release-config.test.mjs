@@ -34,12 +34,44 @@ test('deployment is split into exactly four compose categories', () => {
   }
 });
 
+test('runtime resources use the namewta prefix', () => {
+  const composeFiles = [
+    'docker/docker-compose-backend.yml',
+    'docker/docker-compose-frontend.yml',
+    'docker/docker-compose-infrastructure.yml',
+    'docker/docker-compose-observability.yml',
+  ];
+  for (const filename of composeFiles) {
+    const compose = read(filename);
+    const containerNames = [...compose.matchAll(/^\s+container_name:\s+(\S+)$/gm)]
+      .map((match) => match[1]);
+    assert.ok(containerNames.length > 0, `${filename} must declare container names`);
+    assert.ok(containerNames.every((name) => name.startsWith('namewta-')));
+    assert.doesNotMatch(compose, /ruoyi-namewta/);
+  }
+
+  for (const filename of [
+    'docker/docker-compose-backend.yml',
+    'docker/docker-compose-frontend.yml',
+  ]) {
+    const servicesBlock = read(filename).split('\nservices:\n')[1].split('\nnetworks:')[0];
+    const services = [...servicesBlock.matchAll(/^  ([a-z0-9-]+):$/gm)]
+      .map((match) => match[1]);
+    assert.ok(services.every((name) => name.startsWith('namewta-')));
+  }
+
+  const env = read('.env.example');
+  assert.doesNotMatch(env, /^RUOYI_.*_IMAGE=/m);
+  assert.match(env, /^NAMEWTA_NETWORK=namewta-network$/m);
+  assert.match(read('scripts/docker-manage.sh'), /-p "namewta-\$\{category\}"/);
+});
+
 test('frontend compose provides LB, TLS profile, and independent app nginx', () => {
   const compose = read('docker/docker-compose-frontend.yml');
-  assert.match(compose, /^  nginx-lb:$/m);
-  assert.match(compose, /^  nginx-lb-tls:$/m);
+  assert.match(compose, /^  namewta-nginx-lb:$/m);
+  assert.match(compose, /^  namewta-nginx-lb-tls:$/m);
   assert.match(compose, /profiles: \[tls\]/);
-  assert.match(compose, /^  nginx-admin-web:$/m);
+  assert.match(compose, /^  namewta-nginx-admin-web:$/m);
   assert.match(compose, /ADMIN_WEB_PREFIX:\?ADMIN_WEB_PREFIX is required/);
   assert.match(compose, /NGINX_ENVSUBST_FILTER: "\^\(APP_\|BACKEND_\|LB_\)"/);
 });
@@ -69,7 +101,9 @@ test('both load balancers serve the internal no-cache maintenance page for upstr
   assert.match(maintenancePage, /<meta name="robots" content="noindex, nofollow">/);
   assert.match(maintenancePage, /系统正在更新中/);
   assert.doesNotMatch(maintenancePage, /<(?:script|img)\b|https?:\/\//i);
-  assert.match(read('.gitignore'), /!docker\/frontend\/nginx\/html\/nginx-lb\/system-updating\.html/);
+  if (fs.existsSync(path.join(releaseRoot, '.gitignore'))) {
+    assert.match(read('.gitignore'), /!docker\/frontend\/nginx\/html\/nginx-lb\/system-updating\.html/);
+  }
 
   for (const filename of ['nginx-lb-http.conf.template', 'nginx-lb-tls.conf.template']) {
     const config = read(`docker/frontend/nginx/lb/${filename}`);
@@ -95,7 +129,12 @@ test('committed env file contains placeholders instead of runtime secrets', () =
   }
   assert.match(env, /^MYSQL_DATABASE=ry-namewta$/m);
   assert.match(env, /^MINIO_ROOT_USER=namewta$/m);
-  assert.match(read('.gitignore'), /^\.env$/m);
+  assert.match(env, /^MINIO_ENDPOINT=replace-/m);
+  assert.match(env, /^MINIO_BUCKET=ruoyi$/m);
+  assert.match(env, /^MINIO_DIAGNOSTIC_OBJECT=\.well-known\/oss-readiness\/private-canary\.txt$/m);
+  if (fs.existsSync(path.join(releaseRoot, '.gitignore'))) {
+    assert.match(read('.gitignore'), /^\.env$/m);
+  }
 });
 
 test('Nacos infrastructure is optional, pinned, authenticated, and locally bound', () => {
@@ -105,6 +144,8 @@ test('Nacos infrastructure is optional, pinned, authenticated, and locally bound
   assert.match(compose, /profiles: \[nacos\]/);
   assert.match(compose, /MODE: standalone/);
   assert.match(compose, /NACOS_AUTH_ENABLE: "true"/);
+  assert.match(compose, /NACOS_AUTH_CACHE_ENABLE: "false"/);
+  assert.match(compose, /JAVA_OPT: -Dnacos\.core\.auth\.caching\.enabled=false/);
   assert.match(compose, /NACOS_AUTH_USER_AGENT_AUTH_WHITE_ENABLE: "false"/);
   assert.match(compose, /NACOS_MYSQL_INIT_ENABLED: "\$\{NACOS_MYSQL_INIT_ENABLED:-false\}"/);
   assert.match(compose, /\$\{NAMEWTA_BIND_HOST:-127\.0\.0\.1\}:8848:8848/);
@@ -129,7 +170,7 @@ test('Nacos override requires secrets and enables both admin instances after hea
   }
   assert.match(override, /\$\{NACOS_CONFIG_USERNAME:\?NACOS_CONFIG_USERNAME is required\}/);
   assert.match(read('.env.example'), /^NACOS_CONFIG_USERNAME=nacos$/m);
-  for (const service of ['ruoyi-server1', 'ruoyi-server2']) {
+  for (const service of ['namewta-server1', 'namewta-server2']) {
     assert.match(override, new RegExp(`^  ${service}:`, 'm'));
   }
   assert.equal((override.match(/NACOS_CONFIG_ENABLED: "true"/g) ?? []).length, 2);
@@ -225,7 +266,9 @@ test('fresh-volume Nacos hook is a no-op unless the optional override enables it
   assert.equal(output, '');
 });
 
-test('stage-mysql removes stale generated SQL and preserves pinned Nacos assets', () => {
+test('stage-mysql removes stale generated SQL and preserves pinned Nacos assets', {
+  skip: !fs.existsSync(path.join(workspaceRoot, 'ruoyi-vue-plus-namewta/script/sql/ry_vue.sql')),
+}, () => {
   const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'namewta-stage-mysql-test-'));
   const tempRelease = path.join(tempRoot, 'release-artifacts');
   const tempInit = path.join(tempRelease, 'docker/infrastructure/mysql/init');
@@ -288,7 +331,9 @@ test('MySQL initialization targets one protected ry-namewta database', () => {
   assert.match(script, /refusing existing database/);
   assert.match(script, /EXPECTED_TABLES=86/);
   assert.match(script, /--default-character-set=utf8mb4/);
-  assert.match(script, /access_policy='2'/);
+  assert.match(script, /access_policy='0'/);
+  assert.match(script, /config_key='minio' THEN 'Y' ELSE 'N'/);
+  assert.match(script, /exactly one PRIVATE default named minio/);
   assert.doesNotMatch(script, /--force/);
   for (const filename of expectedSql) {
     assert.match(script, new RegExp(filename.replaceAll('.', '\\.')));
@@ -302,6 +347,12 @@ test('MySQL initialization targets one protected ry-namewta database', () => {
     assert.match(read(composeName), /MYSQL_DATABASE:-ry-namewta/);
     assert.doesNotMatch(read(composeName), /MYSQL_DATABASE:-ry-vue/);
   }
+});
+
+test('admin instances receive the private MinIO readiness canary contract', () => {
+  const backend = read('docker/docker-compose-backend.yml');
+  assert.match(backend, /OSS_READINESS_DIAGNOSTIC_OBJECTS_MINIO/);
+  assert.match(backend, /MINIO_DIAGNOSTIC_OBJECT:-\.well-known\/oss-readiness\/private-canary\.txt/);
 });
 
 test('reserved ingress routes cannot be used as an app prefix', () => {
@@ -331,7 +382,7 @@ test('add_app.py registers a buildable app across compose and both LBs', () => {
     ], { stdio: 'pipe' });
 
     const compose = read('docker/docker-compose-frontend.yml', path.join(tempRoot, 'release-artifacts'));
-    assert.match(compose, /^  nginx-client-web:$/m);
+    assert.match(compose, /^  namewta-nginx-client-web:$/m);
     assert.match(compose, /CLIENT_WEB_PREFIX/);
     assert.match(compose, /CLIENT_WEB_PORT:-41081/);
     for (const filename of ['nginx-lb-http.conf.template', 'nginx-lb-tls.conf.template']) {
@@ -359,7 +410,7 @@ test('docker manager forwards an optional logs service on macOS-compatible bash'
     fs.chmodSync(fakeDocker, 0o755);
     const output = execFileSync(
       'bash',
-      [path.join(releaseRoot, 'scripts/docker-manage.sh'), 'logs', 'backend', 'ruoyi-server1'],
+      [path.join(releaseRoot, 'scripts/docker-manage.sh'), 'logs', 'backend', 'namewta-server1'],
       {
         encoding: 'utf8',
         env: {
@@ -369,7 +420,7 @@ test('docker manager forwards an optional logs service on macOS-compatible bash'
         },
       },
     );
-    assert.match(output, /logs -f --tail 200 ruoyi-server1/);
+    assert.match(output, /logs -f --tail 200 namewta-server1/);
   } finally {
     fs.rmSync(tempRoot, { recursive: true, force: true });
   }

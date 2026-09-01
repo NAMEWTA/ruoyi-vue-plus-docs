@@ -1,5 +1,7 @@
 # ADR-0017: 专用 HTTP 运行日志原样记录认证凭证
 
+> **Superseded by [ADR-0025](./0025-http-runtime-log-credential-redaction.md)**
+
 - **Status:** Accepted
 - **Date:** 2026-08-28
 - **Source:** `2026-08-26-current-log-system-eli5` ADR-001

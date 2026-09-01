@@ -9,7 +9,8 @@
     "specdev/grill-with-docs",
     "specdev/tickets",
     "specdev/goal-plan",
-    "specdev/implement"
+    "specdev/implement",
+    "specdev/eli5"
   ],
   "claimed_investigations": [],
   "execution_authorization": {

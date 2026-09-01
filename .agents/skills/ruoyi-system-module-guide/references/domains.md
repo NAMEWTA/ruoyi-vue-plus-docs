@@ -98,10 +98,13 @@
 
 ### OSS
 
-- 跨模块：`ruoyi-api/src/main/java/org/dromara/system/api/OssService.java` — `selectUrlByIds`、`selectByIds`。实现 `service/impl/SysOssServiceImpl.java`。翻译 `ruoyi-common/ruoyi-common-translation/src/main/java/org/dromara/common/translation/core/impl/OssUrlTranslationImpl.java`。
-- 管理面：`service/ISysOssService.java` 上传下载列表；`ISysOssConfigService.java` `init()`。HTTP `/resource/oss`、`/resource/oss/config`。
-- 启动：`runner/SystemApplicationRunner.java` 调 `ossConfigService.init()`。
-- 配置变更：`event/OssConfigChangeEvent.java` + `listener/OssConfigChangeListener.java`，发布于 `service/impl/SysOssConfigServiceImpl.java`。
+- 跨模块：`ruoyi-api/src/main/java/org/dromara/system/api/OssService.java`。新代码在业务授权后使用 `resolveAccessUrl` 获取无签名到期时间的 PUBLIC 地址，或带 `expiresAt` 的 PRIVATE 短时签名；明确需要私有下载时使用 `presignDownload`，命名策略只能由服务端选择。`selectUrlByIds`、`selectByIds` 已标记为兼容接口，仅供翻译器和存量调用方，不作为新接口范式。
+- 引用生命周期：业务表只保存 `ossId`，在保存业务数据的同一个 `@DSTransactional` 中调用 `reconcileReferences`；`snapshot` 用于查看临时状态和真实物理表引用。实现位于 `service/impl/SysOssServiceImpl.java` 与 `oss/service/OssLifecycleManager.java`。
+- 管理面：`service/ISysOssService.java` 提供管理查询与删除；HTTP `/resource/oss`。浏览器直传使用 `/resource/oss/uploads` 固定 JSON 协议，客户端只提交服务端策略名和文件元数据。
+- 配置面：`ISysOssConfigService.java` 与 HTTP `/resource/oss/config`。必须且只能有一个 PRIVATE 默认配置；PUBLIC_READ 配置必须非默认；`sys_oss.service` 是对象存储路由权威。
+- 启动与 readiness：`runner/SystemApplicationRunner.java` 调 `ossConfigService.init()`；readiness 只诊断 Bucket、Policy、域名和 Provider 能力，不创建 Bucket、不修改 Policy，未达到 serving 时拒绝签发访问 URL。
+- 配置变更：`event/OssConfigChangeEvent.java` + `listener/OssConfigChangeListener.java`，发布于 `service/impl/SysOssConfigServiceImpl.java`。被对象引用的配置不能通过普通编辑修改 configKey、Bucket 或访问策略，需走受控迁移。
+- 翻译兼容：`ruoyi-common/ruoyi-common-translation/src/main/java/org/dromara/common/translation/core/impl/OssUrlTranslationImpl.java` 仍调用旧批量接口；私有 URL 会过期，不得将翻译结果持久化或缓存为资源身份。
 
 ### 消息
 

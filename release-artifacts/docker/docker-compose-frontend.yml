@@ -5,9 +5,9 @@ x-nginx-logging: &nginx-logging
     max-file: "5"
 
 services:
-  nginx-lb:
+  namewta-nginx-lb:
     image: "${NGINX_IMAGE:-nginx:1.31.1}"
-    container_name: ruoyi-namewta-nginx-lb
+    container_name: namewta-nginx-lb
     environment:
       TZ: Asia/Shanghai
       APP_ADMIN_WEB_PREFIX: "${ADMIN_WEB_PREFIX:?ADMIN_WEB_PREFIX is required}"
@@ -23,9 +23,9 @@ services:
     restart: unless-stopped
     networks: [namewta]
 
-  nginx-lb-tls:
+  namewta-nginx-lb-tls:
     image: "${NGINX_IMAGE:-nginx:1.31.1}"
-    container_name: ruoyi-namewta-nginx-lb-tls
+    container_name: namewta-nginx-lb-tls
     profiles: [tls]
     environment:
       TZ: Asia/Shanghai
@@ -43,9 +43,9 @@ services:
     restart: unless-stopped
     networks: [namewta]
 
-  nginx-admin-web:
+  namewta-nginx-admin-web:
     image: "${NGINX_IMAGE:-nginx:1.31.1}"
-    container_name: ruoyi-namewta-nginx-admin-web
+    container_name: namewta-nginx-admin-web
     environment:
       TZ: Asia/Shanghai
       APP_PREFIX: "${ADMIN_WEB_PREFIX:?ADMIN_WEB_PREFIX is required}"
@@ -63,4 +63,4 @@ services:
 networks:
   namewta:
     external: true
-    name: "${NAMEWTA_NETWORK:-ruoyi-namewta-network}"
+    name: "${NAMEWTA_NETWORK:-namewta-network}"

@@ -16,7 +16,7 @@ services:
       NACOS_AUTH_IDENTITY_KEY: "${NACOS_AUTH_IDENTITY_KEY:?NACOS_AUTH_IDENTITY_KEY is required}"
       NACOS_AUTH_IDENTITY_VALUE: "${NACOS_AUTH_IDENTITY_VALUE:?NACOS_AUTH_IDENTITY_VALUE is required}"
 
-  ruoyi-server1:
+  namewta-server1:
     environment:
       NACOS_CONFIG_ENABLED: "true"
       NACOS_CONFIG_SERVER_ADDR: nacos:8848
@@ -29,7 +29,7 @@ services:
       nacos:
         condition: service_healthy
 
-  ruoyi-server2:
+  namewta-server2:
     environment:
       NACOS_CONFIG_ENABLED: "true"
       NACOS_CONFIG_SERVER_ADDR: nacos:8848

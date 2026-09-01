@@ -1,6 +1,6 @@
 FROM bellsoft/liberica-openjdk-rocky:21.0.12-cds
 
-LABEL org.opencontainers.image.title="ruoyi-admin" \
+LABEL org.opencontainers.image.title="namewta-admin" \
       org.opencontainers.image.vendor="NAMEWTA"
 
 RUN mkdir -p /ruoyi/server/logs /ruoyi/server/temp

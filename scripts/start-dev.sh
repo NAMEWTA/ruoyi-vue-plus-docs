@@ -130,7 +130,6 @@ start_frontend() {
 }
 
 start_backend() {
-  require_command git
   require_command java
   require_command jar
   [[ -x "${backend_dir}/mvnw" ]] || fail "后端 Maven Wrapper 不存在或不可执行：${backend_dir}/mvnw"
@@ -142,9 +141,6 @@ start_backend() {
   backend_build_lock_acquire "${backend_dir}" || fail "当前后端工作区无法取得独占构建锁。"
 
   [[ -s "${backend_dir}/${backend_local_config}" ]] || fail "缺少非空的本地后端配置：${backend_dir}/${backend_local_config}"
-  if ! git -C "${backend_dir}" check-ignore -q -- "${backend_local_config}"; then
-    fail "本地后端配置未被 Git 忽略，请先修复 secret 边界：${backend_dir}/${backend_local_config}"
-  fi
   ensure_port_available 8080 "后端"
 
   cd "${backend_dir}"

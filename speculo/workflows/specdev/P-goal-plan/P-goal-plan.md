@@ -58,7 +58,7 @@ Goal Plan 只拥有单个 Ticket 无法独立决定的事情：整体 Outcome、
 1. 验证 Spec、Tickets、合同覆盖、DAG、路径所有权和 Deep Ticket 完整性；
 2. 只读探索影响调度的代码与项目事实；
 3. 识别 migration、high-assurance、reference-conformance、release-coordination 等适用模式；
-4. 从 config 读取 `max_implementation_agents` 与 `max_integration_attempts`，将实际值快照到 `implementation_agent_limit` 与 `integration_attempt_limit`；本计划可以降低但不得超过 config 或平台能力，Lead 不计入；
+4. 从 config 读取 `max_implementation_agents` 与 `max_integration_attempts`，将实际值快照到 `implementation_agent_limit` 与 `integration_attempt_limit`；集成值为 `null` 时表示不设次数上限，否则本计划可以降低但不得超过 config，Lead 不计入；
 5. 根据 workspace 策略确认实现 commit 与 direct-parent/candidate integration 已获授权；缺一项则计划保持 blocked；
 6. 只询问无法发现且会改变 Gate、Wave、owner、迁移、批准或验收的问题。
 

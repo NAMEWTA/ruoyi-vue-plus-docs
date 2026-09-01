@@ -5,18 +5,19 @@ x-default-logging: &default-logging
     max-file: "5"
 
 services:
-  ruoyi-monitor-admin:
-    image: "${RUOYI_MONITOR_IMAGE:-ruoyi-namewta/ruoyi-monitor-admin:6.0.0}"
+  namewta-monitor-admin:
+    image: "${NAMEWTA_MONITOR_IMAGE:-namewta/namewta-monitor-admin:6.0.0}"
     build:
       context: ./backend/images/ruoyi-monitor-admin
-    container_name: ruoyi-namewta-monitor-admin
+    container_name: namewta-monitor-admin
     environment:
       TZ: Asia/Shanghai
       SPRING_PROFILES_ACTIVE: "${SPRING_PROFILES_ACTIVE:-prod}"
+      SPRING_APPLICATION_NAME: namewta-monitor-admin
       JAVA_OPTS: "${JAVA_OPTS:--Xms256m -Xmx512m}"
       SPRING_SECURITY_USER_NAME: "${MONITOR_USERNAME:?MONITOR_USERNAME is required}"
       SPRING_SECURITY_USER_PASSWORD: "${MONITOR_PASSWORD:?MONITOR_PASSWORD is required}"
-      SPRING_BOOT_ADMIN_CLIENT_URL: http://ruoyi-monitor-admin:9090/admin
+      SPRING_BOOT_ADMIN_CLIENT_URL: http://namewta-monitor-admin:9090/admin
       SPRING_BOOT_ADMIN_CLIENT_USERNAME: "${MONITOR_USERNAME:?MONITOR_USERNAME is required}"
       SPRING_BOOT_ADMIN_CLIENT_PASSWORD: "${MONITOR_PASSWORD:?MONITOR_PASSWORD is required}"
     ports:
@@ -29,7 +30,7 @@ services:
 
   loki:
     image: grafana/loki:3.6.0
-    container_name: ruoyi-namewta-loki
+    container_name: namewta-loki
     user: "0:0"
     command: ["-config.file=/etc/loki/loki.yml"]
     volumes:
@@ -41,7 +42,7 @@ services:
 
   alloy:
     image: grafana/alloy:v1.11.0
-    container_name: ruoyi-namewta-alloy
+    container_name: namewta-alloy
     command: ["run", "--storage.path=/var/lib/alloy/data", "/etc/alloy/config.alloy"]
     volumes:
       - ./observability/alloy/config.alloy:/etc/alloy/config.alloy:ro
@@ -54,7 +55,7 @@ services:
 
   grafana:
     image: grafana/grafana:12.2.8
-    container_name: ruoyi-namewta-grafana
+    container_name: namewta-grafana
     environment:
       TZ: Asia/Shanghai
       GF_SECURITY_ADMIN_USER: "${GRAFANA_ADMIN_USER:?GRAFANA_ADMIN_USER is required}"
@@ -77,7 +78,7 @@ services:
 
   prometheus:
     image: prom/prometheus:v3.5.0
-    container_name: ruoyi-namewta-prometheus
+    container_name: namewta-prometheus
     profiles: [metrics]
     command:
       - --config.file=/etc/prometheus/prometheus.yml
@@ -94,7 +95,7 @@ services:
 
   node-exporter:
     image: prom/node-exporter:v1.9.1
-    container_name: ruoyi-namewta-node-exporter
+    container_name: namewta-node-exporter
     profiles: [metrics]
     command:
       - --path.rootfs=/host
@@ -108,7 +109,7 @@ services:
 
   cadvisor:
     image: ghcr.io/google/cadvisor:v0.57.0
-    container_name: ruoyi-namewta-cadvisor
+    container_name: namewta-cadvisor
     profiles: [metrics]
     command: ["--docker_only=true", "--housekeeping_interval=15s"]
     volumes:
@@ -125,4 +126,4 @@ services:
 networks:
   namewta:
     external: true
-    name: "${NAMEWTA_NETWORK:-ruoyi-namewta-network}"
+    name: "${NAMEWTA_NETWORK:-namewta-network}"

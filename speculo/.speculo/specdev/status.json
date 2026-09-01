@@ -22,7 +22,12 @@
       "change": "2026-08-24-oss-eli5",
       "current_work": null,
       "works_run": [
-        "specdev/eli5"
+        "specdev/eli5",
+        "specdev/grill-with-docs",
+        "specdev/spec",
+        "specdev/tickets",
+        "specdev/goal-plan",
+        "specdev/implement"
       ],
       "claimed_investigations": []
     },
@@ -51,31 +56,26 @@
       "claimed_investigations": []
     },
     {
-      "change": "2026-08-29-ruoyi-admin-system-classpath-build-failure",
-      "current_work": null,
-      "works_run": [
-        "specdev/diagnose-bugs",
-        "specdev/spec",
-        "specdev/implement"
-      ],
-      "claimed_investigations": []
-    },
-    {
-      "change": "2026-08-29-login-password-policy-runtime-and-http-log-redaction",
-      "current_work": null,
-      "works_run": [
-        "specdev/diagnose-bugs",
-        "specdev/spec",
-        "specdev/implement"
-      ],
-      "claimed_investigations": []
-    },
-    {
       "change": "2026-08-30-openapi-common-module",
       "current_work": null,
       "works_run": [
         "specdev/spec",
-        "specdev/grill-with-docs"
+        "specdev/grill-with-docs",
+        "specdev/tickets",
+        "specdev/goal-plan",
+        "specdev/implement",
+        "specdev/eli5"
+      ],
+      "claimed_investigations": []
+    },
+    {
+      "change": "2026-08-31-account-profile-verification",
+      "current_work": "specdev/implement",
+      "works_run": [
+        "specdev/grill-with-docs",
+        "specdev/spec",
+        "specdev/tickets",
+        "specdev/goal-plan"
       ],
       "claimed_investigations": []
     },
@@ -87,7 +87,8 @@
         "specdev/spec",
         "specdev/tickets",
         "specdev/goal-plan",
-        "specdev/implement"
+        "specdev/implement",
+        "specdev/eli5"
       ],
       "claimed_investigations": []
     }
@@ -103,6 +104,8 @@
     "2026-08-27-plus-ui-backend-aligned-domains",
     "2026-08-28-retire-runtime-code-generator",
     "2026-08-28-user-password-policy-temporary-credentials",
-    "2026-08-28-plus-ui-shared-navigation-permission-runtime"
+    "2026-08-28-plus-ui-shared-navigation-permission-runtime",
+    "2026-08-29-login-password-policy-runtime-and-http-log-redaction",
+    "2026-08-29-ruoyi-admin-system-classpath-build-failure"
   ]
 }

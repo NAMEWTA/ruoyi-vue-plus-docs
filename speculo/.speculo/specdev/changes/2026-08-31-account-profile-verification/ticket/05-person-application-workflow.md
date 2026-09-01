@@ -4,25 +4,44 @@ artifact: ticket
 change: 2026-08-31-account-profile-verification
 id: T-05
 title: 交付个人申请、不可变快照与 Workflow 发布闭环
-status: ready
+status: done
 planning_depth: deep
 planning_depth_reason: 个人明文身份、并发唯一性、不可变快照和流程终态原子发布直接影响认证完整性。
 ready: true
 risk: critical
 blocked_by: [T-03, T-04]
 contract_ids: [AC-001, AC-003, AC-004, AC-005, AC-006, AC-007, AC-008, AC-014, AC-015, AC-038]
-owner: unassigned
-expected_changes: ["<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/ruoyi-profile-person/src/main/java/org/dromara/profile/person/application/**</Path>"]
+owner: codex:/root
+expected_changes:
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/ruoyi-profile-person/src/main/java/org/dromara/profile/person/application/**</Path>"
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/ruoyi-profile-person/src/main/java/org/dromara/profile/person/persistence/**</Path>"
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/ruoyi-profile-person/src/main/java/org/dromara/profile/shared/material/ProfileMaterialService.java</Path>"
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/ruoyi-profile-person/src/main/java/org/dromara/profile/shared/material/ProfileMaterialRepository.java</Path>"
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/ruoyi-profile-person/src/main/java/org/dromara/profile/shared/material/MybatisProfileMaterialRepository.java</Path>"
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/ruoyi-profile-person/src/main/java/org/dromara/profile/shared/material/mapper/ProfileMaterialMapper.java</Path>"
 writable_paths:
   - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/ruoyi-profile-person/src/main/java/org/dromara/profile/person/application/**</Path>"
   - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/ruoyi-profile-person/src/main/java/org/dromara/profile/person/persistence/**</Path>"
   - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/ruoyi-profile-person/src/test/java/org/dromara/profile/person/application/**</Path>"
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/ruoyi-profile-person/src/main/java/org/dromara/profile/shared/material/ProfileMaterialService.java</Path>"
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/ruoyi-profile-person/src/main/java/org/dromara/profile/shared/material/ProfileMaterialRepository.java</Path>"
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/ruoyi-profile-person/src/main/java/org/dromara/profile/shared/material/MybatisProfileMaterialRepository.java</Path>"
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/ruoyi-profile-person/src/main/java/org/dromara/profile/shared/material/mapper/ProfileMaterialMapper.java</Path>"
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/ruoyi-profile-person/src/test/java/org/dromara/profile/shared/material/ProfileMaterialServiceTest.java</Path>"
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/ruoyi-profile-person/src/test/java/org/dromara/profile/shared/material/ProfileMaterialMySqlE2ETest.java</Path>"
 read_only_paths:
   - "<Path>ruoyi-vue-plus-namewta/ruoyi-api/**</Path>"
   - "<Path>release-artifacts/docker/infrastructure/mysql/init/**</Path>"
-  - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/ruoyi-profile-person/src/main/java/org/dromara/profile/shared/material/**</Path>"
-shared_paths: []
-shared_path_owners: []
+shared_paths:
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/ruoyi-profile-person/src/main/java/org/dromara/profile/shared/material/ProfileMaterialService.java</Path>"
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/ruoyi-profile-person/src/main/java/org/dromara/profile/shared/material/ProfileMaterialRepository.java</Path>"
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/ruoyi-profile-person/src/main/java/org/dromara/profile/shared/material/MybatisProfileMaterialRepository.java</Path>"
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/ruoyi-profile-person/src/main/java/org/dromara/profile/shared/material/mapper/ProfileMaterialMapper.java</Path>"
+shared_path_owners:
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/ruoyi-profile-person/src/main/java/org/dromara/profile/shared/material/ProfileMaterialService.java</Path> => T-05"
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/ruoyi-profile-person/src/main/java/org/dromara/profile/shared/material/ProfileMaterialRepository.java</Path> => T-05"
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/ruoyi-profile-person/src/main/java/org/dromara/profile/shared/material/MybatisProfileMaterialRepository.java</Path> => T-05"
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/ruoyi-profile-person/src/main/java/org/dromara/profile/shared/material/mapper/ProfileMaterialMapper.java</Path> => T-05"
 ---
 
 # Ticket T-05: 交付个人申请、不可变快照与 Workflow 发布闭环
@@ -91,7 +110,7 @@ shared_path_owners: []
 
 - **预计修改点/可写范围：** person application/persistence 与测试子树。
 - **只读上下文：** T-01 至 T-04 产物和 SQL。
-- **共享路径：** 无。
+- **共享路径：** T-05 临时拥有材料 service/repository/mapper 的最小接缝修正；不改公开端口。
 - **保留或不动：** rebind、通知、企业与管理员命令。
 
 ## 8. 验证矩阵
@@ -118,6 +137,11 @@ shared_path_owners: []
 
 ## 10. 验收标准
 
-- [ ] 所列 AC 正常、失败、并发和 core 回归通过。
-- [ ] required E2E、Evidence、提交和父分支结果完整。
-- [ ] 无越界或未批准偏差。
+- [x] 所列 AC 正常、失败、并发和 core 回归通过。
+- [x] required E2E、Evidence、提交和父分支结果完整。
+- [x] 无越界或未批准偏差。
+
+## 11. 执行偏差
+
+- T-04 的共享材料实现只允许 `WORKING -> immutable`，无法按本 Ticket 已锁定合同把审批提交材料冻结为档案版本材料；同时工作材料写入未校验申请状态，`WAITING` 仍可能被修改。
+- T-05 仅接管上述四个共享实现文件、一个聚焦测试及受新状态门禁影响的既有 MySQL E2E 夹具，增加 `WORKING` 可编辑状态检查与受关系约束的 `SUBMISSION -> VERSION` 复制；`ProfileMaterialPort`、schema、OSS 生命周期和企业 adapter 均不改变。

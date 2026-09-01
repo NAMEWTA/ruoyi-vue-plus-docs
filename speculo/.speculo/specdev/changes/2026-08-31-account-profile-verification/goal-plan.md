@@ -180,7 +180,7 @@ W1  T-01 ─┐
 | T-02 | backend `672268b2f` + root `b9685ae` | backend `{change}/T-02-v2` + root `{change}/T-02-root-v2` | schema static + MySQL passed | backend `b57e25d14` / root `bc812e2` | fresh MySQL 8.4.9 required/passed | backend `b57e25d14` / root `bc812e2` |
 | T-03 | backend `b57e25d14` | `{change}/T-03` | 19 provider unit/security tests passed | `8b8353491` | callback+DB required/passed | `4bc543c01` |
 | T-04 | backend `4bc543c01` | `{change}/T-04` | 12 material/OSS contract tests passed | `c9691c9a8` | MySQL+OSS+ACL required/passed | `7eb550b90` |
-| T-05 | backend G2 result | `{change}/T-05` | person unit/integration non-E2E | required/pending | HTTP+DB+workflow required | pending |
+| T-05 | backend `7eb550b90` | `{change}/T-05` | 43 person/material tests passed | `44f83197d` | HTTP+MySQL+ProcessEvent required/passed | `8393756b0` |
 | T-07 | backend G2 result | `{change}/T-07` | enterprise non-E2E | required/pending | HTTP+DB+workflow required | pending |
 | T-06 | backend T-05 result | `{change}/T-06` | rebind/notify tests | required/pending | workflow+DB+notify required | pending |
 | T-08 | backend T-05/T-07 result | `{change}/T-08` | challenge/clock tests | required/pending | Redis+notify+DB required | pending |
@@ -266,6 +266,9 @@ source 测试只证明局部实现；required E2E 只在 Lead-owned parent-candi
 - T-04 已完成并集成：source tip `c9691c9a82cfdda845046fcaaace7f32c112b064`，candidate/result `7eb550b9041603aa8317913574c70ec8140bb244`；12 个材料/OSS 合同测试和 1 个真实 MySQL 材料生命周期 E2E 通过，隔离库/用户清理后业务库仍为 87 表。
 - T-04 通过兼容 default method 扩展 `OssService` 的只读元数据合同；旧方法、OSS URL/删除合同、schema 和运行时依赖均未改变。
 - G2 已关闭；T-05/T-07 可从 backend `7eb550b9041603aa8317913574c70ec8140bb244` 开始。
+- T-05 已完成并集成：source tip `44f83197d519ce1d86ea1096f163e3b106dd298b`，candidate/result `8393756b0973ccecc4bf73a6669c0c1d6c0b0b1e`；43 个 person/material 测试和 5 个真实 MySQL HTTP/ProcessEvent/事务发布 E2E 通过，full/core bundle 与 JAR 装配核验通过。
+- T-05 发现材料发布接缝缺口并按偏差控制接管最小共享实现：补齐工作副本状态写保护与 `SUBMISSION -> VERSION` 关系约束复制，不改变公开端口、schema 或 OSS 生命周期。
+- T-05 的完整 Warm-Flow 引擎/流程定义启动链保留给 T-14 全栈 Gate；本 Ticket 已覆盖生产 WorkflowService gateway 合同、持久化 instanceVariable fence，以及生产 ProcessEvent 监听与真实 MySQL 原子发布。
 
 ### Pending Decisions and Blockers
 

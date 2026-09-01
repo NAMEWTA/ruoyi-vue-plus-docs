@@ -39,7 +39,7 @@
     "history": []
   },
   "created_at": "2026-08-31T18:06:59+08:00",
-  "updated_at": "2026-09-01T20:41:52+08:00",
+  "updated_at": "2026-09-01T21:41:29+08:00",
   "completed_at": null,
   "archived": false,
   "archive_path": null,
@@ -68,6 +68,14 @@
       "detail": "T-04 要求 enterprise 通过公开窄端口消费 person 的共享材料能力，并要求按 OSS 权威文件大小与 MIME 复验；当前 ruoyi-api 既没有材料端口，OssService 也只暴露文件名/后缀和生命周期。",
       "impact": "严格停留在原路径会迫使企业重复实现共享领域，或绕过 AC-034 的大小/MIME 校验，或直接依赖 system 内部表，均违反已锁定架构和安全合同。",
       "correction": "将 ruoyi-api profile material 窄端口、OssService 新增兼容只读 objectMetadata 合同、SysOssServiceImpl 唯一桥接实现及其聚焦测试纳入 T-04 可写范围；不改 schema、旧 API、OSS 生命周期或 URL 语义。"
+    },
+    {
+      "ticket_id": "T-05",
+      "kind": "material-publication-seam-and-working-state-guard-omitted",
+      "observed_at": "2026-09-01T20:58:20+08:00",
+      "detail": "T-04 的共享材料实现只允许从 WORKING 建立不可变副本，无法执行 T-05 已锁定的 SUBMISSION 到 VERSION 材料发布；工作材料写入也未验证申请处于 DRAFT/BACK/CANCEL。",
+      "impact": "若不修正，档案版本缺少审核时材料证据，且 WAITING 期间仍可能变更工作材料，破坏不可变快照和只读状态合同。",
+      "correction": "由 T-05 临时接管 person 叶模块内四个共享材料实现文件、一个聚焦测试及受状态门禁影响的既有 MySQL E2E 夹具，仅增加工作副本可编辑状态校验及受来源关系约束的 SUBMISSION 到 VERSION 复制；不修改公开 ProfileMaterialPort、schema 或 OSS 生命周期。"
     }
   ],
   "worktrees": [
@@ -134,9 +142,9 @@
     },
     {
       "ticket_id": "T-05", "owner": "codex:/root", "implementation_owner": "codex:/root", "integration_owner": "codex:/root", "provider": "git",
-      "base_sha": "ebc2fef99d4ee33121de298d68a75781cbd2109c", "parent_branch": "main", "branch": "speculo/2026-08-31-account-profile-verification/T-05", "workspace_ref": "specdev-worktree/2026-08-31-account-profile-verification/T-05", "source_checkpoint": null,
-      "integration": {"status": "pending", "parent_ref": "refs/heads/main", "parent_before_sha": null, "source_sha": null, "candidate_sha": null, "candidate_tree_sha": null, "candidate_branch": null, "candidate_workspace_ref": null, "result_sha": null, "method": null, "conflict_paths": [], "verification": "pending", "full_suite": {"required": false, "status": "not-required", "reason": "Person application ticket runs focused checks; the change-wide suite belongs to T-14", "evidence": null}, "e2e": {"required": true, "status": "pending", "reason": "HTTP, MySQL and workflow publication require integration verification", "evidence": null}, "evidence": "<Path>{roots.state}/specdev/changes/2026-08-31-account-profile-verification/evidence/T-05.md</Path>", "attempts": 0, "promotion_status": "pending"},
-      "status": "planned", "updated_at": "2026-09-01T11:30:00+08:00"
+      "base_sha": "7eb550b9041603aa8317913574c70ec8140bb244", "parent_branch": "main", "branch": "speculo/2026-08-31-account-profile-verification/T-05", "workspace_ref": "specdev-worktree/2026-08-31-account-profile-verification/T-05", "source_checkpoint": "44f83197d519ce1d86ea1096f163e3b106dd298b",
+      "integration": {"status": "passed", "parent_ref": "refs/heads/main", "parent_before_sha": "7eb550b9041603aa8317913574c70ec8140bb244", "source_sha": "44f83197d519ce1d86ea1096f163e3b106dd298b", "candidate_sha": "8393756b0973ccecc4bf73a6669c0c1d6c0b0b1e", "candidate_tree_sha": "54afa9ca40b9a201b07f1d6a6d99f5f1e0df2bfb", "candidate_branch": "speculo/integration/2026-08-31-account-profile-verification/T-05", "candidate_workspace_ref": "specdev-worktree/.integration/2026-08-31-account-profile-verification/T-05", "result_sha": "8393756b0973ccecc4bf73a6669c0c1d6c0b0b1e", "method": "merge-commit", "conflict_paths": [], "verification": "passed", "full_suite": {"required": false, "status": "not-required", "reason": "The change-wide test suite belongs to T-14; supplemental full and core clean bundle builds passed", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-31-account-profile-verification/evidence/T-05.md</Path>"}, "e2e": {"required": true, "status": "passed", "reason": "Current-user HTTP, immutable snapshots, production ProcessEvent handling and atomic publication passed against an isolated authorized development MySQL database; the complete Warm-Flow engine definition chain remains a T-14 gate", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-31-account-profile-verification/evidence/T-05.md</Path>"}, "evidence": "<Path>{roots.state}/specdev/changes/2026-08-31-account-profile-verification/evidence/T-05.md</Path>", "attempts": 2, "promotion_status": "applied"},
+      "status": "integrated", "updated_at": "2026-09-01T21:41:29+08:00"
     },
     {
       "ticket_id": "T-06", "owner": "codex:/root", "implementation_owner": "codex:/root", "integration_owner": "codex:/root", "provider": "git",

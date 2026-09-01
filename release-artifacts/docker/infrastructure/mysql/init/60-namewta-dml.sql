@@ -1005,3 +1005,131 @@ commit;
 
 -- 本块不向普通角色授予 OpenAPI 或 Nacos 菜单；授权继续由管理员显式管理。
 -- NAMEWTA-ADMIN-RUNTIME-RECONCILE-DML-001-END
+
+-- NAMEWTA-PROFILE-DML-001
+-- ============================================================================
+-- 变更内容：新增区域证件目录、系统必传材料规则、档案配置及完整能力菜单
+-- 变更标识：2026-09-01_11:50:00
+-- 执行前置：已执行 NAMEWTA-PROFILE-DDL-001
+-- 适用范围：全新环境；尚未应用本变更的升级环境
+-- 重复执行：否；稳定主键与编码冲突时失败关闭
+-- 回滚方式：仅上线前可按引用逆序回滚；上线后标签编码和证件编码只允许兼容追加
+-- ============================================================================
+
+insert into profile_document_type
+    (document_type_id, document_type_code, issuing_region, document_type_name, number_pattern,
+     validity_required, status, order_num, create_dept, create_by, create_time)
+values
+    (2100100000000000001, 'CN_RESIDENT_ID', 'CN', '中华人民共和国居民身份证', '^[0-9]{17}[0-9Xx]$', 'Y', '0', 1, 1761000000000000103, 1761100000000000001, sysdate()),
+    (2100100000000000002, 'HK_RESIDENT_ID', 'HK', '香港永久性居民身份证', '^[A-Za-z]{1,2}[0-9]{6}[0-9A-Za-z]$', 'Y', '0', 2, 1761000000000000103, 1761100000000000001, sysdate()),
+    (2100100000000000003, 'MO_RESIDENT_ID', 'MO', '澳门居民身份证', '^[0-9]{8}$', 'Y', '0', 3, 1761000000000000103, 1761100000000000001, sysdate()),
+    (2100100000000000004, 'TW_RESIDENT_ID', 'TW', '台湾地区身份证件', '^[A-Za-z][0-9]{9}$', 'Y', '0', 4, 1761000000000000103, 1761100000000000001, sysdate()),
+    (2100100000000000005, 'HK_MACAO_RESIDENCE_PERMIT', 'CN', '港澳居民居住证', '^8[123]0000[0-9]{11}[0-9Xx]$', 'Y', '0', 5, 1761000000000000103, 1761100000000000001, sysdate()),
+    (2100100000000000006, 'TW_RESIDENCE_PERMIT', 'CN', '台湾居民居住证', '^830000[0-9]{11}[0-9Xx]$', 'Y', '0', 6, 1761000000000000103, 1761100000000000001, sysdate()),
+    (2100100000000000007, 'MAINLAND_TRAVEL_PERMIT_HK_MACAO', 'CN', '港澳居民来往内地通行证', '^[HMhm][0-9]{8,10}$', 'Y', '0', 7, 1761000000000000103, 1761100000000000001, sysdate()),
+    (2100100000000000008, 'MAINLAND_TRAVEL_PERMIT_TW', 'CN', '台湾居民来往大陆通行证', '^[0-9]{8,10}$', 'Y', '0', 8, 1761000000000000103, 1761100000000000001, sysdate()),
+    (2100100000000000009, 'CN_PASSPORT', 'CN', '中华人民共和国护照或旅行证', '^[A-Za-z0-9]{5,17}$', 'Y', '0', 9, 1761000000000000103, 1761100000000000001, sysdate()),
+    (2100100000000000010, 'HK_PASSPORT', 'HK', '香港特别行政区护照或签证身份书', '^[A-Za-z0-9]{5,17}$', 'Y', '0', 10, 1761000000000000103, 1761100000000000001, sysdate()),
+    (2100100000000000011, 'MO_PASSPORT', 'MO', '澳门特别行政区护照或旅行证件', '^[A-Za-z0-9]{5,17}$', 'Y', '0', 11, 1761000000000000103, 1761100000000000001, sysdate()),
+    (2100100000000000012, 'TW_TRAVEL_DOCUMENT', 'TW', '台湾地区护照或旅行证件', '^[A-Za-z0-9]{5,17}$', 'Y', '0', 12, 1761000000000000103, 1761100000000000001, sysdate());
+
+insert into profile_material_node
+    (material_node_id, parent_id, node_type, node_depth, profile_type, material_tag_code, node_name,
+     system_required, status, order_num, create_dept, create_by, create_time)
+values
+    (2100200000000000001, 0, 'CATEGORY', 1, 'PERSON', null, '个人材料', 'N', '0', 1, 1761000000000000103, 1761100000000000001, sysdate()),
+    (2100200000000000002, 0, 'CATEGORY', 1, 'ENTERPRISE', null, '企业材料', 'N', '0', 2, 1761000000000000103, 1761100000000000001, sysdate()),
+    (2100200000000000003, 0, 'CATEGORY', 1, 'COMMON', null, '通用材料', 'N', '0', 3, 1761000000000000103, 1761100000000000001, sysdate()),
+    (2100200000000000011, 2100200000000000001, 'CATEGORY', 2, 'PERSON', null, '个人身份证明', 'N', '0', 1, 1761000000000000103, 1761100000000000001, sysdate()),
+    (2100200000000000012, 2100200000000000002, 'CATEGORY', 2, 'ENTERPRISE', null, '企业主体证明', 'N', '0', 1, 1761000000000000103, 1761100000000000001, sysdate()),
+    (2100200000000000013, 2100200000000000002, 'CATEGORY', 2, 'ENTERPRISE', null, '企业办理证明', 'N', '0', 2, 1761000000000000103, 1761100000000000001, sysdate()),
+    (2100200000000000101, 2100200000000000011, 'TAG', 3, 'PERSON', 'PERSON_ID_CARD_PORTRAIT', '居民身份证人像面', 'Y', '0', 1, 1761000000000000103, 1761100000000000001, sysdate()),
+    (2100200000000000102, 2100200000000000011, 'TAG', 3, 'PERSON', 'PERSON_ID_CARD_EMBLEM', '居民身份证国徽面', 'Y', '0', 2, 1761000000000000103, 1761100000000000001, sysdate()),
+    (2100200000000000103, 2100200000000000011, 'TAG', 3, 'PERSON', 'PERSON_IDENTITY_FRONT', '身份证明正面', 'Y', '0', 3, 1761000000000000103, 1761100000000000001, sysdate()),
+    (2100200000000000104, 2100200000000000011, 'TAG', 3, 'PERSON', 'PERSON_IDENTITY_BACK', '身份证明背面', 'Y', '0', 4, 1761000000000000103, 1761100000000000001, sysdate()),
+    (2100200000000000105, 2100200000000000011, 'TAG', 3, 'PERSON', 'PERSON_PASSPORT_DATA_PAGE', '护照或旅行证件资料页', 'Y', '0', 5, 1761000000000000103, 1761100000000000001, sysdate()),
+    (2100200000000000201, 2100200000000000012, 'TAG', 3, 'ENTERPRISE', 'ENTERPRISE_BUSINESS_LICENSE', '营业执照', 'Y', '0', 1, 1761000000000000103, 1761100000000000001, sysdate()),
+    (2100200000000000202, 2100200000000000012, 'TAG', 3, 'ENTERPRISE', 'ENTERPRISE_LEGAL_REPRESENTATIVE_DOCUMENT', '法定代表人身份证明', 'Y', '0', 2, 1761000000000000103, 1761100000000000001, sysdate()),
+    (2100200000000000203, 2100200000000000013, 'TAG', 3, 'ENTERPRISE', 'ENTERPRISE_AUTHORIZATION_LETTER', '企业授权委托书', 'Y', '0', 1, 1761000000000000103, 1761100000000000001, sysdate());
+
+insert into profile_material_requirement
+    (material_requirement_id, profile_type, document_type_code, handler_condition, material_tag_code,
+     minimum_count, status, create_dept, create_by, create_time)
+values
+    (2100300000000000001, 'PERSON', 'CN_RESIDENT_ID', 'ALWAYS', 'PERSON_ID_CARD_PORTRAIT', 1, '0', 1761000000000000103, 1761100000000000001, sysdate()),
+    (2100300000000000002, 'PERSON', 'CN_RESIDENT_ID', 'ALWAYS', 'PERSON_ID_CARD_EMBLEM', 1, '0', 1761000000000000103, 1761100000000000001, sysdate()),
+    (2100300000000000003, 'PERSON', 'HK_RESIDENT_ID', 'ALWAYS', 'PERSON_IDENTITY_FRONT', 1, '0', 1761000000000000103, 1761100000000000001, sysdate()),
+    (2100300000000000004, 'PERSON', 'HK_RESIDENT_ID', 'ALWAYS', 'PERSON_IDENTITY_BACK', 1, '0', 1761000000000000103, 1761100000000000001, sysdate()),
+    (2100300000000000005, 'PERSON', 'MO_RESIDENT_ID', 'ALWAYS', 'PERSON_IDENTITY_FRONT', 1, '0', 1761000000000000103, 1761100000000000001, sysdate()),
+    (2100300000000000006, 'PERSON', 'MO_RESIDENT_ID', 'ALWAYS', 'PERSON_IDENTITY_BACK', 1, '0', 1761000000000000103, 1761100000000000001, sysdate()),
+    (2100300000000000007, 'PERSON', 'TW_RESIDENT_ID', 'ALWAYS', 'PERSON_IDENTITY_FRONT', 1, '0', 1761000000000000103, 1761100000000000001, sysdate()),
+    (2100300000000000008, 'PERSON', 'TW_RESIDENT_ID', 'ALWAYS', 'PERSON_IDENTITY_BACK', 1, '0', 1761000000000000103, 1761100000000000001, sysdate()),
+    (2100300000000000009, 'PERSON', 'HK_MACAO_RESIDENCE_PERMIT', 'ALWAYS', 'PERSON_IDENTITY_FRONT', 1, '0', 1761000000000000103, 1761100000000000001, sysdate()),
+    (2100300000000000010, 'PERSON', 'HK_MACAO_RESIDENCE_PERMIT', 'ALWAYS', 'PERSON_IDENTITY_BACK', 1, '0', 1761000000000000103, 1761100000000000001, sysdate()),
+    (2100300000000000011, 'PERSON', 'TW_RESIDENCE_PERMIT', 'ALWAYS', 'PERSON_IDENTITY_FRONT', 1, '0', 1761000000000000103, 1761100000000000001, sysdate()),
+    (2100300000000000012, 'PERSON', 'TW_RESIDENCE_PERMIT', 'ALWAYS', 'PERSON_IDENTITY_BACK', 1, '0', 1761000000000000103, 1761100000000000001, sysdate()),
+    (2100300000000000013, 'PERSON', 'MAINLAND_TRAVEL_PERMIT_HK_MACAO', 'ALWAYS', 'PERSON_IDENTITY_FRONT', 1, '0', 1761000000000000103, 1761100000000000001, sysdate()),
+    (2100300000000000014, 'PERSON', 'MAINLAND_TRAVEL_PERMIT_HK_MACAO', 'ALWAYS', 'PERSON_IDENTITY_BACK', 1, '0', 1761000000000000103, 1761100000000000001, sysdate()),
+    (2100300000000000015, 'PERSON', 'MAINLAND_TRAVEL_PERMIT_TW', 'ALWAYS', 'PERSON_IDENTITY_FRONT', 1, '0', 1761000000000000103, 1761100000000000001, sysdate()),
+    (2100300000000000016, 'PERSON', 'MAINLAND_TRAVEL_PERMIT_TW', 'ALWAYS', 'PERSON_IDENTITY_BACK', 1, '0', 1761000000000000103, 1761100000000000001, sysdate()),
+    (2100300000000000017, 'PERSON', 'CN_PASSPORT', 'ALWAYS', 'PERSON_PASSPORT_DATA_PAGE', 1, '0', 1761000000000000103, 1761100000000000001, sysdate()),
+    (2100300000000000018, 'PERSON', 'HK_PASSPORT', 'ALWAYS', 'PERSON_PASSPORT_DATA_PAGE', 1, '0', 1761000000000000103, 1761100000000000001, sysdate()),
+    (2100300000000000019, 'PERSON', 'MO_PASSPORT', 'ALWAYS', 'PERSON_PASSPORT_DATA_PAGE', 1, '0', 1761000000000000103, 1761100000000000001, sysdate()),
+    (2100300000000000020, 'PERSON', 'TW_TRAVEL_DOCUMENT', 'ALWAYS', 'PERSON_PASSPORT_DATA_PAGE', 1, '0', 1761000000000000103, 1761100000000000001, sysdate()),
+    (2100300000000000101, 'ENTERPRISE', '*', 'ALWAYS', 'ENTERPRISE_BUSINESS_LICENSE', 1, '0', 1761000000000000103, 1761100000000000001, sysdate()),
+    (2100300000000000102, 'ENTERPRISE', '*', 'ALWAYS', 'ENTERPRISE_LEGAL_REPRESENTATIVE_DOCUMENT', 1, '0', 1761000000000000103, 1761100000000000001, sysdate()),
+    (2100300000000000103, 'ENTERPRISE', '*', 'HANDLER_NOT_LEGAL_REPRESENTATIVE', 'ENTERPRISE_AUTHORIZATION_LETTER', 1, '0', 1761000000000000103, 1761100000000000001, sysdate());
+
+insert into sys_config
+    (config_id, config_name, config_key, config_value, config_type, create_dept, create_by, create_time, remark)
+values
+    (2100400000000000001, '个人实名认证流程编码', 'profile.person.flowCode', 'profile_person_verification', 'Y', 1761000000000000103, 1761100000000000001, sysdate(), '个人与企业使用独立流程编码'),
+    (2100400000000000002, '企业实名认证流程编码', 'profile.enterprise.flowCode', 'profile_enterprise_verification', 'Y', 1761000000000000103, 1761100000000000001, sysdate(), '个人与企业使用独立流程编码'),
+    (2100400000000000003, '个人默认实名认证供应商', 'profile.person.provider.default', 'manual', 'Y', 1761000000000000103, 1761100000000000001, sysdate(), '首期人工复核'),
+    (2100400000000000004, '企业默认实名认证供应商', 'profile.enterprise.provider.default', 'manual', 'Y', 1761000000000000103, 1761100000000000001, sysdate(), '首期人工复核'),
+    (2100400000000000005, '个人启用实名认证供应商', 'profile.person.provider.enabled', 'manual', 'Y', 1761000000000000103, 1761100000000000001, sysdate(), '逗号分隔稳定providerCode'),
+    (2100400000000000006, '企业启用实名认证供应商', 'profile.enterprise.provider.enabled', 'manual', 'Y', 1761000000000000103, 1761100000000000001, sysdate(), '逗号分隔稳定providerCode');
+
+insert into sys_dict_type
+    (dict_id, dict_name, dict_type, create_dept, create_by, create_time, remark)
+values
+    (2100450000000000001, '档案主体状态', 'profile_subject_status', 1761000000000000103, 1761100000000000001, sysdate(), '个人与企业主体共用'),
+    (2100450000000000002, '档案申请状态', 'profile_application_status', 1761000000000000103, 1761100000000000001, sysdate(), '个人与企业申请共用'),
+    (2100450000000000003, '档案绑定状态', 'profile_binding_status', 1761000000000000103, 1761100000000000001, sysdate(), '个人与企业绑定共用');
+
+insert into sys_dict_data
+    (dict_code, dict_sort, dict_label, dict_value, dict_type, css_class, list_class, is_default,
+     create_dept, create_by, create_time, remark)
+values
+    (2100460000000000001, 1, '有效', 'ACTIVE', 'profile_subject_status', '', 'success', 'Y', 1761000000000000103, 1761100000000000001, sysdate(), ''),
+    (2100460000000000002, 2, '已注销', 'REVOKED', 'profile_subject_status', '', 'info', 'N', 1761000000000000103, 1761100000000000001, sysdate(), ''),
+    (2100460000000000011, 1, '草稿', 'DRAFT', 'profile_application_status', '', 'info', 'Y', 1761000000000000103, 1761100000000000001, sysdate(), ''),
+    (2100460000000000012, 2, '退回', 'BACK', 'profile_application_status', '', 'warning', 'N', 1761000000000000103, 1761100000000000001, sysdate(), ''),
+    (2100460000000000013, 3, '已撤销', 'CANCEL', 'profile_application_status', '', 'info', 'N', 1761000000000000103, 1761100000000000001, sysdate(), ''),
+    (2100460000000000014, 4, '审核中', 'WAITING', 'profile_application_status', '', 'primary', 'N', 1761000000000000103, 1761100000000000001, sysdate(), ''),
+    (2100460000000000015, 5, '已完成', 'FINISH', 'profile_application_status', '', 'success', 'N', 1761000000000000103, 1761100000000000001, sysdate(), ''),
+    (2100460000000000016, 6, '已作废', 'INVALID', 'profile_application_status', '', 'danger', 'N', 1761000000000000103, 1761100000000000001, sysdate(), ''),
+    (2100460000000000017, 7, '已终止', 'TERMINATION', 'profile_application_status', '', 'danger', 'N', 1761000000000000103, 1761100000000000001, sysdate(), ''),
+    (2100460000000000021, 1, '有效', 'ACTIVE', 'profile_binding_status', '', 'success', 'Y', 1761000000000000103, 1761100000000000001, sysdate(), ''),
+    (2100460000000000022, 2, '已停用', 'SUSPENDED', 'profile_binding_status', '', 'warning', 'N', 1761000000000000103, 1761100000000000001, sysdate(), ''),
+    (2100460000000000023, 3, '已解绑', 'UNBOUND', 'profile_binding_status', '', 'info', 'N', 1761000000000000103, 1761100000000000001, sysdate(), '');
+
+insert into sys_menu
+    (menu_id, client_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, is_cache,
+     menu_type, visible, status, perms, icon, active_menu, ext, create_dept, create_by, create_time, remark)
+values
+    (2100500000000000001, 1762000000000000001, '档案管理', 0, 6, 'profile', null, '', 'N', 'Y', 'M', '0', '0', '', 'id-card', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '个人、企业与材料标签管理目录'),
+    (2100500000000000010, 1762000000000000001, '个人档案', 2100500000000000001, 1, 'person', 'profile/person/index', '', 'N', 'Y', 'C', '0', '0', 'profile:person:query', 'user', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '个人档案管理'),
+    (2100500000000000011, 1762000000000000001, '个人认证申请', 2100500000000000010, 1, '', '', '', 'N', 'Y', 'F', '0', '0', 'profile:person:apply', '#', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '完整个人申请能力'),
+    (2100500000000000012, 1762000000000000001, '个人材料办理', 2100500000000000010, 2, '', '', '', 'N', 'Y', 'F', '0', '0', 'profile:person:material', '#', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '完整个人材料能力'),
+    (2100500000000000013, 1762000000000000001, '个人档案审核', 2100500000000000010, 3, '', '', '', 'N', 'Y', 'F', '0', '0', 'profile:person:review', '#', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '审核包含所需快照和材料读取'),
+    (2100500000000000014, 1762000000000000001, '个人档案处置', 2100500000000000010, 4, '', '', '', 'N', 'Y', 'F', '0', '0', 'profile:person:manage', '#', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '完整个人档案管理能力'),
+    (2100500000000000015, 1762000000000000001, '个人档案覆盖', 2100500000000000010, 5, '', '', '', 'N', 'Y', 'F', '0', '0', 'profile:person:override', '#', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '直建与管理员覆盖能力'),
+    (2100500000000000020, 1762000000000000001, '企业档案', 2100500000000000001, 2, 'enterprise', 'profile/enterprise/index', '', 'N', 'Y', 'C', '0', '0', 'profile:enterprise:query', 'building', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '企业档案管理'),
+    (2100500000000000021, 1762000000000000001, '企业认证申请', 2100500000000000020, 1, '', '', '', 'N', 'Y', 'F', '0', '0', 'profile:enterprise:apply', '#', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '完整企业申请能力'),
+    (2100500000000000022, 1762000000000000001, '企业材料办理', 2100500000000000020, 2, '', '', '', 'N', 'Y', 'F', '0', '0', 'profile:enterprise:material', '#', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '完整企业材料能力'),
+    (2100500000000000023, 1762000000000000001, '企业档案审核', 2100500000000000020, 3, '', '', '', 'N', 'Y', 'F', '0', '0', 'profile:enterprise:review', '#', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '审核包含所需快照和材料读取'),
+    (2100500000000000024, 1762000000000000001, '企业档案处置', 2100500000000000020, 4, '', '', '', 'N', 'Y', 'F', '0', '0', 'profile:enterprise:manage', '#', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '完整企业档案管理能力'),
+    (2100500000000000025, 1762000000000000001, '企业档案覆盖', 2100500000000000020, 5, '', '', '', 'N', 'Y', 'F', '0', '0', 'profile:enterprise:override', '#', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '直建与管理员覆盖能力'),
+    (2100500000000000030, 1762000000000000001, '材料标签', 2100500000000000001, 3, 'material-tag', 'profile/materialTag/index', '', 'N', 'Y', 'C', '0', '0', 'profile:material-tag:query', 'tree', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '档案材料标签树'),
+    (2100500000000000031, 1762000000000000001, '材料标签管理', 2100500000000000030, 1, '', '', '', 'N', 'Y', 'F', '0', '0', 'profile:material-tag:manage', '#', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '完整材料目录管理能力');

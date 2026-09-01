@@ -2,7 +2,7 @@
 schema_version: 6
 artifact: goal-plan
 change: 2026-09-01-harden-namewta-full-stack-deployment-skill
-status: in_progress
+status: completed
 modes: [high-assurance, reference-conformance]
 orchestration: lead-directed
 lead: codex:/root
@@ -10,7 +10,7 @@ implementation_agent_limit: 3
 integration_attempt_limit: null
 ticket_workspace_policy: current
 integration_gate: direct-parent
-ready_for_execution: true
+ready_for_execution: false
 ---
 
 # Goal Plan: 强化 NAMEWTA 全栈部署 Skill
@@ -89,10 +89,10 @@ T-01 -> G1 -> T-02 -> G2 -> T-03 -> G3 -> T-04 -> G4
 
 | 合同或参考要求 | 覆盖 Ticket | 验证接缝 | Evidence | 状态 |
 |---|---|---|---|---|
-| AC-001..002 | T-01 | unit | T-01 | planned |
-| AC-003..007 | T-02 | unit/CLI | T-02 | planned |
+| AC-001..002 | T-01 | unit | T-01 | verified |
+| AC-003..007 | T-02 | unit/CLI | T-02 | verified |
 | AC-009 | T-03 | static | T-03 | verified |
-| AC-008, AC-010 | T-04 | integration/regression | T-04 | planned |
+| AC-008, AC-010 | T-04 | integration/regression | T-04 | verified |
 
 ## 4. Execution and Integration Protocol
 
@@ -159,7 +159,7 @@ Lead 直接实现、独立核对 Git/测试并写 Evidence；不向其他 Agent 
 
 ### Current Status
 
-G3 已关闭：T-03 result `46e0566`，主 Skill 102 行、一级 runbook 与静态安全边界检查通过；当前进入 T-04。外部副作用未授权。
+G4 已关闭：T-04 result `cb561d4`；部署 Skill Node `25/25`、SpecDev implement、链接/JSON/语法/secret/diff 门禁通过。四个 Ticket 与 AC-001..010 全部完成；外部副作用未授权且未执行。
 
 ### Pending Decisions and Blockers
 

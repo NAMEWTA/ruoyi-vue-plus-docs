@@ -2,9 +2,9 @@
   "schema_version": 6,
   "artifact": "change-status",
   "change": "2026-09-01-harden-namewta-full-stack-deployment-skill",
-  "change_status": "active",
-  "current_work": "specdev/implement",
-  "works_run": ["specdev/triage", "specdev/spec", "specdev/tickets", "specdev/goal-plan"],
+  "change_status": "completed",
+  "current_work": null,
+  "works_run": ["specdev/triage", "specdev/spec", "specdev/tickets", "specdev/goal-plan", "specdev/implement"],
   "claimed_investigations": [],
   "execution_authorization": {
     "implementation_commit": {
@@ -33,8 +33,8 @@
     "history": []
   },
   "created_at": "2026-09-01T18:06:51+08:00",
-  "updated_at": "2026-09-01T18:34:55+08:00",
-  "completed_at": null,
+  "updated_at": "2026-09-01T18:45:33+08:00",
+  "completed_at": "2026-09-01T18:45:33+08:00",
   "archived": false,
   "archive_path": null,
   "blockers": [],
@@ -168,6 +168,49 @@
       },
       "status": "integrated",
       "updated_at": "2026-09-01T18:34:55+08:00"
+    },
+    {
+      "ticket_id": "T-04",
+      "owner": "codex:/root",
+      "implementation_owner": "codex:/root",
+      "integration_owner": "codex:/root",
+      "provider": "git",
+      "base_sha": "81414fdf883772e2913b7a0427c9a96769738662",
+      "parent_branch": "main",
+      "branch": "main",
+      "workspace_ref": "current",
+      "source_checkpoint": "cb561d4f277c340cdbbee812d4459bffcccf727f",
+      "integration": {
+        "status": "passed",
+        "parent_ref": "main",
+        "parent_before_sha": "81414fdf883772e2913b7a0427c9a96769738662",
+        "source_sha": "cb561d4f277c340cdbbee812d4459bffcccf727f",
+        "candidate_sha": null,
+        "candidate_tree_sha": null,
+        "candidate_branch": null,
+        "candidate_workspace_ref": null,
+        "result_sha": "cb561d4f277c340cdbbee812d4459bffcccf727f",
+        "method": "direct-parent",
+        "conflict_paths": [],
+        "verification": "passed",
+        "full_suite": {
+          "required": true,
+          "status": "passed",
+          "reason": "Deployment render/report integration and complete Node regression passed 25/25; static and SpecDev gates passed",
+          "evidence": "<Path>{roots.state}/specdev/changes/2026-09-01-harden-namewta-full-stack-deployment-skill/evidence/T-04.md</Path>"
+        },
+        "e2e": {
+          "required": false,
+          "status": "not-required",
+          "reason": "Local CLI integration covers files, permissions, exit codes and redaction; external deployment is out of scope",
+          "evidence": "<Path>{roots.state}/specdev/changes/2026-09-01-harden-namewta-full-stack-deployment-skill/evidence/T-04.md</Path>"
+        },
+        "evidence": "<Path>{roots.state}/specdev/changes/2026-09-01-harden-namewta-full-stack-deployment-skill/evidence/T-04.md</Path>",
+        "attempts": 1,
+        "promotion_status": "applied"
+      },
+      "status": "integrated",
+      "updated_at": "2026-09-01T18:45:33+08:00"
     }
   ]
 }

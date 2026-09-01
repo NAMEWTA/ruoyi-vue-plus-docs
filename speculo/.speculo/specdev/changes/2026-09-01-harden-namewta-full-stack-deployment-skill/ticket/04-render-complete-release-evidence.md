@@ -4,7 +4,7 @@ artifact: ticket
 change: 2026-09-01-harden-namewta-full-stack-deployment-skill
 id: T-04
 title: 渲染完整发布配置与交接证据
-status: ready
+status: done
 planning_depth: standard
 planning_depth_reason: 私密配置和报告跨 profile、secret、state 与文件权限，需兼容和防泄漏回归
 ready: true
@@ -109,6 +109,6 @@ shared_path_owners: []
 
 ## 10. 验收标准
 
-- [ ] AC-008、AC-010 全部通过。
-- [ ] 全套 Node、SpecDev 和 diff 门禁有 Evidence。
-- [ ] 路径和 direct-parent 合同满足。
+- [x] AC-008、AC-010 全部通过。
+- [x] 全套 Node、SpecDev 和 diff 门禁有 Evidence。
+- [x] 路径和 direct-parent 合同满足。

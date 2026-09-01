@@ -103,6 +103,18 @@
         "specdev/implement"
       ],
       "claimed_investigations": []
+    },
+    {
+      "change": "2026-09-01-harden-namewta-full-stack-deployment-skill",
+      "current_work": null,
+      "works_run": [
+        "specdev/triage",
+        "specdev/spec",
+        "specdev/tickets",
+        "specdev/goal-plan",
+        "specdev/implement"
+      ],
+      "claimed_investigations": []
     }
   ],
   "archived": [

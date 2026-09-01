@@ -8,7 +8,8 @@
     "specdev/grill-with-docs",
     "specdev/spec",
     "specdev/tickets",
-    "specdev/goal-plan"
+    "specdev/goal-plan",
+    "specdev/implement"
   ],
   "claimed_investigations": [],
   "execution_authorization": {
@@ -38,7 +39,7 @@
     "history": []
   },
   "created_at": "2026-08-31T18:06:59+08:00",
-  "updated_at": "2026-09-01T19:13:00+08:00",
+  "updated_at": "2026-09-01T19:29:00+08:00",
   "completed_at": null,
   "archived": false,
   "archive_path": null,
@@ -50,7 +51,7 @@
       "observed_at": "2026-09-01T18:21:36+08:00",
       "detail": "T-02 source checkpoint 6aa3f7e60e48b7490c5b4ac421c582b44bdac76d 基于已退出的后端 script/sql/namewta 路径实现。发布资产收敛 Change 已将六份 MySQL 基座所有权迁移到父仓库。",
       "impact": "该 checkpoint 不能直接集成，否则会恢复已删除的后端 script 目录并制造第二份 SQL 事实源。",
-      "correction": "保留 source checkpoint 与 Evidence 作为审计证据；恢复 T-02 时从最新后端 main 重放 Java/schema 测试变化，并把 DDL/DML 业务差异移植到父仓库 50-namewta-ddl.sql 与 60-namewta-dml.sql，形成后端和父仓库两个结果提交后再进入 fresh MySQL Gate。"
+      "correction": "旧 checkpoint 仅保留为审计证据。已从 T-01 result 重放后端测试为 b57e25d14273ab33cd09052544d50d936866d5ce，并将同一业务 SQL 块移植到父仓库 50/60，结果为 bc812e21fd268874436d2726887671768b4479d7；授权开发服务器 MySQL 8.4.9 fresh Gate 已通过。"
     }
   ],
   "worktrees": [
@@ -99,19 +100,19 @@
     },
     {
       "ticket_id": "T-02", "owner": "codex:/root", "implementation_owner": "codex:/root", "integration_owner": "codex:/root", "provider": "git",
-      "base_sha": "ebc2fef99d4ee33121de298d68a75781cbd2109c", "parent_branch": "main", "branch": "speculo/2026-08-31-account-profile-verification/T-02", "workspace_ref": "specdev-worktree/2026-08-31-account-profile-verification/T-02", "source_checkpoint": "6aa3f7e60e48b7490c5b4ac421c582b44bdac76d",
-      "integration": {"status": "pending", "parent_ref": "refs/heads/main", "parent_before_sha": null, "source_sha": "6aa3f7e60e48b7490c5b4ac421c582b44bdac76d", "candidate_sha": null, "candidate_tree_sha": null, "candidate_branch": null, "candidate_workspace_ref": null, "result_sha": null, "method": null, "conflict_paths": [], "verification": "pending", "full_suite": {"required": false, "status": "not-required", "reason": "Schema ticket runs focused checks; the change-wide suite belongs to T-14", "evidence": null}, "e2e": {"required": true, "status": "pending", "reason": "Fresh MySQL DDL and DML verification is required on the parent-candidate; the source-worktree MySQL run passed", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-31-account-profile-verification/evidence/T-02.md</Path>"}, "evidence": "<Path>{roots.state}/specdev/changes/2026-08-31-account-profile-verification/evidence/T-02.md</Path>", "attempts": 0, "promotion_status": "pending"},
-      "status": "review", "updated_at": "2026-09-01T12:08:10+08:00"
+      "base_sha": "672268b2fa18b4cdd0d6ee19be1cb1615252e040", "parent_branch": "main", "branch": "speculo/2026-08-31-account-profile-verification/T-02-v2", "workspace_ref": "specdev-worktree/2026-08-31-account-profile-verification/T-02", "source_checkpoint": "b57e25d14273ab33cd09052544d50d936866d5ce",
+      "integration": {"status": "passed", "parent_ref": "refs/heads/main", "parent_before_sha": "672268b2fa18b4cdd0d6ee19be1cb1615252e040", "source_sha": "b57e25d14273ab33cd09052544d50d936866d5ce", "candidate_sha": "b57e25d14273ab33cd09052544d50d936866d5ce", "candidate_tree_sha": "c8a836889efc4a48d3f9ced541f1e14273560739", "candidate_branch": "speculo/integration/2026-08-31-account-profile-verification/T-02", "candidate_workspace_ref": "specdev-worktree/.integration/2026-08-31-account-profile-verification/T-02", "result_sha": "b57e25d14273ab33cd09052544d50d936866d5ce", "method": "fast-forward", "conflict_paths": [], "verification": "passed", "full_suite": {"required": false, "status": "not-required", "reason": "Schema ticket runs focused checks; the change-wide suite belongs to T-14", "evidence": null}, "e2e": {"required": true, "status": "passed", "reason": "Authorized development MySQL 8.4.9 fresh six-file initialization and database constraint tests passed", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-31-account-profile-verification/evidence/T-02.md</Path>"}, "evidence": "<Path>{roots.state}/specdev/changes/2026-08-31-account-profile-verification/evidence/T-02.md</Path>", "attempts": 1, "promotion_status": "applied"},
+      "status": "integrated", "updated_at": "2026-09-01T19:29:00+08:00"
     },
     {
       "ticket_id": "T-03", "owner": "codex:/root", "implementation_owner": "codex:/root", "integration_owner": "codex:/root", "provider": "git",
-      "base_sha": "ebc2fef99d4ee33121de298d68a75781cbd2109c", "parent_branch": "main", "branch": "speculo/2026-08-31-account-profile-verification/T-03", "workspace_ref": "specdev-worktree/2026-08-31-account-profile-verification/T-03", "source_checkpoint": null,
+      "base_sha": "b57e25d14273ab33cd09052544d50d936866d5ce", "parent_branch": "main", "branch": "speculo/2026-08-31-account-profile-verification/T-03", "workspace_ref": "specdev-worktree/2026-08-31-account-profile-verification/T-03", "source_checkpoint": null,
       "integration": {"status": "pending", "parent_ref": "refs/heads/main", "parent_before_sha": null, "source_sha": null, "candidate_sha": null, "candidate_tree_sha": null, "candidate_branch": null, "candidate_workspace_ref": null, "result_sha": null, "method": null, "conflict_paths": [], "verification": "pending", "full_suite": {"required": false, "status": "not-required", "reason": "Provider ticket runs focused checks; the change-wide suite belongs to T-14", "evidence": null}, "e2e": {"required": true, "status": "pending", "reason": "HTTP callback, database idempotency and adapter authentication require integration verification", "evidence": null}, "evidence": "<Path>{roots.state}/specdev/changes/2026-08-31-account-profile-verification/evidence/T-03.md</Path>", "attempts": 0, "promotion_status": "pending"},
       "status": "planned", "updated_at": "2026-09-01T11:30:00+08:00"
     },
     {
       "ticket_id": "T-04", "owner": "codex:/root", "implementation_owner": "codex:/root", "integration_owner": "codex:/root", "provider": "git",
-      "base_sha": "ebc2fef99d4ee33121de298d68a75781cbd2109c", "parent_branch": "main", "branch": "speculo/2026-08-31-account-profile-verification/T-04", "workspace_ref": "specdev-worktree/2026-08-31-account-profile-verification/T-04", "source_checkpoint": null,
+      "base_sha": "b57e25d14273ab33cd09052544d50d936866d5ce", "parent_branch": "main", "branch": "speculo/2026-08-31-account-profile-verification/T-04", "workspace_ref": "specdev-worktree/2026-08-31-account-profile-verification/T-04", "source_checkpoint": null,
       "integration": {"status": "pending", "parent_ref": "refs/heads/main", "parent_before_sha": null, "source_sha": null, "candidate_sha": null, "candidate_tree_sha": null, "candidate_branch": null, "candidate_workspace_ref": null, "result_sha": null, "method": null, "conflict_paths": [], "verification": "pending", "full_suite": {"required": false, "status": "not-required", "reason": "Material ticket runs focused checks; the change-wide suite belongs to T-14", "evidence": null}, "e2e": {"required": true, "status": "pending", "reason": "MySQL relationships, OSS references and download authorization require integration verification", "evidence": null}, "evidence": "<Path>{roots.state}/specdev/changes/2026-08-31-account-profile-verification/evidence/T-04.md</Path>", "attempts": 0, "promotion_status": "pending"},
       "status": "planned", "updated_at": "2026-09-01T11:30:00+08:00"
     },

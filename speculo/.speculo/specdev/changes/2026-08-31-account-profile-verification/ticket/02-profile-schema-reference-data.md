@@ -4,7 +4,7 @@ artifact: ticket
 change: 2026-08-31-account-profile-verification
 id: T-02
 title: 建立 Profile 全量 Schema、活动唯一约束与参考数据
-status: review
+status: done
 planning_depth: deep
 planning_depth_reason: 新增明文身份数据 schema、并发唯一约束、权限菜单和不可删除历史，属于高事故半径数据迁移。
 ready: true
@@ -122,7 +122,7 @@ fresh install 后可持久化完整个人/企业档案历史，并允许同一�
 
 ## 10. 验收标准
 
-- [ ] 所列 AC 的 schema/权限/历史不变量通过 MySQL fixture。
-- [ ] DDL/DML 只有 T-02 写入，`ry_vue.sql` 未修改。
-- [ ] required E2E、Evidence、实现提交和父分支结果完整。
-- [ ] 无生产执行或未批准偏差。
+- [x] 所列 AC 的 schema/权限/历史不变量通过 MySQL fixture。
+- [x] DDL/DML 只有 T-02 写入，后端 `script/` 未恢复。
+- [x] required E2E、Evidence、实现提交和父分支结果完整。
+- [x] 无生产执行或未批准偏差。

@@ -177,7 +177,7 @@ W1  T-01 ─┐
 | Ticket | Parent/base | Workspace/branch | Source checks | Implementation commit | Integration checks/E2E | Parent result |
 |---|---|---|---|---|---|---|
 | T-01 | backend `main@6927ee978...` | `{change}/T-01` | Maven/API contract passed | `b62d64b5511847f265c63b21d02117ee21630453` | candidate/reactor passed，E2E not-required | `672268b2fa18b4cdd0d6ee19be1cb1615252e040` |
-| T-02 | backend 与父仓库 latest G0 | backend `{change}/T-02` + 父仓库 SQL owner | SQL/schema static+test | required/pending | fresh MySQL 六文件基座 required | pending |
+| T-02 | backend `672268b2f` + root `b9685ae` | backend `{change}/T-02-v2` + root `{change}/T-02-root-v2` | schema static + MySQL passed | backend `b57e25d14` / root `bc812e2` | fresh MySQL 8.4.9 required/passed | backend `b57e25d14` / root `bc812e2` |
 | T-03 | backend G1 result | `{change}/T-03` | provider unit/security | required/pending | callback+DB required | pending |
 | T-04 | backend G1 result | `{change}/T-04` | material/service tests | required/pending | MySQL+OSS required | pending |
 | T-05 | backend G2 result | `{change}/T-05` | person unit/integration non-E2E | required/pending | HTTP+DB+workflow required | pending |
@@ -259,7 +259,8 @@ source 测试只证明局部实现；required E2E 只在 Lead-owned parent-candi
 - 用户已选择 required worktree，并授权 Ticket implementation changes 与 implementation commits。
 - 用户已授权 Lead-owned local candidate integration 与验证通过后的本地父分支推进。
 - T-01 已完成并集成：source `b62d64b5511847f265c63b21d02117ee21630453`，candidate/result `672268b2fa18b4cdd0d6ee19be1cb1615252e040`；合同测试、full/core 干净构建与 JAR 装配核验通过。
-- T-02 旧 source checkpoint `6aa3f7e60e48b7490c5b4ac421c582b44bdac76d` 因 SQL 唯一事实源已迁至父仓库而不能直接集成；按已记录偏差从最新结果重放后端测试，并把业务 SQL 移植到父仓库 50/60 基座。G1 等待 T-02 新结果。
+- T-02 已完成并集成：旧 checkpoint 因 SQL owner 迁移仅保留审计；backend result `b57e25d14273ab33cd09052544d50d936866d5ce`，root SQL result `bc812e21fd268874436d2726887671768b4479d7`。授权开发服务器 MySQL 8.4.9 六文件 fresh 初始化得到 111 表，Java 约束测试 6/6 通过，临时库/用户已清理且业务库保持 87 表。
+- G1 已关闭；T-03/T-04 可从 backend `b57e25d14273ab33cd09052544d50d936866d5ce` 开始。
 
 ### Pending Decisions and Blockers
 

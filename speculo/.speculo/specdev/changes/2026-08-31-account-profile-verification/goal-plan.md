@@ -181,7 +181,7 @@ W1  T-01 ─┐
 | T-03 | backend `b57e25d14` | `{change}/T-03` | 19 provider unit/security tests passed | `8b8353491` | callback+DB required/passed | `4bc543c01` |
 | T-04 | backend `4bc543c01` | `{change}/T-04` | 12 material/OSS contract tests passed | `c9691c9a8` | MySQL+OSS+ACL required/passed | `7eb550b90` |
 | T-05 | backend `7eb550b90` | `{change}/T-05` | 43 person/material tests passed | `44f83197d` | HTTP+MySQL+ProcessEvent required/passed | `8393756b0` |
-| T-07 | backend G2 result | `{change}/T-07` | enterprise non-E2E | required/pending | HTTP+DB+workflow required | pending |
+| T-07 | backend `8393756b0` | `{change}/T-07` | 31 enterprise tests passed | `1ad938d67` | HTTP+DB+workflow required/passed | `f41c792bc` |
 | T-06 | backend T-05 result | `{change}/T-06` | rebind/notify tests | required/pending | workflow+DB+notify required | pending |
 | T-08 | backend T-05/T-07 result | `{change}/T-08` | challenge/clock tests | required/pending | Redis+notify+DB required | pending |
 | T-09 | backend T-01/T-04/T-05/T-07 result | `{change}/T-09` | admin/auth/race tests | required/pending | workflow+DB+OSS required | pending |
@@ -269,8 +269,9 @@ source 测试只证明局部实现；required E2E 只在 Lead-owned parent-candi
 - T-05 已完成并集成：source tip `44f83197d519ce1d86ea1096f163e3b106dd298b`，candidate/result `8393756b0973ccecc4bf73a6669c0c1d6c0b0b1e`；43 个 person/material 测试和 5 个真实 MySQL HTTP/ProcessEvent/事务发布 E2E 通过，full/core bundle 与 JAR 装配核验通过。
 - T-05 发现材料发布接缝缺口并按偏差控制接管最小共享实现：补齐工作副本状态写保护与 `SUBMISSION -> VERSION` 关系约束复制，不改变公开端口、schema 或 OSS 生命周期。
 - T-05 的完整 Warm-Flow 引擎/流程定义启动链保留给 T-14 全栈 Gate；本 Ticket 已覆盖生产 WorkflowService gateway 合同、持久化 instanceVariable fence，以及生产 ProcessEvent 监听与真实 MySQL 原子发布。
-- T-07 source worktree 从 backend `8393756b0973ccecc4bf73a6669c0c1d6c0b0b1e` 创建，状态为 active。
-- T-07 发现 Spec 已锁定的企业邮箱、注册资本、行业、网站未进入 T-02 schema；已按偏差控制把 `50-namewta-ddl.sql` 纳入最小可写范围，为五张企业事实表增加 nullable 列，DML 和已有约束不变。
+- T-07 已完成并集成：source `1ad938d67d634b6ea880c40d85621333c8209fc0`，candidate/result `f41c792bcb3782ece300d256317825fd1a7a8c87`；31 个 enterprise 测试和 3 个真实 MySQL HTTP/ProcessEvent/事务/唯一竞态 E2E 通过，full/core bundle 与 JAR 装配核验通过。
+- T-07 发现 Spec 已锁定的企业邮箱、注册资本、行业、网站未进入 T-02 schema；已按偏差控制把 `50-namewta-ddl.sql` 纳入最小可写范围，为五张企业事实表增加 nullable 列并完成申请到版本全链持久化，DML 和已有约束不变。
+- G3 已关闭；T-06、T-08、T-09 可进入 W4，后端父结果为 `f41c792bcb3782ece300d256317825fd1a7a8c87`。
 
 ### Pending Decisions and Blockers
 

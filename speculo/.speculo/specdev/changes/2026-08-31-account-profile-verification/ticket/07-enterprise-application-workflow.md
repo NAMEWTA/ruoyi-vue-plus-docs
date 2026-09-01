@@ -4,7 +4,7 @@ artifact: ticket
 change: 2026-08-31-account-profile-verification
 id: T-07
 title: 交付企业申请、不可变快照与唯一负责人发布
-status: in_progress
+status: done
 planning_depth: deep
 planning_depth_reason: 企业身份唯一、授权材料、流程发布和唯一负责人绑定属于高完整性公共业务合同。
 ready: true
@@ -121,9 +121,9 @@ shared_path_owners: []
 
 ## 10. 验收标准
 
-- [ ] 所列 AC 与企业字段/材料/唯一负责人矩阵通过。
-- [ ] required E2E、Evidence、提交和父分支结果完整。
-- [ ] 无普通申请顶替或资料预填偏差。
+- [x] 所列 AC 与企业字段/材料/唯一负责人矩阵通过。
+- [x] required E2E、Evidence、提交和父分支结果完整。
+- [x] 无普通申请顶替或资料预填偏差。
 
 ## 11. 执行偏差
 

@@ -39,7 +39,7 @@
     "history": []
   },
   "created_at": "2026-08-31T18:06:59+08:00",
-  "updated_at": "2026-09-01T22:04:16+08:00",
+  "updated_at": "2026-09-01T22:22:00+08:00",
   "completed_at": null,
   "archived": false,
   "archive_path": null,
@@ -162,9 +162,9 @@
     },
     {
       "ticket_id": "T-07", "owner": "codex:/root", "implementation_owner": "codex:/root", "integration_owner": "codex:/root", "provider": "git",
-      "base_sha": "8393756b0973ccecc4bf73a6669c0c1d6c0b0b1e", "parent_branch": "main", "branch": "speculo/2026-08-31-account-profile-verification/T-07", "workspace_ref": "specdev-worktree/2026-08-31-account-profile-verification/T-07", "source_checkpoint": null,
-      "integration": {"status": "pending", "parent_ref": "refs/heads/main", "parent_before_sha": null, "source_sha": null, "candidate_sha": null, "candidate_tree_sha": null, "candidate_branch": null, "candidate_workspace_ref": null, "result_sha": null, "method": null, "conflict_paths": [], "verification": "pending", "full_suite": {"required": false, "status": "not-required", "reason": "Enterprise application ticket runs focused checks; the change-wide suite belongs to T-14", "evidence": null}, "e2e": {"required": true, "status": "pending", "reason": "HTTP, MySQL, workflow and responsible-account publication require integration verification", "evidence": null}, "evidence": "<Path>{roots.state}/specdev/changes/2026-08-31-account-profile-verification/evidence/T-07.md</Path>", "attempts": 0, "promotion_status": "pending"},
-      "status": "active", "updated_at": "2026-09-01T21:45:00+08:00"
+      "base_sha": "8393756b0973ccecc4bf73a6669c0c1d6c0b0b1e", "parent_branch": "main", "branch": "speculo/2026-08-31-account-profile-verification/T-07", "workspace_ref": "specdev-worktree/2026-08-31-account-profile-verification/T-07", "source_checkpoint": "1ad938d67d634b6ea880c40d85621333c8209fc0",
+      "integration": {"status": "passed", "parent_ref": "refs/heads/main", "parent_before_sha": "8393756b0973ccecc4bf73a6669c0c1d6c0b0b1e", "source_sha": "1ad938d67d634b6ea880c40d85621333c8209fc0", "candidate_sha": "f41c792bcb3782ece300d256317825fd1a7a8c87", "candidate_tree_sha": "25aeeaebf16ec07c72e86640c64027f9058a0fac", "candidate_branch": "speculo/integration/2026-08-31-account-profile-verification/T-07", "candidate_workspace_ref": "specdev-worktree/.integration/2026-08-31-account-profile-verification/T-07", "result_sha": "f41c792bcb3782ece300d256317825fd1a7a8c87", "method": "merge-commit", "conflict_paths": [], "verification": "passed", "full_suite": {"required": false, "status": "not-required", "reason": "Enterprise application ticket runs focused checks; the change-wide suite belongs to T-14; supplemental full and core clean bundle builds passed", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-31-account-profile-verification/evidence/T-07.md</Path>"}, "e2e": {"required": true, "status": "passed", "reason": "Current-user HTTP, immutable snapshots, production ProcessEvent handling, unique responsible publication and database races passed against an isolated authorized development MySQL database; the complete Warm-Flow engine definition chain remains a T-14 gate", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-31-account-profile-verification/evidence/T-07.md</Path>"}, "evidence": "<Path>{roots.state}/specdev/changes/2026-08-31-account-profile-verification/evidence/T-07.md</Path>", "attempts": 1, "promotion_status": "applied"},
+      "status": "integrated", "updated_at": "2026-09-01T22:22:00+08:00"
     },
     {
       "ticket_id": "T-08", "owner": "codex:/root", "implementation_owner": "codex:/root", "integration_owner": "codex:/root", "provider": "git",

@@ -1090,6 +1090,50 @@ values
     (2100400000000000005, '个人启用实名认证供应商', 'profile.person.provider.enabled', 'manual', 'Y', 1761000000000000103, 1761100000000000001, sysdate(), '逗号分隔稳定providerCode'),
     (2100400000000000006, '企业启用实名认证供应商', 'profile.enterprise.provider.enabled', 'manual', 'Y', 1761000000000000103, 1761100000000000001, sysdate(), '逗号分隔稳定providerCode');
 
+-- 两套实名认证流程独立发布；审核任务由超级管理员角色承接，业务权限仍由 profile:*:review 控制。
+insert into flow_definition
+    (id, flow_code, flow_name, model_value, category, version, is_publish, form_custom, form_path,
+     activity_status, create_time, create_by, update_time, update_by, del_flag)
+values
+    (2100600000000000001, 'profile_person_verification', '个人实名认证', 'CLASSICS',
+     '1762300000000000102', '1', 1, 'Y', 'profile/person/review', 1, sysdate(),
+     '1761100000000000001', sysdate(), '1761100000000000001', '0'),
+    (2100600000000000002, 'profile_enterprise_verification', '企业实名认证', 'CLASSICS',
+     '1762300000000000102', '1', 1, 'Y', 'profile/enterprise/review', 1, sysdate(),
+     '1761100000000000001', sysdate(), '1761100000000000001', '0');
+
+insert into flow_node
+    (id, node_type, definition_id, node_code, node_name, permission_flag, coordinate,
+     form_custom, form_path, version, create_time, create_by, update_time, update_by, del_flag)
+values
+    (2100610000000000001, 0, 2100600000000000001, 'person_apply', '提交申请', null,
+     '100,100', 'N', null, '1', sysdate(), '1761100000000000001', sysdate(), '1761100000000000001', '0'),
+    (2100610000000000002, 1, 2100600000000000001, 'person_review', '人工复核',
+     'role:1761300000000000001', '300,100', 'Y', 'profile/person/review', '1', sysdate(),
+     '1761100000000000001', sysdate(), '1761100000000000001', '0'),
+    (2100610000000000003, 2, 2100600000000000001, 'person_finish', '复核完成', null,
+     '500,100', 'N', null, '1', sysdate(), '1761100000000000001', sysdate(), '1761100000000000001', '0'),
+    (2100610000000000011, 0, 2100600000000000002, 'enterprise_apply', '提交申请', null,
+     '100,100', 'N', null, '1', sysdate(), '1761100000000000001', sysdate(), '1761100000000000001', '0'),
+    (2100610000000000012, 1, 2100600000000000002, 'enterprise_review', '人工复核',
+     'role:1761300000000000001', '300,100', 'Y', 'profile/enterprise/review', '1', sysdate(),
+     '1761100000000000001', sysdate(), '1761100000000000001', '0'),
+    (2100610000000000013, 2, 2100600000000000002, 'enterprise_finish', '复核完成', null,
+     '500,100', 'N', null, '1', sysdate(), '1761100000000000001', sysdate(), '1761100000000000001', '0');
+
+insert into flow_skip
+    (id, definition_id, now_node_code, now_node_type, next_node_code, next_node_type,
+     skip_name, skip_type, coordinate, create_time, create_by, update_time, update_by, del_flag)
+values
+    (2100620000000000001, 2100600000000000001, 'person_apply', 0, 'person_review', 1,
+     '提交', 'PASS', '200,100', sysdate(), '1761100000000000001', sysdate(), '1761100000000000001', '0'),
+    (2100620000000000002, 2100600000000000001, 'person_review', 1, 'person_finish', 2,
+     '完成', 'PASS', '400,100', sysdate(), '1761100000000000001', sysdate(), '1761100000000000001', '0'),
+    (2100620000000000011, 2100600000000000002, 'enterprise_apply', 0, 'enterprise_review', 1,
+     '提交', 'PASS', '200,100', sysdate(), '1761100000000000001', sysdate(), '1761100000000000001', '0'),
+    (2100620000000000012, 2100600000000000002, 'enterprise_review', 1, 'enterprise_finish', 2,
+     '完成', 'PASS', '400,100', sysdate(), '1761100000000000001', sysdate(), '1761100000000000001', '0');
+
 insert into sys_dict_type
     (dict_id, dict_name, dict_type, create_dept, create_by, create_time, remark)
 values

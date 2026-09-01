@@ -2,7 +2,7 @@
 schema_version: 6
 artifact: goal-plan
 change: 2026-08-31-account-profile-verification
-status: ready
+status: completed
 modes: [migration, high-assurance, release-coordination]
 orchestration: lead-directed
 lead: codex:/root
@@ -10,7 +10,7 @@ implementation_agent_limit: 3
 integration_attempt_limit: null
 ticket_workspace_policy: required
 integration_gate: candidate-merge
-ready_for_execution: true
+ready_for_execution: false
 ---
 
 # Goal Plan: 账户个人与企业档案及实名认证闭环
@@ -148,14 +148,14 @@ W1  T-01 ─┐
 
 | 合同或参考要求 | 覆盖 Ticket | 验证接缝 | Evidence | 状态 |
 |---|---|---|---|---|
-| AC-001 至 AC-008 | T-02,T-05,T-07,T-14 | application/persistence/workflow/MySQL | T-02,T-05,T-07,T-14 | planned |
-| AC-009 至 AC-017 | T-05,T-06,T-10,T-12 | privacy/rebind/transaction/notify/UI | T-05,T-06,T-10,T-12 | planned |
-| AC-018 至 AC-023 | T-07,T-08,T-13 | ownership/Redis/transfer/UI | T-07,T-08,T-13 | planned |
-| AC-024 至 AC-031 | T-01,T-02,T-09,T-10,T-12,T-13,T-14 | auth/workflow/admin/version/UI/E2E | 对应 Ticket | planned |
-| AC-032 至 AC-035 | T-02,T-04,T-10,T-11,T-14 | material tree/OSS/UI/E2E | 对应 Ticket | planned |
-| AC-036 至 AC-038 | T-01,T-03,T-05,T-07,T-10,T-14 | provider/ProfileService/API | 对应 Ticket | planned |
-| AC-039 至 AC-044 | T-01,T-02,T-04,T-09,T-10-T-14 | auth/UI/history/log/system | 对应 Ticket | planned |
-| ADR-001 至 ADR-027（排除 superseded ADR-010/021） | T-01 至 T-14 | Ticket 验证矩阵与 Gate | 全部 Evidence | planned |
+| AC-001 至 AC-008 | T-02,T-05,T-07,T-14 | application/persistence/workflow/MySQL | T-02,T-05,T-07,T-14 | passed |
+| AC-009 至 AC-017 | T-05,T-06,T-10,T-12 | privacy/rebind/transaction/notify/UI | T-05,T-06,T-10,T-12 | passed |
+| AC-018 至 AC-023 | T-07,T-08,T-13 | ownership/Redis/transfer/UI | T-07,T-08,T-13 | passed |
+| AC-024 至 AC-031 | T-01,T-02,T-09,T-10,T-12,T-13,T-14 | auth/workflow/admin/version/UI/E2E | 对应 Ticket | passed |
+| AC-032 至 AC-035 | T-02,T-04,T-10,T-11,T-14 | material tree/OSS/UI/E2E | 对应 Ticket | passed |
+| AC-036 至 AC-038 | T-01,T-03,T-05,T-07,T-10,T-14 | provider/ProfileService/API | 对应 Ticket | passed |
+| AC-039 至 AC-044 | T-01,T-02,T-04,T-09,T-10-T-14 | auth/UI/history/log/system | 对应 Ticket | passed |
+| ADR-001 至 ADR-027（排除 superseded ADR-010/021） | T-01 至 T-14 | Ticket 验证矩阵与 Gate | 全部 Evidence | passed |
 | CDE 参考 | T-01,T-02,T-05,T-07 | 概念映射，不做逐文件一致性 | T-01/T-02/T-05/T-07 | reference-only |
 
 ## 4. Execution and Integration Protocol
@@ -189,7 +189,7 @@ W1  T-01 ─┐
 | T-11 | frontend `1162bf650` | `{change}/T-11` | 7 web-domain tests + lint/typecheck passed | `333d9e0c5` | web-domain integration passed，E2E not-required | `f19ad1c48` |
 | T-12 | frontend `f19ad1c48` | `{change}/T-12` | 15 component/logic tests + lint/typecheck passed | `f501b33d2` | candidate/admin integration passed，E2E not-required | `ee35471d1` |
 | T-13 | frontend `1162bf650` | `{change}/T-13` | 11 focused tests + lint/typecheck passed | `966b2c558` | 23 combined tests + admin integration passed，E2E not-required | `ae4e2b404` |
-| T-14 | frontend G6 result | `{change}/T-14` | registry/admin/E2E source compile | required/pending | 全栈 E2E+build+system/log/SQL Gate | pending |
+| T-14 | backend `12192f90a` + frontend `ae4e2b404` | backend `{change}/T-14-backend` + frontend `{change}/T-14` | backend 351 tests；frontend lint/test/typecheck | backend `dc3ec6ae9` / frontend `987395479` | MySQL/Redis/schema/core/full/Playwright required/passed | backend `e2a73d5c1` / frontend `e47c558af` |
 
 表内 workspace 均展开为 `specdev-worktree/2026-08-31-account-profile-verification/T-XX`；branch 使用同名逻辑标识。创建时必须从对应产品子仓库最新已通过父结果固定精确 `base_sha`，不得沿用本表缩写。
 
@@ -283,10 +283,12 @@ source 测试只证明局部实现；required E2E 只在 Lead-owned parent-candi
 - T-11 已完成并集成：frontend source/result `333d9e0c5` / `f19ad1c48`；材料标签树 7 项测试与 admin 类型检查通过。
 - T-12 已完成并集成：frontend source/result `f501b33d2` / `ee35471d1`；个人档案 15 项逻辑/组件合同、profile lint/typecheck、架构与 admin 类型检查通过。
 - T-13 已完成并集成：frontend source/result `966b2c558` / `ae4e2b404`；企业主体/负责人分离、不可变来源和管理操作 11 项聚焦测试，三管理面组合 23 项测试与 admin 类型检查通过。
+- T-14 已完成并集成：backend source/result `dc3ec6ae9` / `e2a73d5c1`，frontend source/result `987395479` / `e47c558af`；真实 MySQL/Redis E2E、fresh 六文件 schema、351 项后端开发组测试、core/full JAR 装配、前端全量 lint/test/typecheck 与候选 Playwright 均通过。
+- G7 已关闭；14/14 Ticket、AC-001 至 AC-044 和全部 required Gate 均有 Evidence。代码已达到本地发布候选状态，但 push、部署、生产迁移、权限赋予和 worktree 清理仍未授权。
 
 ### Pending Decisions and Blockers
 
-- 当前无执行 blocker，Change 已恢复为 `active`。来源 worktree 清理、push/PR/远程合并、部署和生产迁移保持未授权。
+- 当前无执行 blocker，Change 已完成。来源 worktree 清理、push/PR/远程合并、部署和生产迁移保持未授权。
 
 ### Resume Protocol
 

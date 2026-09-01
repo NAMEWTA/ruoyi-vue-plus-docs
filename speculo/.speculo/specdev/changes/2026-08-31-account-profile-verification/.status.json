@@ -2,8 +2,8 @@
   "schema_version": 6,
   "artifact": "change-status",
   "change": "2026-08-31-account-profile-verification",
-  "change_status": "active",
-  "current_work": "specdev/implement",
+  "change_status": "completed",
+  "current_work": null,
   "works_run": [
     "specdev/grill-with-docs",
     "specdev/spec",
@@ -39,8 +39,8 @@
     "history": []
   },
   "created_at": "2026-08-31T18:06:59+08:00",
-  "updated_at": "2026-09-02T01:34:35+08:00",
-  "completed_at": null,
+  "updated_at": "2026-09-02T02:12:45+08:00",
+  "completed_at": "2026-09-02T02:12:45+08:00",
   "archived": false,
   "archive_path": null,
   "blockers": [],
@@ -84,6 +84,22 @@
       "detail": "Spec 将企业邮箱、注册资本、行业和网站锁定为可选档案字段，但 T-02 schema 未在企业申请、提交快照、主体、版本和管理员来源表中建列。",
       "impact": "若只保存在 field_snapshot_json，workflow 发布后主体与不可变版本会丢失四项信息，管理员来源也无法保持同构合同。",
       "correction": "将聚合仓库 50-namewta-ddl.sql 纳入 T-07 最小可写范围，为五张企业事实表增加 nullable 列，并在申请到版本链完整持久化；不改已有列、索引、DML、业务库或生产环境。"
+    },
+    {
+      "ticket_id": "T-14",
+      "kind": "closed-admin-companion-seams-missing",
+      "observed_at": "2026-09-02T01:38:00+08:00",
+      "detail": "三管理面集成审计发现，override 直建所需账户检索会调用 system:user:list，材料标签树也不接受 override；个人覆盖决定还把 workflow 的 APPROVE/REJECT 值直接发送给只接受 APPROVED/REJECTED 的管理 API。",
+      "impact": "仅授予 profile override 的角色无法闭合完成直建，个人管理员覆盖必然失败，违反 AC-025、AC-027、AC-039 与已确认的能力授权原则。",
+      "correction": "T-14 接管最小后端 UserService 兼容搜索、profile 合格账户窄接口、材料树权限、前端 profile transport/runtime 与个人页面校正路径；不修改 system 权限、角色、菜单、Client、登录域、schema 或业务状态机。"
+    },
+    {
+      "ticket_id": "T-14",
+      "kind": "release-gate-assembly-contracts-missing",
+      "observed_at": "2026-09-02T02:03:00+08:00",
+      "detail": "发布门禁发现 60 基座只有两套 flowCode 配置而没有可发布流程定义；core 装配中的管理员决定硬依赖 WorkflowService；FINISH 监听没有向 ProcessEvent 透传 profileDecision；新增 profile_material_ref.oss_id 也未登记到 OSS 载体治理清单。",
+      "impact": "若不修正，fresh 环境无法启动两套审核，core 可能装配失败，workflow 驳回会被误发布为有效档案，OSS 架构全量门禁失败。",
+      "correction": "T-14 将两套最小 Warm-Flow 定义写入父仓库 60 基座，使管理员 workflow 依赖可选且在调用前失败关闭，透传并消费 REJECT 终态变量，登记 profile 材料 OSS 载体并增加空变量、schema、决定前置失败和终态回归；不执行生产迁移或部署。"
     }
   ],
   "worktrees": [
@@ -204,9 +220,9 @@
     },
     {
       "ticket_id": "T-14", "owner": "codex:/root", "implementation_owner": "codex:/root", "integration_owner": "codex:/root", "provider": "git",
-      "base_sha": "7462ffece02a48f64288847c907a644c646e1944", "parent_branch": "main", "branch": "speculo/2026-08-31-account-profile-verification/T-14", "workspace_ref": "specdev-worktree/2026-08-31-account-profile-verification/T-14", "source_checkpoint": null,
-      "integration": {"status": "pending", "parent_ref": "refs/heads/main", "parent_before_sha": null, "source_sha": null, "candidate_sha": null, "candidate_tree_sha": null, "candidate_branch": null, "candidate_workspace_ref": null, "result_sha": null, "method": null, "conflict_paths": [], "verification": "pending", "full_suite": {"required": true, "status": "pending", "reason": "T-14 is the change-wide release gate", "evidence": null}, "e2e": {"required": true, "status": "pending", "reason": "T-14 requires full-stack profile management E2E verification", "evidence": null}, "evidence": "<Path>{roots.state}/specdev/changes/2026-08-31-account-profile-verification/evidence/T-14.md</Path>", "attempts": 0, "promotion_status": "pending"},
-      "status": "planned", "updated_at": "2026-09-01T11:30:00+08:00"
+      "base_sha": "ae4e2b404615f0fcdba9f1feadf9fe058348f990", "parent_branch": "main", "branch": "speculo/2026-08-31-account-profile-verification/T-14", "workspace_ref": "specdev-worktree/2026-08-31-account-profile-verification/T-14", "source_checkpoint": "987395479675aa4144847340f908aabfc5cad8e3",
+      "integration": {"status": "passed", "parent_ref": "refs/heads/main", "parent_before_sha": "ae4e2b404615f0fcdba9f1feadf9fe058348f990", "source_sha": "987395479675aa4144847340f908aabfc5cad8e3", "candidate_sha": "e47c558afd815075c71863e6e52bcf3a17ca30c4", "candidate_tree_sha": "23769564784b1d09f7002dde4bce9f885f2daf20", "candidate_branch": "speculo/integration/2026-08-31-account-profile-verification/T-14", "candidate_workspace_ref": "specdev-worktree/.integration/2026-08-31-account-profile-verification/T-14", "result_sha": "e47c558afd815075c71863e6e52bcf3a17ca30c4", "method": "merge-commit", "conflict_paths": [], "verification": "passed", "full_suite": {"required": true, "status": "passed", "reason": "Backend 351-test development reactor, core/full packages, schema contracts, frontend workspace lint/test/typecheck and architecture gates passed", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-31-account-profile-verification/evidence/T-14.md</Path>"}, "e2e": {"required": true, "status": "passed", "reason": "Isolated fresh MySQL plus Redis profile E2E and candidate production-build Playwright management flow passed; prior T-04/T-09 evidence supplies real OSS/workflow boundary coverage", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-31-account-profile-verification/evidence/T-14.md</Path>"}, "evidence": "<Path>{roots.state}/specdev/changes/2026-08-31-account-profile-verification/evidence/T-14.md</Path>", "attempts": 1, "promotion_status": "applied"},
+      "status": "integrated", "updated_at": "2026-09-02T02:12:45+08:00"
     }
   ]
 }

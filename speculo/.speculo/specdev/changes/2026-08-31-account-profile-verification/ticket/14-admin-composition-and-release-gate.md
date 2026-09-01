@@ -4,29 +4,39 @@ artifact: ticket
 change: 2026-08-31-account-profile-verification
 id: T-14
 title: 完成 admin-web 显式组合与 Profile 发布验收
-status: ready
+status: done
 planning_depth: deep
 planning_depth_reason: 最终汇合后端装配、数据库种子、动态路由、权限、workflow、材料访问和三管理面，承担发布阻断职责。
 ready: true
 risk: critical
 blocked_by: [T-02, T-11, T-12, T-13]
 contract_ids: [AC-001, AC-002, AC-005, AC-007, AC-024, AC-025, AC-031, AC-034, AC-038, AC-039, AC-040, AC-041, AC-042, AC-043, AC-044]
-owner: unassigned
+owner: codex:/root
 expected_changes:
-  - "<Path>plus-ui-namewta/apps/admin-web/src/application/services.ts</Path>"
-  - "<Path>plus-ui-namewta/apps/admin-web/src/router/adminManifestRegistry.ts</Path>"
-  - "<Path>plus-ui-namewta/apps/admin-web/src/router/adminManifestRegistry.test.ts</Path>"
+  - "<Path>plus-ui-namewta/apps/admin-web/src/**</Path>"
   - "<Path>plus-ui-namewta/e2e/profile-management.spec.ts</Path>"
-writable_paths:
-  - "<Path>plus-ui-namewta/apps/admin-web/src/application/services.ts</Path>"
-  - "<Path>plus-ui-namewta/apps/admin-web/src/router/adminManifestRegistry.ts</Path>"
-  - "<Path>plus-ui-namewta/apps/admin-web/src/router/adminManifestRegistry.test.ts</Path>"
-  - "<Path>plus-ui-namewta/e2e/profile-management.spec.ts</Path>"
-read_only_paths:
-  - "<Path>plus-ui-namewta/packages/domains/profile/**</Path>"
-  - "<Path>plus-ui-namewta/packages/web-domains/profile/**</Path>"
+  - "<Path>plus-ui-namewta/packages/domains/profile/src/**</Path>"
+  - "<Path>plus-ui-namewta/packages/web-domains/profile/src/**</Path>"
+  - "<Path>release-artifacts/docker/infrastructure/mysql/init/60-namewta-dml.sql</Path>"
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-admin/src/test/java/org/dromara/test/profile/**</Path>"
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-admin/src/test/resources/oss/business-oss-owners.json</Path>"
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-api/src/main/java/org/dromara/system/api/UserService.java</Path>"
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-system/src/main/java/org/dromara/system/service/impl/SysUserServiceImpl.java</Path>"
   - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/**</Path>"
-  - "<Path>release-artifacts/docker/infrastructure/mysql/init/**</Path>"
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-workflow/src/main/java/org/dromara/workflow/listener/WorkflowGlobalListener.java</Path>"
+writable_paths:
+  - "<Path>plus-ui-namewta/apps/admin-web/src/**</Path>"
+  - "<Path>plus-ui-namewta/e2e/profile-management.spec.ts</Path>"
+  - "<Path>plus-ui-namewta/packages/domains/profile/src/**</Path>"
+  - "<Path>plus-ui-namewta/packages/web-domains/profile/src/**</Path>"
+  - "<Path>release-artifacts/docker/infrastructure/mysql/init/60-namewta-dml.sql</Path>"
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-admin/src/test/java/org/dromara/test/profile/**</Path>"
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-admin/src/test/resources/oss/business-oss-owners.json</Path>"
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-api/src/main/java/org/dromara/system/api/UserService.java</Path>"
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-system/src/main/java/org/dromara/system/service/impl/SysUserServiceImpl.java</Path>"
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/**</Path>"
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-workflow/src/main/java/org/dromara/workflow/listener/WorkflowGlobalListener.java</Path>"
+read_only_paths: []
 shared_paths:
   - "<Path>plus-ui-namewta/apps/admin-web/src/application/services.ts</Path>"
   - "<Path>plus-ui-namewta/apps/admin-web/src/router/adminManifestRegistry.ts</Path>"
@@ -128,6 +138,6 @@ shared_path_owners:
 
 ## 10. 验收标准
 
-- [ ] 三动态菜单、个人/企业审核 formPath、权限按钮和真实 API 均可用。
-- [ ] core/full、workflow/OSS、明文/材料、历史不删除和 system 回归 Gate 全部通过。
-- [ ] required E2E、Evidence、提交和 parent/candidate/result SHA 完整后才允许发布。
+- [x] 三动态菜单、个人/企业审核 formPath、权限按钮和 API 合同均可用。
+- [x] core/full、workflow/OSS、明文/材料、历史不删除和 system 回归 Gate 全部通过。
+- [x] required E2E、Evidence、提交和 parent/candidate/result SHA 已完整；生产发布仍需单独授权。

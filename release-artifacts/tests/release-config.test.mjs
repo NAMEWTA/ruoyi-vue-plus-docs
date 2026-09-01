@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
+import crypto from 'node:crypto';
 import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
@@ -94,6 +95,131 @@ test('committed env file contains placeholders instead of runtime secrets', () =
   assert.match(env, /^MYSQL_DATABASE=ry-namewta$/m);
   assert.match(env, /^MINIO_ROOT_USER=namewta$/m);
   assert.match(read('.gitignore'), /^\.env$/m);
+});
+
+test('Nacos infrastructure is optional, pinned, authenticated, and locally bound', () => {
+  const compose = read('docker/docker-compose-infrastructure.yml');
+  assert.match(compose, /^  nacos:$/m);
+  assert.match(compose, /image: nacos\/nacos-server:v2\.5\.4/);
+  assert.match(compose, /profiles: \[nacos\]/);
+  assert.match(compose, /MODE: standalone/);
+  assert.match(compose, /NACOS_AUTH_ENABLE: "true"/);
+  assert.match(compose, /NACOS_AUTH_USER_AGENT_AUTH_WHITE_ENABLE: "false"/);
+  assert.match(compose, /NACOS_MYSQL_INIT_ENABLED: "\$\{NACOS_MYSQL_INIT_ENABLED:-false\}"/);
+  assert.match(compose, /\$\{NAMEWTA_BIND_HOST:-127\.0\.0\.1\}:8848:8848/);
+  assert.match(compose, /\$\{NAMEWTA_BIND_HOST:-127\.0\.0\.1\}:9848:9848/);
+  assert.match(compose, /nacos\/v1\/console\/health\/readiness/);
+  assert.match(compose, /condition: service_healthy/);
+  assert.doesNotMatch(compose, /nacos\/nacos-server:latest/);
+});
+
+test('Nacos override requires secrets and enables both admin instances after health', () => {
+  const override = read('docker/overrides/nacos-enabled.yml');
+  assert.match(override, /NACOS_MYSQL_INIT_ENABLED: "true"/);
+  for (const key of [
+    'NACOS_DB_PASSWORD',
+    'NACOS_AUTH_TOKEN',
+    'NACOS_AUTH_IDENTITY_KEY',
+    'NACOS_AUTH_IDENTITY_VALUE',
+    'NACOS_CONFIG_PASSWORD',
+  ]) {
+    assert.match(override, new RegExp(`\\$\\{${key}:\\?${key} is required\\}`));
+    assert.match(read('.env.example'), new RegExp(`^${key}=replace-`, 'm'));
+  }
+  assert.match(override, /\$\{NACOS_CONFIG_USERNAME:\?NACOS_CONFIG_USERNAME is required\}/);
+  assert.match(read('.env.example'), /^NACOS_CONFIG_USERNAME=nacos$/m);
+  for (const service of ['ruoyi-server1', 'ruoyi-server2']) {
+    assert.match(override, new RegExp(`^  ${service}:`, 'm'));
+  }
+  assert.equal((override.match(/NACOS_CONFIG_ENABLED: "true"/g) ?? []).length, 2);
+  assert.equal((override.match(/condition: service_healthy/g) ?? []).length, 2);
+  assert.equal((override.match(/NACOS_CONFIG_SERVER_ADDR: nacos:8848/g) ?? []).length, 2);
+  assert.match(override, /profiles: !reset \[\]/);
+
+  const backend = read('docker/docker-compose-backend.yml');
+  assert.doesNotMatch(backend, /NACOS_CONFIG_ENABLED/);
+  assert.doesNotMatch(backend, /^\s+nacos:\s*$/m);
+});
+
+test('Nacos MySQL schema is pinned and both initialization paths are idempotent', () => {
+  const schema = fs.readFileSync(
+    path.join(releaseRoot, 'docker/infrastructure/mysql/init/nacos/mysql-schema.sql'),
+  );
+  const digest = crypto.createHash('sha256').update(schema).digest('hex');
+  assert.equal(digest, '5f8292d8add62e4275ad103cdd5757ec6b2abb77a01e2d06cf0434c3f0b6317d');
+  assert.equal(schema.toString('utf8').match(/^CREATE TABLE/gm)?.length, 10);
+  assert.doesNotMatch(schema.toString('utf8'), /INSERT\s+INTO\s+[`']?users/i);
+
+  const source = read('docker/infrastructure/mysql/init/nacos/SOURCE.md');
+  assert.match(source, /alibaba\/nacos\/2\.5\.4\/distribution\/conf\/mysql-schema\.sql/);
+  assert.match(source, new RegExp(digest));
+
+  for (const scriptPath of [
+    'docker/infrastructure/mysql/init/15-nacos-init.sh',
+    'scripts/init-nacos-mysql-container.sh',
+  ]) {
+    const script = read(scriptPath);
+    assert.match(script, /CREATE DATABASE IF NOT EXISTS/);
+    assert.match(script, /CREATE USER IF NOT EXISTS/);
+    assert.match(script, /ALTER USER/);
+    assert.match(script, /GRANT SELECT, INSERT, UPDATE, DELETE/);
+    assert.match(script, /EXPECTED_TABLES=10/);
+    assert.match(script, /config_info_gray/);
+    assert.match(script, /schema table-name verification failed/);
+    assert.doesNotMatch(script, /DROP DATABASE|DROP USER|GRANT ALL PRIVILEGES/);
+  }
+
+  const releaseScript = read('scripts/release-manage.sh');
+  assert.match(releaseScript, /15-nacos-init\.sh/);
+  assert.match(releaseScript, /nacos\/mysql-schema\.sql/);
+});
+
+test('existing-volume Nacos initializer rejects placeholder credentials without leaking them', () => {
+  const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'namewta-nacos-init-test-'));
+  try {
+    const fakeDocker = path.join(tempRoot, 'docker');
+    const envFile = path.join(tempRoot, '.env');
+    fs.writeFileSync(fakeDocker, '#!/bin/sh\nexit 0\n');
+    fs.chmodSync(fakeDocker, 0o755);
+    fs.writeFileSync(envFile, [
+      'NACOS_DB_NAME=nacos',
+      'NACOS_DB_USER=nacos',
+      'NACOS_DB_PASSWORD=replace-with-a-real-secret',
+      '',
+    ].join('\n'));
+
+    let output = '';
+    try {
+      execFileSync('bash', [
+        path.join(releaseRoot, 'scripts/init-nacos-mysql-container.sh'),
+        '--env-file', envFile,
+      ], {
+        encoding: 'utf8',
+        env: { ...process.env, PATH: `${tempRoot}:${process.env.PATH}` },
+        stdio: ['ignore', 'pipe', 'pipe'],
+      });
+      assert.fail('initializer should reject placeholder credentials');
+    } catch (error) {
+      output = `${error.stdout ?? ''}${error.stderr ?? ''}`;
+    }
+    assert.match(output, /NACOS_DB_PASSWORD is missing or still uses a placeholder/);
+    assert.doesNotMatch(output, /replace-with-a-real-secret/);
+  } finally {
+    fs.rmSync(tempRoot, { recursive: true, force: true });
+  }
+});
+
+test('fresh-volume Nacos hook is a no-op unless the optional override enables it', () => {
+  const output = execFileSync(
+    'bash',
+    [path.join(releaseRoot, 'docker/infrastructure/mysql/init/15-nacos-init.sh')],
+    {
+      encoding: 'utf8',
+      env: { ...process.env, NACOS_MYSQL_INIT_ENABLED: 'false' },
+      stdio: ['ignore', 'pipe', 'pipe'],
+    },
+  );
+  assert.equal(output, '');
 });
 
 test('MySQL initialization targets one protected ry-namewta database', () => {

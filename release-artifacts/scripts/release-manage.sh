@@ -433,7 +433,17 @@ stage_mysql_init() {
     "namewta/DDL.sql|50-namewta-ddl.sql"
     "namewta/DML.sql|60-namewta-dml.sql"
   )
-  clear_directory_except_gitignore "${target_root}"
+  local nacos_assets=(
+    "15-nacos-init.sh"
+    "nacos/mysql-schema.sql"
+    "nacos/SOURCE.md"
+  )
+  for target in "${nacos_assets[@]}"; do
+    [[ -f "${target_root}/${target}" ]] || {
+      error "缺少 Nacos 初始化资产: ${target_root}/${target}"
+      return 1
+    }
+  done
   for item in "${sql_files[@]}"; do
     source="${source_root}/${item%%|*}"
     target="${target_root}/${item#*|}"

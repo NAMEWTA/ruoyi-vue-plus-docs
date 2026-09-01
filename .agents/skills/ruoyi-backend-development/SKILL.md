@@ -1,6 +1,6 @@
 ---
 name: ruoyi-backend-development
-description: 为 NAMEWTA RuoYi-Vue-Plus 后端提供当前 Maven 模块、CRUD/API、数据权限、事务、SQL、测试与交付导航。处理 ruoyi-admin、ruoyi-api、ruoyi-common、ruoyi-modules、controller、service、mapper、BO/VO/entity、GET/POST、@Log、@DSTransactional 或 script/sql/namewta 时使用；具体 system/common/workflow 能力再路由到对应模块 Skill。
+description: 为 NAMEWTA RuoYi-Vue-Plus 后端提供当前 Maven 模块、CRUD/API、数据权限、事务、MySQL 基座、测试与交付导航。处理 ruoyi-admin、ruoyi-api、ruoyi-common、ruoyi-modules、controller、service、mapper、BO/VO/entity、GET/POST、@Log、@DSTransactional 或 release-artifacts MySQL SQL 时使用；具体 system/common/workflow 能力再路由到对应模块 Skill。
 ---
 
 # NAMEWTA 后端开发导航
@@ -27,5 +27,5 @@ description: 为 NAMEWTA RuoYi-Vue-Plus 后端提供当前 Maven 模块、CRUD/A
 - CRUD 只读查询使用 GET，业务变更使用 POST；每个 POST 业务接口使用准确、安全的 `@Log`。
 - 新建或实质修改的业务事务使用 `@DSTransactional`，事务事件使用匹配的 `@DsTxEventListener`。
 - 保留现有权限、数据范围、Client 隔离、缓存失效、关系维护、删除前校验、导入导出和翻译语义。
-- `script/sql/ry_vue.sql` 保持不变；NAMEWTA 增量只进入 `script/sql/namewta/DDL.sql` 与 `DML.sql`。
+- 数据库只支持 MySQL 8.4；六份完整基座只由父仓库 `release-artifacts/docker/infrastructure/mysql/init/` 拥有并直接修改，后端仓库不得恢复 `script/` 或 SQL 副本。
 - `main` 承载产品；`6.X` 只做上游镜像。前端 API、模型、页面与 App 组合只在 `plus-ui-namewta` 维护。

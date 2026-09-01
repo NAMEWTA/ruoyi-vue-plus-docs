@@ -2,7 +2,7 @@
 
 仓库内唯一完整业务接入样例在 **workflow 模块内部**，不是 `ruoyi-demo`。复制该模式到其他业务模块：注入 `WorkflowService`，换成自己的 `flowCode`。能力描述不清时读下列路径，不要凭空补步骤。
 
-`leave1` 流程定义 JSON / 完整节点图不在源码树中（预期在库表或导入数据）。需要节点编码时回读运行库或设计器导出，不要编造网关条件。
+`leave1` 至 `leave6` 的流程定义 JSON 由父仓库 `release-artifacts/workflow/leave/` 统一拥有。需要节点编码时先读取对应版本资产，再对照运行库或设计器导出，不要编造网关条件。
 
 ## 源码位置
 
@@ -17,6 +17,7 @@
 | 前端领域资源 | `plus-ui-namewta/packages/domains/workflow/src/leave/index.ts`；service 合同与 transport 位于同包 `src/index.ts` |
 | 前端领域页面 | `plus-ui-namewta/packages/web-domains/workflow/src/leave/LeaveListPage.vue`、`LeaveEditPage.vue` |
 | Web manifest | `plus-ui-namewta/packages/web-domains/workflow/src/index.ts`（注册 `workflow/leave/index` 与 `workflow/leave/leaveEdit`） |
+| 流程定义资产 | `release-artifacts/workflow/leave/leave1.json` 至 `leave6.json` |
 
 控制器均 `@ConditionalOnEnable`。提交入口：`POST /workflow/leave/submitAndFlowStart`，权限 `workflow:leave:add`。
 

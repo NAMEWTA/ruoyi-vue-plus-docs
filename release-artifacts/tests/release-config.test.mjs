@@ -239,7 +239,7 @@ test('Nacos MySQL schema is pinned and both initialization paths are idempotent'
   const releaseScript = read('scripts/release-manage.sh');
   assert.match(releaseScript, /15-nacos-init\.sh/);
   assert.match(releaseScript, /nacos\/mysql-schema\.sql/);
-  assert.match(releaseScript, /! -name 15-nacos-init\.sh -delete/);
+  assert.doesNotMatch(releaseScript, /mysql\/init.*-delete|source_root=.*script\/sql/s);
 });
 
 test('existing-volume Nacos initializer rejects placeholder credentials without leaking them', () => {
@@ -290,50 +290,34 @@ test('fresh-volume Nacos hook is a no-op unless the optional override enables it
   assert.equal(output, '');
 });
 
-test('stage-mysql removes stale generated SQL and preserves pinned Nacos assets', {
-  skip: !fs.existsSync(path.join(workspaceRoot, 'ruoyi-vue-plus-namewta/script/sql/ry_vue.sql')),
-}, () => {
+test('stage-mysql validates the canonical SQL baseline without writing it', () => {
   const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'namewta-stage-mysql-test-'));
   const tempRelease = path.join(tempRoot, 'release-artifacts');
   const tempInit = path.join(tempRelease, 'docker/infrastructure/mysql/init');
-  const sourceSqlRoot = path.join(workspaceRoot, 'ruoyi-vue-plus-namewta/script/sql');
-  const sqlFiles = [
-    ['ry_vue.sql', '10-ruoyi-base.sql'],
-    ['ry_job.sql', '20-ry-job.sql'],
-    ['ry_workflow.sql', '30-ry-workflow.sql'],
-    ['ry_ai.sql', '40-ry-ai.sql'],
-    ['namewta/DDL.sql', '50-namewta-ddl.sql'],
-    ['namewta/DML.sql', '60-namewta-dml.sql'],
-  ];
   try {
-    fs.mkdirSync(path.join(tempRelease, 'scripts'), { recursive: true });
-    fs.cpSync(
-      path.join(releaseRoot, 'scripts/release-manage.sh'),
-      path.join(tempRelease, 'scripts/release-manage.sh'),
-    );
-    fs.cpSync(path.join(releaseRoot, 'docker/infrastructure/mysql/init'), tempInit, {
-      recursive: true,
-    });
-    for (const [source] of sqlFiles) {
-      const destination = path.join(tempRoot, 'ruoyi-vue-plus-namewta/script/sql', source);
-      fs.mkdirSync(path.dirname(destination), { recursive: true });
-      fs.cpSync(path.join(sourceSqlRoot, source), destination);
-    }
-    fs.writeFileSync(path.join(tempInit, '70-obsolete.sql'), 'SELECT 1;\n');
-    const schemaBefore = fs.readFileSync(path.join(tempInit, 'nacos/mysql-schema.sql'));
+    fs.cpSync(releaseRoot, tempRelease, { recursive: true });
+    const before = fs.readdirSync(tempInit).map((name) => [
+      name,
+      fs.statSync(path.join(tempInit, name)).isFile()
+        ? crypto.createHash('sha256').update(fs.readFileSync(path.join(tempInit, name))).digest('hex')
+        : 'directory',
+    ]);
 
     execFileSync('bash', [path.join(tempRelease, 'scripts/release-manage.sh'), 'stage-mysql']);
 
-    assert.equal(fs.existsSync(path.join(tempInit, '70-obsolete.sql')), false);
-    assert.deepEqual(fs.readFileSync(path.join(tempInit, 'nacos/mysql-schema.sql')), schemaBefore);
-    assert.ok(fs.existsSync(path.join(tempInit, '15-nacos-init.sh')));
-    for (const [source, target] of sqlFiles) {
-      assert.match(fs.readFileSync(path.join(sourceSqlRoot, source), 'utf8'), /^SET NAMES utf8mb4;/);
-      assert.deepEqual(
-        fs.readFileSync(path.join(tempInit, target)),
-        fs.readFileSync(path.join(sourceSqlRoot, source)),
-      );
-    }
+    const after = fs.readdirSync(tempInit).map((name) => [
+      name,
+      fs.statSync(path.join(tempInit, name)).isFile()
+        ? crypto.createHash('sha256').update(fs.readFileSync(path.join(tempInit, name))).digest('hex')
+        : 'directory',
+    ]);
+    assert.deepEqual(after, before);
+
+    fs.rmSync(path.join(tempInit, '40-ry-ai.sql'));
+    assert.throws(
+      () => execFileSync('bash', [path.join(tempRelease, 'scripts/release-manage.sh'), 'stage-mysql']),
+      /Command failed/,
+    );
   } finally {
     fs.rmSync(tempRoot, { recursive: true, force: true });
   }
@@ -353,7 +337,7 @@ test('MySQL initialization targets one protected ry-namewta database', () => {
 
   assert.match(script, /database.*== ry-namewta/);
   assert.match(script, /refusing existing database/);
-  assert.match(script, /EXPECTED_TABLES=86/);
+  assert.match(script, /EXPECTED_TABLES=87/);
   assert.match(script, /--default-character-set=utf8mb4/);
   assert.match(script, /access_policy='0'/);
   assert.match(script, /config_key='minio' THEN 'Y' ELSE 'N'/);

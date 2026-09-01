@@ -11,8 +11,12 @@ minio_container="namewta-minio-$run_suffix"
 redis_port=${NAMEWTA_CI_REDIS_PORT:-16379}
 mysql_port=${NAMEWTA_CI_MYSQL_PORT:-13306}
 minio_port=${NAMEWTA_CI_MINIO_PORT:-19000}
+mysql_env_file=""
 
 cleanup() {
+  if [[ -n "$mysql_env_file" && -f "$mysql_env_file" ]]; then
+    rm -f "$mysql_env_file"
+  fi
   docker rm -f "$redis_container" "$mysql_container" "$minio_container" >/dev/null 2>&1 || true
   docker network rm "$network" >/dev/null 2>&1 || true
 }
@@ -21,7 +25,7 @@ trap cleanup EXIT
 docker network create "$network" >/dev/null
 docker run -d --name "$redis_container" --network "$network" -p "$redis_port:6379" redis:8.6.3 >/dev/null
 docker run -d --name "$mysql_container" --network "$network" -p "$mysql_port:3306" \
-  -e MYSQL_ROOT_PASSWORD=namewta-ci -e MYSQL_DATABASE=namewta_ci mysql:8.4.9 \
+  -e MYSQL_ROOT_PASSWORD=namewta-ci mysql:8.4.9 \
   --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci >/dev/null
 docker run -d --name "$minio_container" --network "$network" -p "$minio_port:9000" \
   -e MINIO_ROOT_USER=namewta -e MINIO_ROOT_PASSWORD=namewta123 \
@@ -38,6 +42,25 @@ for _ in {1..90}; do
   sleep 1
 done
 docker exec "$mysql_container" mysqladmin ping -h 127.0.0.1 -uroot -pnamewta-ci --silent
+
+mysql_env_file="$(mktemp "${TMPDIR:-/tmp}/namewta-ci-mysql.XXXXXX")"
+chmod 0600 "$mysql_env_file"
+printf '%s\n' \
+  'MYSQL_DATABASE=ry-namewta' \
+  'MYSQL_APP_USER=namewta_ci_app' \
+  'MYSQL_APP_PASSWORD=namewtaci123' \
+  'MINIO_ROOT_USER=namewta' \
+  'MINIO_ROOT_PASSWORD=namewta123' \
+  'MINIO_ENDPOINT=namewta-minio:9000' \
+  'MINIO_BUCKET=ruoyi' > "$mysql_env_file"
+
+bash "$workspace_root/release-artifacts/scripts/init-mysql-container.sh" \
+  --container "$mysql_container" \
+  --env-file "$mysql_env_file" \
+  --sql-dir "$workspace_root/release-artifacts/docker/infrastructure/mysql/init"
+
+docker exec "$mysql_container" sh -lc \
+  'MYSQL_PWD="$MYSQL_ROOT_PASSWORD" exec mysql -uroot --default-character-set=utf8mb4 --execute "CREATE DATABASE namewta_ci CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci"'
 
 for _ in {1..60}; do
   curl --fail --silent "http://127.0.0.1:$minio_port/minio/health/ready" >/dev/null && break
@@ -56,4 +79,5 @@ cd "$workspace_root/ruoyi-vue-plus-namewta"
   -Dnotify.mysql.integration.password=namewta-ci \
   -Doss.minio.integration.endpoint="http://127.0.0.1:$minio_port" \
   -Doss.minio.integration.access-key=namewta \
-  -Doss.minio.integration.secret-key=namewta123
+  -Doss.minio.integration.secret-key=namewta123 \
+  -Dnamewta.sql.root="$workspace_root/release-artifacts/docker/infrastructure/mysql/init"

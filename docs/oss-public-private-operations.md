@@ -42,7 +42,7 @@
 ## 4. 数据库与配置顺序
 
 1. DBA 对 `sys_oss_config`、`sys_oss`、`sys_oss_ref` 和迁移表做可恢复备份，记录行数与校验摘要。
-2. 在隔离副本先执行 `script/sql/namewta/DDL.sql` 与 `DML.sql`，验证 fresh 和 upgrade 两条路径；再申请生产执行。
+2. 全新库在隔离环境按顺序执行 `release-artifacts/docker/infrastructure/mysql/init/` 六份基座；已有库指定源/目标 Git Tag，备份后生成并评审差异 SQL，再申请生产执行。
 3. 检查访问类型物理编码仅为 `0=PRIVATE`、`2=PUBLIC_READ`。旧 `0/1/2` 和未知值在升级时都必须先按 PRIVATE 解释。
 4. 先配置 PRIVATE configKey 并保持默认；再配置非默认 PUBLIC_READ configKey。存在对象引用的配置不得原地修改 Bucket 或访问类型。
 5. 后端以公共策略默认关闭的配置部署。readiness 必须同时确认所有 upload policy、存量 service 和活动迁移 configKey。

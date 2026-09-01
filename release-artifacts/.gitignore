@@ -6,7 +6,6 @@ builds/*
 bundles/*
 !bundles/.gitignore
 docker/backend/images/*/app.jar
-docker/infrastructure/mysql/init/*.sql
 docker/frontend/nginx/html/*/*
 !docker/frontend/nginx/html/*/.gitignore
 !docker/frontend/nginx/html/nginx-lb/system-updating.html

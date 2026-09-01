@@ -13,6 +13,6 @@
 - [前端 README](../plus-ui-namewta/README.md)：多 App monorepo、领域分层、开发命令与复用规则。
 - [前端架构基线](../plus-ui-namewta/docs/architecture-baseline.md)：认证、动态路由、权限和包依赖边界。
 - [后端 README](../ruoyi-vue-plus-namewta/README.md)：模块结构、增强能力、构建、HTTP 与 SQL 规则。
-- [NAMEWTA SQL](../ruoyi-vue-plus-namewta/script/sql/namewta/README.md)：MySQL 支持矩阵、执行顺序和追加式迁移规则。
+- [发布资产](../release-artifacts/README.md)：MySQL 8.4 六文件基座、初始化、构建与部署规则。
 
 各 App、domain、web-domain、platform、adapter 和 web-kit 的局部职责由其目录 README 说明，不在聚合文档中重复维护文件清单。

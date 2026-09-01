@@ -26,7 +26,7 @@ read_only_paths:
   - "<Path>plus-ui-namewta/packages/domains/profile/**</Path>"
   - "<Path>plus-ui-namewta/packages/web-domains/profile/**</Path>"
   - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/**</Path>"
-  - "<Path>ruoyi-vue-plus-namewta/script/sql/namewta/**</Path>"
+  - "<Path>release-artifacts/docker/infrastructure/mysql/init/**</Path>"
 shared_paths:
   - "<Path>plus-ui-namewta/apps/admin-web/src/application/services.ts</Path>"
   - "<Path>plus-ui-namewta/apps/admin-web/src/router/adminManifestRegistry.ts</Path>"

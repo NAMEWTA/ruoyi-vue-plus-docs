@@ -1,0 +1,56 @@
+{
+  "schema_version": 6,
+  "artifact": "change-status",
+  "change": "2026-09-01-release-artifacts-mysql-baseline-consolidation",
+  "change_status": "active",
+  "current_work": "specdev/implement",
+  "works_run": [
+    "specdev/spec",
+    "specdev/tickets",
+    "specdev/goal-plan"
+  ],
+  "claimed_investigations": [],
+  "execution_authorization": {
+    "implementation_commit": {
+      "status": "authorized",
+      "source": "USER-DECISION:2026-09-01-complete-migration-commit-push-tag",
+      "granted_at": "2026-09-01T18:03:17+08:00",
+      "scope": "Ticket implementation commits"
+    },
+    "local_candidate_integration": {
+      "status": "authorized",
+      "source": "USER-DECISION:2026-09-01-complete-migration-commit-push-tag",
+      "granted_at": "2026-09-01T18:03:17+08:00",
+      "scope": "Lead-owned local direct-parent or candidate integration and parent update"
+    },
+    "source_cleanup": {
+      "status": "not-authorized",
+      "source": null,
+      "granted_at": null,
+      "scope": "Source worktree and branch cleanup"
+    }
+  },
+  "leadership": {
+    "current": "codex:/root",
+    "epoch": 1,
+    "assigned_at": "2026-09-01T15:34:11+08:00",
+    "history": []
+  },
+  "created_at": "2026-09-01T15:34:11+08:00",
+  "updated_at": "2026-09-01T18:03:17+08:00",
+  "completed_at": null,
+  "archived": false,
+  "archive_path": null,
+  "blockers": [],
+  "deviations": [
+    {
+      "ticket_id": "T-01",
+      "kind": "mysql-baseline-drift-after-planning",
+      "observed_at": "2026-09-01T18:08:00+08:00",
+      "detail": "切换前摘要确认 50-namewta-ddl.sql 与 60-namewta-dml.sql 落后于本 Change 建立后已完成的管理端运行能力 SQL 提交。",
+      "impact": "直接删除后端 script 会丢失最新生成器退役、OpenAPI 与 Nacos 菜单收敛基座。",
+      "correction": "T-01 先把后端最新 DDL/DML 等价接管到 50/60，记录新摘要，再以发布目录为唯一权威完成消费者迁移和旧目录删除。"
+    }
+  ],
+  "worktrees": []
+}

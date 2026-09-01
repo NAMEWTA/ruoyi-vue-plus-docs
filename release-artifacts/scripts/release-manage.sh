@@ -422,39 +422,48 @@ stage_frontend_html() {
 }
 
 stage_mysql_init() {
-  local source_root="${BACKEND_ROOT}/script/sql"
   local target_root="${RELEASE_ROOT}/docker/infrastructure/mysql/init"
-  local item source target
+  local filename index=0
   local sql_files=(
-    "ry_vue.sql|10-ruoyi-base.sql"
-    "ry_job.sql|20-ry-job.sql"
-    "ry_workflow.sql|30-ry-workflow.sql"
-    "ry_ai.sql|40-ry-ai.sql"
-    "namewta/DDL.sql|50-namewta-ddl.sql"
-    "namewta/DML.sql|60-namewta-dml.sql"
+    "10-ruoyi-base.sql"
+    "20-ry-job.sql"
+    "30-ry-workflow.sql"
+    "40-ry-ai.sql"
+    "50-namewta-ddl.sql"
+    "60-namewta-dml.sql"
   )
   local nacos_assets=(
     "15-nacos-init.sh"
     "nacos/mysql-schema.sql"
     "nacos/SOURCE.md"
   )
-  for target in "${nacos_assets[@]}"; do
-    [[ -f "${target_root}/${target}" ]] || {
-      error "缺少 Nacos 初始化资产: ${target_root}/${target}"
+  for filename in "${nacos_assets[@]}"; do
+    [[ -r "${target_root}/${filename}" ]] || {
+      error "缺少或无法读取 Nacos 初始化资产: ${target_root}/${filename}"
       return 1
     }
   done
-  find "${target_root}" -mindepth 1 -maxdepth 1 -type f \
-    ! -name .gitignore ! -name 15-nacos-init.sh -delete
-  for item in "${sql_files[@]}"; do
-    source="${source_root}/${item%%|*}"
-    target="${target_root}/${item#*|}"
-    [[ -f "${source}" ]] || {
-      error "缺少数据库初始化文件: ${source}"
+
+  for filename in "${sql_files[@]}"; do
+    [[ -s "${target_root}/${filename}" && -r "${target_root}/${filename}" ]] || {
+      error "缺少、为空或无法读取数据库初始化文件: ${target_root}/${filename}"
       return 1
     }
-    install -m 0644 "${source}" "${target}"
   done
+
+  while IFS= read -r filename; do
+    [[ ${index} -lt ${#sql_files[@]} && "${filename}" == "${sql_files[${index}]}" ]] || {
+      error "MySQL 基座文件名称或顺序异常: ${filename}"
+      return 1
+    }
+    index=$((index + 1))
+  done < <(find "${target_root}" -mindepth 1 -maxdepth 1 -type f -name '[0-9][0-9]-*.sql' -exec basename {} \; | LC_ALL=C sort)
+
+  [[ ${index} -eq ${#sql_files[@]} ]] || {
+    error "MySQL 基座文件数量异常: ${index}，预期 ${#sql_files[@]}"
+    return 1
+  }
+  info "MySQL 基座校验通过：六份 SQL 由 release-artifacts 直接维护，未执行复制或改写"
 }
 
 stage_release() {

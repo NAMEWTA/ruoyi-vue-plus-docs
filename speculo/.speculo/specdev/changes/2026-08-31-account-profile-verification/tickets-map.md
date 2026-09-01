@@ -143,7 +143,7 @@ W7                             └────────→ T-14 [RELEASE GATE
 | Shared owner | 共享路径 |
 |---|---|
 | T-01 | 根/模块/admin POM、Profile/Workflow `ruoyi-api` 公共合同 |
-| T-02 | NAMEWTA `DDL.sql`、`DML.sql` |
+| T-02 | 父仓库 NAMEWTA `50-namewta-ddl.sql`、`60-namewta-dml.sql` 完整基座 |
 | T-10 | profile 前端包入口、admin package、`pnpm-lock.yaml` |
 | T-14 | admin `services.ts`、`adminManifestRegistry.ts` |
 

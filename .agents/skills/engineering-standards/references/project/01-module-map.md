@@ -83,5 +83,5 @@
 - `path:ruoyi-vue-plus-namewta/**` -> 通用相关规则 + Java core；Spring 应用/配置/Web scope 再加 Spring Boot；事务、数据源切换和 DDL/schema scope 追加数据源事务与建表规范。
 - `path:ruoyi-vue-plus-namewta/ruoyi-modules/**` 中的 CRUD/mapper/service/controller，以及 `ruoyi-common-mybatis`、`ruoyi-common-translation` -> 追加后端 CRUD/查询实现规范；模板修改单独路由到 `path:docs/fm/**`。
 - `path:docs/upstream/**`、Submodule 指针或上游同步 -> 架构边界 + 安全数据 + 评审交付。
-- SQL/表结构变化 -> 安全数据 + Java/Spring contract + 数据源事务与建表 + customization map；新建项目自有表应用基础字段基线，同时保持 `ry_vue.sql` 冻结。
+- SQL/表结构变化 -> 安全数据 + Java/Spring contract + 数据源事务与建表 + customization map；新建项目自有表应用基础字段基线，直接修改父仓库六份 MySQL 8.4 完整基座中的对应文件。
 - 跨前后端 API 变化 -> 同时加载 TypeScript、Java、测试、安全和交付规则，并以后端兼容合同先行。

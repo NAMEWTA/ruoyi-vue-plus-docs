@@ -7,7 +7,7 @@
 | 仓库 | 产品分支 | 上游镜像 | 本地责任 |
 |---|---|---|---|
 | 父仓库 | `main` | 无 | 文档、工程规范、Speculo 状态和两个子模块 gitlink |
-| 后端 | `main` | `6.X` | Spring Boot 服务、权限、数据与迁移脚本 |
+| 后端 | `main` | `6.X` | Spring Boot 服务、权限与数据访问实现；不拥有发布 SQL |
 | 前端 | `main` | `6.X-Vue` | 多 App monorepo、领域包、终端适配与界面组合 |
 
 镜像分支只允许快进；产品变更只进入 `main`；`namewta-base-upstream-6x` 与 `namewta-base-upstream-6x-vue` 不移动。
@@ -43,7 +43,7 @@
 - `sys.user.passwordPolicy` 是所有新密码生成与写入的唯一策略源，服务端负责最终裁决；公开端点只投影长度和字符类别等非敏感约束，存量弱 BCrypt 密码保持登录兼容并在下一次写入时收敛。
 - 临时密码使用独立权限、用户级 60 秒覆盖语义和 Redis 不可逆校验值；错误尝试不消费，正确认证只能原子消费一次，成功后签发普通会话且不改变永久密码，业务审计不得保存凭据明文。
 - 模块间优先通过 `ruoyi-api`、common SPI 或公开 Service 合同协作，不跨模块依赖 Controller 或实现细节。
-- NAMEWTA 数据库增量仅维护 `script/sql/namewta/DDL.sql` 与 `DML.sql`，保持历史前缀不变并追加幂等增量；初始化顺序为 `ry_vue.sql -> DDL.sql -> DML.sql`。密码能力发布先执行并验证 DML，再发布后端、前端和角色授权；回滚只补偿配置、菜单及授权关系，绝不改写用户密码，配置变化后显式刷新缓存。
+- 数据库事实源仅为父仓库 `release-artifacts/docker/infrastructure/mysql/init/` 的六份 MySQL 8.4 完整基座；迭代直接修改对应文件，`50-namewta-ddl.sql` 只含结构语句，`60-namewta-dml.sql` 只含数据语句。全新库按 `10 -> 20 -> 30 -> 40 -> 50 -> 60` 初始化；已有库必须按源/目标 Git Tag 生成并评审差异，禁止重放完整基座。
 - OSS、通知、工作流与权限修改必须同时验证 API 合同、数据隔离、失败语义和对应集成测试。
 - 完整 HTTP 系统日志必须保留 requestId 关联、同步/异步/异常终态、正文大小与媒体类型策略；日志采集失败不得改变业务响应。
 - OpenAPI 机器身份只有同时具备服务端验签 request attribute、`openapi` userType 和空 Client 字段时，才可跳过浏览器 Client 校验；普通 Token、伪造 header 和泄漏的内部 Token 均不得触发该分支。
@@ -54,7 +54,7 @@
 |---|---|---|
 | 协议与装配 | `ruoyi-common-openapi`、`OpenApiAutoConfiguration`、`application.yml` | full/core 使用同一 common artifact；`openapi.enabled` 在所有环境默认 `false`；启用时 KEK、Redis、Sa-Token、MVC mapping、唯一 credential/authorization SPI 任一缺失或无效都必须阻止启动，不得回退到本地状态或空权限 |
 | 凭据、目录与失效 | `ruoyi-system` 的 OpenAPI credential/catalog Controller、Service、Mapper 和 RBAC/身份写后失效调用点 | secret 仅创建/重置时返回一次并以 KEK 加密保存；self/admin scope 在后端裁决；权限或身份写入成功前完成机器 Session 注销，失败不得静默成功 |
-| 数据与菜单 | `script/sql/namewta/{DDL,DML}.sql` | 只维护 additive、幂等的凭据表/索引、权限与菜单增量，不改写上游初始化 SQL；生产 DDL/DML 不随代码集成自动执行 |
+| 数据与菜单 | `release-artifacts/docker/infrastructure/mysql/init/{50-namewta-ddl,60-namewta-dml}.sql` | 直接维护当前完整基座并保持 DDL/DML 分类；存量环境只执行由源/目标 Git Tag 差异形成且已评审的升级 SQL，生产数据库不随代码集成自动变更 |
 | 前端入口 | system domain `open-api`、system web-domain 的 `OpenApiWorkspace`/manifest、admin `system/openApi/index` 动态页和 profile 静态 tab | admin 入口显式选择目标用户，个人入口固定当前用户；权限隐藏不能替代后端授权；一次性 secret 在所有弹窗关闭路径清空，不写 storage、URL、缓存或日志 |
 | 发布与恢复 | common-openapi README、部署环境变量与发布 Evidence | 顺序固定为备份、批准并执行 additive SQL、部署默认关闭代码、配置 Redis/KEK、另行批准启用；恢复先置 `OPENAPI_ENABLED=false`。KEK 下发、生产启用、真实迁移和远程发布均不是代码集成动作 |
 

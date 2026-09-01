@@ -9,7 +9,7 @@
 - [PERSIST-003 每个新建项目自有表的基础字段](#persist-003-每个新建项目自有表的基础字段)
 - [PERSIST-004 模块表前缀与主键命名](#persist-004-模块表前缀与主键命名)
 - [PERSIST-005 表与字段中文注释](#persist-005-表与字段中文注释)
-- [PERSIST-006 NAMEWTA 双文件与只追加合同](#persist-006-namewta-双文件与只追加合同)
+- [PERSIST-006 NAMEWTA 六文件可编辑 MySQL 基座合同](#persist-006-namewta-六文件可编辑-mysql-基座合同)
 - [PERSIST-007 DDL 所有权、方言与迁移](#persist-007-ddl-所有权方言与迁移)
 
 ### PERSIST-001 统一使用动态数据源事务
@@ -42,11 +42,11 @@ Verification: commit/rollback 时 listener 是否触发及触发次数的集成�
 
 ### PERSIST-003 每个新建项目自有表的基础字段
 
-Scope: every new project-owned `CREATE TABLE` under `path:ruoyi-vue-plus-namewta/script/sql/**`
+Scope: every new project-owned `CREATE TABLE` under `path:release-artifacts/docker/infrastructure/mysql/init/**`
 
 Level: MUST
 
-Source: `user-decision` + `repository-fact` (`script/sql/ry_vue.sql:880-886`, `test_demo`, `BaseEntity`)
+Source: `user-decision` + `repository-fact` (`10-ruoyi-base.sql` 的 `test_demo`, `BaseEntity`)
 
 Rule: 每个新建的项目自有表，包括业务表、关系表、历史/日志表和配置表，均以 `test_demo` 的以下字段集为建表基线；缺少任一字段都必须在实现前取得明确 schema 例外，不能因“只是关系表”自行省略：
 
@@ -60,13 +60,13 @@ Rule: 每个新建的项目自有表，包括业务表、关系表、历史/日�
 | `update_by` | 更新人；由 `BaseEntity.updateBy` 映射/填充 |
 | `del_flag` | 逻辑删除标志，未删除默认值为 `0`；对应 entity 显式字段和 `@TableLogic` |
 
-DDL 中优先保持上述顺序，便于与 `script/sql/ry_vue.sql:880-886` 逐项核对；字段类型、时间类型和注释使用目标数据库的等价语法，并与 Java 类型、MyBatis Plus 配置及同模块成熟表一致，不能机械复制 MySQL display width。项目自有 entity 应继承 `BaseEntity`，只显式声明 `version` 和 `delFlag`；没有 entity 的表仍不得省略 DDL 基础字段。
+DDL 中优先保持上述顺序，便于与 `10-ruoyi-base.sql` 的 `test_demo` 逐项核对；字段类型、时间类型和注释使用 MySQL 8.4 语法，并与 Java 类型、MyBatis Plus 配置及同模块成熟表一致，不能机械复制 MySQL display width。项目自有 entity 应继承 `BaseEntity`，只显式声明 `version` 和 `delFlag`；没有 entity 的表仍不得省略 DDL 基础字段。
 
 Verification: 对每个新增 `CREATE TABLE` 提供七字段逐项 review 证据；对照 schema/entity/`BaseEntity`，验证 insert 自动填充、update 自动填充、乐观锁冲突和逻辑删除查询；在目标数据库执行 fresh install。存量缺失字段按 `MIG-BE-DDL-BASE` 处理，不把未迁移的旧表当作新表范例。
 
 ### PERSIST-004 模块表前缀与主键命名
 
-Scope: every new or project-taken-over `CREATE TABLE` under `path:ruoyi-vue-plus-namewta/script/sql/**`
+Scope: every new or project-taken-over `CREATE TABLE` under `path:release-artifacts/docker/infrastructure/mysql/init/**`
 
 Level: MUST
 
@@ -80,7 +80,7 @@ Verification: review 每个 `CREATE TABLE` 的所有者、表名前缀和主键�
 
 ### PERSIST-005 表与字段中文注释
 
-Scope: project-owned table and column DDL under `path:ruoyi-vue-plus-namewta/script/sql/**`
+Scope: project-owned table and column DDL under `path:release-artifacts/docker/infrastructure/mysql/init/**`
 
 Level: MUST
 
@@ -90,34 +90,32 @@ Rule: 每张项目自有表都必须提供简明、准确的中文表注释；�
 
 Verification: 逐表检查 table comment，逐字段检查 column comment；在目标数据库查询 `information_schema.TABLES.TABLE_COMMENT` 与 `information_schema.COLUMNS.COLUMN_COMMENT`，两者不得为空且不得是占位文本。
 
-### PERSIST-006 NAMEWTA 双文件与只追加合同
+### PERSIST-006 NAMEWTA 六文件可编辑 MySQL 基座合同
 
-Scope: `path:ruoyi-vue-plus-namewta/script/sql/namewta/**`
+Scope: `path:release-artifacts/docker/infrastructure/mysql/init/**`
 
 Level: MUST
 
 Source: `user-decision`
 
-Rule: `script/sql/namewta/` 只允许存在两个 `.sql` 文件，且文件名精确为 `DDL.sql` 和 `DML.sql`。`DDL.sql` 只保存建表、改表、索引、约束等结构语句；`DML.sql` 是本项目约定的数据类 SQL 文件，只保存初始化、回填及其他 `INSERT`、`UPDATE`、`DELETE` 数据语句。不得新增编号、版本、功能、临时或备份 `.sql` 文件，也不得把 DDL 与数据语句混入对方文件。
+Rule: `release-artifacts/docker/infrastructure/mysql/init/` 是数据库初始化资产的唯一事实源，只允许六份受管 SQL：`10-ruoyi-base.sql`、`20-ry-job.sql`、`30-ry-workflow.sql`、`40-ry-ai.sql`、`50-namewta-ddl.sql`、`60-namewta-dml.sql`。六份文件都是当前完整基座，可以在迭代中直接修改、删除、替换或重排其内部内容；不得再使用 append-only 约束，也不得为单次变化新增版本、功能、临时或备份 SQL。
 
-两个文件均为 append-only：已经生成、提交或执行过的 SQL 不得修改、删除、替换或重排；后续变化只能追加到对应文件末尾。每个追加块必须以 `-- 变更内容：<简明中文说明>` 和 `-- 变更标识：YYYY-MM-DD_HH:mm:ss` 开头，并继续用中文注释标明执行前置、fresh/upgrade 适用性、是否可重复执行以及回滚或补偿方式。变更标识时间必须通过 `node script/sql/namewta/generate-change-timestamp.js` 按 `Asia/Shanghai` 时区生成，不得手工使用其他格式。全新环境固定先执行 `DDL.sql`，再执行 `DML.sql`；已有环境只执行本次新增块，不得无条件重放全部历史语句。
+`10` 至 `40` 分别承载 RuoYi、Job、Workflow、AI 基座；`50-namewta-ddl.sql` 只保存 NAMEWTA 建表、改表、索引和约束等结构语句；`60-namewta-dml.sql` 只保存 NAMEWTA 初始化、回填及其他 `INSERT`、`UPDATE`、`DELETE` 数据语句。DDL 与 DML 不得混入对方文件。所有六份文件必须被 Git 跟踪，不得被 `.gitignore` 排除。
 
-需要在 DSL 中写入项目主键时，使用 `node script/sql/namewta/generate-snowflake-id.js`；批量生成使用 `--count <数量>`。该脚本以 Node.js `BigInt` 复刻当前 MyBatis-Plus 3.5.17 的 Snowflake 位布局和 MAC/PID 节点推导，输出必须作为十进制字符串或数据库 `BIGINT` 字面量使用，不得先转换为 JavaScript `Number`。
+全新环境固定按文件名前缀 `10 -> 20 -> 30 -> 40 -> 50 -> 60` 执行。已有环境不得重放任一完整基座；升级必须指定源 Git Tag 与目标 Git Tag，备份数据库，基于两 Tag 的六文件差异形成可审计升级 SQL，在隔离副本评审和演练后才能执行。差异 SQL 是部署报告中的临时交付物，不进入基座目录。
 
-旧 `001_user_type.sql` 至 `004_app_client_menus.sql` 已于 2026-08-21 一次性等价收敛为 `DDL.sql` 和 `DML.sql`，旧文件名不得恢复或作为后续范例。两个文件自该基线起立即冻结为只追加文件。
-
-Verification: `find script/sql/namewta -maxdepth 1 -type f -name '*.sql'` 的结果最终只能是 `DDL.sql` 与 `DML.sql`；review SQL 分类和 diff，确认历史前缀逐字不变、仅在文件末尾增加完整变更块；在隔离数据库分别验证 fresh install、已有库 upgrade、适用重复执行和回滚/补偿。
+Verification: 检查目录中六份 SQL 的精确名称、顺序、非空和 Git 跟踪状态；检查 `50`/`60` 分类及后端 `script/` 不存在；在全新 MySQL 8.4 隔离库执行全部六份文件并验证关键表、菜单和 OSS 配置；存量升级验证源/目标 Tag、备份、差异、演练和回滚证据。
 
 ### PERSIST-007 DDL 所有权、方言与迁移
 
-Scope: `path:ruoyi-vue-plus-namewta/script/sql/**`, schema changes
+Scope: `path:release-artifacts/docker/infrastructure/mysql/init/**`, schema changes
 
 Level: MUST
 
 Source: `user-decision` + `repository-fact` (project profile, upstream and third-party SQL ownership)
 
-Rule: `script/sql/ry_vue.sql` 是冻结的上游初始化脚本，`test_demo` 只作为基础字段证据，不回写该文件承载 NAMEWTA 变化。NAMEWTA SQL 遵循 PERSIST-006 的双文件与只追加合同。当前 NAMEWTA 明确只维护 MySQL，不虚构 PostgreSQL、Oracle 或 SQL Server 支持；若某个被项目接管的功能明确承诺多方言，所有已承诺方言必须在同一变更中保持语义一致。
+Rule: 六份完整基座由父仓库发布资产统一拥有，后端仓库不得恢复 `script/` 或任何 SQL 副本。当前 NAMEWTA 只支持 MySQL 8.4，不维护或宣称 PostgreSQL、Oracle、SQL Server 兼容；上游出现其他方言文件时也不迁移到产品基座。
 
 上游、SnailJob、WarmFlow、AI 或其他第三方拥有的 schema 不因本规则被批量重写；项目一旦新建或明确接管某张表，该表从接管点起应用 PERSIST-003 至 PERSIST-005。任何例外进入 decisions/exceptions，并包含 owner、理由、风险、补偿、验证和移除条件。
 
-Verification: SQL diff 与文件所有权 review；隔离数据库验证 fresh install、已有库 upgrade、适用迁移重复执行和回滚/补偿；多方言 scope 对照字段、默认值、索引、约束、注释和逻辑删除语义。
+Verification: SQL diff 与文件所有权 review；隔离 MySQL 8.4 验证全新初始化；存量环境按源/目标 Git Tag 验证差异升级和回滚/补偿；扫描后端不存在 `script/` 和非 MySQL SQL。

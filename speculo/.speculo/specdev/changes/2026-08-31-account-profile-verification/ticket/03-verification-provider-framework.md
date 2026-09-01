@@ -22,7 +22,7 @@ writable_paths:
   - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/ruoyi-profile-enterprise/src/test/java/org/dromara/profile/enterprise/verification/**</Path>"
 read_only_paths:
   - "<Path>ruoyi-vue-plus-namewta/ruoyi-api/src/main/java/org/dromara/profile/api/**</Path>"
-  - "<Path>ruoyi-vue-plus-namewta/script/sql/namewta/DDL.sql</Path>"
+  - "<Path>release-artifacts/docker/infrastructure/mysql/init/50-namewta-ddl.sql</Path>"
 shared_paths: []
 shared_path_owners: []
 ---

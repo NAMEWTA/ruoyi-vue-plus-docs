@@ -43,7 +43,7 @@
 1. `project-owned-current`：当前产品代码、配置、数据或文档，必须迁移；
 2. `third-party-coordinate`：依赖 group/import/package，必须保留；
 3. `legal-provenance`：LICENSE、NOTICE、专用上游/迁移文档，可保留但不得成为产品入口；
-4. `immutable-history`：追加式 SQL 历史块、不可变 OpenAPI revision，可保留并通过新迁移/新 revision 覆盖当前状态；
+4. `immutable-history`：不可变 OpenAPI revision 与已发布 Git Tag 保持不变；当前 SQL 基座直接修改，存量库升级通过 Tag 差异生成临时迁移；
 5. `live-runtime-state`：未跟踪私有配置或真实环境值，按用户确认策略处理；
 6. `generated-output`：从已修改源重新生成，不手工编辑。
 
@@ -69,7 +69,7 @@
 ### 数据与升级路径
 
 - fresh baseline 直接呈现新品牌；已安装环境必须有幂等升级路径。
-- 对追加式 DDL/DML 只在文件末尾追加迁移，更新/删除旧菜单外链、管理员昵称、社会化关系和产品自有资源配置。
+- 直接更新 `release-artifacts/docker/infrastructure/mysql/init/50-namewta-ddl.sql` 与 `60-namewta-dml.sql` 的当前完整基座，并更新/删除旧菜单外链、管理员昵称、社会化关系和产品自有资源配置。
 - 不修改历史块来制造字符串归零；用新迁移建立当前状态，并在残留 guard 中将历史范围精确列为 immutable。
 - 不执行真实数据库迁移，除非用户另行授权；交接时明确给出需要应用的迁移标识。
 
@@ -88,7 +88,7 @@
 - 扫描当前前端 App、后端资源/源码、发布资产、默认 README 和脚本；
 - 检查旧名称、作者、邮箱、上游产品 URL、已退役资源路径；
 - 断言新 Logo/favicon 存在，旧资源和旧入口组件不存在；
-- 检查追加式数据迁移包含必要的菜单、用户和社会化关系处理；
+- 检查当前完整基座包含必要的菜单、用户和社会化关系处理，并为已有环境提供源/目标 Tag 差异方案；
 - 排除依赖缓存、构建目录和精确的 immutable/legal allowlist；
 - 对每个 allowlist 条目记录路径、分类和原因，禁止宽泛 `docs/**` 或 `sql/**` 排除。
 

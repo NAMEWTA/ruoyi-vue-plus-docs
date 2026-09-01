@@ -7,7 +7,7 @@ RELEASE_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 ENV_FILE="${RELEASE_ROOT}/.env"
 SQL_DIR="${RELEASE_ROOT}/docker/infrastructure/mysql/init"
 MYSQL_CONTAINER="namewta-data-mysql"
-EXPECTED_TABLES=86
+EXPECTED_TABLES=87
 
 readonly SQL_FILES=(
   "10-ruoyi-base.sql"

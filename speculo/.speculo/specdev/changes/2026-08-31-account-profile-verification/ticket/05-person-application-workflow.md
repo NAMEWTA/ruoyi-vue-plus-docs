@@ -19,7 +19,7 @@ writable_paths:
   - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/ruoyi-profile-person/src/test/java/org/dromara/profile/person/application/**</Path>"
 read_only_paths:
   - "<Path>ruoyi-vue-plus-namewta/ruoyi-api/**</Path>"
-  - "<Path>ruoyi-vue-plus-namewta/script/sql/namewta/**</Path>"
+  - "<Path>release-artifacts/docker/infrastructure/mysql/init/**</Path>"
   - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/ruoyi-profile-person/src/main/java/org/dromara/profile/shared/material/**</Path>"
 shared_paths: []
 shared_path_owners: []

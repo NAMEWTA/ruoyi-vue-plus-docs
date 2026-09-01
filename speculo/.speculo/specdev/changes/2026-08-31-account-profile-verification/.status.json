@@ -38,12 +38,21 @@
     "history": []
   },
   "created_at": "2026-08-31T18:06:59+08:00",
-  "updated_at": "2026-09-01T14:55:22+08:00",
+  "updated_at": "2026-09-01T18:21:36+08:00",
   "completed_at": null,
   "archived": false,
   "archive_path": null,
   "blockers": [],
-  "deviations": [],
+  "deviations": [
+    {
+      "ticket_id": "T-02",
+      "kind": "sql-owner-consolidated-after-source-checkpoint",
+      "observed_at": "2026-09-01T18:21:36+08:00",
+      "detail": "T-02 source checkpoint 6aa3f7e60e48b7490c5b4ac421c582b44bdac76d 基于已退出的后端 script/sql/namewta 路径实现。发布资产收敛 Change 已将六份 MySQL 基座所有权迁移到父仓库。",
+      "impact": "该 checkpoint 不能直接集成，否则会恢复已删除的后端 script 目录并制造第二份 SQL 事实源。",
+      "correction": "保留 source checkpoint 与 Evidence 作为审计证据；恢复 T-02 时从最新后端 main 重放 Java/schema 测试变化，并把 DDL/DML 业务差异移植到父仓库 50-namewta-ddl.sql 与 60-namewta-dml.sql，形成后端和父仓库两个结果提交后再进入 fresh MySQL Gate。"
+    }
+  ],
   "worktrees": [
     {
       "ticket_id": "T-01",

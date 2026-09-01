@@ -27,4 +27,6 @@
 
 ## SQL
 
-`script/sql/namewta/DDL.sql` 管理结构变化，`DML.sql` 管理初始化、回填和补偿。两者只在末尾追加已经设计好执行前置、fresh/upgrade 范围、重复执行和回滚方式的变更块；具体格式读取工程规范的持久化 reference 和 `script/sql/namewta/README.md`。
+父仓库 `release-artifacts/docker/infrastructure/mysql/init/` 是唯一 SQL 事实源。项目只支持 MySQL 8.4，六份文件均为可直接修改的当前完整基座；`50-namewta-ddl.sql` 只管理 NAMEWTA 结构，`60-namewta-dml.sql` 只管理初始化、回填和其他数据。禁止在后端仓库恢复 `script/`、创建 SQL 副本或新增其他方言。
+
+全新库按 `10 -> 20 -> 30 -> 40 -> 50 -> 60` 执行。已有库不得重放基座，必须指定源/目标 Git Tag、备份现场、生成并评审差异 SQL，并在隔离副本演练；详细合同读取工程规范的持久化 reference 与父仓库 `release-artifacts/README.md`。

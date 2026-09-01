@@ -87,7 +87,7 @@ W1  T-01 ─┐
 | Wave | Ticket | 前置条件 | 项目写路径 | Shared owner | Gate/集成序号 |
 |---|---|---|---|---|---|
 | W1 | T-01 | G0；后端基线固定 | backend POM、profile/workflow API、profile contract test | T-01 | G1 / 1 |
-| W1 | T-02 | G0；后端基线固定 | backend DDL/DML、schema test | T-02 | G1 / 2 |
+| W1 | T-02 | G0；后端与父仓库基线固定 | 父仓库 50/60 完整基座、backend schema test | T-02 | G1 / 2 |
 | W2 | T-03 | G1 | person/enterprise verification 子树 | — | G2 / 3 |
 | W2 | T-04 | G1 | shared material 与 enterprise material 子树 | — | G2 / 4 |
 | W3 | T-05 | G2 | person application/persistence 子树 | — | G3 / 5 |
@@ -106,7 +106,7 @@ W1  T-01 ─┐
 | ID | 可观察产出 | Dependencies | Workspace | Implementation owner | E2E disposition | Evidence |
 |---|---|---|---|---|---|---|
 | T-01 | 模块/API/workflow 接缝 | — | backend `specdev-worktree/{change}/T-01` | Lead / dynamic dispatch | not-required: 下游验证跨边界 | `<Path>{roots.state}/specdev/changes/{change}/evidence/T-01.md</Path>` |
-| T-02 | schema/约束/种子 | — | backend `specdev-worktree/{change}/T-02` | Lead / dynamic dispatch | required: fresh MySQL DDL/DML | `<Path>{roots.state}/specdev/changes/{change}/evidence/T-02.md</Path>` |
+| T-02 | schema/约束/种子 | — | backend source + 父仓库 SQL owner | Lead / dynamic dispatch | required: fresh MySQL 六文件基座 | `<Path>{roots.state}/specdev/changes/{change}/evidence/T-02.md</Path>` |
 | T-03 | provider SPI/回调 | T-01,T-02 | backend `specdev-worktree/{change}/T-03` | Lead / dynamic dispatch | required: HTTP+DB+鉴权 | `<Path>{roots.state}/specdev/changes/{change}/evidence/T-03.md</Path>` |
 | T-04 | 材料树/OSS 生命周期 | T-01,T-02 | backend `specdev-worktree/{change}/T-04` | Lead / dynamic dispatch | required: MySQL+OSS+ACL | `<Path>{roots.state}/specdev/changes/{change}/evidence/T-04.md</Path>` |
 | T-05 | 个人申请/流程发布 | T-03,T-04 | backend `specdev-worktree/{change}/T-05` | Lead / dynamic dispatch | required: HTTP+DB+workflow | `<Path>{roots.state}/specdev/changes/{change}/evidence/T-05.md</Path>` |
@@ -126,7 +126,7 @@ W1  T-01 ─┐
 
 - AC-001 至 AC-044 全部为 passed Evidence，无未经批准的 deferred。
 - 每个非取消 Ticket 的 source worktree clean，source checkpoint 可达；candidate/result SHA 与产品子仓库父分支实际状态一致。
-- shared owner、公共 API、DDL/DML、domain exports、App manifest 和 lock 无竞争写入；所有消费者基于已集成 checkpoint。
+- shared owner、公共 API、父仓库 50/60 基座、domain exports、App manifest 和 lock 无竞争写入；所有消费者基于已集成 checkpoint。
 - 后端定向测试、受影响 reactor/build、前端 lint/typecheck/test/build 和 required E2E 无回归。
 - 无业务 DELETE/OSS 删除、敏感日志、未授权数据读取、伪 workflow 成功、双决定或 system RBAC 副作用。
 - SpecDev Ticket/Map/Plan/Evidence/status 与 Git 一致，无活动 candidate、未集成 source 或高影响未决偏差。
@@ -136,7 +136,7 @@ W1  T-01 ─┐
 | Gate | 开启条件 | 关闭证据 | 阻塞范围 | Lead/批准人 | 失败恢复 |
 |---|---|---|---|---|---|
 | G0 执行授权 | 上游 ready、workspace=required、基线 clean | implementation commit 与 local candidate integration 均 authorized | 全部 Ticket | Lead / 用户 | 保持 blocked，不创建 worktree |
-| G1 合同与数据地基 | G0 | T-01/T-02 result、reactor/API、fresh DDL/DML/唯一约束 Evidence | W2+ | Lead | 保留失败 source/candidate，父分支不动 |
+| G1 合同与数据地基 | G0 | T-01/T-02 result、reactor/API、fresh 六文件基座/唯一约束 Evidence | W2+ | Lead | 保留失败 source/candidate，父分支不动 |
 | G2 验证证据地基 | G1 | provider 安全矩阵、材料树/OSS ACL/lifecycle E2E | W3+ | Lead | 修正 T-03/T-04，不扩大 SPI/材料合同 |
 | G3 两类认证垂直路径 | G2 | 个人/企业提交、快照、流程终态、并发、发布 E2E | W4+ | Lead | 回到失败叶子，旧 current/绑定保持不变 |
 | G4 所有权与运营闭环 | G3 | 换绑/通知、转移挑战、override/decision fence、权限矩阵 E2E | W5+ | Lead | 暂停消费者，保留权威绑定/决定版本 |
@@ -177,7 +177,7 @@ W1  T-01 ─┐
 | Ticket | Parent/base | Workspace/branch | Source checks | Implementation commit | Integration checks/E2E | Parent result |
 |---|---|---|---|---|---|---|
 | T-01 | backend `main@c13a375...` | `{change}/T-01` | Maven/API contract | required/pending | reactor，E2E not-required | pending |
-| T-02 | backend latest G0 | `{change}/T-02` | SQL/schema static+test | required/pending | fresh MySQL required | pending |
+| T-02 | backend 与父仓库 latest G0 | backend `{change}/T-02` + 父仓库 SQL owner | SQL/schema static+test | required/pending | fresh MySQL 六文件基座 required | pending |
 | T-03 | backend G1 result | `{change}/T-03` | provider unit/security | required/pending | callback+DB required | pending |
 | T-04 | backend G1 result | `{change}/T-04` | material/service tests | required/pending | MySQL+OSS required | pending |
 | T-05 | backend G2 result | `{change}/T-05` | person unit/integration non-E2E | required/pending | HTTP+DB+workflow required | pending |
@@ -230,8 +230,8 @@ source 测试只证明局部实现；required E2E 只在 Lead-owned parent-candi
 
 ### Migration or Release Sequence
 
-1. 测试环境 fresh 执行 DDL，验证表、约束、索引和重复执行策略。
-2. 执行 DML，验证字典、流程/配置、菜单权限和 systemRequired 材料标签稳定 code。
+1. 测试环境按 `10 -> 20 -> 30 -> 40 -> 50 -> 60` fresh 执行完整基座，验证表、约束和索引。
+2. 验证 60 基座中的字典、流程/配置、菜单权限和 systemRequired 材料标签稳定 code；已有环境另按源/目标 Git Tag 差异演练。
 3. 部署 backend `bundle-core`，验证无 workflow 的启动、查询/草稿与提交失败关闭。
 4. 部署 backend `bundle-full`，发布并验证个人/企业两套流程、OSS/Redis/通知。
 5. 部署前端 profile 包与 admin App 组合；菜单默认不赋权。

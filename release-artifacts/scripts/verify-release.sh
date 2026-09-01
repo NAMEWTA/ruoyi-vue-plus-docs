@@ -13,8 +13,8 @@ for script in "${RELEASE_ROOT}"/scripts/*.sh; do
   bash -n "${script}"
 done
 
-info "执行发布配置测试"
-node --test "${RELEASE_ROOT}/tests/release-config.test.mjs"
+info "执行全部发布合同测试"
+node --test "${RELEASE_ROOT}"/tests/*.test.mjs
 
 info "执行 Nginx Skill 台账检查"
 python3 "${RELEASE_ROOT}/skills/ruoyi-namewta-nginx-config/scripts/add_app.py" \

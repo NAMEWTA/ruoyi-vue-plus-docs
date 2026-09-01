@@ -297,7 +297,7 @@ sources:
 - **唯一性：** 数据库可判定的唯一键与事务锁共同保证活动身份、进行中申请和 active/suspended 绑定基数。MySQL 具体实现可以采用归一化活动键/守卫行等当前项目可支持方式，但必须证明并发不变量，不能只做应用层先查后写。
 - **敏感数据：** 姓名、证件号、手机号及身份字段按已确认合同明文落库/有权展示；材料只保存 ossId 与业务归属，不保存永久下载 URL。日志、错误、通知和 ProfileService 摘要不携带敏感值。
 - **兼容要求：** 现有 system 用户手机号格式、登录/RBAC、OSS、通知和 workflow 已有调用方保持兼容。WorkflowService 扩展保持引擎中立；现有实现与禁用装配均需通过编译和合同测试。
-- **迁移要求：** 当前无既有 profile 生产数据迁移或 CDE 数据导入。只在 `<Path>ruoyi-vue-plus-namewta/script/sql/namewta/DDL.sql</Path>` 与 `<Path>ruoyi-vue-plus-namewta/script/sql/namewta/DML.sql</Path>` 追加 fresh-install 数据结构、字典、菜单权限、配置与 systemRequired 标签；`ry_vue.sql` 保持冻结。
+- **迁移要求：** 当前无既有 profile 生产数据迁移或 CDE 数据导入。直接修改父仓库 `<Path>release-artifacts/docker/infrastructure/mysql/init/50-namewta-ddl.sql</Path>` 与 `<Path>release-artifacts/docker/infrastructure/mysql/init/60-namewta-dml.sql</Path>` 的当前完整基座，纳入 fresh-install 数据结构、字典、菜单权限、配置与 systemRequired 标签；后端仓库不得恢复 SQL 副本。
 - **发布或运维影响：** 发布前必须完成新模块在 full/core 两种 bundle 的装配、数据库 DDL/DML、菜单权限、两套 workflow 定义/formPath、默认 manual provider 与必要通知/短信配置。workflow 未发布不会阻止应用启动，但会阻止提交；真实短信、OSS 和 workflow E2E 需要对应环境证据。
 
 ## 8. 非功能要求

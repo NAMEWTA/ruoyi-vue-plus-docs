@@ -185,7 +185,7 @@ W1  T-01 ─┐
 | T-06 | backend `f41c792bc` | `{change}/T-06` | 59 rebind/notify tests passed | `10edd3102` | workflow+DB+notify required/passed | `d07a94635` |
 | T-08 | backend `d07a94635` | `{change}/T-08` | 43 enterprise/transfer tests passed | `01ba4b479` | Redis+notify+DB required/passed | `7635e962b` |
 | T-09 | backend `7635e962b` | `{change}/T-09` | person 62 + enterprise 46 tests passed | `a850f288d` | workflow+DB+OSS required/passed | `12192f90a` |
-| T-10 | frontend `main@4b204f...` | `{change}/T-10` | domain/web test+typecheck | required/pending | package/admin integration，E2E not-required | pending |
+| T-10 | frontend `a2d79cf7b` | `{change}/T-10` | 13 contract + 100 architecture tests passed | `f6c4d3329` | package/admin integration passed，E2E not-required | `1162bf650` |
 | T-11 | frontend T-10 result | `{change}/T-11` | component+lint+typecheck | required/pending | web-domain integration，E2E not-required | pending |
 | T-12 | frontend T-10 result | `{change}/T-12` | component+lint+typecheck | required/pending | web-domain integration，E2E not-required | pending |
 | T-13 | frontend T-10 result | `{change}/T-13` | component+lint+typecheck | required/pending | web-domain integration，E2E not-required | pending |

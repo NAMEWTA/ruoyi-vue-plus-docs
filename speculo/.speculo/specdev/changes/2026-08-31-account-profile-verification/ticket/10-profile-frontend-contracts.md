@@ -4,14 +4,14 @@ artifact: ticket
 change: 2026-08-31-account-profile-verification
 id: T-10
 title: 建立前端 Profile Domain、Transport 与包级公共合同
-status: ready
+status: done
 planning_depth: deep
 planning_depth_reason: 公共 transport、运行时端口和 package exports 同时约束三个管理面，错误会放大为跨票据返工。
 ready: true
 risk: high
 blocked_by: [T-04, T-05, T-06, T-07, T-08, T-09]
 contract_ids: [AC-009, AC-010, AC-024, AC-031, AC-032, AC-034, AC-038, AC-039, AC-040, AC-041]
-owner: unassigned
+owner: codex:/root
 expected_changes:
   - "<Path>plus-ui-namewta/packages/domains/profile/**</Path>"
   - "<Path>plus-ui-namewta/packages/web-domains/profile/package.json</Path>"
@@ -20,6 +20,7 @@ expected_changes:
   - "<Path>plus-ui-namewta/packages/web-domains/profile/src/runtime.ts</Path>"
   - "<Path>plus-ui-namewta/apps/admin-web/package.json</Path>"
   - "<Path>plus-ui-namewta/pnpm-lock.yaml</Path>"
+  - "<Path>plus-ui-namewta/tooling/architecture/test/domain-layout.test.mjs</Path>"
 writable_paths:
   - "<Path>plus-ui-namewta/packages/domains/profile/**</Path>"
   - "<Path>plus-ui-namewta/packages/web-domains/profile/package.json</Path>"
@@ -30,6 +31,7 @@ writable_paths:
   - "<Path>plus-ui-namewta/packages/web-domains/profile/src/page-types.d.ts</Path>"
   - "<Path>plus-ui-namewta/apps/admin-web/package.json</Path>"
   - "<Path>plus-ui-namewta/pnpm-lock.yaml</Path>"
+  - "<Path>plus-ui-namewta/tooling/architecture/test/domain-layout.test.mjs</Path>"
 read_only_paths:
   - "<Path>plus-ui-namewta/packages/domains/system/**</Path>"
   - "<Path>plus-ui-namewta/packages/web-domains/system/**</Path>"
@@ -140,6 +142,6 @@ shared_path_owners:
 
 ## 10. 验收标准
 
-- [ ] 所列 AC 的 transport、权限、隐私和 manifest 合同有自动化验证。
-- [ ] T-11/T-12/T-13 无需改公共入口、App package 或锁文件即可实现。
-- [ ] Evidence、提交和集成结果完整。
+- [x] 所列 AC 的 transport、权限、隐私和 manifest 合同有自动化验证。
+- [x] T-11/T-12/T-13 无需改公共入口、App package 或锁文件即可实现。
+- [x] Evidence、提交和集成结果完整。

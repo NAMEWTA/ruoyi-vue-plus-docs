@@ -33,7 +33,7 @@
     "history": []
   },
   "created_at": "2026-09-01T18:06:51+08:00",
-  "updated_at": "2026-09-01T18:14:00+08:00",
+  "updated_at": "2026-09-01T18:23:41+08:00",
   "completed_at": null,
   "archived": false,
   "archive_path": null,
@@ -82,6 +82,49 @@
       },
       "status": "integrated",
       "updated_at": "2026-09-01T18:14:00+08:00"
+    },
+    {
+      "ticket_id": "T-02",
+      "owner": "codex:/root",
+      "implementation_owner": "codex:/root",
+      "integration_owner": "codex:/root",
+      "provider": "git",
+      "base_sha": "e5214e3",
+      "parent_branch": "main",
+      "branch": "main",
+      "workspace_ref": "current",
+      "source_checkpoint": "7c032cd",
+      "integration": {
+        "status": "passed",
+        "parent_ref": "main",
+        "parent_before_sha": "e5214e3",
+        "source_sha": "7c032cd",
+        "candidate_sha": null,
+        "candidate_tree_sha": null,
+        "candidate_branch": null,
+        "candidate_workspace_ref": null,
+        "result_sha": "7c032cd",
+        "method": "direct-parent",
+        "conflict_paths": [],
+        "verification": "passed",
+        "full_suite": {
+          "required": true,
+          "status": "passed",
+          "reason": "Candidate, frontend artifact, legacy profile and existing deployment tests passed 19/19",
+          "evidence": "<Path>{roots.state}/specdev/changes/2026-09-01-harden-namewta-full-stack-deployment-skill/evidence/T-02.md</Path>"
+        },
+        "e2e": {
+          "required": false,
+          "status": "not-required",
+          "reason": "Local deterministic CLI fixtures cover this change; external deployment is out of scope",
+          "evidence": "<Path>{roots.state}/specdev/changes/2026-09-01-harden-namewta-full-stack-deployment-skill/evidence/T-02.md</Path>"
+        },
+        "evidence": "<Path>{roots.state}/specdev/changes/2026-09-01-harden-namewta-full-stack-deployment-skill/evidence/T-02.md</Path>",
+        "attempts": 1,
+        "promotion_status": "applied"
+      },
+      "status": "integrated",
+      "updated_at": "2026-09-01T18:23:41+08:00"
     }
   ]
 }

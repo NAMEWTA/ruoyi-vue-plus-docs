@@ -22,7 +22,7 @@ status: ready
 | ID | Ticket | 可观察产出 | Blocked By | Depth | Risk | Ready | Owner | Contract IDs | Wave/Gate | Status |
 |---|---|---|---|---|---|---|---|---|---|---|
 | T-01 | `<Path>{roots.state}/specdev/changes/2026-09-01-harden-namewta-full-stack-deployment-skill/ticket/01-version-deployment-profile-contract.md</Path>` | v2 profile 严格且 v1 可读 | — | standard | medium | yes | codex:/root | AC-001, AC-002 | W1/G1 | done |
-| T-02 | `<Path>{roots.state}/specdev/changes/2026-09-01-harden-namewta-full-stack-deployment-skill/ticket/02-verify-release-candidate.md</Path>` | 已知发布故障稳定红灯 | T-01 | standard | medium | yes | codex:/root | AC-003..007 | W2/G2 | ready |
+| T-02 | `<Path>{roots.state}/specdev/changes/2026-09-01-harden-namewta-full-stack-deployment-skill/ticket/02-verify-release-candidate.md</Path>` | 已知发布故障稳定红灯 | T-01 | standard | medium | yes | codex:/root | AC-003..007 | W2/G2 | done |
 | T-03 | `<Path>{roots.state}/specdev/changes/2026-09-01-harden-namewta-full-stack-deployment-skill/ticket/03-document-rolling-release-runbook.md</Path>` | 完整发布运行手册可发现 | T-02 | standard | medium | yes | codex:/root | AC-009 | W3/G3 | ready |
 | T-04 | `<Path>{roots.state}/specdev/changes/2026-09-01-harden-namewta-full-stack-deployment-skill/ticket/04-render-complete-release-evidence.md</Path>` | 私密配置和完整报告可生成 | T-03 | standard | medium | yes | codex:/root | AC-008, AC-010 | W4/G4 | ready |
 

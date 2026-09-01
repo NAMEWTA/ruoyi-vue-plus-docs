@@ -4,7 +4,7 @@ artifact: ticket
 change: 2026-09-01-harden-namewta-full-stack-deployment-skill
 id: T-02
 title: 校验双实例候选与前端产物
-status: ready
+status: done
 planning_depth: standard
 planning_depth_reason: 候选验收跨 Compose 身份、双实例、业务语义、前端静态产物和稳定窗口
 ready: true

@@ -38,7 +38,7 @@
     "history": []
   },
   "created_at": "2026-08-31T18:06:59+08:00",
-  "updated_at": "2026-09-01T18:21:36+08:00",
+  "updated_at": "2026-09-01T19:13:00+08:00",
   "completed_at": null,
   "archived": false,
   "archive_path": null,
@@ -66,18 +66,18 @@
       "workspace_ref": "specdev-worktree/2026-08-31-account-profile-verification/T-01",
       "source_checkpoint": "b62d64b5511847f265c63b21d02117ee21630453",
       "integration": {
-        "status": "pending",
+        "status": "passed",
         "parent_ref": "refs/heads/main",
-        "parent_before_sha": null,
+        "parent_before_sha": "6927ee9786ba87f432127f4feda61c0f43c01849",
         "source_sha": "b62d64b5511847f265c63b21d02117ee21630453",
-        "candidate_sha": null,
-        "candidate_tree_sha": null,
-        "candidate_branch": null,
-        "candidate_workspace_ref": null,
-        "result_sha": null,
-        "method": null,
+        "candidate_sha": "672268b2fa18b4cdd0d6ee19be1cb1615252e040",
+        "candidate_tree_sha": "ddb4365bb201764409eba16e6a7b57147ce80abe",
+        "candidate_branch": "speculo/integration/2026-08-31-account-profile-verification/T-01",
+        "candidate_workspace_ref": "specdev-worktree/.integration/2026-08-31-account-profile-verification/T-01",
+        "result_sha": "672268b2fa18b4cdd0d6ee19be1cb1615252e040",
+        "method": "merge-commit",
         "conflict_paths": [],
-        "verification": "pending",
+        "verification": "passed",
         "full_suite": {
           "required": false,
           "status": "not-required",
@@ -91,11 +91,11 @@
           "evidence": "<Path>{roots.state}/specdev/changes/2026-08-31-account-profile-verification/evidence/T-01.md</Path>"
         },
         "evidence": "<Path>{roots.state}/specdev/changes/2026-08-31-account-profile-verification/evidence/T-01.md</Path>",
-        "attempts": 0,
-        "promotion_status": "pending"
+        "attempts": 1,
+        "promotion_status": "applied"
       },
-      "status": "review",
-      "updated_at": "2026-09-01T11:42:20+08:00"
+      "status": "integrated",
+      "updated_at": "2026-09-01T19:13:00+08:00"
     },
     {
       "ticket_id": "T-02", "owner": "codex:/root", "implementation_owner": "codex:/root", "integration_owner": "codex:/root", "provider": "git",

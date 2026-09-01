@@ -28,7 +28,7 @@ status: ready
 
 | ID | Ticket | 可观察产出 | Blocked By | Depth | Risk | Ready | Owner | Contract IDs | Wave/Gate | Status |
 |---|---|---|---|---|---|---|---|---|---|---|
-| T-01 | `<Path>{roots.state}/specdev/changes/{change}/ticket/01-profile-contracts-and-workflow-seam.md</Path>` | Profile 模块图、公共查询与 workflow 终止接缝 | — | deep | high | yes | codex:/root | AC-025,026,038,044 | W1 / foundation | review |
+| T-01 | `<Path>{roots.state}/specdev/changes/{change}/ticket/01-profile-contracts-and-workflow-seam.md</Path>` | Profile 模块图、公共查询与 workflow 终止接缝 | — | deep | high | yes | codex:/root | AC-025,026,038,044 | W1 / foundation | done |
 | T-02 | `<Path>{roots.state}/specdev/changes/{change}/ticket/02-profile-schema-reference-data.md</Path>` | 全量 schema、活动唯一约束、菜单权限与参考数据 | — | deep | critical | yes | codex:/root | AC-008,015,027,028,031-034,039,042 | W1 / data | review |
 | T-03 | `<Path>{roots.state}/specdev/changes/{change}/ticket/03-verification-provider-framework.md</Path>` | 两类 provider SPI、manual 策略和回调证据 | T-01,T-02 | deep | high | yes | unassigned | AC-036,037 | W2 | ready |
 | T-04 | `<Path>{roots.state}/specdev/changes/{change}/ticket/04-material-catalog-and-lifecycle.md</Path>` | 材料树、必传校验和 OSS 引用生命周期 | T-01,T-02 | deep | high | yes | unassigned | AC-032-035,042 | W2 | ready |

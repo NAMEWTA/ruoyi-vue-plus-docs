@@ -4,7 +4,7 @@ artifact: ticket
 change: 2026-08-31-account-profile-verification
 id: T-01
 title: 建立 Profile 模块、公共查询合同与 Workflow 终止接缝
-status: review
+status: done
 planning_depth: deep
 planning_depth_reason: 新增 Maven 模块图、跨模块 Java API 和工作流终止公共合同，影响 full/core 兼容与后续全部切片。
 ready: true
@@ -138,7 +138,7 @@ shared_path_owners:
 
 ## 10. 验收标准
 
-- [ ] AC-025/026/038/044 的公共接缝与回归成立。
-- [ ] POM、ruoyi-api 与 workflow shared path 仅由 T-01 修改。
-- [ ] 验证矩阵和提交/集成结果记录到 `<Path>{roots.state}/specdev/changes/{change}/evidence/T-01.md</Path>`。
-- [ ] E2E disposition 已执行，无未批准偏差。
+- [x] AC-025/026/038/044 的公共接缝与回归成立。
+- [x] POM、ruoyi-api 与 workflow shared path 仅由 T-01 修改。
+- [x] 验证矩阵和提交/集成结果记录到 `<Path>{roots.state}/specdev/changes/{change}/evidence/T-01.md</Path>`。
+- [x] E2E disposition 已执行，无未批准偏差。

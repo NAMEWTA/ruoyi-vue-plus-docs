@@ -176,7 +176,7 @@ W1  T-01 ─┐
 
 | Ticket | Parent/base | Workspace/branch | Source checks | Implementation commit | Integration checks/E2E | Parent result |
 |---|---|---|---|---|---|---|
-| T-01 | backend `main@c13a375...` | `{change}/T-01` | Maven/API contract | required/pending | reactor，E2E not-required | pending |
+| T-01 | backend `main@6927ee978...` | `{change}/T-01` | Maven/API contract passed | `b62d64b5511847f265c63b21d02117ee21630453` | candidate/reactor passed，E2E not-required | `672268b2fa18b4cdd0d6ee19be1cb1615252e040` |
 | T-02 | backend 与父仓库 latest G0 | backend `{change}/T-02` + 父仓库 SQL owner | SQL/schema static+test | required/pending | fresh MySQL 六文件基座 required | pending |
 | T-03 | backend G1 result | `{change}/T-03` | provider unit/security | required/pending | callback+DB required | pending |
 | T-04 | backend G1 result | `{change}/T-04` | material/service tests | required/pending | MySQL+OSS required | pending |
@@ -258,8 +258,8 @@ source 测试只证明局部实现；required E2E 只在 Lead-owned parent-candi
 - Goal Plan 输入、DAG、路径、Git 基线和工作区策略已固定；G0 已关闭。
 - 用户已选择 required worktree，并授权 Ticket implementation changes 与 implementation commits。
 - 用户已授权 Lead-owned local candidate integration 与验证通过后的本地父分支推进。
-- T-01 source checkpoint 为 `b62d64b5511847f265c63b21d02117ee21630453`，T-02 source checkpoint 为 `6aa3f7e60e48b7490c5b4ac421c582b44bdac76d`；两者状态均为 `review`，source 验证和 Evidence 已完成。
-- backend `main@7864237127a1ab7644ec03706f930c6856987f0e` checkout 已 clean；原用户未提交改动已按 2026-09-01 明确授权提交，T-01/T-02 可从最新父结果建立 candidate，G1 尚未关闭。
+- T-01 已完成并集成：source `b62d64b5511847f265c63b21d02117ee21630453`，candidate/result `672268b2fa18b4cdd0d6ee19be1cb1615252e040`；合同测试、full/core 干净构建与 JAR 装配核验通过。
+- T-02 旧 source checkpoint `6aa3f7e60e48b7490c5b4ac421c582b44bdac76d` 因 SQL 唯一事实源已迁至父仓库而不能直接集成；按已记录偏差从最新结果重放后端测试，并把业务 SQL 移植到父仓库 50/60 基座。G1 等待 T-02 新结果。
 
 ### Pending Decisions and Blockers
 

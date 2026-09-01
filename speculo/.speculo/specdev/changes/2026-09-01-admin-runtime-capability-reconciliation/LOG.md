@@ -16,3 +16,6 @@
 - T-01 形成 backend implementation commit `9f5d382ada11e4bbc01bb7b49ca8ed4c6770f6ef`，父仓库 direct-parent checkpoint `1bae24677e601b6313820a3198fc0e8690ab8248` 的 gitlink 精确包含该提交；开发库备份/迁移 Gate 尚未执行，Ticket 保持 `in_progress`。
 - 用户在 G1 后明确决定“无需备份”；新增并接受 `ADR-005`，本次目标开发库迁移改为无备份、仅前向修复。0 行、对象身份、固定菜单冲突、禁止 `--force`、目标最终态和逐实例 Gate 保持不变。
 - T-01 以 backend follow-up commit `c7e926c8ac663b1fc83e1df2abf39ffcebbecef3` 同步 DDL/DML 运维注释；SQL 行为未变化，聚焦测试仍为 `14` 项、`0` 失败（无 JDBC 时 `7` 项环境型跳过）。
+- T-01 通过 DBX 对 `ry-namewta` 完成无备份写前 Gate：生成器表 `0/0`、对象身份正确、固定菜单与 parent/duplicate preflight 全部通过；DDL/DML 自身 preflight 均为 `1`。
+- DBX 在任何持久化 DML 前拒绝显式 `START TRANSACTION`；同一 pinned session 改用 `autocommit=0` 执行已提交 DML，并通过恢复 `autocommit=1` 原子提交。最终四项诊断全真，重放前后指纹同为 `2d76cc06b7238381aead6178ed5bf0ba`，目标角色授权和生成器表均保持 `0`。
+- T-01 Evidence 完成并标记 `done/integrated`；T-02 依赖 Gate 关闭并进入 `in_progress`。

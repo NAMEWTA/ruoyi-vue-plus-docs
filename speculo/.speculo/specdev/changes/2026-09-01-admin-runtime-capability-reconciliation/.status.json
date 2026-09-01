@@ -39,7 +39,7 @@
     "history": []
   },
   "created_at": "2026-09-01T15:22:59+08:00",
-  "updated_at": "2026-09-01T16:15:00+08:00",
+  "updated_at": "2026-09-01T16:27:00+08:00",
   "completed_at": null,
   "archived": false,
   "archive_path": null,
@@ -52,6 +52,14 @@
       "detail": "After G1, the user explicitly instructed that no migration backup is required for the target development database.",
       "impact": "The retired generator tables and pre-migration menu state have no change-owned data-level rollback copy.",
       "correction": "ADR-005 records the accepted forward-only recovery boundary; zero-row, object identity, menu conflict, no-force, target final-state, and rollout gates remain mandatory."
+    },
+    {
+      "ticket_id": "T-01",
+      "kind": "dbx-transaction-compatibility",
+      "observed_at": "2026-09-01T16:23:00+08:00",
+      "detail": "DBX rejected the explicit START TRANSACTION statement before the first persistent DML statement.",
+      "impact": "No menu write had started; the DDL preflight and empty-table retirement had already completed.",
+      "correction": "The Lead used the same pinned DBX session with autocommit=0, reran the committed DML preflight and statements, restored autocommit=1 to commit once, and repeated the same method for the idempotency replay."
     }
   ],
   "worktrees": [
@@ -65,38 +73,38 @@
       "parent_branch": "main",
       "branch": "main",
       "workspace_ref": "current",
-      "source_checkpoint": "1bae24677e601b6313820a3198fc0e8690ab8248",
+      "source_checkpoint": "a21d0fdb7fa8782cfd83afa9237c74a5311cfa45",
       "integration": {
-        "status": "pending",
+        "status": "passed",
         "parent_ref": "main",
-        "parent_before_sha": null,
-        "source_sha": null,
+        "parent_before_sha": "1bae24677e601b6313820a3198fc0e8690ab8248",
+        "source_sha": "a21d0fdb7fa8782cfd83afa9237c74a5311cfa45",
         "candidate_sha": null,
         "candidate_tree_sha": null,
         "candidate_branch": null,
         "candidate_workspace_ref": null,
-        "result_sha": null,
-        "method": null,
+        "result_sha": "a21d0fdb7fa8782cfd83afa9237c74a5311cfa45",
+        "method": "direct-parent",
         "conflict_paths": [],
-        "verification": "pending",
+        "verification": "passed",
         "full_suite": {
           "required": true,
-          "status": "pending",
-          "reason": "T-01 requires SQL contracts, the admin reactor, isolated MySQL, and the explicitly no-backup development database gate",
-          "evidence": null
+          "status": "passed",
+          "reason": "Static and isolated MySQL matrix, the 328-test admin reactor, and focused no-backup regression all passed",
+          "evidence": "<Path>{roots.state}/specdev/changes/2026-09-01-admin-runtime-capability-reconciliation/evidence/T-01.md</Path>"
         },
         "e2e": {
           "required": true,
-          "status": "pending",
-          "reason": "The development MySQL zero-row/identity checks, migration, replay, and final-state diagnostics remain pending under ADR-005",
-          "evidence": null
+          "status": "passed",
+          "reason": "Target development MySQL passed no-backup preflight, migration, replay fingerprint, final-state, and role-grant checks",
+          "evidence": "<Path>{roots.state}/specdev/changes/2026-09-01-admin-runtime-capability-reconciliation/evidence/T-01.md</Path>"
         },
         "evidence": "<Path>{roots.state}/specdev/changes/2026-09-01-admin-runtime-capability-reconciliation/evidence/T-01.md</Path>",
-        "attempts": 0,
-        "promotion_status": "pending"
+        "attempts": 2,
+        "promotion_status": "applied"
       },
-      "status": "active",
-      "updated_at": "2026-09-01T16:15:00+08:00"
+      "status": "integrated",
+      "updated_at": "2026-09-01T16:27:00+08:00"
     },
     {
       "ticket_id": "T-02",
@@ -104,7 +112,7 @@
       "implementation_owner": "codex:/root",
       "integration_owner": "codex:/root",
       "provider": "git",
-      "base_sha": "82cd80bf990a6182e4fd16a6884f402511098998",
+      "base_sha": "a21d0fdb7fa8782cfd83afa9237c74a5311cfa45",
       "parent_branch": "main",
       "branch": "main",
       "workspace_ref": "current",
@@ -138,8 +146,8 @@
         "attempts": 0,
         "promotion_status": "pending"
       },
-      "status": "planned",
-      "updated_at": "2026-09-01T16:08:00+08:00"
+      "status": "active",
+      "updated_at": "2026-09-01T16:27:00+08:00"
     }
   ]
 }

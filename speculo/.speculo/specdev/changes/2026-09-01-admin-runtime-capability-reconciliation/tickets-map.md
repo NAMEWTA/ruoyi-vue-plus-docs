@@ -23,8 +23,8 @@ status: in_progress
 
 | ID | Ticket | 可观察产出 | Blocked By | Depth | Risk | Ready | Owner | Contract IDs | Wave/Gate | Status |
 |---|---|---|---|---|---|---|---|---|---|---|
-| T-01 | `<Path>{roots.state}/specdev/changes/{change}/ticket/01-reconcile-admin-runtime-database.md</Path>` | OpenAPI/Nacos/生成器 schema/menu 收敛 | — | deep | critical | yes | codex:/root | AC-005..011,013 | W1/G1-G2 | in_progress |
-| T-02 | `<Path>{roots.state}/specdev/changes/{change}/ticket/02-enable-openapi-release-and-verify-admin.md</Path>` | 双实例 OpenAPI 显式启用与 Admin 最终体验 | T-01 | deep | critical | yes | codex:/root | AC-001..004,012,014..016 | W2/G3-G4 | ready |
+| T-01 | `<Path>{roots.state}/specdev/changes/{change}/ticket/01-reconcile-admin-runtime-database.md</Path>` | OpenAPI/Nacos/生成器 schema/menu 收敛 | — | deep | critical | yes | codex:/root | AC-005..011,013 | W1/G1-G2 | done |
+| T-02 | `<Path>{roots.state}/specdev/changes/{change}/ticket/02-enable-openapi-release-and-verify-admin.md</Path>` | 双实例 OpenAPI 显式启用与 Admin 最终体验 | T-01 | deep | critical | yes | codex:/root | AC-001..004,012,014..016 | W2/G3-G4 | in_progress |
 
 Ticket frontmatter 是状态、依赖、深度和路径访问契约的权威；本表是同步投影。
 

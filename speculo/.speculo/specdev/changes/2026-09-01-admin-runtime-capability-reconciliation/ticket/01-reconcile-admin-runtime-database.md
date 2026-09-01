@@ -4,7 +4,7 @@ artifact: ticket
 change: 2026-09-01-admin-runtime-capability-reconciliation
 id: T-01
 title: 收敛 OpenAPI、Nacos 与生成器数据库最终态
-status: in_progress
+status: done
 planning_depth: deep
 planning_depth_reason: 修改共享初始化 SQL、执行可重放升级迁移并物理删除已退役表，涉及固定菜单 ID、数据完整性、冲突前置失败和不可逆恢复边界。
 ready: true

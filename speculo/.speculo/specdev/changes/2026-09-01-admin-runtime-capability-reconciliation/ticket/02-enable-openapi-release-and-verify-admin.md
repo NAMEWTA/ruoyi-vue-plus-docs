@@ -4,7 +4,7 @@ artifact: ticket
 change: 2026-09-01-admin-runtime-capability-reconciliation
 id: T-02
 title: 显式启用 OpenAPI 发布配置并验收 Admin 最终体验
-status: ready
+status: in_progress
 planning_depth: deep
 planning_depth_reason: 变更双实例安全配置透传并在现有开发环境滚动启用涉及共享 KEK、启动失败关闭、运行可用性与真实浏览器权限投影。
 ready: true

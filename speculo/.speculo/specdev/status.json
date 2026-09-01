@@ -91,6 +91,17 @@
         "specdev/eli5"
       ],
       "claimed_investigations": []
+    },
+    {
+      "change": "2026-09-01-admin-runtime-capability-reconciliation",
+      "current_work": "specdev/implement",
+      "works_run": [
+        "specdev/diagnose-bugs",
+        "specdev/spec",
+        "specdev/tickets",
+        "specdev/goal-plan"
+      ],
+      "claimed_investigations": []
     }
   ],
   "archived": [

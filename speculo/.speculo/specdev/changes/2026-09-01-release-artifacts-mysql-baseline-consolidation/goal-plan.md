@@ -2,7 +2,7 @@
 schema_version: 6
 artifact: goal-plan
 change: 2026-09-01-release-artifacts-mysql-baseline-consolidation
-status: ready
+status: completed
 modes: [migration, high-assurance, release-coordination]
 orchestration: lead-directed
 lead: codex:/root
@@ -10,7 +10,7 @@ implementation_agent_limit: 3
 integration_attempt_limit: null
 ticket_workspace_policy: current
 integration_gate: direct-parent
-ready_for_execution: true
+ready_for_execution: false
 ---
 
 # Goal Plan：发布资产与 MySQL 基座收敛
@@ -98,11 +98,11 @@ AC-001 至 AC-014 均有可重复 Evidence；六个非 cancelled Ticket 都有�
 
 | 合同或参考要求 | 覆盖 Ticket | 验证接缝 | Evidence | 状态 |
 |---|---|---|---|---|
-| AC-001 至 AC-003、AC-007、AC-009 | T-01、T-06 | Git/Node/Shell | T-01、T-06 | planned |
-| AC-004 至 AC-006 | T-02、T-04、T-05、T-06 | 文件、摘要、当前引用扫描 | T-02、T-04、T-05、T-06 | planned |
-| AC-008、AC-012 | T-06 | 隔离 MySQL 8.4 | T-06 | planned |
-| AC-010 | T-03、T-06 | Node/JUnit/Maven | T-03、T-06 | planned |
-| AC-011、AC-013、AC-014 | T-05、T-06 | 文档、Skill、活动 Change、升级合同 | T-05、T-06 | planned |
+| AC-001 至 AC-003、AC-007、AC-009 | T-01、T-06 | Git/Node/Shell | T-01、T-06 | passed |
+| AC-004 至 AC-006 | T-02、T-04、T-05、T-06 | 文件、摘要、当前引用扫描 | T-02、T-04、T-05、T-06 | passed |
+| AC-008、AC-012 | T-06 | 隔离 MySQL 8.4 | T-06 | passed |
+| AC-010 | T-03、T-06 | Node/JUnit/Maven | T-03、T-06 | passed |
+| AC-011、AC-013、AC-014 | T-05、T-06 | 文档、Skill、活动 Change、升级合同 | T-05、T-06 | passed |
 
 ## 4. Execution and Integration Protocol
 
@@ -172,13 +172,15 @@ Lead 记录每个 Ticket 的父分支前后 SHA、修改路径、验证命令与
 
 ### Current Status
 
-- G0 已关闭：Spec、Tickets、Goal Plan Ready；用户已授权实现、提交、直接父分支集成、删除、推送和标签。
-- workspace 使用默认 `current/direct-parent`；所有 Ticket 由 Lead 严格串行执行。
-- T-01 预检确认 `10/20/30/40` 与旧副本一致；`50/60` 存在后续已提交增量，按偏差记录先接管最新内容。
+- G-10 至 G-50 已全部关闭，T-01 至 T-06 均完成并形成 Evidence。
+- 父仓实现结果为 `9dc99e715d8ba542dcee547205504cf9d74c32a4`，后端实现结果为 `6927ee9786ba87f432127f4feda61c0f43c01849`。
+- 发布合同 31/31、后端 42 模块测试、full/core 打包及 JAR 校验全部通过。
+- 用户指定开发服务器上的隔离 MySQL 8.4.9 fresh 初始化通过；最终 87 张表，回放保护生效，容器与 `/data/namewta-mysql-baseline-validation-v003` 已清理。
+- T-01 的 `50/60` 计划后漂移已通过接管后端最新内容解决；无活动 deviation、blocker 或未运行的 required 检查。
 
 ### Pending Decisions and Blockers
 
-无产品决策 blocker。真实环境数据库、部署、归档和来源清理不在本次授权范围。
+无产品决策 blocker。真实环境数据库、部署、归档和来源清理不在本次授权范围；MySQL 8.4 整数显示宽度与 AI 重复索引告警记录为后续清理候选，不阻塞本 Change。
 
 ### Resume Protocol
 

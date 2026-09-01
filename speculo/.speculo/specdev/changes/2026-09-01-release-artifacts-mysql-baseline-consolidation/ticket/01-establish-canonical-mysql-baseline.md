@@ -4,14 +4,14 @@ artifact: ticket
 change: 2026-09-01-release-artifacts-mysql-baseline-consolidation
 id: T-01
 title: 建立唯一且可跟踪的 MySQL 发布基座
-status: ready
+status: done
 planning_depth: deep
 planning_depth_reason: 改变六份数据库基座的所有权、可变性合同和发布命令语义，影响全新初始化与后续升级依据
 ready: true
 risk: high
 blocked_by: []
 contract_ids: [AC-001, AC-002, AC-003, AC-007, AC-009]
-owner: 待分配
+owner: codex:/root
 expected_changes:
   - "<Path>release-artifacts/.gitignore</Path>"
   - "<Path>release-artifacts/docker/infrastructure/mysql/init/.gitignore</Path>"

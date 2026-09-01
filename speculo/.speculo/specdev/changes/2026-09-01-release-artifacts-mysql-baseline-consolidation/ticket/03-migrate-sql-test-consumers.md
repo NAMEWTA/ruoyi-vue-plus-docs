@@ -4,14 +4,14 @@ artifact: ticket
 change: 2026-09-01-release-artifacts-mysql-baseline-consolidation
 id: T-03
 title: 将 SQL 合同测试迁移到唯一基座
-status: ready
+status: done
 planning_depth: deep
 planning_depth_reason: 跨父仓库与 Java 测试套件改变 SQL 输入接缝，必须避免静默跳过和第三份测试副本
 ready: true
 risk: high
 blocked_by: [T-01]
 contract_ids: [AC-010]
-owner: 待分配
+owner: codex:/root
 expected_changes:
   - "<Path>release-artifacts/tests/mysql-sql-contract.test.mjs</Path>"
   - "<Path>ruoyi-vue-plus-namewta/ruoyi-admin/src/test/java/org/dromara/test/**</Path>"

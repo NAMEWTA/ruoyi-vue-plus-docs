@@ -4,14 +4,14 @@ artifact: ticket
 change: 2026-09-01-release-artifacts-mysql-baseline-consolidation
 id: T-05
 title: 同步 MySQL-only 规范与活动实施工件
-status: ready
+status: done
 planning_depth: deep
 planning_depth_reason: 修改跨仓库长期规范、部署 Skill 和仍在实施的 SpecDev 路径所有权，需要协调其他活动 Work
 ready: true
 risk: high
 blocked_by: [T-04]
 contract_ids: [AC-005, AC-006, AC-011, AC-013, AC-014]
-owner: Lead
+owner: codex:/root
 expected_changes:
   - "<Path>README.md</Path>"
   - "<Path>docs/**</Path>"

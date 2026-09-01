@@ -4,14 +4,14 @@ artifact: ticket
 change: 2026-09-01-release-artifacts-mysql-baseline-consolidation
 id: T-06
 title: 打通发布回归与 MySQL 全新初始化门禁
-status: ready
+status: done
 planning_depth: deep
 planning_depth_reason: 跨父仓库、后端子仓库和真实 MySQL 8.4 验证最终组合状态，并固化 CI 防回归入口
 ready: true
 risk: high
 blocked_by: [T-04, T-05]
 contract_ids: [AC-001, AC-002, AC-003, AC-004, AC-005, AC-006, AC-007, AC-008, AC-009, AC-010, AC-011, AC-012, AC-013, AC-014]
-owner: Lead
+owner: codex:/root
 expected_changes:
   - "<Path>scripts/ci/run-external-services.sh</Path>"
   - "<Path>.github/workflows/quality-gates.yml</Path>"

@@ -75,7 +75,8 @@
         "specdev/grill-with-docs",
         "specdev/spec",
         "specdev/tickets",
-        "specdev/goal-plan"
+        "specdev/goal-plan",
+        "specdev/implement"
       ],
       "claimed_investigations": []
     },

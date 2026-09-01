@@ -4,14 +4,14 @@ artifact: ticket
 change: 2026-09-01-release-artifacts-mysql-baseline-consolidation
 id: T-04
 title: 删除后端 script 并收缩为 MySQL-only
-status: ready
+status: done
 planning_depth: deep
 planning_depth_reason: 整目录删除包含 SQL、工作流资产和旧部署脚本，并永久退出三种非 MySQL 方言
 ready: true
 risk: high
 blocked_by: [T-01, T-02, T-03]
 contract_ids: [AC-004, AC-005, AC-006]
-owner: 待分配
+owner: codex:/root
 expected_changes:
   - "<Path>ruoyi-vue-plus-namewta/script/**</Path>"
   - "<Path>release-artifacts/tests/backend-script-retirement-contract.test.mjs</Path>"

@@ -2,7 +2,7 @@
 schema_version: 3
 artifact: tickets-map
 change: 2026-09-01-release-artifacts-mysql-baseline-consolidation
-status: ready
+status: completed
 ---
 
 # Tickets Map：发布资产与 MySQL 基座收敛
@@ -32,12 +32,12 @@ status: ready
 
 | ID | Ticket | 可观察产出 | Blocked By | Depth | Risk | Ready | Owner | Contract IDs | 候选 Wave/Gate | Status |
 |---|---|---|---|---|---|---|---|---|---|---|
-| T-01 | `<Path>{roots.state}/specdev/changes/2026-09-01-release-artifacts-mysql-baseline-consolidation/ticket/01-establish-canonical-mysql-baseline.md</Path>` | 六份 SQL 被跟踪，`stage-mysql` 只验证且零写入 | — | deep | high | yes | 待分配 | AC-001、AC-002、AC-003、AC-007、AC-009 | Wave 1 / 基座 Gate | ready |
-| T-02 | `<Path>{roots.state}/specdev/changes/2026-09-01-release-artifacts-mysql-baseline-consolidation/ticket/02-version-workflow-json-assets.md</Path>` | 六个 Workflow JSON 在发布目录等价、可解析、被跟踪 | — | standard | medium | yes | 待分配 | AC-005 | Wave 1 / 资产 Gate | ready |
-| T-03 | `<Path>{roots.state}/specdev/changes/2026-09-01-release-artifacts-mysql-baseline-consolidation/ticket/03-migrate-sql-test-consumers.md</Path>` | 父级和 Java 测试只读取唯一 SQL 基座且不静默跳过 | T-01 | deep | high | yes | 待分配 | AC-010 | Wave 2 / 消费者 Gate | ready |
-| T-04 | `<Path>{roots.state}/specdev/changes/2026-09-01-release-artifacts-mysql-baseline-consolidation/ticket/04-retire-backend-script-tree.md</Path>` | 后端 `script/` 整体删除，三种非 MySQL 方言零迁移 | T-01、T-02、T-03 | deep | high | yes | 待分配 | AC-004、AC-005、AC-006 | Wave 3 / 收缩 Gate | ready |
-| T-05 | `<Path>{roots.state}/specdev/changes/2026-09-01-release-artifacts-mysql-baseline-consolidation/ticket/05-align-governance-and-active-work.md</Path>` | 当前规范、Skill 和活动实施工件统一新 owner 与 MySQL-only | T-04 | deep | high | yes | Lead | AC-005、AC-006、AC-011、AC-013、AC-014 | Wave 4 / 治理 Gate | ready |
-| T-06 | `<Path>{roots.state}/specdev/changes/2026-09-01-release-artifacts-mysql-baseline-consolidation/ticket/06-prove-release-and-mysql-gates.md</Path>` | 聚合回归与隔离 MySQL 8.4 fresh 初始化通过 | T-04、T-05 | deep | high | yes | Lead | AC-001 至 AC-014 | Wave 5 / 最终 E2E Gate | ready |
+| T-01 | `<Path>{roots.state}/specdev/changes/2026-09-01-release-artifacts-mysql-baseline-consolidation/ticket/01-establish-canonical-mysql-baseline.md</Path>` | 六份 SQL 被跟踪，`stage-mysql` 只验证且零写入 | — | deep | high | yes | codex:/root | AC-001、AC-002、AC-003、AC-007、AC-009 | Wave 1 / 基座 Gate | done |
+| T-02 | `<Path>{roots.state}/specdev/changes/2026-09-01-release-artifacts-mysql-baseline-consolidation/ticket/02-version-workflow-json-assets.md</Path>` | 六个 Workflow JSON 在发布目录等价、可解析、被跟踪 | — | standard | medium | yes | codex:/root | AC-005 | Wave 1 / 资产 Gate | done |
+| T-03 | `<Path>{roots.state}/specdev/changes/2026-09-01-release-artifacts-mysql-baseline-consolidation/ticket/03-migrate-sql-test-consumers.md</Path>` | 父级和 Java 测试只读取唯一 SQL 基座且不静默跳过 | T-01 | deep | high | yes | codex:/root | AC-010 | Wave 2 / 消费者 Gate | done |
+| T-04 | `<Path>{roots.state}/specdev/changes/2026-09-01-release-artifacts-mysql-baseline-consolidation/ticket/04-retire-backend-script-tree.md</Path>` | 后端 `script/` 整体删除，三种非 MySQL 方言零迁移 | T-01、T-02、T-03 | deep | high | yes | codex:/root | AC-004、AC-005、AC-006 | Wave 3 / 收缩 Gate | done |
+| T-05 | `<Path>{roots.state}/specdev/changes/2026-09-01-release-artifacts-mysql-baseline-consolidation/ticket/05-align-governance-and-active-work.md</Path>` | 当前规范、Skill 和活动实施工件统一新 owner 与 MySQL-only | T-04 | deep | high | yes | codex:/root | AC-005、AC-006、AC-011、AC-013、AC-014 | Wave 4 / 治理 Gate | done |
+| T-06 | `<Path>{roots.state}/specdev/changes/2026-09-01-release-artifacts-mysql-baseline-consolidation/ticket/06-prove-release-and-mysql-gates.md</Path>` | 聚合回归与隔离 MySQL 8.4 fresh 初始化通过 | T-04、T-05 | deep | high | yes | codex:/root | AC-001 至 AC-014 | Wave 5 / 最终 E2E Gate | done |
 
 Ticket frontmatter 是状态、依赖、深度和路径访问契约的权威；本表只是同步投影。
 
@@ -132,6 +132,6 @@ T-03 ─────────────┘       │
 
 ## 8. Ready 审核与同步规则
 
-用户已确认拆分、Deep 风险和删除边界。六个 Ticket 均为 `ready`，不存在产品、数据、兼容或验收未决问题；实际实施、提交、目录删除、隔离服务、推送和数据库操作仍受后续 Goal Plan 与授权边界约束。
+用户已确认拆分、Deep 风险和删除边界。六个 Ticket 均为 `done`，对应 Evidence 已落盘；实现、目录删除和隔离验证均在授权边界内完成。
 
 Ticket 状态、路径、依赖发生变化时，以 Ticket frontmatter 为权威同步本 Map；Goal Plan 创建后，Wave、Gate、workspace 策略和 owner 以 Goal Plan 为编排权威。

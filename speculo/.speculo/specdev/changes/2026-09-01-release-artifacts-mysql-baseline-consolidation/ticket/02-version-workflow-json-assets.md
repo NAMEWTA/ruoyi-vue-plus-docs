@@ -4,14 +4,14 @@ artifact: ticket
 change: 2026-09-01-release-artifacts-mysql-baseline-consolidation
 id: T-02
 title: 在发布资产中版本化工作流 JSON
-status: ready
+status: done
 planning_depth: standard
 planning_depth_reason: 跨父仓库和后端子仓库迁移六个运行参考资产，需要内容等价、解析和跟踪合同
 ready: true
 risk: medium
 blocked_by: []
 contract_ids: [AC-005]
-owner: 待分配
+owner: codex:/root
 expected_changes:
   - "<Path>release-artifacts/workflow/leave/*.json</Path>"
   - "<Path>release-artifacts/tests/workflow-assets-contract.test.mjs</Path>"

@@ -4,14 +4,14 @@ artifact: ticket
 change: 2026-08-31-account-profile-verification
 id: T-09
 title: 交付管理查询、审核上下文与高风险 Profile 覆盖命令
-status: ready
+status: in_progress
 planning_depth: deep
 planning_depth_reason: 明文全量查看、ADMIN_CREATE/OVERRIDE、流程竞态和注销终态同时涉及授权、隐私与数据完整性。
 ready: true
 risk: critical
 blocked_by: [T-01, T-04, T-05, T-07]
 contract_ids: [AC-024, AC-025, AC-026, AC-027, AC-028, AC-029, AC-030, AC-031, AC-039, AC-041, AC-042, AC-043, AC-044]
-owner: unassigned
+owner: codex:/root
 expected_changes:
   - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/ruoyi-profile-person/src/main/java/org/dromara/profile/person/admin/**</Path>"
   - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/ruoyi-profile-enterprise/src/main/java/org/dromara/profile/enterprise/admin/**</Path>"

@@ -4,14 +4,14 @@ artifact: ticket
 change: 2026-08-31-account-profile-verification
 id: T-07
 title: 交付企业申请、不可变快照与唯一负责人发布
-status: ready
+status: in_progress
 planning_depth: deep
 planning_depth_reason: 企业身份唯一、授权材料、流程发布和唯一负责人绑定属于高完整性公共业务合同。
 ready: true
 risk: critical
 blocked_by: [T-03, T-04]
 contract_ids: [AC-002, AC-003, AC-004, AC-005, AC-006, AC-007, AC-008, AC-018, AC-023, AC-038]
-owner: unassigned
+owner: codex:/root
 expected_changes: ["<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/ruoyi-profile-enterprise/src/main/java/org/dromara/profile/enterprise/application/**</Path>"]
 writable_paths:
   - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/ruoyi-profile-enterprise/src/main/java/org/dromara/profile/enterprise/application/**</Path>"

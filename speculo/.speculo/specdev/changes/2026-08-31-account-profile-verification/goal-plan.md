@@ -183,7 +183,7 @@ W1  T-01 ─┐
 | T-05 | backend `7eb550b90` | `{change}/T-05` | 43 person/material tests passed | `44f83197d` | HTTP+MySQL+ProcessEvent required/passed | `8393756b0` |
 | T-07 | backend `8393756b0` | `{change}/T-07` | 31 enterprise tests passed | `1ad938d67` | HTTP+DB+workflow required/passed | `f41c792bc` |
 | T-06 | backend `f41c792bc` | `{change}/T-06` | 59 rebind/notify tests passed | `10edd3102` | workflow+DB+notify required/passed | `d07a94635` |
-| T-08 | backend `d07a94635` | `{change}/T-08` | challenge/clock tests | required/pending | Redis+notify+DB required | pending |
+| T-08 | backend `d07a94635` | `{change}/T-08` | 43 enterprise/transfer tests passed | `01ba4b479` | Redis+notify+DB required/passed | `7635e962b` |
 | T-09 | backend T-01/T-04/T-05/T-07 result | `{change}/T-09` | admin/auth/race tests | required/pending | workflow+DB+OSS required | pending |
 | T-10 | frontend `main@4b204f...` | `{change}/T-10` | domain/web test+typecheck | required/pending | package/admin integration，E2E not-required | pending |
 | T-11 | frontend T-10 result | `{change}/T-11` | component+lint+typecheck | required/pending | web-domain integration，E2E not-required | pending |
@@ -275,6 +275,8 @@ source 测试只证明局部实现；required E2E 只在 Lead-owned parent-candi
 - T-06 已完成并集成：source `10edd3102416722a3a7c2c8e08b4eec88ae1a005`，candidate/result `d07a946353477f8936f343c1ef71b321b598d285`；59 个 rebind/notify 测试和 2 个真实 MySQL HTTP/ProcessEvent/原子换绑/通知失败 E2E 通过，core bundle 与 JAR 装配核验通过。
 - T-06 复核补齐安全 POST 审计、动态数据源事务提交后通知和事务内持久 `PENDING` 通知待办；通知失败不回滚绑定且保留可重试记录，schema、system 用户合同和业务历史均未改变。
 - T-08 source worktree 已从 backend `d07a946353477f8936f343c1ef71b321b598d285` 创建，状态为 active；实现保持在 enterprise transfer 独立子树。
+- T-08 已完成并集成：source `01ba4b479324420b7f0f9dfb635a9c5f45b2ad81`，candidate/result `7635e962bfb12e3718c52741ea05433ca3d98b06`；43 个 enterprise/transfer 测试和 4 个真实 MySQL/Redis/notify/current-user E2E 通过，core bundle 与 JAR 装配核验通过，临时资源残留为零。
+- T-08 集成顺序偏差已在 Evidence 如实记录：父 merge commit 因当前目录错误先创建，候选随后快进到完全相同 SHA/tree 并在候选树完成全部 Gate；未 reset/revert，最终 result tree 无额外差异。
 
 ### Pending Decisions and Blockers
 

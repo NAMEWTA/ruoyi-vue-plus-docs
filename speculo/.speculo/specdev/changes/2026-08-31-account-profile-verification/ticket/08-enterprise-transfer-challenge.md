@@ -4,7 +4,7 @@ artifact: ticket
 change: 2026-08-31-account-profile-verification
 id: T-08
 title: 交付企业本人解绑与短信挑战负责人转移
-status: in_progress
+status: done
 planning_depth: deep
 planning_depth_reason: 短信 credential、实名匹配、Redis 一次性状态和负责人原子切换属于认证安全边界。
 ready: true
@@ -117,6 +117,6 @@ shared_path_owners: []
 
 ## 10. 验收标准
 
-- [ ] AC-019 至 AC-023 全协议/竞态矩阵通过。
-- [ ] required E2E、REDACT_SENSITIVE、Evidence 和提交结果完整。
-- [ ] 未复用登录验证码或引入企业 workflow。
+- [x] AC-019 至 AC-023 全协议/竞态矩阵通过。
+- [x] required E2E、REDACT_SENSITIVE、Evidence 和提交结果完整。
+- [x] 未复用登录验证码或引入企业 workflow。

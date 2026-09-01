@@ -39,7 +39,7 @@
     "history": []
   },
   "created_at": "2026-08-31T18:06:59+08:00",
-  "updated_at": "2026-09-01T22:25:00+08:00",
+  "updated_at": "2026-09-02T00:14:00+08:00",
   "completed_at": null,
   "archived": false,
   "archive_path": null,
@@ -168,9 +168,9 @@
     },
     {
       "ticket_id": "T-08", "owner": "codex:/root", "implementation_owner": "codex:/root", "integration_owner": "codex:/root", "provider": "git",
-      "base_sha": "d07a946353477f8936f343c1ef71b321b598d285", "parent_branch": "main", "branch": "speculo/2026-08-31-account-profile-verification/T-08", "workspace_ref": "specdev-worktree/2026-08-31-account-profile-verification/T-08", "source_checkpoint": null,
-      "integration": {"status": "pending", "parent_ref": "refs/heads/main", "parent_before_sha": null, "source_sha": null, "candidate_sha": null, "candidate_tree_sha": null, "candidate_branch": null, "candidate_workspace_ref": null, "result_sha": null, "method": null, "conflict_paths": [], "verification": "pending", "full_suite": {"required": false, "status": "not-required", "reason": "Enterprise transfer ticket runs focused checks; the change-wide suite belongs to T-14", "evidence": null}, "e2e": {"required": true, "status": "pending", "reason": "Redis, notifications and atomic ownership transfer require integration verification", "evidence": null}, "evidence": "<Path>{roots.state}/specdev/changes/2026-08-31-account-profile-verification/evidence/T-08.md</Path>", "attempts": 0, "promotion_status": "pending"},
-      "status": "active", "updated_at": "2026-09-01T23:40:00+08:00"
+      "base_sha": "d07a946353477f8936f343c1ef71b321b598d285", "parent_branch": "main", "branch": "speculo/2026-08-31-account-profile-verification/T-08", "workspace_ref": "specdev-worktree/2026-08-31-account-profile-verification/T-08", "source_checkpoint": "01ba4b479324420b7f0f9dfb635a9c5f45b2ad81",
+      "integration": {"status": "passed", "parent_ref": "refs/heads/main", "parent_before_sha": "d07a946353477f8936f343c1ef71b321b598d285", "source_sha": "01ba4b479324420b7f0f9dfb635a9c5f45b2ad81", "candidate_sha": "7635e962bfb12e3718c52741ea05433ca3d98b06", "candidate_tree_sha": "fe14ee7b73455e06df77eec8af3e2e1658802968", "candidate_branch": "speculo/integration/2026-08-31-account-profile-verification/T-08", "candidate_workspace_ref": "specdev-worktree/.integration/2026-08-31-account-profile-verification/T-08", "result_sha": "7635e962bfb12e3718c52741ea05433ca3d98b06", "method": "merge-commit", "conflict_paths": [], "verification": "passed", "full_suite": {"required": false, "status": "not-required", "reason": "Enterprise transfer ticket runs 43 focused tests; the change-wide suite belongs to T-14; supplemental core clean bundle passed", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-31-account-profile-verification/evidence/T-08.md</Path>"}, "e2e": {"required": true, "status": "passed", "reason": "Current-user HTTP, MySQL atomic ownership transfer, Redis expiry/rate/attempt/one-time consumption and isolated NotifyClient passed in the parent candidate", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-31-account-profile-verification/evidence/T-08.md</Path>"}, "evidence": "<Path>{roots.state}/specdev/changes/2026-08-31-account-profile-verification/evidence/T-08.md</Path>", "attempts": 2, "promotion_status": "applied"},
+      "status": "integrated", "updated_at": "2026-09-02T00:14:00+08:00"
     },
     {
       "ticket_id": "T-09", "owner": "codex:/root", "implementation_owner": "codex:/root", "integration_owner": "codex:/root", "provider": "git",

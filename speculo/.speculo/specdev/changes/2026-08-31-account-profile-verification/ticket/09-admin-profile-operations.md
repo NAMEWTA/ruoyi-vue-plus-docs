@@ -4,7 +4,7 @@ artifact: ticket
 change: 2026-08-31-account-profile-verification
 id: T-09
 title: 交付管理查询、审核上下文与高风险 Profile 覆盖命令
-status: in_progress
+status: done
 planning_depth: deep
 planning_depth_reason: 明文全量查看、ADMIN_CREATE/OVERRIDE、流程竞态和注销终态同时涉及授权、隐私与数据完整性。
 ready: true
@@ -122,6 +122,6 @@ shared_path_owners: []
 
 ## 10. 验收标准
 
-- [ ] 所列 AC 的权限、决定、历史、隐私和回归矩阵通过。
-- [ ] required E2E、Evidence、提交和父分支结果完整。
-- [ ] 无导出、物理删除、数据范围或 system 授权副作用。
+- [x] 所列 AC 的权限、决定、历史、隐私和回归矩阵通过。
+- [x] required E2E、Evidence、提交和父分支结果完整。
+- [x] 无导出、物理删除、数据范围或 system 授权副作用。

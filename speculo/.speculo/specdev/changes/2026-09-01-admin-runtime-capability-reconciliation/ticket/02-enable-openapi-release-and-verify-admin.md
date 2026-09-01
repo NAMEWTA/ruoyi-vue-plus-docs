@@ -18,15 +18,18 @@ expected_changes:
   - "<Path>release-artifacts/tests/release-config.test.mjs</Path>"
   - "<Path>ruoyi-vue-plus-namewta/ruoyi-common/ruoyi-common-openapi/src/main/java/org/dromara/common/openapi/config/OpenApiAutoConfiguration.java</Path>"
   - "<Path>ruoyi-vue-plus-namewta/ruoyi-admin/src/test/java/org/dromara/test/openapi/assembly/OpenApiAssemblyContextTest.java</Path>"
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-system/src/main/java/org/dromara/system/controller/system/openapi/SysOpenApiCredentialController.java</Path>"
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-admin/src/test/java/org/dromara/test/openapi/credential/SysOpenApiCredentialControllerContractTest.java</Path>"
 writable_paths:
   - "<Path>release-artifacts/docker/docker-compose-backend.yml</Path>"
   - "<Path>release-artifacts/.env.example</Path>"
   - "<Path>release-artifacts/tests/release-config.test.mjs</Path>"
   - "<Path>ruoyi-vue-plus-namewta/ruoyi-common/ruoyi-common-openapi/src/main/java/org/dromara/common/openapi/config/OpenApiAutoConfiguration.java</Path>"
   - "<Path>ruoyi-vue-plus-namewta/ruoyi-admin/src/test/java/org/dromara/test/openapi/assembly/OpenApiAssemblyContextTest.java</Path>"
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-system/src/main/java/org/dromara/system/controller/system/openapi/SysOpenApiCredentialController.java</Path>"
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-admin/src/test/java/org/dromara/test/openapi/credential/SysOpenApiCredentialControllerContractTest.java</Path>"
 read_only_paths:
   - "<Path>ruoyi-vue-plus-namewta/ruoyi-admin/src/main/resources/application.yml</Path>"
-  - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-system/**</Path>"
   - "<Path>plus-ui-namewta/apps/admin-web/src/**</Path>"
   - "<Path>plus-ui-namewta/packages/web-domains/system/src/**</Path>"
 shared_paths:
@@ -35,12 +38,16 @@ shared_paths:
   - "<Path>release-artifacts/tests/release-config.test.mjs</Path>"
   - "<Path>ruoyi-vue-plus-namewta/ruoyi-common/ruoyi-common-openapi/src/main/java/org/dromara/common/openapi/config/OpenApiAutoConfiguration.java</Path>"
   - "<Path>ruoyi-vue-plus-namewta/ruoyi-admin/src/test/java/org/dromara/test/openapi/assembly/OpenApiAssemblyContextTest.java</Path>"
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-system/src/main/java/org/dromara/system/controller/system/openapi/SysOpenApiCredentialController.java</Path>"
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-admin/src/test/java/org/dromara/test/openapi/credential/SysOpenApiCredentialControllerContractTest.java</Path>"
 shared_path_owners:
   - "<Path>release-artifacts/docker/docker-compose-backend.yml</Path> => T-02"
   - "<Path>release-artifacts/.env.example</Path> => T-02"
   - "<Path>release-artifacts/tests/release-config.test.mjs</Path> => T-02"
   - "<Path>ruoyi-vue-plus-namewta/ruoyi-common/ruoyi-common-openapi/src/main/java/org/dromara/common/openapi/config/OpenApiAutoConfiguration.java</Path> => T-02"
   - "<Path>ruoyi-vue-plus-namewta/ruoyi-admin/src/test/java/org/dromara/test/openapi/assembly/OpenApiAssemblyContextTest.java</Path> => T-02"
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-system/src/main/java/org/dromara/system/controller/system/openapi/SysOpenApiCredentialController.java</Path> => T-02"
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-admin/src/test/java/org/dromara/test/openapi/credential/SysOpenApiCredentialControllerContractTest.java</Path> => T-02"
 ---
 
 # Ticket T-02: 显式启用 OpenAPI 发布配置并验收 Admin 最终体验
@@ -80,7 +87,7 @@ shared_path_owners:
 
 | IN（本 Ticket 构建） | REUSE（复用且不改变契约） | OUT（明确不做） |
 |---|---|---|
-| release Compose/env 示例/静态测试、MVC HandlerMapping 选择修复与回归、Spring/前端回归、开发环境私密配置、双实例滚动与浏览器验收 | 现有 OpenAPI conditional assembly、Redis/SPI、system Controller、Admin manifest/profile、Nacos iframe | 协议/API 改造、真实 secret 入库、普通角色自动授权、远程 push、CDE/生产发布 |
+| release Compose/env 示例/静态测试、MVC HandlerMapping 选择修复、缺失凭据 404 语义及回归、Spring/前端回归、开发环境私密配置、双实例滚动与浏览器验收 | 现有 OpenAPI conditional assembly、Redis/SPI、Admin manifest/profile、Nacos iframe | 其他协议/API 改造、真实 secret 入库、普通角色自动授权、远程 push、CDE/生产发布 |
 
 ## 4. 要构建什么
 
@@ -110,9 +117,9 @@ shared_path_owners:
 
 ## 7. 路径访问契约
 
-- **预计修改点：** release backend Compose、公开 env 示例、Node release test、OpenAPI MVC 自动配置及其 Admin assembly 回归测试。
+- **预计修改点：** release backend Compose、公开 env 示例、Node release test、OpenAPI MVC 自动配置、凭据缺失查询语义及其 Admin 回归测试。
 - **可写范围：** 仅 frontmatter `writable_paths`；真实启用已证明后端 assembly 对 Actuator 双 HandlerMapping 不兼容，因此按 deviation control 在本 Ticket 内升级该精确接缝，其他后端与前端源码仍保持只读。
-- **只读上下文：** Spring property/auto-configuration、system Controller、Admin manifest/profile 和动态路由实现。
+- **只读上下文：** Spring property 配置、Admin manifest/profile 和动态路由实现；system Controller 仅开放上述缺失凭据契约文件。
 - **共享路径：** 三个 release 文件由 T-02 唯一修改。
 - **保留或不动：** application default false、OpenAPI protocol/credential schema、Nacos auth、普通角色权限和所有生成器源码退役决定。
 

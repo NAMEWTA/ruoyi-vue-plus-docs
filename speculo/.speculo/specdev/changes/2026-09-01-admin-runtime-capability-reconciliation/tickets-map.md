@@ -83,6 +83,7 @@ G0 Spec/authorization/baseline
 | `<Path>ruoyi-vue-plus-namewta/ruoyi-admin/src/test/java/org/dromara/test/migration/password/PasswordMigrationUnitTest.java</Path>` | T-01 | 只同步实施前 HEAD 已失真的固定 15,370 字节 DML 前缀哈希，保持长度和算法不变 |
 | `<Path>release-artifacts/docker/docker-compose-backend.yml</Path>`、`<Path>release-artifacts/.env.example</Path>`、`<Path>release-artifacts/tests/release-config.test.mjs</Path>` | T-02 | default-off、双实例同源、无真实 secret |
 | `<Path>ruoyi-vue-plus-namewta/ruoyi-common/ruoyi-common-openapi/src/main/java/org/dromara/common/openapi/config/OpenApiAutoConfiguration.java</Path>`、`<Path>ruoyi-vue-plus-namewta/ruoyi-admin/src/test/java/org/dromara/test/openapi/assembly/OpenApiAssemblyContextTest.java</Path>` | T-02 | 明确选择业务 MVC mapping，并覆盖 Actuator 第二候选回归 |
+| `<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-system/src/main/java/org/dromara/system/controller/system/openapi/SysOpenApiCredentialController.java</Path>`、`<Path>ruoyi-vue-plus-namewta/ruoyi-admin/src/test/java/org/dromara/test/openapi/credential/SysOpenApiCredentialControllerContractTest.java</Path>` | T-02 | 缺失凭据使用业务 404，使 UI 区分空状态与能力不可用 |
 
 ## 6. Gate、Wave 与集成点
 

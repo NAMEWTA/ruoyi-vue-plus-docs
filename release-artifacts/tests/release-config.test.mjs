@@ -261,6 +261,7 @@ test('stage-mysql removes stale generated SQL and preserves pinned Nacos assets'
     assert.deepEqual(fs.readFileSync(path.join(tempInit, 'nacos/mysql-schema.sql')), schemaBefore);
     assert.ok(fs.existsSync(path.join(tempInit, '15-nacos-init.sh')));
     for (const [source, target] of sqlFiles) {
+      assert.match(fs.readFileSync(path.join(sourceSqlRoot, source), 'utf8'), /^SET NAMES utf8mb4;/);
       assert.deepEqual(
         fs.readFileSync(path.join(tempInit, target)),
         fs.readFileSync(path.join(sourceSqlRoot, source)),

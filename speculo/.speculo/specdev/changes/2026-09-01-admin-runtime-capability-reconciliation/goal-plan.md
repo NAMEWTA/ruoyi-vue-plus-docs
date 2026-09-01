@@ -200,7 +200,8 @@ JUnit 静态解析不代替真实 MySQL；隔离 MySQL 不代替当前混合目�
 - G0 已关闭：Spec、Tickets、Goal Plan ready；用户已授权执行、implementation commits 和 local direct-parent；product 子仓 clean。
 - 工作区策略采用推荐默认 `current/direct-parent`；两个 Ticket 严格串行，由 Lead 直接实施。
 - T-01 已完成：G1 由 backend `9f5d382ada11e4bbc01bb7b49ca8ed4c6770f6ef` 与 aggregate `1bae24677e601b6313820a3198fc0e8690ab8248` 关闭；无备份 follow-up 为 backend `c7e926c8ac663b1fc83e1df2abf39ffcebbecef3`、aggregate result `a21d0fdb7fa8782cfd83afa9237c74a5311cfa45`。
-- G2 已关闭：目标库写前 0-row/身份/冲突检查通过，DDL/DML 最终态四项全真，重放前后指纹一致且普通角色授权增量为 0。T-02 已进入 `in_progress`；G3/G4 未关闭。
+- G2 已关闭：目标库写前 0-row/身份/冲突检查通过，DDL/DML 最终态四项全真，重放前后指纹一致且普通角色授权增量为 0。
+- T-02 source checkpoint `97d67cf3aac1ce0dfdd38a5c8e3b1b235c7f3e8d` 已形成；Node 18/18、Spring 7/7、Admin 41 tests、system web-domain 23 tests、两包 typecheck 与 Admin build 通过。本机无 Docker，G3 仍等待目标 Compose parsing；G4 等待双实例与浏览器。
 - 用户明确决定本次目标开发库“无需备份”，已由 `ADR-005` 接管恢复边界；该决定不降低其他 Gate。
 
 ### Pending Decisions and Blockers

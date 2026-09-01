@@ -19,3 +19,5 @@
 - T-01 通过 DBX 对 `ry-namewta` 完成无备份写前 Gate：生成器表 `0/0`、对象身份正确、固定菜单与 parent/duplicate preflight 全部通过；DDL/DML 自身 preflight 均为 `1`。
 - DBX 在任何持久化 DML 前拒绝显式 `START TRANSACTION`；同一 pinned session 改用 `autocommit=0` 执行已提交 DML，并通过恢复 `autocommit=1` 原子提交。最终四项诊断全真，重放前后指纹同为 `2d76cc06b7238381aead6178ed5bf0ba`，目标角色授权和生成器表均保持 `0`。
 - T-01 Evidence 完成并标记 `done/integrated`；T-02 依赖 Gate 关闭并进入 `in_progress`。
+- T-02 先以 Node 合同测试确认共享锚点缺少 OpenAPI 变量的红灯，再在三个 writable release path 中补齐 default-off 双实例同源透传和公开占位符；aggregate source checkpoint 为 `97d67cf3aac1ce0dfdd38a5c8e3b1b235c7f3e8d`。
+- T-02 本地门通过 Node `18/18`、Spring assembly `7/7`、Admin `41` tests、system web-domain `23` tests、两包 typecheck 和 Admin production build；本机无 Docker CLI，Compose parsing 明确留给目标只读 Gate，未虚报 G3 完成。

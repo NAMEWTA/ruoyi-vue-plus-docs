@@ -178,7 +178,7 @@ W1  T-01 ─┐
 |---|---|---|---|---|---|---|
 | T-01 | backend `main@6927ee978...` | `{change}/T-01` | Maven/API contract passed | `b62d64b5511847f265c63b21d02117ee21630453` | candidate/reactor passed，E2E not-required | `672268b2fa18b4cdd0d6ee19be1cb1615252e040` |
 | T-02 | backend `672268b2f` + root `b9685ae` | backend `{change}/T-02-v2` + root `{change}/T-02-root-v2` | schema static + MySQL passed | backend `b57e25d14` / root `bc812e2` | fresh MySQL 8.4.9 required/passed | backend `b57e25d14` / root `bc812e2` |
-| T-03 | backend G1 result | `{change}/T-03` | provider unit/security | required/pending | callback+DB required | pending |
+| T-03 | backend `b57e25d14` | `{change}/T-03` | 19 provider unit/security tests passed | `8b8353491` | callback+DB required/passed | `4bc543c01` |
 | T-04 | backend G1 result | `{change}/T-04` | material/service tests | required/pending | MySQL+OSS required | pending |
 | T-05 | backend G2 result | `{change}/T-05` | person unit/integration non-E2E | required/pending | HTTP+DB+workflow required | pending |
 | T-07 | backend G2 result | `{change}/T-07` | enterprise non-E2E | required/pending | HTTP+DB+workflow required | pending |
@@ -261,6 +261,8 @@ source 测试只证明局部实现；required E2E 只在 Lead-owned parent-candi
 - T-01 已完成并集成：source `b62d64b5511847f265c63b21d02117ee21630453`，candidate/result `672268b2fa18b4cdd0d6ee19be1cb1615252e040`；合同测试、full/core 干净构建与 JAR 装配核验通过。
 - T-02 已完成并集成：旧 checkpoint 因 SQL owner 迁移仅保留审计；backend result `b57e25d14273ab33cd09052544d50d936866d5ce`，root SQL result `bc812e21fd268874436d2726887671768b4479d7`。授权开发服务器 MySQL 8.4.9 六文件 fresh 初始化得到 111 表，Java 约束测试 6/6 通过，临时库/用户已清理且业务库保持 87 表。
 - G1 已关闭；T-03/T-04 可从 backend `b57e25d14273ab33cd09052544d50d936866d5ce` 开始。
+- T-03 已完成并集成：source `8b83534917e8a235f00879f05687bfc674e303c6`，candidate/result `4bc543c01e190f92468e05e8b99f8d8d55d6cade`；19 个 provider 单元/安全合同测试和 person/enterprise 真实 MySQL callback E2E 通过，隔离库/用户清理后业务库仍为 87 表。
+- T-03 执行发现叶子 POM 缺少测试依赖；已记录局部路径偏差，两个叶子 POM 仅增加 test-scope 测试与 MySQL 驱动依赖，运行时依赖方向未变化。
 
 ### Pending Decisions and Blockers
 

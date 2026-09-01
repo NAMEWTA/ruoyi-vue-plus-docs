@@ -4,18 +4,22 @@ artifact: ticket
 change: 2026-08-31-account-profile-verification
 id: T-03
 title: 交付个人与企业认证供应商策略及回调证据框架
-status: ready
+status: done
 planning_depth: deep
 planning_depth_reason: 供应商签名、时间窗、回调幂等和敏感证据属于外部安全协议与公共扩展点。
 ready: true
 risk: high
 blocked_by: [T-01, T-02]
 contract_ids: [AC-036, AC-037]
-owner: unassigned
+owner: codex:/root
 expected_changes:
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/ruoyi-profile-person/pom.xml</Path>"
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/ruoyi-profile-enterprise/pom.xml</Path>"
   - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/ruoyi-profile-person/src/main/java/org/dromara/profile/person/verification/**</Path>"
   - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/ruoyi-profile-enterprise/src/main/java/org/dromara/profile/enterprise/verification/**</Path>"
 writable_paths:
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/ruoyi-profile-person/pom.xml</Path>"
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/ruoyi-profile-enterprise/pom.xml</Path>"
   - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/ruoyi-profile-person/src/main/java/org/dromara/profile/person/verification/**</Path>"
   - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/ruoyi-profile-enterprise/src/main/java/org/dromara/profile/enterprise/verification/**</Path>"
   - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/ruoyi-profile-person/src/test/java/org/dromara/profile/person/verification/**</Path>"
@@ -90,7 +94,7 @@ shared_path_owners: []
 
 ## 7. 路径访问契约
 
-- **预计修改点/可写范围：** 两叶子 verification 子树及对应测试。
+- **预计修改点/可写范围：** 两叶子 verification 子树、对应测试与仅用于 test-scope 依赖的叶子 POM。
 - **只读上下文：** T-01 公共端口与 T-02 schema。
 - **共享路径：** 无。
 - **保留或不动：** 申请发布、workflow 和档案绑定。
@@ -119,6 +123,6 @@ shared_path_owners: []
 
 ## 10. 验收标准
 
-- [ ] AC-036/037 全矩阵通过且回调不能发布档案。
-- [ ] required E2E、敏感日志扫描与 Evidence 完整。
-- [ ] 实际路径、提交和父分支结果符合合同。
+- [x] AC-036/037 全矩阵通过且回调不能发布档案。
+- [x] required E2E、敏感日志扫描与 Evidence 完整。
+- [x] 实际路径、提交和父分支结果符合合同。

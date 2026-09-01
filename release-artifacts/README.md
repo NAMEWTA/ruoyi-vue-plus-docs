@@ -56,6 +56,23 @@ bash release-artifacts/scripts/release-manage.sh bundle --env prod
 bash release-artifacts/scripts/verify-release.sh
 ```
 
+Nacos 的真实运行验收会创建并销毁独立的 MySQL、Redis、Nacos 与双应用实例。它不读取
+`release-artifacts/.env`，也不复用现有容器或数据卷；必须显式确认后运行：
+
+```bash
+./mvnw -f ruoyi-vue-plus-namewta/pom.xml -Pbundle-full -DskipTests package
+NACOS_E2E_CONFIRM=1 \
+  bash release-artifacts/scripts/verify-nacos.sh
+
+# 仅在排障时保留失败现场；成功时仍会自动清理
+NACOS_E2E_CONFIRM=1 \
+  bash release-artifacts/scripts/verify-nacos.sh --keep-on-failure
+```
+
+该门禁覆盖默认关闭、稀疏覆盖、部署参数优先、即时/重启键分类、非法候选原子拒绝、
+双实例收敛、运行断连、离线重启本地回退、恢复重连和 MySQL 持久化。服务器上运行时，
+可用 `NACOS_E2E_WORK_PARENT` 指向明确的测试目录，用 `NACOS_E2E_APP_JAR` 指向待验收 jar。
+
 ## Docker Compose 分类
 
 | 分类 | Compose | 主要服务 |
@@ -120,6 +137,33 @@ bash release-artifacts/scripts/init-mysql-container.sh \
 ```
 
 每个 App Nginx 也映射独立宿主机端口，可直接访问 `http://<host>:<app-port>/<app-prefix>/`。证书只允许运维投放到 `docker/frontend/nginx/cert/`，不得提交私钥。
+
+## 可选 Nacos 配置中心
+
+Nacos 固定使用官方 `nacos/nacos-server:v2.5.4`。客户端默认关闭；准备好数据库、管理员密码、
+namespace 和同源代理后，再通过 `docker/overrides/nacos-enabled.yml` 同时开启两套后端实例：
+
+```bash
+bash release-artifacts/scripts/release-manage.sh stage-mysql
+bash release-artifacts/scripts/docker-manage.sh up infrastructure --profile nacos
+docker compose --env-file release-artifacts/.env \
+  -f release-artifacts/docker/docker-compose-backend.yml \
+  -f release-artifacts/docker/overrides/nacos-enabled.yml up -d ruoyi-server1 ruoyi-server2
+```
+
+首次启动后必须在受信网络内调用 Nacos 的管理员初始化接口设置强密码，再创建与当前
+Spring profile 对应的 namespace。应用账号只需要配置读取权限；控制台管理员凭据不得注入
+前端或 Nginx。Nacos 2.5.4 的控制台/API 链路仍是 HTTP 明文协议，因此宿主机端口应保持
+`127.0.0.1` 绑定，跨主机访问应置于受信内网或 TLS 反向代理之后。
+
+远程配置是稀疏覆盖，并非任意 YAML 都能无条件热更新。验证码、通知幂等窗口和 OSS 下载
+TTL 会即时生效；其他允许键只记录为需重启，`nacos.config.*` 与 `spring.profiles.*` 会被拒绝。
+部署环境变量优先级高于远程值。删除配置会回到本地基线；运行中断连保留最后一次有效内存
+配置，而 Nacos 不可用时重启应用不会读取磁盘快照，会从本地基线启动并等待服务恢复。
+
+回退时先删除远程覆盖或确认其为空，再把两实例的 `NACOS_CONFIG_ENABLED` 设为 `false` 并
+逐一重启。确认业务回到本地配置后，可隐藏系统管理下的 Nacos 菜单并停止 Nacos；数据库
+和数据目录应保留，以便审计或前向恢复，禁止使用 `docker compose down -v`。
 
 ## 外部依赖
 

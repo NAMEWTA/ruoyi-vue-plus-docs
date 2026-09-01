@@ -126,6 +126,12 @@ bash release-artifacts/scripts/init-mysql-container.sh \
 
 运行密钥只进入被忽略且权限为 `0600` 的 `.env`，不会写回六份 SQL。共享 MySQL 的其他数据库及其 entrypoint 初始化文件不属于该脚本的操作范围。
 
+初始化脚本会将 `minio` 设置为唯一启用的默认 OSS，并强制使用 `access_policy=0`
+（`PRIVATE`）；当前枚举中的 `access_policy=2` 表示 `PUBLIC_READ`，不能用于默认私桶。
+`.env` 还必须配置 `MINIO_ENDPOINT`、`MINIO_BUCKET` 和 `MINIO_DIAGNOSTIC_OBJECT`。
+后端就绪检查会读取该私有探针对象；部署时应同时验证匿名访问被拒绝，以及短时签名链接
+在有效期内成功、过期后失效。公共资源应使用独立的公共配置或桶，不得将默认私桶改为公共读。
+
 ## Nginx 请求链路
 
 ```text

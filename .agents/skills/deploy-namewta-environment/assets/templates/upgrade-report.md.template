@@ -1,0 +1,25 @@
+# {{deploymentName}} 迭代升级记录
+
+- 升级时间：{{generatedAt}}
+- 原发布编号：{{previousReleaseId}}
+- 新发布编号：{{releaseId}}
+- 数据库迁移：{{databaseMigration}}
+- 配置变更：{{configurationChange}}
+- 验证结论：{{verificationStatus}}
+- 回滚命令：{{rollbackCommand}}
+
+## 变更
+
+{{changeSummary}}
+
+## 备份与校验
+
+{{backupEvidence}}
+
+## 验证证据
+
+{{verificationSection}}
+
+## 异常与处置
+
+{{riskSection}}

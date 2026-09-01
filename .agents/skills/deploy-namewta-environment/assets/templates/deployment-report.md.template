@@ -1,0 +1,39 @@
+# {{deploymentName}} 部署交接
+
+- 生成时间：{{generatedAt}}
+- 模式：{{mode}}
+- 环境：{{environment}}
+- 发布编号：{{releaseId}}
+- 验证结论：{{verificationStatus}}
+
+## 服务器与持久化
+
+{{serverSection}}
+
+## 入口与端口
+
+{{endpointSection}}
+
+## 账号与凭据
+
+{{credentialSection}}
+
+## 服务与版本
+
+{{serviceSection}}
+
+## 验证证据
+
+{{verificationSection}}
+
+## 后续升级 SOP
+
+{{upgradeSection}}
+
+## 回滚 SOP
+
+{{rollbackSection}}
+
+## 未决事项与风险
+
+{{riskSection}}

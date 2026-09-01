@@ -23,7 +23,7 @@ description: 为 NAMEWTA RuoYi-Vue-Plus 全栈提供审计、接管、开发环�
 
 ## 准备输入
 
-1. 将 `assets/templates/deployment-profile.json.template` 复制到 Skill 目录之外，只填写非敏感拓扑；现场状态从 `assets/templates/deployment-state.json.template` 创建。
+1. 将 `assets/templates/deployment-profile.json.template` 复制到 Skill 目录之外，只填写非敏感拓扑；新发布使用 schema v2，并在现场身份核对后显式设置 `release.compose.identityConfirmed=true`。现场状态从 v2 `assets/templates/deployment-state.json.template` 创建。
 2. 只有托管凭据工具无法提供值时，才将 `assets/templates/deployment-secrets.json.template` 复制到被忽略的本地目录。
 3. 敏感输入和包含账密的报告一律设置为 `0600`。
 4. 连接服务器前执行校验：
@@ -56,20 +56,31 @@ node .agents/skills/deploy-namewta-environment/scripts/render-local-config.mjs \
 
 ## 构建与部署
 
-按 [构建、传输与发布](references/build-transfer-release.md) 执行：
+`takeover`、`upgrade` 和 `release-prod` 先读取[全栈滚动发布运行手册](references/rolling-full-stack-release.md)，再按[构建、传输与发布](references/build-transfer-release.md)执行专题步骤：
 
 1. 运行发布校验；开发环境构建指定目标，生产环境同时构建前后端。
 2. 生成发布清单和 SHA-256 校验值。
-3. 备份当前版本、配置、数据库和持久化服务元数据。
+3. 备份当前版本、配置、数据库和持久化服务元数据；受限开发库 waiver 只能按安全边界使用。
 4. 传输到授权根目录下的新暂存目录，并在服务器端校验文件。
-5. 按基础设施、可选 Nacos、可观测、后端、前端的顺序启动。
+5. 按基础设施、可选 Nacos、可观测、后端实例 1、后端实例 2、前端的顺序启动；每一步通过门禁后才继续。
 6. 接管模式必须沿用现场版本化 Compose 文件，不得用通用模板覆盖服务器根 Compose。
 
 禁止执行 `docker compose down -v`。单独重建 Nacos 必须使用 `--no-deps`。Nacos 始终是可选的稀疏覆盖，具体见 [Nacos 运行契约](references/nacos-runtime-contract.md)。
 
 ## 验证与交接
 
-执行 [验证与排障](references/verification-and-troubleshooting.md) 中的全部门禁。必须保证启用的默认 OSS 配置恰好一个且为 `PRIVATE`（`access_policy=0`）；验证 MinIO 私有探针、匿名拒绝以及签名链接过期。启用 Nacos 时，两套后端实例必须收敛到相同配置版本。
+执行 [验证与排障](references/verification-and-troubleshooting.md) 中的全部门禁。必须保证启用的默认 OSS 配置恰好一个且为 `PRIVATE`（`access_policy=0`）；验证 MinIO 私有探针、匿名拒绝以及签名链接过期。启用 Nacos 或 OpenAPI 时，两套后端实例必须收敛到相同非敏感配置摘要。
+
+发布前校验前端产物，滚动完成后校验组合候选：
+
+```bash
+node .agents/skills/deploy-namewta-environment/scripts/verify-frontend-artifact.mjs \
+  --profile temp/relase/deployment-profile.json \
+  --index plus-ui-namewta/apps/admin-web/dist/index.html
+node .agents/skills/deploy-namewta-environment/scripts/verify-release-candidate.mjs \
+  --profile temp/relase/deployment-profile.json \
+  --state temp/relase/deployment-state.json
+```
 
 ```bash
 node .agents/skills/deploy-namewta-environment/scripts/generate-deployment-report.mjs \
@@ -85,7 +96,7 @@ node .agents/skills/deploy-namewta-environment/scripts/generate-deployment-repor
 
 - 修改远程主机、数据库、对象存储、DNS、证书、防火墙或外部服务前，必须取得明确授权。
 - 只使用配置档案中服务器根目录下的绝对路径；拒绝 `/`、用户主目录、空路径和未解析变量。
-- 数据库迁移、配置替换、数据移动或版本提升前必须完成可验证备份。
+- 数据库迁移、配置替换、数据移动或版本提升前必须完成可验证备份。只有精确目标为开发环境、用户明确批准且零行/对象身份/冲突 preflight 与 `forward-only` 恢复边界完整时，才允许一次性数据库备份 waiver；生产环境不接受 waiver。
 - 不得伪造凭据、版本、健康状态或部署证据。
 - 校验值不一致、备份失败、资源归属异常、Schema 不兼容、私桶可匿名访问或健康检查失败时必须停止。
-- 保留失败暂存目录和脱敏日志用于排障。
+- 保留失败暂存目录、旧镜像、rollback 资产和脱敏日志用于排障；清理需要独立授权。

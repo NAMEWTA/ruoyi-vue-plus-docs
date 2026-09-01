@@ -12,9 +12,11 @@ bash release-artifacts/scripts/release-manage.sh bundle --env prod
 
 发布清单必须记录父仓库与子模块修订、环境、文件和 SHA-256。不得打包 `.env`、`application-local.yml`、前端 `*.local`、证书私钥或其他密钥。
 
+前端生产构建必须从 profile 注入 `VITE_APP_CONTEXT_PATH` 与 `VITE_APP_BASE_API`。构建完成后运行 `scripts/verify-frontend-artifact.mjs`，确认 `index.html` 中 JavaScript/CSS 使用预期 `assetPrefix`；错误根 `/` 构建不得进入传输阶段。
+
 ## 传输
 
-在校验过的服务器根目录下创建新暂存目录，传输不可变发布包、清单和校验值。在服务器端验证大小与 SHA-256 后才能解压，禁止将未验证归档直接流入活动版本。
+在校验过的服务器根目录下创建新暂存目录，使用 `.part` 文件或独立 staging 传输不可变发布包、清单和校验值。在服务器端验证大小与 SHA-256 后才能原子重命名/解压，禁止将未验证归档直接流入活动版本。记录最终镜像 ID，不能只记录标签。
 
 ## 发布顺序
 
@@ -28,6 +30,8 @@ bash release-artifacts/scripts/release-manage.sh bundle --env prod
 8. 发布前端资产并重载入口。
 9. 验证 API、UI、OSS、监控和日志。
 10. 提升活动指针并保留上一版本。
+
+本机缺少 Docker 时只能把 Compose 校验报告为 skipped；目标机必须使用现场精确 project/files/env 补齐 `config --quiet`，否则不能开始滚动。完整 Gate 和逐实例失败恢复见[全栈滚动发布运行手册](rolling-full-stack-release.md)。
 
 四类逻辑 Compose 所有权为 infrastructure、observability、backend、frontend。既有服务器可能使用版本化文件和项目名，必须保留现场命名。不得仅为了匹配仓库样例而覆盖根 Compose。
 

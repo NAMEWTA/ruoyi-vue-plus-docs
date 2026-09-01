@@ -15,6 +15,8 @@
 9. 前端、API、监控、SnailJob、SnailAI、Nacos 的入口状态。
 10. 当前发布清单、镜像摘要、备份与回滚命令。
 
+Compose 身份必须形成一个不可拆分快照：project、按命令实际顺序排列的全部 `-f` 文件、`--env-file`、service 名、容器 Compose labels、当前镜像标签/image ID 和 bind host。目录名、容器名前缀或仓库样例都不能单独证明 project 身份。
+
 优先保存机器可读盘点结果。敏感结果只能放在被忽略的 `temp/relase/`，权限为 `0600`。
 
 ## 差异分类
@@ -33,5 +35,6 @@
 - 写操作前备份 `.env`、发布 env、Compose、清单、数据库和服务元数据。
 - 敏感文件保持 `0600`。使用非执行式解析器读取单个键，不能 `source` 整份 env；`JAVA_OPTS` 等值可能含空格。
 - 只重建 Nacos 时使用 `docker compose ... up -d --no-deps nacos`。
+- 写入前用精确快照运行 `docker compose config --quiet`，并确认渲染后的服务、镜像和环境存在性与 profile 一致。不得从 shell 中同名临时变量推断最终 env 优先级。
 
 上传到 `<server-root>/releases/<release-id>.staging`，校验清单后重命名为不可变发布目录，再原子更新活动指针。报告中保留旧指针和精确回滚命令。现场使用其他历史目录布局时，应保留该布局并记录映射。

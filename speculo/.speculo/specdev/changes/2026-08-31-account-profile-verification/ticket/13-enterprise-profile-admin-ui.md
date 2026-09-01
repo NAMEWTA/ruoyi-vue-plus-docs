@@ -4,14 +4,14 @@ artifact: ticket
 change: 2026-08-31-account-profile-verification
 id: T-13
 title: 交付企业档案管理列表、详情与负责人操作
-status: ready
+status: done
 planning_depth: deep
 planning_depth_reason: 企业详情同时承载法律主体明文、唯一负责人、转移历史、workflow 和管理员覆盖操作。
 ready: true
 risk: high
 blocked_by: [T-10]
 contract_ids: [AC-018, AC-019, AC-020, AC-021, AC-022, AC-023, AC-024, AC-025, AC-026, AC-027, AC-028, AC-029, AC-030, AC-031, AC-039, AC-040, AC-041]
-owner: unassigned
+owner: codex:/root
 expected_changes:
   - "<Path>plus-ui-namewta/packages/web-domains/profile/src/enterprise/**</Path>"
 writable_paths:
@@ -116,6 +116,6 @@ shared_path_owners: []
 
 ## 10. 验收标准
 
-- [ ] 企业主体/负责人概念、状态、权限、历史和高风险动作矩阵通过。
-- [ ] revoked 只读、无导出、无物理删除和失败回刷符合合同。
-- [ ] Evidence 和集成结果完整。
+- [x] 企业主体/负责人概念、状态、权限、历史和高风险动作矩阵通过。
+- [x] revoked 只读、无导出、无物理删除和失败回刷符合合同。
+- [x] Evidence 和集成结果完整。

@@ -188,7 +188,7 @@ W1  T-01 ─┐
 | T-10 | frontend `a2d79cf7b` | `{change}/T-10` | 13 contract + 100 architecture tests passed | `f6c4d3329` | package/admin integration passed，E2E not-required | `1162bf650` |
 | T-11 | frontend `1162bf650` | `{change}/T-11` | 7 web-domain tests + lint/typecheck passed | `333d9e0c5` | web-domain integration passed，E2E not-required | `f19ad1c48` |
 | T-12 | frontend `f19ad1c48` | `{change}/T-12` | 15 component/logic tests + lint/typecheck passed | `f501b33d2` | candidate/admin integration passed，E2E not-required | `ee35471d1` |
-| T-13 | frontend T-10 result | `{change}/T-13` | component+lint+typecheck | required/pending | web-domain integration，E2E not-required | pending |
+| T-13 | frontend `1162bf650` | `{change}/T-13` | 11 focused tests + lint/typecheck passed | `966b2c558` | 23 combined tests + admin integration passed，E2E not-required | `ae4e2b404` |
 | T-14 | frontend G6 result | `{change}/T-14` | registry/admin/E2E source compile | required/pending | 全栈 E2E+build+system/log/SQL Gate | pending |
 
 表内 workspace 均展开为 `specdev-worktree/2026-08-31-account-profile-verification/T-XX`；branch 使用同名逻辑标识。创建时必须从对应产品子仓库最新已通过父结果固定精确 `base_sha`，不得沿用本表缩写。
@@ -282,6 +282,7 @@ source 测试只证明局部实现；required E2E 只在 Lead-owned parent-candi
 - T-10 已完成并集成：frontend source/result `f6c4d3329` / `1162bf650`；13 项 profile 合同与 100 项架构测试通过。
 - T-11 已完成并集成：frontend source/result `333d9e0c5` / `f19ad1c48`；材料标签树 7 项测试与 admin 类型检查通过。
 - T-12 已完成并集成：frontend source/result `f501b33d2` / `ee35471d1`；个人档案 15 项逻辑/组件合同、profile lint/typecheck、架构与 admin 类型检查通过。
+- T-13 已完成并集成：frontend source/result `966b2c558` / `ae4e2b404`；企业主体/负责人分离、不可变来源和管理操作 11 项聚焦测试，三管理面组合 23 项测试与 admin 类型检查通过。
 
 ### Pending Decisions and Blockers
 

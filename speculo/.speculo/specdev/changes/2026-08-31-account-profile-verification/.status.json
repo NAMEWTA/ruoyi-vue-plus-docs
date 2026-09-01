@@ -39,7 +39,7 @@
     "history": []
   },
   "created_at": "2026-08-31T18:06:59+08:00",
-  "updated_at": "2026-09-02T01:27:27+08:00",
+  "updated_at": "2026-09-02T01:34:35+08:00",
   "completed_at": null,
   "archived": false,
   "archive_path": null,
@@ -198,9 +198,9 @@
     },
     {
       "ticket_id": "T-13", "owner": "codex:/root", "implementation_owner": "codex:/root", "integration_owner": "codex:/root", "provider": "git",
-      "base_sha": "7462ffece02a48f64288847c907a644c646e1944", "parent_branch": "main", "branch": "speculo/2026-08-31-account-profile-verification/T-13", "workspace_ref": "specdev-worktree/2026-08-31-account-profile-verification/T-13", "source_checkpoint": null,
-      "integration": {"status": "pending", "parent_ref": "refs/heads/main", "parent_before_sha": null, "source_sha": null, "candidate_sha": null, "candidate_tree_sha": null, "candidate_branch": null, "candidate_workspace_ref": null, "result_sha": null, "method": null, "conflict_paths": [], "verification": "pending", "full_suite": {"required": false, "status": "not-required", "reason": "Enterprise UI ticket runs focused checks; the change-wide suite belongs to T-14", "evidence": null}, "e2e": {"required": false, "status": "not-required", "reason": "Component contracts are verified here and the real workflow is verified by T-14", "evidence": null}, "evidence": "<Path>{roots.state}/specdev/changes/2026-08-31-account-profile-verification/evidence/T-13.md</Path>", "attempts": 0, "promotion_status": "pending"},
-      "status": "planned", "updated_at": "2026-09-01T11:30:00+08:00"
+      "base_sha": "1162bf650ecb4bd869e5e6361595799bc4aaecfe", "parent_branch": "main", "branch": "speculo/2026-08-31-account-profile-verification/T-13", "workspace_ref": "specdev-worktree/2026-08-31-account-profile-verification/T-13", "source_checkpoint": "966b2c558d64de60ef31c68cb7a4f700c87c99dd",
+      "integration": {"status": "passed", "parent_ref": "refs/heads/main", "parent_before_sha": "ee35471d12043aa259cdc69068f03012c673603a", "source_sha": "966b2c558d64de60ef31c68cb7a4f700c87c99dd", "candidate_sha": "ae4e2b404615f0fcdba9f1feadf9fe058348f990", "candidate_tree_sha": "8e0c3ddf7c3cdcebfe0aef0b66c12c69071574f5", "candidate_branch": "speculo/integration/2026-08-31-account-profile-verification/T-13", "candidate_workspace_ref": "specdev-worktree/.integration/2026-08-31-account-profile-verification/T-13", "result_sha": "ae4e2b404615f0fcdba9f1feadf9fe058348f990", "method": "merge-commit", "conflict_paths": [], "verification": "passed", "full_suite": {"required": false, "status": "not-required", "reason": "Enterprise UI ticket passed 23 combined web-domain tests, lint/typecheck, architecture check and admin typecheck; the change-wide suite belongs to T-14", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-31-account-profile-verification/evidence/T-13.md</Path>"}, "e2e": {"required": false, "status": "not-required", "reason": "Component behavior is verified here and real workflow/material/permission routing is verified by T-14", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-31-account-profile-verification/evidence/T-13.md</Path>"}, "evidence": "<Path>{roots.state}/specdev/changes/2026-08-31-account-profile-verification/evidence/T-13.md</Path>", "attempts": 1, "promotion_status": "applied"},
+      "status": "integrated", "updated_at": "2026-09-02T01:34:35+08:00"
     },
     {
       "ticket_id": "T-14", "owner": "codex:/root", "implementation_owner": "codex:/root", "integration_owner": "codex:/root", "provider": "git",

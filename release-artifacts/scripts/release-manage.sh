@@ -444,6 +444,8 @@ stage_mysql_init() {
       return 1
     }
   done
+  find "${target_root}" -mindepth 1 -maxdepth 1 -type f \
+    ! -name .gitignore ! -name 15-nacos-init.sh -delete
   for item in "${sql_files[@]}"; do
     source="${source_root}/${item%%|*}"
     target="${target_root}/${item#*|}"

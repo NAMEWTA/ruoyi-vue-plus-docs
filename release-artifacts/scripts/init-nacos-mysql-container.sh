@@ -122,8 +122,8 @@ elif [[ "${table_count}" != "${EXPECTED_TABLES}" ]]; then
   exit 1
 fi
 
-printf "CREATE USER IF NOT EXISTS '%s'@'%%' IDENTIFIED BY '%s';\nALTER USER '%s'@'%%' IDENTIFIED BY '%s';\nGRANT SELECT, INSERT, UPDATE, DELETE ON \`%s\`.* TO '%s'@'%%';\nFLUSH PRIVILEGES;\n" \
-  "${db_user}" "${db_password}" "${db_user}" "${db_password}" "${database}" "${db_user}" \
+printf "CREATE USER IF NOT EXISTS '%s'@'%%' IDENTIFIED BY '%s';\nALTER USER '%s'@'%%' IDENTIFIED BY '%s';\nREVOKE ALL PRIVILEGES, GRANT OPTION FROM '%s'@'%%';\nGRANT SELECT, INSERT, UPDATE, DELETE ON \`%s\`.* TO '%s'@'%%';\nFLUSH PRIVILEGES;\n" \
+  "${db_user}" "${db_password}" "${db_user}" "${db_password}" "${db_user}" "${database}" "${db_user}" \
   | mysql_root
 
 table_count="$(mysql_root --batch --skip-column-names --execute \

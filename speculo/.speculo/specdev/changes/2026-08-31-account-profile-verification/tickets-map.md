@@ -31,7 +31,7 @@ status: ready
 | T-01 | `<Path>{roots.state}/specdev/changes/{change}/ticket/01-profile-contracts-and-workflow-seam.md</Path>` | Profile 模块图、公共查询与 workflow 终止接缝 | — | deep | high | yes | codex:/root | AC-025,026,038,044 | W1 / foundation | done |
 | T-02 | `<Path>{roots.state}/specdev/changes/{change}/ticket/02-profile-schema-reference-data.md</Path>` | 全量 schema、活动唯一约束、菜单权限与参考数据 | — | deep | critical | yes | codex:/root | AC-008,015,027,028,031-034,039,042 | W1 / data | done |
 | T-03 | `<Path>{roots.state}/specdev/changes/{change}/ticket/03-verification-provider-framework.md</Path>` | 两类 provider SPI、manual 策略和回调证据 | T-01,T-02 | deep | high | yes | codex:/root | AC-036,037 | W2 | done |
-| T-04 | `<Path>{roots.state}/specdev/changes/{change}/ticket/04-material-catalog-and-lifecycle.md</Path>` | 材料树、必传校验和 OSS 引用生命周期 | T-01,T-02 | deep | high | yes | unassigned | AC-032-035,042 | W2 | ready |
+| T-04 | `<Path>{roots.state}/specdev/changes/{change}/ticket/04-material-catalog-and-lifecycle.md</Path>` | 材料树、必传校验和 OSS 引用生命周期 | T-01,T-02 | deep | high | yes | codex:/root | AC-032-035,042 | W2 | done |
 | T-05 | `<Path>{roots.state}/specdev/changes/{change}/ticket/05-person-application-workflow.md</Path>` | 个人申请、快照与 workflow 发布闭环 | T-03,T-04 | deep | critical | yes | unassigned | AC-001,003-008,014,015,038 | W3 | ready |
 | T-06 | `<Path>{roots.state}/specdev/changes/{change}/ticket/06-person-rebind-unbind-notify.md</Path>` | 个人隐私探测、换绑、解绑和安全通知 | T-05 | deep | critical | yes | unassigned | AC-009-014,016,017 | W4 | ready |
 | T-07 | `<Path>{roots.state}/specdev/changes/{change}/ticket/07-enterprise-application-workflow.md</Path>` | 企业申请、快照和唯一负责人发布 | T-03,T-04 | deep | critical | yes | unassigned | AC-002-008,018,023,038 | W3 | ready |

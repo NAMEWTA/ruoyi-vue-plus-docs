@@ -39,7 +39,7 @@
     "history": []
   },
   "created_at": "2026-08-31T18:06:59+08:00",
-  "updated_at": "2026-09-01T20:10:59+08:00",
+  "updated_at": "2026-09-01T20:41:52+08:00",
   "completed_at": null,
   "archived": false,
   "archive_path": null,
@@ -60,6 +60,14 @@
       "detail": "两个新建 profile 叶子 POM 没有 test-scope 依赖，而原 Ticket 只允许写 verification 源码与测试子树。",
       "impact": "按原路径合同新增 JUnit 测试会因测试 API 不在 classpath 而无法编译。",
       "correction": "将两个叶子 POM 纳入 T-03 唯一可写范围，只增加由根 dependencyManagement 管理的 spring-boot-starter-test 与 mysql-connector-j test-scope 依赖，不改变运行时依赖方向。"
+    },
+    {
+      "ticket_id": "T-04",
+      "kind": "public-material-and-oss-metadata-seams-omitted",
+      "observed_at": "2026-09-01T20:14:35+08:00",
+      "detail": "T-04 要求 enterprise 通过公开窄端口消费 person 的共享材料能力，并要求按 OSS 权威文件大小与 MIME 复验；当前 ruoyi-api 既没有材料端口，OssService 也只暴露文件名/后缀和生命周期。",
+      "impact": "严格停留在原路径会迫使企业重复实现共享领域，或绕过 AC-034 的大小/MIME 校验，或直接依赖 system 内部表，均违反已锁定架构和安全合同。",
+      "correction": "将 ruoyi-api profile material 窄端口、OssService 新增兼容只读 objectMetadata 合同、SysOssServiceImpl 唯一桥接实现及其聚焦测试纳入 T-04 可写范围；不改 schema、旧 API、OSS 生命周期或 URL 语义。"
     }
   ],
   "worktrees": [
@@ -120,9 +128,9 @@
     },
     {
       "ticket_id": "T-04", "owner": "codex:/root", "implementation_owner": "codex:/root", "integration_owner": "codex:/root", "provider": "git",
-      "base_sha": "b57e25d14273ab33cd09052544d50d936866d5ce", "parent_branch": "main", "branch": "speculo/2026-08-31-account-profile-verification/T-04", "workspace_ref": "specdev-worktree/2026-08-31-account-profile-verification/T-04", "source_checkpoint": null,
-      "integration": {"status": "pending", "parent_ref": "refs/heads/main", "parent_before_sha": null, "source_sha": null, "candidate_sha": null, "candidate_tree_sha": null, "candidate_branch": null, "candidate_workspace_ref": null, "result_sha": null, "method": null, "conflict_paths": [], "verification": "pending", "full_suite": {"required": false, "status": "not-required", "reason": "Material ticket runs focused checks; the change-wide suite belongs to T-14", "evidence": null}, "e2e": {"required": true, "status": "pending", "reason": "MySQL relationships, OSS references and download authorization require integration verification", "evidence": null}, "evidence": "<Path>{roots.state}/specdev/changes/2026-08-31-account-profile-verification/evidence/T-04.md</Path>", "attempts": 0, "promotion_status": "pending"},
-      "status": "planned", "updated_at": "2026-09-01T11:30:00+08:00"
+      "base_sha": "4bc543c01e190f92468e05e8b99f8d8d55d6cade", "parent_branch": "main", "branch": "speculo/2026-08-31-account-profile-verification/T-04", "workspace_ref": "specdev-worktree/2026-08-31-account-profile-verification/T-04", "source_checkpoint": "c9691c9a82cfdda845046fcaaace7f32c112b064",
+      "integration": {"status": "passed", "parent_ref": "refs/heads/main", "parent_before_sha": "4bc543c01e190f92468e05e8b99f8d8d55d6cade", "source_sha": "c9691c9a82cfdda845046fcaaace7f32c112b064", "candidate_sha": "7eb550b9041603aa8317913574c70ec8140bb244", "candidate_tree_sha": "eb46df351ac057c7c648534dfdc2ac768747c950", "candidate_branch": "speculo/integration/2026-08-31-account-profile-verification/T-04", "candidate_workspace_ref": "specdev-worktree/.integration/2026-08-31-account-profile-verification/T-04", "result_sha": "7eb550b9041603aa8317913574c70ec8140bb244", "method": "merge-commit", "conflict_paths": [], "verification": "passed", "full_suite": {"required": false, "status": "not-required", "reason": "Material ticket runs focused checks; the change-wide suite belongs to T-14", "evidence": null}, "e2e": {"required": true, "status": "passed", "reason": "Material attach, immutable snapshot, detach, required validation, OSS reference reconciliation and authorization-before-download passed against an isolated authorized development MySQL database with an OssService test double", "evidence": "<Path>{roots.state}/specdev/changes/2026-08-31-account-profile-verification/evidence/T-04.md</Path>"}, "evidence": "<Path>{roots.state}/specdev/changes/2026-08-31-account-profile-verification/evidence/T-04.md</Path>", "attempts": 1, "promotion_status": "applied"},
+      "status": "integrated", "updated_at": "2026-09-01T20:41:52+08:00"
     },
     {
       "ticket_id": "T-05", "owner": "codex:/root", "implementation_owner": "codex:/root", "integration_owner": "codex:/root", "provider": "git",

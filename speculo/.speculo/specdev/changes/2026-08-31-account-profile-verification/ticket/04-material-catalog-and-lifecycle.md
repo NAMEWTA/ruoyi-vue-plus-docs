@@ -4,24 +4,30 @@ artifact: ticket
 change: 2026-08-31-account-profile-verification
 id: T-04
 title: 交付材料目录、必传校验与 OSS 引用生命周期
-status: ready
+status: done
 planning_depth: deep
 planning_depth_reason: 材料树、不可删除证据、OSS ACL/生命周期和敏感下载跨越数据与安全边界。
 ready: true
 risk: high
 blocked_by: [T-01, T-02]
 contract_ids: [AC-032, AC-033, AC-034, AC-035, AC-042]
-owner: unassigned
+owner: codex:/root
 expected_changes:
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-api/src/main/java/org/dromara/profile/api/material/**</Path>"
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-api/src/main/java/org/dromara/system/api/OssService.java</Path>"
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-system/src/main/java/org/dromara/system/service/impl/SysOssServiceImpl.java</Path>"
   - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/ruoyi-profile-person/src/main/java/org/dromara/profile/shared/material/**</Path>"
   - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/ruoyi-profile-enterprise/src/main/java/org/dromara/profile/enterprise/material/**</Path>"
 writable_paths:
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-api/src/main/java/org/dromara/profile/api/material/**</Path>"
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-api/src/main/java/org/dromara/system/api/OssService.java</Path>"
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-system/src/main/java/org/dromara/system/service/impl/SysOssServiceImpl.java</Path>"
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-admin/src/test/java/org/dromara/test/oss/access/OssObjectMetadataServiceUnitTest.java</Path>"
   - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/ruoyi-profile-person/src/main/java/org/dromara/profile/shared/material/**</Path>"
   - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/ruoyi-profile-enterprise/src/main/java/org/dromara/profile/enterprise/material/**</Path>"
   - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/ruoyi-profile-person/src/test/java/org/dromara/profile/shared/material/**</Path>"
   - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/ruoyi-profile-enterprise/src/test/java/org/dromara/profile/enterprise/material/**</Path>"
 read_only_paths:
-  - "<Path>ruoyi-vue-plus-namewta/ruoyi-api/src/main/java/org/dromara/system/api/OssService.java</Path>"
   - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-system/src/main/java/org/dromara/system/service/impl/SysMenuServiceImpl.java</Path>"
 shared_paths: []
 shared_path_owners: []
@@ -91,9 +97,9 @@ shared_path_owners: []
 
 ## 7. 路径访问契约
 
-- **预计修改点/可写范围：** shared material 与 enterprise material adapter 子树。
-- **只读上下文：** OssService 与 system 树实现。
-- **共享路径：** 无；SQL/ruoyi-api 只读。
+- **预计修改点/可写范围：** shared material、enterprise material adapter、profile 材料窄端口，以及补齐 OSS 文件大小/MIME 只读能力的最小 API/实现/测试路径。
+- **只读上下文：** system 树实现及 OSS 生命周期内部实现；OssService 只新增兼容只读合同。
+- **共享路径：** 无；SQL 只读，公开 API 的局部兼容扩展已纳入本 Ticket 可写合同。
 - **保留或不动：** system OSS 表、全局孤立对象清理和生产对象。
 
 ## 8. 验证矩阵
@@ -120,6 +126,6 @@ shared_path_owners: []
 
 ## 10. 验收标准
 
-- [ ] AC-032 至 AC-035、AC-042 通过且无物理删除。
-- [ ] required E2E 与敏感下载正反矩阵记录完整。
-- [ ] 实际路径、提交和父分支结果符合合同。
+- [x] AC-032 至 AC-035、AC-042 通过且无物理删除。
+- [x] required E2E 与敏感下载正反矩阵记录完整。
+- [x] 实际路径、提交和父分支结果符合合同。

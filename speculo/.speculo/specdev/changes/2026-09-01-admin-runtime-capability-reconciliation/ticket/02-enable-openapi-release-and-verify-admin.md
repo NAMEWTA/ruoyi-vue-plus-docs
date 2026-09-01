@@ -16,13 +16,16 @@ expected_changes:
   - "<Path>release-artifacts/docker/docker-compose-backend.yml</Path>"
   - "<Path>release-artifacts/.env.example</Path>"
   - "<Path>release-artifacts/tests/release-config.test.mjs</Path>"
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-common/ruoyi-common-openapi/src/main/java/org/dromara/common/openapi/config/OpenApiAutoConfiguration.java</Path>"
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-admin/src/test/java/org/dromara/test/openapi/assembly/OpenApiAssemblyContextTest.java</Path>"
 writable_paths:
   - "<Path>release-artifacts/docker/docker-compose-backend.yml</Path>"
   - "<Path>release-artifacts/.env.example</Path>"
   - "<Path>release-artifacts/tests/release-config.test.mjs</Path>"
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-common/ruoyi-common-openapi/src/main/java/org/dromara/common/openapi/config/OpenApiAutoConfiguration.java</Path>"
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-admin/src/test/java/org/dromara/test/openapi/assembly/OpenApiAssemblyContextTest.java</Path>"
 read_only_paths:
   - "<Path>ruoyi-vue-plus-namewta/ruoyi-admin/src/main/resources/application.yml</Path>"
-  - "<Path>ruoyi-vue-plus-namewta/ruoyi-common/ruoyi-common-openapi/**</Path>"
   - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-system/**</Path>"
   - "<Path>plus-ui-namewta/apps/admin-web/src/**</Path>"
   - "<Path>plus-ui-namewta/packages/web-domains/system/src/**</Path>"
@@ -30,10 +33,14 @@ shared_paths:
   - "<Path>release-artifacts/docker/docker-compose-backend.yml</Path>"
   - "<Path>release-artifacts/.env.example</Path>"
   - "<Path>release-artifacts/tests/release-config.test.mjs</Path>"
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-common/ruoyi-common-openapi/src/main/java/org/dromara/common/openapi/config/OpenApiAutoConfiguration.java</Path>"
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-admin/src/test/java/org/dromara/test/openapi/assembly/OpenApiAssemblyContextTest.java</Path>"
 shared_path_owners:
   - "<Path>release-artifacts/docker/docker-compose-backend.yml</Path> => T-02"
   - "<Path>release-artifacts/.env.example</Path> => T-02"
   - "<Path>release-artifacts/tests/release-config.test.mjs</Path> => T-02"
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-common/ruoyi-common-openapi/src/main/java/org/dromara/common/openapi/config/OpenApiAutoConfiguration.java</Path> => T-02"
+  - "<Path>ruoyi-vue-plus-namewta/ruoyi-admin/src/test/java/org/dromara/test/openapi/assembly/OpenApiAssemblyContextTest.java</Path> => T-02"
 ---
 
 # Ticket T-02: 显式启用 OpenAPI 发布配置并验收 Admin 最终体验
@@ -48,7 +55,7 @@ shared_path_owners:
 - **目标：** 让受管发布显式、同源地为两个 admin 实例提供 OpenAPI 配置，同时保留未配置安装的 default-off 安全模型，并证明最终 Admin 页面/菜单行为。
 - **可观察产出：** Compose 两实例接收相同的 `OPENAPI_ENABLED`、`OPENAPI_KEK_VERSION`、`OPENAPI_KEK`；公开示例只有关闭默认值和占位符；目标开发环境滚动启用后本人接口目录不再业务 404，侧栏与个人设置符合最新产品决定。
 - **来源：** `US-001`、`US-002`、`US-003`、`US-004`、`US-006`、`AC-001` 至 `AC-004`、`AC-012`、`AC-014` 至 `AC-016`、`ADR-001`、`DIAG-001`。
-- **当前事实：** backend application 已支持环境变量且自动配置/Controller 由 `openapi.enabled=true` 条件装配；release Compose 未透传三项变量，目标实例因默认 false 返回业务 404；前端 OpenAPI/Nacos component 和生成器关闭行为已存在并通过定向测试。
+- **当前事实：** backend application 已支持环境变量且自动配置/Controller 由 `openapi.enabled=true` 条件装配；release Compose 原先未透传三项变量，目标实例因默认 false 返回业务 404；首次 server1 启用探测进一步发现 Actuator 引入第二个 `RequestMappingHandlerMapping` 时自动配置注入歧义，实例已恢复上一配置且未推进 server2。
 - **Planning Depth 原因：** KEK 配置与双实例一致性直接影响凭据可解密性和启动安全，最终验收跨 Compose、Spring、DB、Redis、动态菜单和浏览器。
 
 ## 2. 决策状态
@@ -73,7 +80,7 @@ shared_path_owners:
 
 | IN（本 Ticket 构建） | REUSE（复用且不改变契约） | OUT（明确不做） |
 |---|---|---|
-| release Compose/env 示例/静态测试、Spring/前端回归、开发环境私密配置、双实例滚动与浏览器验收 | 现有 OpenAPI conditional assembly、Redis/SPI、system Controller、Admin manifest/profile、Nacos iframe | 协议/API 改造、真实 secret 入库、普通角色自动授权、远程 push、CDE/生产发布 |
+| release Compose/env 示例/静态测试、MVC HandlerMapping 选择修复与回归、Spring/前端回归、开发环境私密配置、双实例滚动与浏览器验收 | 现有 OpenAPI conditional assembly、Redis/SPI、system Controller、Admin manifest/profile、Nacos iframe | 协议/API 改造、真实 secret 入库、普通角色自动授权、远程 push、CDE/生产发布 |
 
 ## 4. 要构建什么
 
@@ -95,15 +102,16 @@ shared_path_owners:
 1. 先扩展 Node release config test，证明三项变量当前未透传并锁定 default-off/placeholder/双实例同源合同。
 2. 修改 Compose 共享 admin environment 与公开 `.env.example`，运行静态测试和 Compose 解析正反向场景。
 3. 重跑 OpenAPI assembly、Admin manifest/profile、前端 typecheck/build 和受影响 release gates，形成 parent implementation commit。
-4. 只读接管目标发布，登记当前 image/config/compose 定位、实例健康和精确回滚命令；确认 T-01 数据库 Gate 已关闭。
-5. 在远端权限受限 `.env` 生成或注入同一 KEK/version，逐实例重建并分别验证健康、路由不再业务 404和日志脱敏。
-6. 刷新菜单缓存/重新登录，用 Admin 浏览器验收个人 OpenAPI、两个菜单位置名称及生成器入口消失。
-7. 汇总数据库、HTTP、Compose、日志与浏览器 Evidence，执行 final secret scan 和工作树/commit 核对。
+4. 若真实启用暴露既有 assembly 与目标运行时差异，先以最小回归测试复现并修复同一 OpenAPI 自动配置接缝，重新构建候选镜像；不得跳过首实例门禁。
+5. 只读接管目标发布，登记当前 image/config/compose 定位、实例健康和精确回滚命令；确认 T-01 数据库 Gate 已关闭。
+6. 在远端权限受限 `.env` 生成或注入同一 KEK/version，逐实例重建并分别验证健康、路由不再业务 404和日志脱敏。
+7. 刷新菜单缓存/重新登录，用 Admin 浏览器验收个人 OpenAPI、两个菜单位置名称及生成器入口消失。
+8. 汇总数据库、HTTP、Compose、日志与浏览器 Evidence，执行 final secret scan 和工作树/commit 核对。
 
 ## 7. 路径访问契约
 
-- **预计修改点：** release backend Compose、公开 env 示例与 Node release test。
-- **可写范围：** 仅 frontmatter `writable_paths`；后端 OpenAPI 与前端源码视为已交付能力，回归失败时先诊断再决定是否偏差升级。
+- **预计修改点：** release backend Compose、公开 env 示例、Node release test、OpenAPI MVC 自动配置及其 Admin assembly 回归测试。
+- **可写范围：** 仅 frontmatter `writable_paths`；真实启用已证明后端 assembly 对 Actuator 双 HandlerMapping 不兼容，因此按 deviation control 在本 Ticket 内升级该精确接缝，其他后端与前端源码仍保持只读。
 - **只读上下文：** Spring property/auto-configuration、system Controller、Admin manifest/profile 和动态路由实现。
 - **共享路径：** 三个 release 文件由 T-02 唯一修改。
 - **保留或不动：** application default false、OpenAPI protocol/credential schema、Nacos auth、普通角色权限和所有生成器源码退役决定。

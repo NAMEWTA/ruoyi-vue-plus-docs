@@ -17,7 +17,7 @@ status: in_progress
 
 两个 Ready/Deep Ticket 共同修复 `US-001..US-006`：T-01 先交付可重复、冲突安全且具备明确前向恢复边界的数据库最终态，T-02 再通过受管发布显式启用既有 OpenAPI 能力并验收真实 Admin 体验。拆分边界按可观察发布阶段而不是前后端水平层划分；用户明确无备份的数据库迁移与最终态仍是双实例启用的真实前置，因此 `T-01 -> T-02`。
 
-不需要 prefactor 或 expand-contract：既有 OpenAPI/Nacos 前后端能力和生成器退役源码都已存在。SQL 采用新的 append-only contract 块完成历史状态到最终态的收缩。
+不需要 prefactor 或 expand-contract：既有 OpenAPI/Nacos 前后端能力和生成器退役源码都已存在。SQL 采用新的 append-only contract 块完成历史状态到最终态的收缩。T-02 首实例真实启用后发现 OpenAPI 自动配置未限定业务 `RequestMappingHandlerMapping`，按运行时证据将该精确接缝及回归测试纳入原 Ticket，不拆分新的产品能力。
 
 ## 2. 执行清单
 
@@ -69,7 +69,7 @@ G0 Spec/authorization/baseline
 
 - Goal Plan 采用 current workspace，两个 Ticket 严格串行，当前同时 implementation writer 固定为 1。
 - config 的 implementation subagent 上限为 3，但本次协作约束和用户未要求派单，因此 Lead 自行实施，不创建 subagent。
-- T-01 独占 backend NAMEWTA DDL/DML；T-02 独占 parent release Compose/env/test。两者无 writable 交集。
+- T-01 独占 backend NAMEWTA DDL/DML；T-02 独占 parent release Compose/env/test，并拥有 OpenAPI HandlerMapping 选择及其 assembly 回归测试。两者无 writable 交集。
 - Lead 是 SpecDev 状态、Evidence、direct-parent、E2E 与开发环境接管的唯一 owner。
 
 | Ticket A | Ticket B | Writable 交集 | 真实依赖 | 处理 |
@@ -82,6 +82,7 @@ G0 Spec/authorization/baseline
 | `<Path>ruoyi-vue-plus-namewta/ruoyi-admin/src/test/java/org/dromara/test/openapi/credential/OpenApiCredentialSqlContractTest.java</Path>` | T-01 | 以实施前 backend HEAD 完整 SQL 重建不可变 append-only 前缀门 |
 | `<Path>ruoyi-vue-plus-namewta/ruoyi-admin/src/test/java/org/dromara/test/migration/password/PasswordMigrationUnitTest.java</Path>` | T-01 | 只同步实施前 HEAD 已失真的固定 15,370 字节 DML 前缀哈希，保持长度和算法不变 |
 | `<Path>release-artifacts/docker/docker-compose-backend.yml</Path>`、`<Path>release-artifacts/.env.example</Path>`、`<Path>release-artifacts/tests/release-config.test.mjs</Path>` | T-02 | default-off、双实例同源、无真实 secret |
+| `<Path>ruoyi-vue-plus-namewta/ruoyi-common/ruoyi-common-openapi/src/main/java/org/dromara/common/openapi/config/OpenApiAutoConfiguration.java</Path>`、`<Path>ruoyi-vue-plus-namewta/ruoyi-admin/src/test/java/org/dromara/test/openapi/assembly/OpenApiAssemblyContextTest.java</Path>` | T-02 | 明确选择业务 MVC mapping，并覆盖 Actuator 第二候选回归 |
 
 ## 6. Gate、Wave 与集成点
 

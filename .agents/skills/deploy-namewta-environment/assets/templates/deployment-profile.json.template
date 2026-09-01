@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "deployment": {
     "name": "namewta-dev",
     "mode": "takeover",
@@ -57,5 +57,43 @@
   "ownership": {
     "composeProjects": ["namewta-data", "namewta-backend", "namewta-observability", "namewta-frontend"],
     "protectedExternalProjects": ["cde"]
+  },
+  "release": {
+    "compose": {
+      "identityConfirmed": false,
+      "project": "namewta-backend",
+      "files": [
+        "/data/namewta-data/compose/docker-compose-backend.yml",
+        "/data/namewta-data/compose/overrides/nacos-enabled.yml",
+        "/data/namewta-data/compose/overrides/snail-enabled.yml",
+        "/data/namewta-data/compose/overrides/openapi-runtime.yml"
+      ],
+      "envFile": "/data/namewta-data/namewta-release.env",
+      "backendServices": ["namewta-server1", "namewta-server2"],
+      "frontendServices": ["namewta-nginx-admin-web", "namewta-nginx-lb"]
+    },
+    "images": {
+      "admin": "namewta/namewta-admin:6.0.0"
+    },
+    "frontend": {
+      "buildEnvironment": "prod",
+      "contextPath": "/namewta/",
+      "baseApi": "/namewta/prod-api",
+      "assetPrefix": "/namewta/assets/"
+    },
+    "rollout": {
+      "maxRestartCount": 0,
+      "probeIntervalSeconds": 2,
+      "timeoutSeconds": 120,
+      "requiredConsecutiveSuccesses": 3
+    }
+  },
+  "capabilities": {
+    "openApi": {
+      "enabled": false,
+      "kekVersion": "",
+      "kekPresenceRequired": false,
+      "secretSource": "deployment-secrets"
+    }
   }
 }

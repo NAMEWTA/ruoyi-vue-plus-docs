@@ -14,6 +14,7 @@ const skillDir = path.resolve(scriptDir, '..');
 function validProfile() {
   const profile = JSON.parse(fs.readFileSync(path.join(skillDir, 'assets/templates/deployment-profile.json.template'), 'utf8'));
   profile.deployment.releaseId = '20260901-namewta-001';
+  profile.release.compose.identityConfirmed = true;
   return profile;
 }
 

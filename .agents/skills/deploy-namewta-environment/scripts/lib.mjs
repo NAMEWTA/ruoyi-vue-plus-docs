@@ -59,6 +59,90 @@ export function isPlaceholder(value) {
   return /请替换|请仅在本地替换|replace-|managed-by|由 Fileterm 托管或/u.test(value);
 }
 
+function isPathInside(root, candidate) {
+  if (typeof root !== 'string' || typeof candidate !== 'string' || !path.posix.isAbsolute(candidate)) return false;
+  const relative = path.posix.relative(root, candidate);
+  return relative !== '' && relative !== '..' && !relative.startsWith('../') && !path.posix.isAbsolute(relative);
+}
+
+function validateUniqueStringList(value, key, errors, { minimum = 1 } = {}) {
+  if (!Array.isArray(value) || value.length < minimum || value.some((item) => typeof item !== 'string' || !item)) {
+    errors.push(`${key} 必须包含至少 ${minimum} 个非空字符串`);
+    return [];
+  }
+  if (new Set(value).size !== value.length) errors.push(`${key} 不得包含重复值`);
+  return value;
+}
+
+function validateReleaseProfile(profile, errors) {
+  const compose = profile.release?.compose;
+  const frontend = profile.release?.frontend;
+  const rollout = profile.release?.rollout;
+  const openApi = profile.capabilities?.openApi;
+  const root = profile.server?.root;
+
+  if (compose?.identityConfirmed !== true) errors.push('release.compose.identityConfirmed 必须显式为 true');
+  if (!compose?.project) errors.push('缺少字段 release.compose.project');
+  else if (!profile.ownership?.composeProjects?.includes(compose.project)) {
+    errors.push('release.compose.project 必须存在于 ownership.composeProjects');
+  }
+
+  const composeFiles = validateUniqueStringList(compose?.files, 'release.compose.files', errors);
+  for (const file of composeFiles) {
+    if (isPlaceholder(file)) errors.push(`release.compose.files 仍含占位值：${file}`);
+    else if (!isPathInside(root, file)) errors.push(`Compose 文件必须位于授权根目录 ${root}：${file}`);
+  }
+  if (!compose?.envFile) errors.push('缺少字段 release.compose.envFile');
+  else if (isPlaceholder(compose.envFile) || !isPathInside(root, compose.envFile)) {
+    errors.push(`release.compose.envFile 必须位于授权根目录 ${root}`);
+  }
+  validateUniqueStringList(compose?.backendServices, 'release.compose.backendServices', errors, { minimum: 2 });
+  validateUniqueStringList(compose?.frontendServices, 'release.compose.frontendServices', errors);
+
+  const adminImage = profile.release?.images?.admin;
+  if (!adminImage || isPlaceholder(adminImage) || !adminImage.includes(':')) {
+    errors.push('release.images.admin 必须是带不可变标签的非占位镜像');
+  }
+
+  if (!ENVIRONMENTS.has(frontend?.buildEnvironment)) {
+    errors.push('release.frontend.buildEnvironment 必须为 dev 或 prod');
+  }
+  const expectedContext = `/${profile.routes?.adminPrefix}/`;
+  if (frontend?.contextPath !== expectedContext) {
+    errors.push(`release.frontend.contextPath 必须为 ${expectedContext}`);
+  }
+  const expectedBaseApi = `${expectedContext}${frontend?.buildEnvironment}-api`;
+  if (frontend?.baseApi !== expectedBaseApi) {
+    errors.push(`release.frontend.baseApi 必须为 ${expectedBaseApi}`);
+  }
+  const expectedAssetPrefix = `${expectedContext}assets/`;
+  if (frontend?.assetPrefix !== expectedAssetPrefix) {
+    errors.push(`release.frontend.assetPrefix 必须为 ${expectedAssetPrefix}`);
+  }
+
+  if (!Number.isInteger(rollout?.maxRestartCount) || rollout.maxRestartCount < 0) {
+    errors.push('release.rollout.maxRestartCount 必须是非负整数');
+  }
+  for (const key of ['probeIntervalSeconds', 'timeoutSeconds', 'requiredConsecutiveSuccesses']) {
+    if (!Number.isInteger(rollout?.[key]) || rollout[key] < 1) {
+      errors.push(`release.rollout.${key} 必须是正整数`);
+    }
+  }
+  if (Number.isInteger(rollout?.timeoutSeconds) && Number.isInteger(rollout?.probeIntervalSeconds)
+    && Number.isInteger(rollout?.requiredConsecutiveSuccesses)
+    && rollout.timeoutSeconds < rollout.probeIntervalSeconds * rollout.requiredConsecutiveSuccesses) {
+    errors.push('release.rollout.timeoutSeconds 必须覆盖完整连续成功窗口');
+  }
+
+  if (openApi?.kek !== undefined) errors.push('profile 不得包含 OpenAPI KEK 正文');
+  if (typeof openApi?.enabled !== 'boolean') errors.push('capabilities.openApi.enabled 必须是布尔值');
+  if (openApi?.enabled) {
+    if (!openApi.kekVersion || isPlaceholder(openApi.kekVersion)) errors.push('启用 OpenAPI 时 capabilities.openApi.kekVersion 必填');
+    if (openApi.kekPresenceRequired !== true) errors.push('启用 OpenAPI 时 capabilities.openApi.kekPresenceRequired 必须为 true');
+    if (!openApi.secretSource || isPlaceholder(openApi.secretSource)) errors.push('启用 OpenAPI 时 capabilities.openApi.secretSource 必填');
+  }
+}
+
 export function validateProfile(profile) {
   const errors = [];
   const required = [
@@ -73,7 +157,7 @@ export function validateProfile(profile) {
     if (value === undefined || value === null || value === '') errors.push(`缺少字段 ${key}`);
   }
 
-  if (profile.schemaVersion !== 1) errors.push('schemaVersion 必须为 1');
+  if (![1, 2].includes(profile.schemaVersion)) errors.push('schemaVersion 必须为 1 或 2');
   if (!MODES.has(profile.deployment?.mode)) errors.push(`不支持的部署模式：${profile.deployment?.mode}`);
   if (!ENVIRONMENTS.has(profile.deployment?.environment)) errors.push(`不支持的环境：${profile.deployment?.environment}`);
   if (isPlaceholder(profile.deployment?.releaseId)) errors.push('deployment.releaseId 仍是占位值');
@@ -106,6 +190,7 @@ export function validateProfile(profile) {
   if (!/^[A-Za-z0-9][A-Za-z0-9-]*$/u.test(profile.routes?.adminPrefix ?? '')) {
     errors.push('routes.adminPrefix 只能包含字母、数字和连字符，且不含首尾斜杠');
   }
+  if (profile.schemaVersion === 2) validateReleaseProfile(profile, errors);
   return errors;
 }
 

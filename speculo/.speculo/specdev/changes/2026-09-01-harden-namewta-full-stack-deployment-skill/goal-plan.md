@@ -91,7 +91,7 @@ T-01 -> G1 -> T-02 -> G2 -> T-03 -> G3 -> T-04 -> G4
 |---|---|---|---|---|
 | AC-001..002 | T-01 | unit | T-01 | planned |
 | AC-003..007 | T-02 | unit/CLI | T-02 | planned |
-| AC-009 | T-03 | static | T-03 | planned |
+| AC-009 | T-03 | static | T-03 | verified |
 | AC-008, AC-010 | T-04 | integration/regression | T-04 | planned |
 
 ## 4. Execution and Integration Protocol
@@ -159,7 +159,7 @@ Lead 直接实现、独立核对 Git/测试并写 Evidence；不向其他 Agent 
 
 ### Current Status
 
-G2 已关闭：T-02 result `7c032cd`，部署工具 Node `19/19`；当前进入 T-03。外部副作用未授权。
+G3 已关闭：T-03 result `46e0566`，主 Skill 102 行、一级 runbook 与静态安全边界检查通过；当前进入 T-04。外部副作用未授权。
 
 ### Pending Decisions and Blockers
 

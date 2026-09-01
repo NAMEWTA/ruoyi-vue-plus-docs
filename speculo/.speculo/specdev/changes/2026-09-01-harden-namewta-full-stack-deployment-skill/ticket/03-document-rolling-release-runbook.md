@@ -4,7 +4,7 @@ artifact: ticket
 change: 2026-09-01-harden-namewta-full-stack-deployment-skill
 id: T-03
 title: 固化全栈滚动发布运行手册
-status: ready
+status: done
 planning_depth: standard
 planning_depth_reason: 文档改变高风险部署顺序与停止规则，必须与新工具和实际 Evidence 一致
 ready: true
@@ -108,6 +108,6 @@ Agent 选择 takeover/upgrade/release 后，必须按 runbook 从身份冻结推
 
 ## 10. 验收标准
 
-- [ ] AC-009 通过。
-- [ ] 主 Skill 小于 500 行并直接路由一级 references。
-- [ ] 路径和 direct-parent 合同满足。
+- [x] AC-009 通过。
+- [x] 主 Skill 小于 500 行并直接路由一级 references。
+- [x] 路径和 direct-parent 合同满足。

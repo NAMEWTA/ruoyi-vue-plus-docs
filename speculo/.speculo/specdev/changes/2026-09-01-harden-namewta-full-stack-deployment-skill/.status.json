@@ -33,7 +33,7 @@
     "history": []
   },
   "created_at": "2026-09-01T18:06:51+08:00",
-  "updated_at": "2026-09-01T18:23:41+08:00",
+  "updated_at": "2026-09-01T18:34:55+08:00",
   "completed_at": null,
   "archived": false,
   "archive_path": null,
@@ -125,6 +125,49 @@
       },
       "status": "integrated",
       "updated_at": "2026-09-01T18:23:41+08:00"
+    },
+    {
+      "ticket_id": "T-03",
+      "owner": "codex:/root",
+      "implementation_owner": "codex:/root",
+      "integration_owner": "codex:/root",
+      "provider": "git",
+      "base_sha": "3448c336a18e61535cc01230fbb5e61a0d2e5a75",
+      "parent_branch": "main",
+      "branch": "main",
+      "workspace_ref": "current",
+      "source_checkpoint": "46e0566d97bce964dd31ec474f0eee1fa80d5258",
+      "integration": {
+        "status": "passed",
+        "parent_ref": "main",
+        "parent_before_sha": "3448c336a18e61535cc01230fbb5e61a0d2e5a75",
+        "source_sha": "46e0566d97bce964dd31ec474f0eee1fa80d5258",
+        "candidate_sha": null,
+        "candidate_tree_sha": null,
+        "candidate_branch": null,
+        "candidate_workspace_ref": null,
+        "result_sha": "46e0566d97bce964dd31ec474f0eee1fa80d5258",
+        "method": "direct-parent",
+        "conflict_paths": [],
+        "verification": "passed",
+        "full_suite": {
+          "required": true,
+          "status": "passed",
+          "reason": "Skill routing, runbook safety boundaries, deployment Node regression and diff checks passed",
+          "evidence": "<Path>{roots.state}/specdev/changes/2026-09-01-harden-namewta-full-stack-deployment-skill/evidence/T-03.md</Path>"
+        },
+        "e2e": {
+          "required": false,
+          "status": "not-required",
+          "reason": "Documentation-only operating contract; external deployment is out of scope",
+          "evidence": "<Path>{roots.state}/specdev/changes/2026-09-01-harden-namewta-full-stack-deployment-skill/evidence/T-03.md</Path>"
+        },
+        "evidence": "<Path>{roots.state}/specdev/changes/2026-09-01-harden-namewta-full-stack-deployment-skill/evidence/T-03.md</Path>",
+        "attempts": 1,
+        "promotion_status": "applied"
+      },
+      "status": "integrated",
+      "updated_at": "2026-09-01T18:34:55+08:00"
     }
   ]
 }

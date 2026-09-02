@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "templates": [
     { "source": "java/bo.java.ftl", "target": "main/java/${packagePath}/domain/bo/${ClassName}Bo.java", "categories": ["crud", "tree"] },
     { "source": "java/controller.java.ftl", "target": "main/java/${packagePath}/controller/${ClassName}Controller.java", "categories": ["crud", "tree"] },
@@ -9,10 +9,7 @@
     { "source": "java/serviceImpl.java.ftl", "target": "main/java/${packagePath}/service/impl/${ClassName}ServiceImpl.java", "categories": ["crud", "tree"] },
     { "source": "java/vo.java.ftl", "target": "main/java/${packagePath}/domain/vo/${ClassName}Vo.java", "categories": ["crud", "tree"] },
     { "source": "xml/mapper.xml.ftl", "target": "main/resources/mapper/${moduleName}/${ClassName}Mapper.xml", "categories": ["crud", "tree"] },
-    { "source": "sql/mysql.sql.ftl", "target": "${businessName}Menu.mysql.sql", "categories": ["crud", "tree"] },
-    { "source": "sql/oracle.sql.ftl", "target": "${businessName}Menu.oracle.sql", "categories": ["crud", "tree"] },
-    { "source": "sql/postgres.sql.ftl", "target": "${businessName}Menu.postgres.sql", "categories": ["crud", "tree"] },
-    { "source": "sql/sqlserver.sql.ftl", "target": "${businessName}Menu.sqlserver.sql", "categories": ["crud", "tree"] },
+    { "source": "sql/mysql.sql.ftl", "target": "release-artifacts/docker/infrastructure/mysql/init/60-namewta-dml.sql", "writeMode": "merge", "categories": ["crud", "tree"] },
     { "source": "react/api.ts.ftl", "target": "react/api/${moduleName}/${businessName}/index.ts", "categories": ["crud", "tree"] },
     { "source": "react/types.ts.ftl", "target": "react/api/${moduleName}/${businessName}/types.ts", "categories": ["crud", "tree"] },
     { "source": "react/index.tsx.ftl", "target": "react/pages/${moduleName}/${businessName}/index.tsx", "categories": ["crud"] },

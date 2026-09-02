@@ -25,7 +25,7 @@ export function create${BusinessName}WebRegistration(
     id: '${moduleName}-${businessName}',
     componentKey: '${moduleName}/${businessName}/index',
     componentName: '${BusinessName}',
-    load: async () => {
+    load: async (): Promise<Component> => {
       const page = (await import('./${BusinessName}Page.vue')).default;
       return defineComponent({ name: '${BusinessName}', setup: () => () => h(page, { runtime }) });
     }

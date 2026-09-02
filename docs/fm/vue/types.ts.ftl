@@ -1,34 +1,4 @@
-export type Identifier = string | number;
-export type IdentifierList = Identifier | readonly Identifier[];
-
-export interface ApiResponse<T = unknown> {
-  code?: number;
-  data?: T;
-  msg?: string;
-}
-
-export interface PageResult<T> {
-  rows: T[];
-  total: number;
-}
-
-export interface BaseEntity {
-  createBy?: string | number;
-  createDept?: string | number;
-  createTime?: string;
-  params?: Record<string, unknown>;
-  remark?: string;
-  updateBy?: string | number;
-  updateTime?: string;
-}
-
-export interface PageQuery {
-  pageNum?: number;
-  pageSize?: number;
-  orderByColumn?: string;
-  isAsc?: string;
-  params?: Record<string, unknown>;
-}
+import type { BaseEntity<#if !table.tree>, PageQuery</#if> } from '../types';
 
 export interface ${BusinessName}VO {
 <#list columns as column>
@@ -49,7 +19,7 @@ export interface ${BusinessName}VO {
   /**
    * 子对象
    */
-  children: ${BusinessName}VO[];
+  children: readonly ${BusinessName}VO[];
 </#if>
 }
 
@@ -76,5 +46,5 @@ export interface ${BusinessName}Query<#if !table.tree> extends PageQuery</#if> {
   /**
    * 日期范围参数
    */
-  params?: Record<string, unknown>;
+  params?: Readonly<Record<string, unknown>>;
 }

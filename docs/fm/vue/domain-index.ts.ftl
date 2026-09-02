@@ -1,10 +1,12 @@
 export { create${BusinessName}Service, type ${BusinessName}Service } from './service';
-export type { ${BusinessName}Transport } from './transport';
+export {
+<#if table.tree>
+  build${BusinessName}Tree,
+</#if>
+  project${BusinessName}Transport,
+  type ${BusinessName}Transport
+} from './transport';
 export type {
-  ApiResponse,
-  Identifier,
-  IdentifierList,
-  PageResult,
   ${BusinessName}Form,
   ${BusinessName}Query,
   ${BusinessName}VO

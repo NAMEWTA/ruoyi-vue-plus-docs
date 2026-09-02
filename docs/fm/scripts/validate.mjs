@@ -19,8 +19,44 @@ const templates = files(root)
 const catalog = JSON.parse(readFileSync(join(root, 'catalog.json'), 'utf8'));
 const catalogTemplates = catalog.templates.map(item => item.source).sort();
 
+if (catalog.schemaVersion !== 2) {
+  failures.push(`catalog.json schemaVersion 必须为 2，当前为 ${catalog.schemaVersion}`);
+}
+
 if (JSON.stringify(templates) !== JSON.stringify(catalogTemplates)) {
   failures.push('catalog.json 与实际 .ftl 文件清单不一致');
+}
+
+if (new Set(catalogTemplates).size !== catalogTemplates.length) {
+  failures.push('catalog.json 中存在重复的 source');
+}
+
+for (const item of catalog.templates) {
+  if (!item.target || !Array.isArray(item.categories) || item.categories.length === 0) {
+    failures.push(`模板 ${item.source} 必须声明 target 和至少一个 category`);
+  }
+}
+
+const sqlTemplates = catalog.templates.filter(item => item.source.startsWith('sql/'));
+if (sqlTemplates.length !== 1 || sqlTemplates[0]?.source !== 'sql/mysql.sql.ftl') {
+  failures.push('SQL 模板只允许 sql/mysql.sql.ftl');
+} else {
+  const expectedTarget = 'release-artifacts/docker/infrastructure/mysql/init/60-namewta-dml.sql';
+  if (sqlTemplates[0].target !== expectedTarget || sqlTemplates[0].writeMode !== 'merge') {
+    failures.push(`sql/mysql.sql.ftl 必须以 merge 方式合并到 ${expectedTarget}`);
+  }
+}
+
+const unsupportedDialect = /(^|\/)(oracle|postgres|postgresql|sqlserver)(\.|\/)/i;
+if (templates.some(source => unsupportedDialect.test(source))) {
+  failures.push('当前项目不支持 Oracle、PostgreSQL 或 SQL Server 模板');
+}
+
+const mysqlSource = readFileSync(join(root, 'sql/mysql.sql.ftl'), 'utf8');
+for (const token of ['client_id', '${clientPk}', 'query_param', 'active_menu', 'ext', '60-namewta-dml.sql']) {
+  if (!mysqlSource.includes(token)) {
+    failures.push(`sql/mysql.sql.ftl 缺少当前 sys_menu 契约字段或合并说明: ${token}`);
+  }
 }
 
 const vueSource = templates
@@ -56,6 +92,40 @@ if (!vueTypes.includes('<#if column.insert || column.edit || column.pk>')) {
 const composables = readFileSync(join(root, 'vue/composables.ts.ftl'), 'utf8');
 if (/`(?:begin|end)\$\{propName\}`/.test(composables)) {
   failures.push('vue/composables.ts.ftl 包含未转义的 TypeScript 模板插值');
+}
+
+for (const token of ['pendingCount', 'useLatestRequest', 'onScopeDispose']) {
+  if (!composables.includes(token)) {
+    failures.push(`vue/composables.ts.ftl 缺少并发或生命周期合同: ${token}`);
+  }
+}
+if (composables.includes('export function buildTree')) {
+  failures.push('vue/composables.ts.ftl 不得在 web-domain 重复实现领域构树');
+}
+
+const vueTransport = readFileSync(join(root, 'vue/transport.ts.ftl'), 'utf8');
+for (const token of ['expected an object', 'build${BusinessName}Tree', 'duplicate id', 'orphan id', 'cycle at']) {
+  if (!vueTransport.includes(token)) {
+    failures.push(`vue/transport.ts.ftl 缺少 transport/tree 失败关闭合同: ${token}`);
+  }
+}
+
+const vueRuntime = readFileSync(join(root, 'vue/runtime.ts.ftl'), 'utf8');
+for (const token of ['require${BusinessName}WebRuntime', "typeof runtime.service?.list !== 'function'", "typeof runtime.error !== 'function'"]) {
+  if (!vueRuntime.includes(token)) {
+    failures.push(`vue/runtime.ts.ftl 缺少 runtime 失败关闭合同: ${token}`);
+  }
+}
+
+for (const page of ['vue/index.vue.ftl', 'vue/index-tree.vue.ftl']) {
+  const source = readFileSync(join(root, page), 'utf8');
+  for (const token of ['useLatestRequest', 'buttonLoading.value) return', 'aria-label=']) {
+    if (!source.includes(token)) failures.push(`${page} 缺少异步、重复提交或可访问性合同: ${token}`);
+  }
+}
+
+if (vueTypes.includes('export type Identifier') || vueTypes.includes('export interface ApiResponse')) {
+  failures.push('vue/types.ts.ftl 不得在每个资源复制包级共享合同');
 }
 
 if (failures.length) {

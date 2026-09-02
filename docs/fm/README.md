@@ -30,11 +30,30 @@ packages/web-domains/<module>/src/<resource>/
 
 domain 保持无界面并通过 `HttpClient` 端口访问 HTTP；web-domain 通过类型化 runtime 获得 service、确认、反馈、字典、下载以及可选宿主组件。资源 registration 仍需由所属 web-domain manifest 汇总，并由目标 App 显式选择。
 
+具体的薄入口、共享类型、树语义、异步生命周期、package exports 与 App 人工接入清单见 [vue/README.md](./vue/README.md)。
+
 ## HTTP 合同
 
 - 列表、详情、树和选项等只读操作使用 GET。
 - 新增、修改、删除、状态和排序等业务变更使用 POST。
 - Java POST 业务接口生成准确的 `@Log`；修改与删除使用 `/edit`、`/remove/{ids}` 避免与新增和详情路径冲突。
+
+## 后端模板映射
+
+标准 CRUD 必须按职责使用对应模板，不能把多层职责压进自定义文件：
+
+| 目标职责 | 模板 |
+|---|---|
+| Entity | `java/domain.java.ftl` |
+| BO | `java/bo.java.ftl` |
+| VO | `java/vo.java.ftl` |
+| Mapper | `java/mapper.java.ftl` |
+| Service 接口 | `java/service.java.ftl` |
+| Service 实现 | `java/serviceImpl.java.ftl` |
+| Controller | `java/controller.java.ftl` |
+| 自定义 Mapper XML | `xml/mapper.xml.ftl` |
+
+`sql/mysql.sql.ftl` 只提供菜单 DML 片段。NAMEWTA 不生成 Oracle、PostgreSQL 或 SQL Server 脚本，也不生成模块私有 SQL 文件：表结构变更合并到 `release-artifacts/docker/infrastructure/mysql/init/50-namewta-ddl.sql`，初始化数据、菜单和回填合并到 `release-artifacts/docker/infrastructure/mysql/init/60-namewta-dml.sql`。
 
 ## 校验
 

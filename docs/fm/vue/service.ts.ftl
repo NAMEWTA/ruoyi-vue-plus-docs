@@ -2,13 +2,22 @@ import type { HttpClient, HttpRequest } from '@namewta/platform-contracts';
 import type {
   ApiResponse,
   Identifier,
-  IdentifierList,
-  PageResult,
+  IdentifierList<#if !table.tree>,
+  PageResult
+</#if>
+} from '../types';
+import type {
   ${BusinessName}Form,
   ${BusinessName}Query,
   ${BusinessName}VO
 } from './types';
-import { project${BusinessName}Transport, type ${BusinessName}Transport } from './transport';
+import {
+<#if table.tree>
+  build${BusinessName}Tree,
+</#if>
+  project${BusinessName}Transport,
+  type ${BusinessName}Transport
+} from './transport';
 
 export interface ${BusinessName}Service {
   list(query?: ${BusinessName}Query): Promise<ApiResponse<<#if table.tree>${BusinessName}VO[]<#else>PageResult<${BusinessName}VO></#if>>>;
@@ -38,7 +47,10 @@ export function create${BusinessName}Service(http: HttpClient): ${BusinessName}S
         params
       });
 <#if table.tree>
-      return { ...response, data: (response.data ?? []).map(project${BusinessName}Transport) };
+      return {
+        ...response,
+        data: build${BusinessName}Tree((response.data ?? []).map(project${BusinessName}Transport))
+      };
 <#else>
       return {
         ...response,
@@ -54,7 +66,7 @@ export function create${BusinessName}Service(http: HttpClient): ${BusinessName}S
         url: '/${moduleName}/${businessName}/' + segment(id),
         method: 'get'
       });
-      return response.data
+      return response.data !== undefined
         ? { ...response, data: project${BusinessName}Transport(response.data) }
         : (response as ApiResponse<${BusinessName}VO>);
     },

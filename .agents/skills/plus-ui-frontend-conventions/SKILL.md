@@ -1,6 +1,6 @@
 ---
 name: plus-ui-frontend-conventions
-description: 为 plus-ui-namewta 多 App monorepo 提供当前架构、实现落位、目录命名、Vue/TypeScript 工具链、App 显式组合、动态菜单路由和权限源码导航。处理 apps、domains、web-domains、platform、adapters、web-kit、OpenAPI、projectServerRoutes、addRoute、v-hasPermi、v-hasRoles 或新增终端时使用。
+description: 为 plus-ui-namewta 多 App monorepo 提供架构边界、领域资源纵切片、Vue/TypeScript 目录命名、App 显式组合、动态菜单路由和权限源码导航。处理 apps、domains、web-domains、platform、adapters、web-kit、OpenAPI、CRUD 页面、package exports、projectServerRoutes、addRoute、v-hasPermi、v-hasRoles 或新增终端时使用。
 ---
 
 # plus-ui-namewta 前端开发导航
@@ -9,18 +9,20 @@ description: 为 plus-ui-namewta 多 App monorepo 提供当前架构、实现落
 
 ## 使用流程
 
-1. 确认变更归属 `plus-ui-namewta/`，读取受影响包 README，并用源码确认真实入口。
+1. 确认变更归属 `plus-ui-namewta/`，先按父级 `engineering-standards` 读取适用规范，再读取受影响包 README、`package.json#exports`、相邻测试和 App 消费入口。
 2. 按主题加载引用：
    - 架构边界、依赖方向和当前 App 组合：[architecture.md](references/architecture.md)
    - 目录与命名：[naming-and-layout.md](references/naming-and-layout.md)
    - 新增领域能力或终端：[implementation.md](references/implementation.md)
+   - 新增、迁移或审查 CRUD/Controller 资源：[crud-resource-slices.md](references/crud-resource-slices.md)
    - 工具链与编码：[coding-style.md](references/coding-style.md)
    - 注释：[comments.md](references/comments.md)
    - 动态路由与权限：[permission-routing.md](references/permission-routing.md)
-3. 先由后端 Maven 模块确定一级 domain，再由 Controller base path 确定 `src` 下的 kebab-case 资源目录。
-4. 只从包 `exports` 公开入口导入；禁止深层导入、跨工作区相对导入和 App 互相导入。
-5. App 在编译期显式选择 domain/web-domain；未选择、重复注册、未知组件或缺失依赖必须失败关闭。
-6. 修改后先跑受影响包测试，再按工程规范运行适用的根级架构、lint、typecheck、test、E2E 和 build 门禁。
+3. 涉及前端 CRUD、树表、资源目录或 domain/web-domain 纵切片时，必须读取父仓库 `docs/fm/README.md`、`docs/fm/catalog.json`、`docs/fm/context-contract.md` 和相关 `docs/fm/vue/*.ftl`。模板是当前结构与合同基线，但同 owner、同形态的成熟源码及当前公开合同优先；发现模板滞后时同步修正模板，不能在业务代码中复制偏差。
+4. 先由后端 Maven 模块确定一级 domain，再由实际消费的 Controller base path 确定 `src` 下的 kebab-case 资源目录；回调或没有前端消费者的接口不创建空资源目录。
+5. 只从包 `exports` 公开入口导入；资源目录与 `package.json#exports` 同步，禁止深层导入、跨工作区相对导入和 App 互相导入。
+6. App 在编译期同时显式选择服务、web-domain manifest 和工作区依赖。缺失 runtime/domain、未选择能力、重复 registration 或未知组件键必须失败关闭。
+7. 修改后先跑受影响包测试，再按工程规范运行适用的根级架构、lint、typecheck、test、E2E 和 build 门禁。
 
 ## 硬边界
 
@@ -28,6 +30,7 @@ description: 为 plus-ui-namewta 多 App monorepo 提供当前架构、实现落
 - `packages/domains/*` 不依赖 Vue、DOM、浏览器存储或具体请求实现。
 - `packages/web-domains/*` 不拥有 App 布局、全局路由器、请求单例或后端授权。
 - `platform` 只承载跨领域最小合同和组合运行时；`web-kit` 只承载已被多个真实消费者验证的 Web 机制。
+- `index.ts` 的“薄”按职责判断，不按行数判断：只做显式导出、资源元数据或 module/manifest 组合，不实现 HTTP、模型集合、页面状态或顶层副作用。
 - 后端是最终授权者；前端菜单、路由和按钮权限只负责当前 App 的投影、可见性与失败关闭。
 - `client-web`、`mobile-web`、`miniapp-taro` 和 Taro 适配器在独立规格激活前保持 README-only。
 
@@ -44,7 +47,8 @@ description: 为 plus-ui-namewta 多 App monorepo 提供当前架构、实现落
 | Vue 领域表现 | `packages/web-domains/*/src/**` |
 | 端口与组合运行时 | `packages/platform/*/src/**` |
 | 浏览器适配器 | `packages/adapters/*/src/**` |
-| 架构检查 | `tooling/architecture/src/**`、`tooling/architecture/baseline.json` |
+| 资源目录与 exports 检查 | `tooling/architecture/test/domain-layout.test.mjs` |
+| 其他架构检查 | `tooling/architecture/src/**`、`tooling/architecture/baseline.json` |
 | OpenAPI 合同 | `packages/api-contracts/**`、`tooling/openapi/**` |
 
-当前标准 CRUD 静态模板资产位于父仓库 `docs/fm`，供 AI 与开发者参考实现。后端 `ruoyi-gen` 运行模块和前端 `gen` domain/web-domain 已从基座物理删除，不存在生成器页面、service 或 manifest 注册。
+当前标准 CRUD 静态模板资产位于父仓库 `docs/fm/vue`。它生成资源局部文件，不替代包根 `index.ts`、`package.json#exports`、包级 manifest/runtime 或 App 组合；这些集成点必须按当前源码显式完成。后端 `ruoyi-gen` 运行模块和前端 `gen` domain/web-domain 已从基座物理删除。

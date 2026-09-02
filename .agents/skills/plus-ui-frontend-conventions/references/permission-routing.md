@@ -32,6 +32,7 @@ router guard / restoreProtectedNavigation
 - Web Kit Permission 只注册 `v-hasPermi`、`v-hasRoles` 并调用注入的 evaluator provider，不读取 App Store。
 - Admin 拥有 manifest 选择、navigation Store、Router 注册、诊断呈现和会话 evaluator 装配。
 - web-domain manifest 拥有领域页面 registration；未知或未选择的组件键失败关闭。
+- web-domain registration 创建时必须先校验注入 runtime；不能把缺失 runtime 延迟到页面点击后才暴露，也不能在模块加载时自动注册自身。
 - 后端仍是最终授权者，前端路由和按钮权限只控制可见性与交互。
 
 非空权限/角色数组之外的指令绑定直接报错；权限或角色不匹配时移除元素。evaluator provider 在指令执行时读取当前会话，不缓存权限快照；页面需要命令式判断时也复用同一 evaluator。
@@ -40,6 +41,7 @@ router guard / restoreProtectedNavigation
 
 - `getInfo -> getRouters -> addRoute -> replace` 顺序是否保持，失败时是否停止。
 - 新组件键是否由所属 manifest 公开并由 App 显式选择。
+- 新资源是否先产出局部 registration/permission contribution，再由包级 manifest 显式汇总；组件键是否保持后端菜单合同而非机械跟随文件移动。
 - navigation Store 是否只维护导航投影，不扫描本地页面或复制共享算法。
 - 权限指令和命令式判断是否使用同一实时 evaluator。
 - Platform 是否保持无 Vue/DOM，Web Kit 是否保持无 App Store/Router 单例。

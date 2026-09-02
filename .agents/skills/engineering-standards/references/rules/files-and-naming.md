@@ -20,9 +20,26 @@ Level: MUST
 
 Source: `repository-fact` + `user-decision` (`DEC-003`)
 
-Rule: 前端保持 `apps`、`packages/domains`、`packages/web-domains`、`packages/platform`、`packages/adapters`、`packages/web-kit`、`packages/api-contracts` 与 `tooling` 的所有权主轴，后端保持 Maven 模块和模块内 controller/domain/mapper/service 主轴。只有形成稳定职责、独立生命周期、所有权或依赖方向时新增目录/模块；`index`/barrel 只用于已有公开入口或框架/生成器合同。
+Rule: 前端保持 `apps`、`packages/domains`、`packages/web-domains`、`packages/platform`、`packages/adapters`、`packages/web-kit`、`packages/api-contracts` 与 `tooling` 的所有权主轴。后端标准业务模块保持以下主轴，不能为单个用例任意发明平级 `application/repository/manager/facade` 等目录：
 
-Verification: module map review；检查新增目录的 owner、依赖和导航价值；前端运行 `pnpm lint`、`pnpm typecheck`、`pnpm build:prod`，后端运行适用 Maven 门禁。
+```text
+src/main/java/org/dromara/<module>/<business>/
+  controller/
+    admin/          # 真实管理端受保护接口
+    anonymous/      # 真实 @SaIgnore 匿名接口
+  domain/
+    <Entity>.java
+    bo/
+    vo/
+  mapper/
+  service/
+    impl/
+src/main/resources/mapper/<module>/
+```
+
+只有真实存在并有独立合同的其他客户端才建立 `controller/<actual-client>`；不要预建未来客户端目录。已登录自服务接口若不属于管理端，先在业务规格中裁决访问面。只有形成稳定职责、独立生命周期、所有权或依赖方向时新增目录/模块；`index`/barrel 只用于已有公开入口或框架/生成器合同。
+
+Verification: module map review；检查新增目录的 owner、依赖和导航价值；扫描 controller 路径与 `@SaIgnore` 是否一致；前端运行 `pnpm lint`、`pnpm typecheck`、`pnpm build:prod`，后端运行适用 Maven 门禁。
 
 ### FILES-003 保留生成器、框架与大小写合同
 

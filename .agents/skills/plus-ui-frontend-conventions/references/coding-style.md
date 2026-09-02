@@ -18,8 +18,12 @@
 ## 编码原则
 
 - TypeScript 边界优先显式类型，生成 transport 进入 domain 时必须映射为 domain-owned model。
+- 公共资源按 `package.json#exports` 暴露；资源 `index.ts` 和包根 `index.ts` 只做显式导出、元数据或组合，不放 HTTP 实现、完整类型集合和页面状态。
+- 网络 mapper 对 `unknown` 或生成 transport 执行明确投影、拒绝或默认策略；类型断言不能替代异常/null 边界处理。
 - Vue 页面通过 web-domain runtime 取得反馈、字典、下载、导航等宿主能力，不创建全局请求/Router/Store 单例。
+- Promise 必须 await、return 或由明确 owner 监督；快速查询和组件卸载必须防止旧响应覆盖，重叠请求不能只靠单个布尔 `loading` 表达所有权。
 - domain/platform 不引用 Vue、DOM、浏览器存储或具体请求库。
+- 资源状态先留在本资源；同包至少两个真实资源共用后再提升到包级 runtime/composable，跨包多个稳定消费者存在后才考虑 `web-kit`/`platform`。
 - 保持当前文件的引号、导入排序和 SFC 风格；不要顺手格式化无关包。
 
 ## 根级命令

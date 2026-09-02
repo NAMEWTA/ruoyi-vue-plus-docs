@@ -3,13 +3,16 @@
 ## 新增或迁移领域能力
 
 1. 确认唯一后端 Maven 模块、Controller 类和 `@RequestMapping` base path。
-2. 如需生成传输类型，更新 `packages/api-contracts` 与 `tooling/openapi` 的来源、快照和生成结果；生成 transport 进入 domain 时映射为 domain-owned model。
-3. 在 `packages/domains/<module>/src/<resource>` 放置领域模型、映射器、服务和注入端口；`module` 去掉 `ruoyi-` 前缀，`resource` 由稳定 base path 转为 kebab-case。
-4. Web 能力放入 `packages/web-domains/<module>/src/<resource>`，通过类型化 runtime 端口获取字典、反馈、弹窗、下载和导航等宿主能力。
-5. 从包根或明确资源子路径导出必要合同；禁止 catch-all exports、深层导入和跨工作区相对导入。
-6. 更新包 README 中的职责、后端模块、Controller 映射和验证命令。
-7. 在目标 App 的组合入口显式选择，禁止通过副作用自动注册。
-8. 验证未选择的能力不可见，重复键、缺失 domain 和未知 manifest registration 均失败关闭。
+2. CRUD、树表或资源纵切片必须先读取 `docs/fm/README.md`、`catalog.json`、`context-contract.md` 与相关 `docs/fm/vue/*.ftl`，再对照同 owner 成熟实现。模板不足或落后于当前架构时同步更新模板，不在新资源中继续复制旧结构。
+3. 如需生成传输类型，更新 `packages/api-contracts` 与 `tooling/openapi` 的来源、快照和生成结果；生成 transport 进入 domain 时映射为 domain-owned model。
+4. 在 `packages/domains/<module>/src/<resource>` 放置领域类型、transport mapper、service/factory 和资源元数据；只创建实际需要的文件。
+5. Web 能力放入 `packages/web-domains/<module>/src/<resource>`，通过类型化 runtime 端口获取字典、反馈、弹窗、下载和导航等宿主能力。tree 构造、循环/孤儿裁决和领域排序归 domain，页面只管理展开、选择和交互状态。
+6. 在两个包的 `package.json#exports` 公开资源子路径；包根只保留显式 domain/manifest 组合及确有调用方的兼容 facade，禁止 catch-all exports、深层导入和跨工作区相对导入。
+7. 更新包 README 中的职责、后端模块、Controller 映射、公开入口和验证命令，并扩展 `tooling/architecture/test/domain-layout.test.mjs` 的资源清单。
+8. 在目标 App 同步完成三点选择：依赖声明、service 创建、domain/web-domain manifest 与 runtime 组合。禁止通过顶层副作用自动注册。
+9. 测试 domain transport/规则、web-domain registration/页面状态和 App 组合；验证未选择的能力不可见，重复键、缺失 runtime/domain 和未知 registration 均失败关闭。
+
+完整文件职责、模板落位和迁移清单见 [crud-resource-slices.md](crud-resource-slices.md)。
 
 ## 新增 App
 

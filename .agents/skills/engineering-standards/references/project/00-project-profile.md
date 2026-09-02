@@ -16,8 +16,8 @@
 - `plus-ui-namewta/packages/{domains,web-domains,platform,adapters,web-kit}/**`：headless domain、Vue Web 表现、平台端口、运行时适配器与共享 Web 机制的依赖方向。
 - `plus-ui-namewta/packages/api-contracts/**`、`tooling/openapi/**`：生成 transport、不可变快照、来源与漂移检查；domain model 由各领域独立拥有。
 - `plus-ui-namewta/tooling/architecture/**`：使用 AST/SFC/YAML 结构化检查工作区、公开入口、依赖方向、终端纯度、占位目录和基线漂移。
-- `docs/fm/**`：与已删除的运行时代码生成器解耦的静态 CRUD 模板资产，是 AI 与开发者实现 Java、Vue、React、XML、SQL、树结构、状态/排序和前后端合同时的当前参考基线。
-- `ruoyi-vue-plus-namewta/pom.xml`、`mvnw`、各模块 `pom.xml`：Java 21、Spring Boot 4.1.0、Maven Wrapper、41 个 POM 描述符；根 reactor 构建 41 projects，`bundle-full/core` 控制最终 admin fat jar 的业务模块集合。
+- `docs/fm/**`：与已删除的运行时代码生成器解耦的静态 CRUD 模板资产，是 AI 与开发者实现 Java、Vue、React、MyBatis XML、MySQL 菜单片段、树结构、状态/排序和前后端合同时的当前参考基线；SQL 模板只支持 MySQL。
+- `ruoyi-vue-plus-namewta/pom.xml`、`mvnw`、各模块 `pom.xml`：Java 21、Spring Boot 4.1.0、Maven Wrapper、46 个 POM 描述符；根 reactor 构建 46 projects，`bundle-full/core` 控制最终 admin fat jar 的业务模块集合。
 - `ruoyi-vue-plus-namewta/ruoyi-admin/src/main/java/org/dromara/DromaraApplication.java`、`ruoyi-modules/ruoyi-demo/**` 及 `ruoyi-modules/ruoyi-system/**`：Spring MVC、BO/VO/entity、service、mapper、Bean Validation、数据权限、事务和 Sa-Token 主导实践。
 - `ruoyi-vue-plus-namewta/pom.xml`、`ruoyi-common/ruoyi-common-mybatis/**`：dynamic-datasource 4.5.0、`@DSTransactional`、`BaseEntity` 自动填充字段、VO mapper 与链式查询的公共基础设施合同。
 - `release-artifacts/docker/infrastructure/mysql/init/10-ruoyi-base.sql` 的 `test_demo`、`ruoyi-modules/ruoyi-demo/**/TestDemo*`：新建项目自有业务表的乐观锁、审计字段、逻辑删除及 entity 映射基线。
@@ -53,6 +53,7 @@
 - 上游冻结分支：后端 `6.X`、前端 `6.X-Vue` 只允许 fast-forward，不承载业务提交；产品变更进入各自 `main`。
 - 上游基线标签 `namewta-base-upstream-6x`、`namewta-base-upstream-6x-vue` 不移动。
 - `release-artifacts/docker/infrastructure/mysql/init/` 是六份 MySQL 8.4 完整初始化基座的唯一事实源；后端仓库不保存 `script/`、SQL 副本或其他数据库方言。
+- NAMEWTA 自有表结构只合并到 `50-namewta-ddl.sql`；初始化数据、菜单和回填只合并到 `60-namewta-dml.sql`。两者是完整可重建基座，不是按时间无限追加的迁移日志。
 - SnailJob、WarmFlow、AI 等上游或第三方拥有的 schema 不是 NAMEWTA 表结构整治目标；只在项目明确接管其 schema 时应用项目自有建表规则。
 
 ## 未知与冲突

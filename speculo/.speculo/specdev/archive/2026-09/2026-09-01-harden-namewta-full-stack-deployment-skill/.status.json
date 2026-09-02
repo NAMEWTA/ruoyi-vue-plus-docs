@@ -2,9 +2,9 @@
   "schema_version": 6,
   "artifact": "change-status",
   "change": "2026-09-01-harden-namewta-full-stack-deployment-skill",
-  "change_status": "completed",
+  "change_status": "archived",
   "current_work": null,
-  "works_run": ["specdev/triage", "specdev/spec", "specdev/tickets", "specdev/goal-plan", "specdev/implement"],
+  "works_run": ["specdev/triage", "specdev/spec", "specdev/tickets", "specdev/goal-plan", "specdev/implement", "specdev/archive-and-consolidate"],
   "claimed_investigations": [],
   "execution_authorization": {
     "implementation_commit": {
@@ -33,10 +33,10 @@
     "history": []
   },
   "created_at": "2026-09-01T18:06:51+08:00",
-  "updated_at": "2026-09-01T18:45:33+08:00",
+  "updated_at": "2026-09-02T12:05:34+08:00",
   "completed_at": "2026-09-01T18:45:33+08:00",
-  "archived": false,
-  "archive_path": null,
+  "archived": true,
+  "archive_path": "<Path>{roots.state}/specdev/archive/2026-09/2026-09-01-harden-namewta-full-stack-deployment-skill</Path>",
   "blockers": [],
   "deviations": [],
   "worktrees": [

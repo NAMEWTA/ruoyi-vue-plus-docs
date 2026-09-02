@@ -6,7 +6,7 @@
 |---|---|---|---|---|---|---|---|
 | `workspace-parent` | `.` | Markdown、Git/Submodule 治理 | Git, GitHub Actions | `docs/**`, `scripts/ci/**` | `README.md` | submodule snapshot + frontend/backend/external-services jobs | `README.md`, `.gitmodules`, `.github/workflows/quality-gates.yml`; high |
 | `plus-ui` | `plus-ui-namewta` | TypeScript、Vue 3、Pinia、Browser，可扩展多 App monorepo | pnpm workspace、Vite、Oxlint、Vitest、Playwright | `apps/admin-web/src`、`packages/**/src`、`tooling/**/src`、相邻 `*.test.ts`、`e2e/**` | `apps/admin-web/src/main.ts` | architecture check/test、lint、typecheck、workspace test、双模式 build、按风险 E2E | `package.json`、`pnpm-workspace.yaml`、`tooling/architecture/**`、`playwright.config.ts`; high |
-| `backend-root` | `ruoyi-vue-plus-namewta` | Java 21, Spring Boot 4, JVM | Maven Wrapper | Maven modules below; 73 test source files | `ruoyi-admin` and three extension applications | default test; bundle-full + bundle-core package | root `pom.xml`, `ruoyi-admin/pom.xml`; high |
+| `backend-root` | `ruoyi-vue-plus-namewta` | Java 21, Spring Boot 4, JVM | Maven Wrapper | 46 Maven projects below; 176 tracked Java test source files | `ruoyi-admin` and three extension applications | default test; bundle-full + bundle-core package | root `pom.xml`, `ruoyi-admin/pom.xml`; high |
 
 ## 后端 Maven 模块
 
@@ -33,6 +33,7 @@
 | `ruoyi-common/ruoyi-common-mcp` | MCP 集成 | package surface | none |
 | `ruoyi-common/ruoyi-common-mqtt` | Spring MQTT 集成 | package surface | none |
 | `ruoyi-common/ruoyi-common-mybatis` | Spring/MyBatis 数据访问基础 | package surface | none |
+| `ruoyi-common/ruoyi-common-nacos` | Nacos 配置解密与启动集成 | package surface | none |
 | `ruoyi-common/ruoyi-common-openapi` | 默认关闭的机器调用协议、注册表、网关与 Sa-Token Session 桥 | `@OpenApi`, OpenAPI SPI, auto-configuration | `src/test/java`; protocol/registry/gateway/assembly tests |
 | `ruoyi-common/ruoyi-common-oss` | 对象存储适配 | package surface | none |
 | `ruoyi-common/ruoyi-common-push` | Spring 推送/WebSocket/SSE 基础 | package surface | none |
@@ -52,6 +53,10 @@
 | `ruoyi-modules/ruoyi-ai` | AI 业务能力 | package surface | none |
 | `ruoyi-modules/ruoyi-demo` | 示例/集成演示能力 | package surface | none |
 | `ruoyi-modules/ruoyi-job` | 业务任务执行器 | package surface | none |
+| `ruoyi-modules/ruoyi-profile` | 账号资料业务聚合 POM | none | no source root |
+| `ruoyi-modules/ruoyi-profile/ruoyi-profile-bom` | profile 子模块版本/BOM 合同 | none | no source root |
+| `ruoyi-modules/ruoyi-profile/ruoyi-profile-person` | 个人资料与认证能力 | controller/service/mapper contracts | `src/test/java` |
+| `ruoyi-modules/ruoyi-profile/ruoyi-profile-enterprise` | 企业资料与认证能力 | controller/service/mapper contracts | `src/test/java` |
 | `ruoyi-modules/ruoyi-system` | 用户、Client、角色、菜单、权限等核心系统能力 | controller/service/mapper contracts | none |
 | `ruoyi-modules/ruoyi-workflow` | WarmFlow 工作流能力 | controller/service contracts | none |
 
@@ -62,7 +67,7 @@
 - 前端方向为 App -> web-domain -> domain -> platform，以及 App -> adapter/web-kit；App 显式组合所需能力，App 之间不得互相依赖，禁止包深层导入和跨工作区相对导入。
 - 后端 Maven 方向为：聚合/可部署应用 -> `ruoyi-modules`/`ruoyi-api`/`ruoyi-common-*`；业务模块可依赖 `ruoyi-api` 和所需 common 能力，common 不反向依赖业务模块。
 - `ruoyi-api` 是跨业务模块合同面；`ruoyi-common-*` 只承载可复用基础能力，禁止成为绕过业务边界的容器。
-- `ruoyi-admin` 负责组装，不承载可复用领域实现；默认 `bundle-full` 接入 job/ai/demo/workflow，显式 `bundle-core` 只保留平台基础依赖。运行时代码生成器不在 Maven 模块图或任一 bundle 中。
+- `ruoyi-admin` 负责组装，不承载可复用领域实现；默认 `bundle-full` 接入 job/ai/demo/workflow/profile，显式 `bundle-core` 保留平台基础依赖及 profile person/enterprise，排除 job/ai/demo/workflow。运行时代码生成器不在 Maven 模块图或任一 bundle 中。
 - 认证/权限/菜单跨层契约以 `docs/upstream/customization-map.md` 为额外硬边界。
 
 ## 实现基线与成熟样例

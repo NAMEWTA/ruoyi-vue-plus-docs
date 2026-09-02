@@ -8,9 +8,9 @@ Scope: `path:ruoyi-vue-plus-namewta/ruoyi-modules/**`
 
 Level: MUST
 
-Source: `repository-fact` (`docs/fm/java/**`, `ruoyi-demo/**/TestDemo*`)
+Source: `repository-fact` (`docs/fm/java/{domain,bo,vo,mapper,service,serviceImpl,controller}.java.ftl`, `docs/fm/xml/mapper.xml.ftl`, `ruoyi-system/**`, `ruoyi-demo/**/TestDemo*`)
 
-Rule: 标准业务 CRUD 保持 entity、BO、VO、mapper、service/interface、service/impl、controller 的职责分离。生成器只建立骨架；修改 system/workflow 等成熟模块时，保留同模块已有的关系维护、权限、缓存、事务、导入导出和条件装配，不把复杂用例退化成模板 CRUD。
+Rule: 标准业务 CRUD 保持 entity、BO、VO、mapper、service/interface、service/impl、controller 的职责分离。逐项引用精确模板：Entity 用 `docs/fm/java/domain.java.ftl`，BO 用 `bo.java.ftl`，VO 用 `vo.java.ftl`，Mapper 用 `mapper.java.ftl`，Service 接口用 `service.java.ftl`，实现用 `serviceImpl.java.ftl`，Controller 用 `controller.java.ftl`，自定义 XML 用 `docs/fm/xml/mapper.xml.ftl`。模板只建立骨架；修改 system/workflow 等成熟模块时，保留同模块已有的关系维护、权限、缓存、事务、导入导出和条件装配，不把复杂用例退化成模板 CRUD。已知不规范、处于待重构状态的模块不得作为新代码样例。
 
 Verification: 全链路文件与同模块最近实现对照；controller/service/mapper 职责 review；受影响 Maven reactor build/test。
 
@@ -34,7 +34,7 @@ Level: MUST
 
 Source: `repository-fact` (`BaseMapperPlus`, `TestDemoMapper`, `SysUserMapper`, `SysRoleMapper`)
 
-Rule: 标准 mapper 继承 `BaseMapperPlus<Entity, Vo>` 并优先使用其 VO、batch 和 lambda API。数据权限必须覆盖真实执行查询/更新/删除的方法；`@DataColumn.value` 与 SQL 中实际列或 alias 完全一致，join SQL 使用带 alias 的字段。只有 wrapper/API 不能清晰表达的查询才增加 XML，并保持参数名和 `${ew.customSqlSegment}` 等合同准确。
+Rule: 标准 mapper 继承 `BaseMapperPlus<Entity, Vo>`。查询按 `BaseMapperPlus` 内建能力 -> fresh lambda wrapper/`QueryBuilder` -> MyBatis-Plus-Join 类型化查询 -> Mapper XML 的阶梯选择；只有前一层不能清晰、类型安全、可维护地表达查询时才进入下一层。短小、静态、无需动态拼接的 SQL 注解仅作为经同模块证据确认的窄例外；禁止把长 SQL、动态条件、复杂 join、子查询或大段更新直接堆进 Mapper 注解。XML 位于 `src/main/resources/mapper/<module>/`，namespace、参数名和 `${ew.customSqlSegment}` 等合同必须准确。数据权限覆盖真实执行查询/更新/删除的方法；`@DataColumn.value` 与 SQL 中实际列或 alias 完全一致，join SQL 使用带 alias 的字段。
 
 Verification: mapper 方法到最终 SQL 追踪；不同权限范围负向测试；SQL/alias review；相关集成测试。
 
@@ -70,7 +70,7 @@ Level: MUST
 
 Source: `repository-fact` (`TestDemoController`, Java controller template, system controllers) + `user-decision` (`API-005`)
 
-Rule: controller 继承/复用现有 Web 响应合同，使用 `R`/`PageResult`、Bean Validation groups 和准确的 path/query/body 参数。CRUD 全部遵循 [API-005](../rules/api-errors-resources.md)：list/detail/tree/options 等只读查询使用 `@GetMapping`，不接收 request body；add/edit/remove、批量删除、状态变化和排序更新使用 `@PostMapping`，不得使用 `@PutMapping`、`@PatchMapping`、`@DeleteMapping` 或对应 `RequestMethod`。每个 `@PostMapping` 业务方法必须配置 `@Log(title = "...", businessType = BusinessType.XXX)`，新增使用 `INSERT`，修改/状态/排序使用 `UPDATE`，删除使用 `DELETE`；按请求和响应敏感性设置 `excludeParamNames`、`isSaveRequestData`、`isSaveResponseData`。各操作 URL 必须无映射冲突并与前端一致。写操作同时按风险使用 `@SaCheckPermission`、`@RepeatSubmit`，controller 不承载核心事务或多表编排；前端隐藏按钮不能替代这里及数据层的授权。
+Rule: controller 继承/复用现有 Web 响应合同，使用 `R`/`PageResult`、Bean Validation groups 和准确的 path/query/body 参数。受保护管理端放 `controller/admin`，`@SaIgnore` 匿名接口放 `controller/anonymous`；只有真实客户端存在时建立对应目录，已登录自服务接口先由业务规格裁决访问面。`@SaIgnore` 只跳过登录鉴权，不免除签名、时间戳、重放防护、幂等、审计与日志脱敏。CRUD 全部遵循 [API-005](../rules/api-errors-resources.md)：list/detail/tree/options 等只读查询使用 `@GetMapping`，不接收 request body；add/edit/remove、批量删除、状态变化和排序更新使用 `@PostMapping`，不得使用 `@PutMapping`、`@PatchMapping`、`@DeleteMapping` 或对应 `RequestMethod`。每个 `@PostMapping` 业务方法必须配置 `@Log(title = "...", businessType = BusinessType.XXX)`，新增使用 `INSERT`，修改/状态/排序使用 `UPDATE`，删除使用 `DELETE`；按请求和响应敏感性设置 `excludeParamNames`、`isSaveRequestData`、`isSaveResponseData`。各操作 URL 必须无映射冲突并与前端一致。写操作同时按风险使用 `@SaCheckPermission`、`@RepeatSubmit`，controller 不承载核心事务或多表编排；前端隐藏按钮不能替代这里及数据层的授权。
 
 Verification: MockMvc/集成测试 status/body/validation/permission；前端 API 对照；对受影响 controller 搜索 mapping annotation 和 `RequestMethod`，确认查询使用 `@GetMapping`、变更使用 `@PostMapping` 且 CRUD 不含 PUT/PATCH/DELETE；逐个核对 POST 方法的 `@Log`、`BusinessType` 和敏感字段保存配置；annotation 与 permission string review。
 
@@ -130,6 +130,6 @@ Level: SHOULD
 
 Source: `repository-fact` (`docs/fm` Java, Vue, React, XML and SQL templates) + `user-decision` (`API-005`)
 
-Rule: 会重复污染新模块的缺陷在 `docs/fm` 修复，一次性领域行为留在业务模块。模板变化同时检查 Java/Vue/React/API/types/XML/SQL 关联输出，以及 CRUD/tree、unique、status、sort、between、dict、permission 分支；CRUD controller 与前端 service/API 模板必须同步执行 [API-005](../rules/api-errors-resources.md)，查询只生成 GET，变更只生成 POST，且每个 POST controller 方法生成准确、安全的 `@Log`。Vue 模板生成 domain/web-domain 资源切片，不自动覆盖共享 package 入口、manifest 或 App 组合文件。生成结果必须能编译并保持前后端合同一致。
+Rule: 会重复污染新模块的缺陷在 `docs/fm` 修复，一次性领域行为留在业务模块。模板变化同时检查 Java/Vue/React/API/types/XML/SQL 关联输出，以及 CRUD/tree、unique、status、sort、between、dict、permission 分支；CRUD controller 与前端 service/API 模板必须同步执行 [API-005](../rules/api-errors-resources.md)，查询只生成 GET，变更只生成 POST，且每个 POST controller 方法生成准确、安全的 `@Log`。Vue 模板生成 domain/web-domain 资源切片，不自动覆盖共享 package 入口、manifest 或 App 组合文件。SQL 只支持 `docs/fm/sql/mysql.sql.ftl`，该模板是合并到 `release-artifacts/docker/infrastructure/mysql/init/60-namewta-dml.sql` 的菜单 DML 片段，不生成模块私有脚本；NAMEWTA 表结构合并到同目录 `50-namewta-ddl.sql`，初始化数据、菜单和回填合并到 `60-namewta-dml.sql`。两份基座保持完整、可重建，不按时间无限追加迁移文件。生成结果必须能编译并保持前后端合同一致。
 
 Verification: 先运行 `node docs/fm/scripts/validate.mjs`；再用覆盖受影响条件的生成元数据产出样例并 diff；搜索生成的 controller 和 API，确认查询为 `@GetMapping`/`method: 'get'`，变更为 `@PostMapping`/`method: 'post'`，不存在 PUT/PATCH/DELETE，且每个 POST 方法均有准确的 `@Log`；前端 lint/type diagnostic/build；后端 compile/test；检查未选择分支无回归。

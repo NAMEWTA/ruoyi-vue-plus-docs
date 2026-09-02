@@ -1,31 +1,69 @@
 ---
 name: ruoyi-backend-development
-description: 为 NAMEWTA RuoYi-Vue-Plus 后端提供当前 Maven 模块、CRUD/API、数据权限、事务、MySQL 基座、测试与交付导航。处理 ruoyi-admin、ruoyi-api、ruoyi-common、ruoyi-modules、controller、service、mapper、BO/VO/entity、GET/POST、@Log、@DSTransactional 或 release-artifacts MySQL SQL 时使用；具体 system/common/workflow 能力再路由到对应模块 Skill。
+description: 为 NAMEWTA RuoYi-Vue-Plus 后端提供 Maven 子模块、规范目录、Controller 访问面、CRUD/API、Mapper 查询与 XML、数据权限、事务、MySQL 基座、测试和交付导航。处理 ruoyi-admin、ruoyi-api、ruoyi-common、ruoyi-modules、新建或重构后端模块、controller/admin、controller/anonymous、@SaIgnore、service、mapper、注解 SQL、BO/VO/entity、docs/fm 模板、GET/POST、@Log、@DSTransactional 或 release-artifacts MySQL SQL 时使用；具体 system/common/workflow 能力再路由到对应模块 Skill。
 ---
 
 # NAMEWTA 后端开发导航
 
-本 Skill 是 `ruoyi-vue-plus-namewta` 的项目级后端开发入口。强制规范、Ratchet 和质量门禁由 [engineering-standards](../engineering-standards/SKILL.md) 裁决；当前源码、POM、测试和公开合同始终优先于摘要。
+本 Skill 是 `ruoyi-vue-plus-namewta` 的项目级后端开发入口。强制规范、Ratchet 和质量门禁由 [engineering-standards](../engineering-standards/SKILL.md) 裁决；当前源码、POM、测试和公开合同与本 Skill 冲突时，以工作树证据为准并同步修正本 Skill。
 
-## 工作流程
+## 强制工作流
 
-1. 读取工程规范的项目画像、模块地图及本任务命中的 Java/Spring/持久化 reference。
-2. 确定 Maven 模块和业务 owner，按“同模块同形态成熟实现 -> 公开 `ruoyi-api`/common 能力 -> 父仓库 `docs/fm/java` 标准模板 -> 框架通用做法”取样。
-3. 按任务读取引用：
-   - 模块职责与依赖边界：[architecture.md](references/architecture.md)
-   - API、CRUD、事务与 SQL 实现导航：[implementation.md](references/implementation.md)
-   - Maven 验证与交付选择：[verification.md](references/verification.md)
-4. 需要具体能力时加载最小充分的模块 Skill：
-   - `ruoyi-common-*` 选型、工具和 SPI：[ruoyi-common-modules-guide](../ruoyi-common-modules-guide/SKILL.md)
-   - system 对外 API、用户、部门、字典、OSS、消息和权限：[ruoyi-system-module-guide](../ruoyi-system-module-guide/SKILL.md)
-   - Warm-Flow、流程启动/办理、事件和待办：[ruoyi-workflow-module-guide](../ruoyi-workflow-module-guide/SKILL.md)
-5. 先运行受影响模块或测试类，再按风险执行 Maven 根级门禁，并准确记录未运行项。
+1. 先读取工程规范的[项目画像](../engineering-standards/references/project/00-project-profile.md)、[模块地图](../engineering-standards/references/project/01-module-map.md)、[决策与例外](../engineering-standards/references/project/02-decisions-and-exceptions.md)，再加载命中的 Java、Spring、持久化、安全和测试规则。
+2. 确定 Maven 模块、业务 owner、访问面、数据库 owner 和跨模块合同。先判断是标准 CRUD、复杂系统能力、公开 API/common SPI、工作流接入还是 SQL 基座变化。
+3. 按以下证据顺序取样：同 owner 且已确认规范的成熟实现 -> `ruoyi-system` 同类实现 -> 下表职责对应的精确 `docs/fm` 模板 -> `ruoyi-api`/`ruoyi-common` 公开合同 -> 框架通用做法。已知待重构模块不得成为规范样例。
+4. 按任务读取最小充分 reference：
+   - Maven 职责、依赖和组装：[architecture.md](references/architecture.md)
+   - 标准目录、文件职责和 Controller 分区：[module-layout.md](references/module-layout.md)
+   - 模板映射、HTTP、业务层和事务：[implementation.md](references/implementation.md)
+   - Mapper 查询阶梯、XML、数据权限和 SQL 基座：[mapper-and-sql.md](references/mapper-and-sql.md)
+   - Maven、模板、静态合同与交付验证：[verification.md](references/verification.md)
+5. 修改前建立受影响映射：POM、Java、resources、SQL、测试、`ruoyi-api`、admin bundle、前端调用方和部署资产。结构重构先记录旧路径到新路径与行为 owner，不能边移动边猜职责。
+6. 先运行受影响模块或测试类，再按风险执行根级门禁；准确记录通过、失败、跳过和环境限制。
 
-## 硬边界
+## 精确模板索引
 
+标准 CRUD 逐层读取对应模板，禁止只看一个 Controller 或 Service 后自由发挥目录与职责：
+
+| 职责 | 必须读取的模板 |
+|---|---|
+| Entity | [`docs/fm/java/domain.java.ftl`](../../../docs/fm/java/domain.java.ftl) |
+| BO | [`docs/fm/java/bo.java.ftl`](../../../docs/fm/java/bo.java.ftl) |
+| VO | [`docs/fm/java/vo.java.ftl`](../../../docs/fm/java/vo.java.ftl) |
+| Mapper | [`docs/fm/java/mapper.java.ftl`](../../../docs/fm/java/mapper.java.ftl) |
+| Service 接口 | [`docs/fm/java/service.java.ftl`](../../../docs/fm/java/service.java.ftl) |
+| Service 实现 | [`docs/fm/java/serviceImpl.java.ftl`](../../../docs/fm/java/serviceImpl.java.ftl) |
+| Controller | [`docs/fm/java/controller.java.ftl`](../../../docs/fm/java/controller.java.ftl) |
+| 自定义 Mapper XML | [`docs/fm/xml/mapper.xml.ftl`](../../../docs/fm/xml/mapper.xml.ftl) |
+| MySQL 菜单 DML 片段 | [`docs/fm/sql/mysql.sql.ftl`](../../../docs/fm/sql/mysql.sql.ftl) |
+
+模板定义标准骨架，不替代业务规格。`ruoyi-system` 提供关系维护、Client、缓存、数据权限、MPJ/XML、导入导出等复杂实现证据；只复制与当前用例同形态的部分。
+
+## 模块 Skill 路由
+
+- `ruoyi-common-*` 选型、工具和 SPI：读取 [ruoyi-common-modules-guide](../ruoyi-common-modules-guide/SKILL.md)。
+- system 对外 API、用户、部门、字典、OSS、消息和权限：读取 [ruoyi-system-module-guide](../ruoyi-system-module-guide/SKILL.md)。
+- Warm-Flow、流程启动/办理、事件和待办：读取 [ruoyi-workflow-module-guide](../ruoyi-workflow-module-guide/SKILL.md)。
+- 修改 Java 公共 API、共享 DTO 或兼容桥：追加读取 [java-api-compatibility](../java-api-compatibility/SKILL.md)。
+
+## 不可突破的边界
+
+- 标准模块保持 `controller`、`domain/{bo,vo}`、`mapper`、`service/impl` 主轴；Mapper XML 放 `src/main/resources/mapper/<module>/`。不要为单个用例发明平级架构层。
+- `service` 根只放业务接口和真实可替换端口，生产子目录只允许 `impl`；Controller、Listener 及其他业务 Service 依赖 Service 接口，不注入具体 `*ServiceImpl`。ServiceImpl 按 `docs/fm/java/serviceImpl.java.ftl` 直接依赖 Mapper，禁止增加 DAO、`*DataSupport`、同义 Repository/Manager 或 `service/<feature>` 横切目录。
+- 受保护管理端放 `controller/admin`；`@SaIgnore` 匿名接口放 `controller/anonymous`。只为真实存在的客户端建立目录，不预建未来端；已登录自服务接口先由业务规格裁决访问面。
+- `@SaIgnore` 不免除签名、时间戳、重放防护、幂等、审计与日志脱敏。
 - 跨业务模块只使用 `ruoyi-api` 或明确 common SPI，不依赖其他模块的 mapper、entity、domain、VO 或实现类。
-- CRUD 只读查询使用 GET，业务变更使用 POST；每个 POST 业务接口使用准确、安全的 `@Log`。
+- CRUD 查询使用 GET，业务变更使用 POST；每个 POST 业务接口使用准确、安全的 `@Log`。
+- Mapper 遵循 `BaseMapperPlus -> wrapper/QueryBuilder -> MPJ -> XML` 查询阶梯；禁止在 Mapper 注解中堆叠长 SQL、复杂 join、动态条件或子查询。
 - 新建或实质修改的业务事务使用 `@DSTransactional`，事务事件使用匹配的 `@DsTxEventListener`。
-- 保留现有权限、数据范围、Client 隔离、缓存失效、关系维护、删除前校验、导入导出和翻译语义。
-- 数据库只支持 MySQL 8.4；六份完整基座只由父仓库 `release-artifacts/docker/infrastructure/mysql/init/` 拥有并直接修改，后端仓库不得恢复 `script/` 或 SQL 副本。
+- 数据库只支持 MySQL 8.4。NAMEWTA DDL 合并到 `50-namewta-ddl.sql`，初始化数据、菜单和回填合并到 `60-namewta-dml.sql`；后端不得恢复 `script/`、模块私有 SQL 或其他方言。
 - `main` 承载产品；`6.X` 只做上游镜像。前端 API、模型、页面与 App 组合只在 `plus-ui-namewta` 维护。
+
+## Skill 自检
+
+修改本 Skill 或 `docs/fm` 后运行：
+
+```bash
+node .agents/skills/ruoyi-backend-development/scripts/validate-skill.mjs
+node docs/fm/scripts/validate.mjs
+```

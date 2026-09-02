@@ -16,9 +16,9 @@
 
 | 层级 | 当前 owner | 必须保持的不变量 |
 |---|---|---|
-| App | `apps/admin-web`；`apps/{client-web,mobile-web,miniapp-taro}` 为占位 | 激活 App 显式选择领域 manifest 与 Client，拥有布局、品牌、启动和终端组合；占位目录保持 README-only |
-| Domain | `packages/domains/{admin,system,workflow,demo,gen,ai}` | 按后端模块及 Controller 资源组织 `api.ts`、`types.ts`；headless，不依赖 Vue、DOM 或具体 adapter |
-| Web-domain | `packages/web-domains/{admin,system,workflow,demo,gen,ai}` | 拥有领域页面、Web hooks、组件、语言与 manifest；不拥有 App 壳层，不深层导入 domain |
+| App | `apps/admin-web`；`apps/{client-web,mobile-web,miniapp-taro}` 为占位 | 激活 App 在 `package.json`、`application/services.ts` 和 manifest registry 同步选择领域与 Client，拥有布局、品牌、启动和终端组合；占位目录保持 README-only |
+| Domain | `packages/domains/{admin,ai,demo,profile,system,workflow}` | 按后端模块及实际消费的 Controller 资源组织显式 `index.ts`、`types.ts` 和按需 `transport.ts`/`service.ts`；headless，不依赖 Vue、DOM 或具体 adapter；资源子路径由 package exports 公开 |
+| Web-domain | `packages/web-domains/{admin,ai,demo,profile,system,workflow}` | 拥有领域页面、局部 composable、runtime port、registration 与 manifest；不拥有 App 壳层、全局单例或终端选择，只从 domain 公开 exports 导入 |
 | Platform | `packages/platform/{contracts,auth,http,permission,app-runtime}` | 提供跨领域端口和运行时合同；不反向依赖 App/domain，不实现具体浏览器技术 |
 | Adapter | `packages/adapters/{axios-browser,storage-browser,crypto-browser}` | 只实现 platform port，不承载业务规则；Taro adapter 未激活前保持说明占位 |
 | Web kit | `packages/web-kit/*` | 提供跨领域 Web 壳层机制、基础组件和 token，不拥有领域流程或后端 API |
@@ -26,6 +26,8 @@
 | Tooling | `tooling/{architecture,openapi}` | 依赖边界与接口漂移检查不进入产品运行时 |
 
 未来移动端和小程序继续使用相同 domain/platform 合同；终端特有 UI、存储、请求与生命周期进入对应 App、web-domain 或 adapter，不把浏览器假设带入 headless domain。
+
+后端 `ruoyi-gen` 与前端 `gen` domain/web-domain 已物理删除。标准 CRUD 的当前静态骨架位于父仓库 `docs/fm/vue/**`；模板只生成资源局部文件，不覆盖 package exports、包级 manifest/runtime 或 App 三点组合。
 
 ## 跨端关键不变量
 

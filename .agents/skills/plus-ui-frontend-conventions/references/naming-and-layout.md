@@ -8,6 +8,23 @@
 
 已激活 App 不得建立 `src/api` 复制后端接口或包装 domain 返回值。App 在 `src/application` 中装配所选 domain service、终端适配器和宿主行为；共享接口与模型进入 domain，共享 Vue 表现进入 web-domain。
 
+## 资源目录
+
+- 一级包由后端模块 owner 确定，例如 `ruoyi-profile` 对应 `domains/profile` 与 `web-domains/profile`。
+- `src` 下资源名由实际消费的 Controller base path 和同包既有分组共同确定。去掉模块前缀和 Java 实现前缀后使用 kebab-case；保留 `monitor/*`、`person/*`、`enterprise/*` 等能表达 owner 的稳定层级。
+- 同一 Controller 资源的 `index.ts`、`types.ts`、可选 `transport.ts`/`service.ts` 与测试同目录。存在 Vue 页面时建立相应 web-domain 资源；只有 headless、回调或服务端专用合同则不建立空 Web 对称目录。
+- 每个公开资源必须在包 `package.json#exports` 中声明 `./<resource>`；消费者只从该子路径或必要根入口导入。
+- package 根可以保留兼容 facade，但只显式聚合稳定合同。禁止 `export *` 把所有资源类型合并为 catch-all 表面。
+
+## 薄入口
+
+“薄”表示职责单一，不是固定行数：
+
+- 资源 `index.ts` 只显式导出公共类型、service/mapper 和 Controller 元数据。
+- 包根 `index.ts` 只承载 domain module、兼容 facade 或 manifest 组合。
+- 不在 `index.ts` 实现 HTTP 请求、运行时校验、完整模型集合、页面异步状态或自动注册副作用。
+- 需要拆分时按 `types.ts`、`transport.ts`、`service.ts` 和有业务名称的文件提取；不要为减少行数制造无 owner 的 `helpers.ts`/`common.ts`。
+
 ## 命名
 
 - 工作区包使用 `@namewta/<role-name>`，目录使用 kebab-case。

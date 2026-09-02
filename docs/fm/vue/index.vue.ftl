@@ -218,10 +218,10 @@
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
           <template #default="scope">
             <el-tooltip content="修改" placement="top">
-              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['${moduleName}:${businessName}:edit']"></el-button>
+              <el-button aria-label="修改" link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['${moduleName}:${businessName}:edit']"></el-button>
             </el-tooltip>
             <el-tooltip content="删除" placement="top">
-              <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['${moduleName}:${businessName}:remove']"></el-button>
+              <el-button aria-label="删除" link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['${moduleName}:${businessName}:remove']"></el-button>
             </el-tooltip>
           </template>
         </el-table-column>
@@ -356,8 +356,8 @@
 </template>
 
 <script setup name="${BusinessName}" lang="ts">
+import type { Identifier } from '@namewta/domain-${moduleName}';
 import type {
-  Identifier,
   ${BusinessName}Form,
   ${BusinessName}Query,
   ${BusinessName}VO
@@ -366,6 +366,7 @@ import type { FormInstance, FormRules } from 'element-plus';
 import { onMounted, reactive, ref, toRefs } from 'vue';
 import {
   useFormDialog,
+  useLatestRequest,
   useLoading,
 <#if needAddDateRange>
   useDateRangeQuery,
@@ -395,7 +396,9 @@ const ${statusField}InactiveValue = <#if statusColumn.javaType == "Boolean">fals
 
 const ${businessName}List = ref<${BusinessName}VO[]>([]);
 const buttonLoading = ref(false);
-const { loading, withLoading } = useLoading(true);
+const { loading, withLoading } = useLoading();
+const { runLatest: runLatestList } = useLatestRequest();
+const { invalidate: invalidateDetail, runLatest: runLatestDetail } = useLatestRequest();
 const { showSearch } = useSearchToggle();
 const total = ref(0);
 <#list columns as column>
@@ -466,8 +469,8 @@ const { dialog, resetForm: reset, openDialog, showDialog, closeDialog } = useFor
 });
 
 /** 查询${functionName}列表 */
-const getList = async () => {
-  await withLoading(async () => {
+const getList = () =>
+  withLoading(async () => {
 <#if needAddDateRange>
     let params = queryParams.value;
 <#list columns as column>
@@ -475,25 +478,35 @@ const getList = async () => {
 params = apply${column.capJavaField}DateRange(params);
 </#if>
 </#list>
-    const res = await runtime.service.list(params);
+    await runLatestList(
+      () => runtime.service.list(params),
+      res => {
+        ${businessName}List.value = res.data?.rows ?? [];
+        total.value = res.data?.total ?? 0;
+      }
+    );
 <#else>
-    const res = await runtime.service.list(queryParams.value);
+    await runLatestList(
+      () => runtime.service.list(queryParams.value),
+      res => {
+        ${businessName}List.value = res.data?.rows ?? [];
+        total.value = res.data?.total ?? 0;
+      }
+    );
 </#if>
-    ${businessName}List.value = res.data?.rows ?? [];
-    total.value = res.data?.total ?? 0;
   });
-};
 
 /** 取消按钮 */
 const cancel = () => {
+  invalidateDetail();
   reset();
   closeDialog();
 };
 
 /** 搜索按钮操作 */
-const handleQuery = () => {
+const handleQuery = async () => {
   queryParams.value.pageNum = 1;
-  getList();
+  await getList();
 };
 
 const { resetQuery } = useSearchReset({
@@ -509,59 +522,73 @@ reset${column.capJavaField}DateRange();
 </#if>
 </#list>
   },
-  afterReset: () => {
-    handleQuery();
-  }
+  afterReset: handleQuery
 });
 
 /** 新增按钮操作 */
 const handleAdd = () => {
+  invalidateDetail();
   openDialog('添加${functionName}');
 };
 
 /** 修改按钮操作 */
 const handleUpdate = async (row?: Partial<${BusinessName}VO>) => {
   reset();
-  const _${pkColumn.javaField} = row?.${pkColumn.javaField} || ids.value[0];
-  const res = await runtime.service.get(_${pkColumn.javaField} as Identifier);
-  Object.assign(form.value, res.data);
+  const _${pkColumn.javaField} = row?.${pkColumn.javaField} ?? ids.value[0];
+  if (_${pkColumn.javaField} == null) {
+    runtime.error('请选择要修改的数据');
+    return;
+  }
+  await runLatestDetail(
+    () => runtime.service.get(_${pkColumn.javaField} as Identifier),
+    res => {
+      Object.assign(form.value, res.data);
 <#list columns as column>
-  <#if column.htmlType == "checkbox">
-  form.value.${column.javaField} = typeof form.value.${column.javaField} === 'string'
-    ? form.value.${column.javaField}.split(',')
-    : [];
-  </#if>
+<#if column.htmlType == "checkbox">
+      form.value.${column.javaField} = typeof form.value.${column.javaField} === 'string'
+        ? form.value.${column.javaField}.split(',')
+        : [];
+</#if>
 </#list>
-  showDialog('修改${functionName}');
+      showDialog('修改${functionName}');
+    }
+  );
 };
 
 /** 提交按钮 */
-const submitForm = () => {
-  ${businessName}FormRef.value?.validate(async (valid: boolean) => {
-    if (valid) {
-      buttonLoading.value = true;
-      <#list columns as column>
-        <#if column.htmlType == "checkbox">
-        form.value.${column.javaField} = Array.isArray(form.value.${column.javaField})
-          ? form.value.${column.javaField}.join(',')
-          : (form.value.${column.javaField} ?? '');
-        </#if>
-      </#list>
-      if (form.value.${pkColumn.javaField}) {
-        await runtime.service.update(form.value).finally(() => (buttonLoading.value = false));
-      } else {
-        await runtime.service.add(form.value).finally(() => (buttonLoading.value = false));
-      }
-      runtime.success('操作成功');
-      closeDialog();
-      await getList();
+const submitForm = async () => {
+  if (buttonLoading.value) return;
+  buttonLoading.value = true;
+  try {
+    const valid = await ${businessName}FormRef.value?.validate().catch(() => false);
+    if (!valid) return;
+<#list columns as column>
+<#if column.htmlType == "checkbox">
+    form.value.${column.javaField} = Array.isArray(form.value.${column.javaField})
+      ? form.value.${column.javaField}.join(',')
+      : (form.value.${column.javaField} ?? '');
+</#if>
+</#list>
+    if (form.value.${pkColumn.javaField} != null) {
+      await runtime.service.update(form.value);
+    } else {
+      await runtime.service.add(form.value);
     }
-  });
+    runtime.success('操作成功');
+    closeDialog();
+    await getList();
+  } finally {
+    buttonLoading.value = false;
+  }
 };
 
 /** 删除按钮操作 */
 const handleDelete = async (row?: Partial<${BusinessName}VO>) => {
-  const _${pkColumn.javaField}s = row?.${pkColumn.javaField} || ids.value;
+  const _${pkColumn.javaField}s = row?.${pkColumn.javaField} ?? ids.value;
+  if (Array.isArray(_${pkColumn.javaField}s) && _${pkColumn.javaField}s.length === 0) {
+    runtime.error('请选择要删除的数据');
+    return;
+  }
   await runtime.confirm('是否确认删除${functionName}编号为"' + _${pkColumn.javaField}s + '"的数据项？');
   await runtime.service.delete(_${pkColumn.javaField}s);
   runtime.success('删除成功');
@@ -570,8 +597,8 @@ const handleDelete = async (row?: Partial<${BusinessName}VO>) => {
 
 <#if enableExport>
 /** 导出按钮操作 */
-const handleExport = () => {
-  runtime.download(
+const handleExport = async () => {
+  await runtime.download(
     '${moduleName}/${businessName}/export',
     {
       ...queryParams.value
@@ -585,11 +612,16 @@ const handleExport = () => {
 /** 状态修改 */
 const handleStatusChange = async (row: Partial<${BusinessName}VO>) => {
   const text = row.${statusField} === ${statusField}ActiveValue ? '启用' : '停用';
+  if (row.${pkColumn.javaField} == null) {
+    runtime.error('缺少要修改的数据标识');
+    row.${statusField} = row.${statusField} === ${statusField}ActiveValue ? ${statusField}InactiveValue : ${statusField}ActiveValue;
+    return;
+  }
   try {
     await runtime.confirm('确认要"' + text + '"吗?');
     await runtime.service.changeStatus(row.${pkColumn.javaField} as Identifier, row.${statusField} as ${statusColumn.tsType});
     runtime.success(text + '成功');
-  } catch (err) {
+  } catch {
     row.${statusField} = row.${statusField} === ${statusField}ActiveValue ? ${statusField}InactiveValue : ${statusField}ActiveValue;
   }
 };
@@ -598,16 +630,19 @@ const handleStatusChange = async (row: Partial<${BusinessName}VO>) => {
 <#if enableSort>
 /** 排序调整 */
 const handleSortChange = async (row: Partial<${BusinessName}VO>) => {
+  if (row.${pkColumn.javaField} == null) {
+    runtime.error('缺少要修改的数据标识');
+    await getList();
+    return;
+  }
   try {
     await runtime.service.updateSort(row.${pkColumn.javaField} as Identifier, row.${sortField} as ${sortColumn.tsType});
     runtime.success('排序更新成功');
-  } catch (err) {
+  } catch {
     await getList();
   }
 };
 </#if>
 
-onMounted(() => {
-  getList();
-});
+onMounted(getList);
 </script>

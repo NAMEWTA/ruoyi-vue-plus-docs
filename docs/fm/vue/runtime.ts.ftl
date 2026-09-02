@@ -14,6 +14,7 @@ export interface ${BusinessName}DictOption {
 export interface ${BusinessName}WebRuntime {
   service: ${BusinessName}Service;
   confirm(message: string): Promise<void>;
+  error(message: string): void;
   success(message: string): void;
 <#if enableExport>
   download(url: string, params: unknown, fileName: string): Promise<void> | void;
@@ -41,6 +42,27 @@ export interface ${BusinessName}WebRuntime {
 export function require${BusinessName}WebRuntime(
   runtime: ${BusinessName}WebRuntime | undefined
 ): ${BusinessName}WebRuntime {
-  if (!runtime) throw new Error('${BusinessName}WebRuntime is required');
+  if (
+    !runtime ||
+    typeof runtime.confirm !== 'function' ||
+    typeof runtime.error !== 'function' ||
+    typeof runtime.success !== 'function' ||
+    typeof runtime.service?.list !== 'function' ||
+    typeof runtime.service.get !== 'function' ||
+    typeof runtime.service.add !== 'function' ||
+    typeof runtime.service.update !== 'function' ||
+    typeof runtime.service.delete !== 'function'<#if enableStatus> ||
+    typeof runtime.service.changeStatus !== 'function'</#if><#if enableSort> ||
+    typeof runtime.service.updateSort !== 'function'</#if><#if enableExport> ||
+    typeof runtime.download !== 'function'</#if><#if needDict> ||
+    typeof runtime.dicts !== 'function'</#if><#if needParseTime> ||
+    typeof runtime.formatTime !== 'function'</#if><#if needImagePreview> ||
+    !runtime.imagePreview</#if><#if needImageUpload> ||
+    !runtime.imageUpload</#if><#if needFileUpload> ||
+    !runtime.fileUpload</#if><#if needEditor> ||
+    !runtime.editor</#if>
+  ) {
+    throw new Error('${BusinessName}WebRuntime is required');
+  }
   return runtime;
 }

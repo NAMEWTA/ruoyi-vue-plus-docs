@@ -6,3 +6,4 @@ export {
   require${BusinessName}WebRuntime,
   type ${BusinessName}WebRuntime
 } from './runtime';
+export { default as ${BusinessName}Page } from './${BusinessName}Page.vue';

@@ -18,6 +18,7 @@
 | `author`、`datetime` | 生成署名与日期 |
 | `permissionPrefix` | 权限前缀，通常为 `<module>:<business>` |
 | `parentMenuId` | 菜单父节点 ID |
+| `clientPk` | `sys_client.id` 的数据库主键；不要与 OAuth `clientId` 字符串混用 |
 | `dicts`、`dictsNoSymbol` | Vue/React 字典参数表达式及无引号名称列表 |
 
 ## 列字段
@@ -47,3 +48,5 @@
 ## 输出集成
 
 模板运行器依据 [catalog.json](./catalog.json) 选择模板和目标路径。Vue resource 输出后仍需由所属 domain/web-domain 的公开 exports、service 组合、manifest 与目标 App 显式接入；模板不得通过副作用修改这些共享文件。
+
+`sql/mysql.sql.ftl` 是待合并片段，不生成独立部署脚本。表结构变更合并到 `release-artifacts/docker/infrastructure/mysql/init/50-namewta-ddl.sql`；初始化数据、菜单和回填合并到 `release-artifacts/docker/infrastructure/mysql/init/60-namewta-dml.sql`。

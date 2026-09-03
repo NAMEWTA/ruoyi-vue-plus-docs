@@ -20,8 +20,8 @@
 
 - system：`org.dromara.system.api.UserService`、`ConfigService`、`OssService`、`MessageService` 及 common SPI。
 - workflow：`org.dromara.workflow.api.WorkflowService`、`ProcessEvent`、`ProcessTaskEvent`、`ProcessDeleteEvent`。
-- Redis challenge：`EnterpriseTransferChallengeStore` 是 Store，不是 DAO；实现不得调用 Mapper。
-- verification：`<Person|Enterprise>VerificationProvider` 只负责 provider 认证和规范化证据，不直接发布档案或修改绑定。
+- Redis challenge：`EnterpriseTransferChallengeStore` 是 Store，不是 DAO；合同属于 `port/store`，实现属于 `adapter/store`，不得调用 Mapper。
+- verification：`<Person|Enterprise>VerificationProvider` 只负责 provider 认证和规范化证据，不直接发布档案或修改绑定；合同属于 `port/provider`，实现属于 `adapter/provider`。
 
 ## Entry surfaces
 
@@ -29,4 +29,3 @@
 - `controller/self`：已登录自服务。
 - `controller/anonymous`：回调/公网入口，保留 `@SaIgnore`、签名、nonce、重放、幂等、限流和审计。
 - Listener 和公共 API Adapter 同样走 UseCase，不直接调用 Service/DAO。
-

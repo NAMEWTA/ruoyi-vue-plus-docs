@@ -40,9 +40,9 @@ domain 保持无界面并通过 `HttpClient` 端口访问 HTTP；web-domain 通�
 
 ## 后端模板映射
 
-后端模板分为两个明确模式：`classic` 保持存量模块的 `Controller -> Service -> Mapper`；`layered` 用于新增复杂模块，强制生成 `Controller -> UseCase -> Service -> DAO -> Mapper -> XML`。`ruoyi-profile` 的 person/enterprise 选择 `layered`，基础模块继续使用 `classic`。
+后端模板分为两个明确生命周期：新建业务模块统一使用 `layered`，强制生成 `Controller -> UseCase -> Service -> DAO -> Mapper -> XML`；`classic` 仅用于已登记的存量模块维护。`ruoyi-profile` 是当前五层参考实现，`ruoyi-system`、`ruoyi-workflow`、`ruoyi-job`、`ruoyi-demo`、`ruoyi-ai` 保持 legacy，不因模板升级自动迁移。
 
-标准 CRUD 必须按职责使用对应模板，不能把多层职责压进自定义文件：
+classic 标准 CRUD 必须按职责使用对应模板，不能把多层职责压进自定义文件。下表仅适用于登记为 `classic` 的存量模块：
 
 | 目标职责 | 模板 |
 |---|---|
@@ -69,11 +69,19 @@ layered Java 模板位于 `java/layered/`：
 | Mapper | `java/layered/mapper.java.ftl` |
 | Controller | `java/layered/controller.java.ftl` |
 
-layered 模板必须显式传入 `architectureMode=layered`；默认仍为 `classic`，不得根据模块名隐式切换。layered 模板不生成或继承 MyBatis-Plus `IService`/`ServiceImpl`。
+所有新模块生成的自有 Java 类型和显式方法都必须提供简明中文 Javadoc。模板使用者应在公共入口、事务/锁边界、外部调用和兼容桥处补齐实际的 `@param`、`@return`、`@throws` 与副作用说明；禁止生成“处理业务”“执行操作”等无信息注释。JSON、ID、Redis、OSS、Notify、Log、Sa-Token 和 MyBatis-Plus 必须复用项目现有统一入口，不得在业务模块生成同义工具或框架直连代码。
 
-classic 的 `java/mapper.java.ftl` 仍使用 `BaseMapperPlus<Entity, Vo>` 与 `selectVo*`，用于保持存量模块兼容。layered 必须改用 `java/layered/mapper.java.ftl`：Mapper 的读类型为 `domain/model/read/<ClassName>Row`，DAO 再将 Row 转换为 HTTP VO；不得让 layered Mapper/XML 直接面向 `domain/vo`。
+模板上下文必须显式传入 `moduleLifecycle` 和 `architectureMode`。合法组合只有 `new + layered`、`legacy + classic`；缺失或交叉组合必须在渲染前失败。layered 模板不生成或继承 MyBatis-Plus `IService`/`ServiceImpl`。
 
-查询读模型使用 `java/read.java.ftl`，输出到 `${packagePath}/domain/model/read/`，命名为 `<ClassName>Row`。读模型不是 HTTP VO，不得由 Controller 直接返回；稳定跨能力的只读模型可以在后续演进为 `<ClassName>Projection`，但不应与包迁移同时批量重命名。
+classic 的 Java 模板仍使用 `BaseMapperPlus<Entity, Vo>` 与 `selectVo*`，只用于保持存量模块兼容。layered 必须改用 `java/layered/mapper.java.ftl`：Mapper 的读类型为 `domain/model/read/<ClassName>Row`，Service 将 Row 转换为 HTTP VO；不得让 layered Mapper/XML 直接面向 `domain/vo`。新模块的 DAO 业务调用必须落到同名 Mapper 方法和 XML statement，不得在 DAO 直接调用继承的 CRUD 方法绕过 XML。
+
+查询读模型使用 `java/read.java.ftl`，输出到 `${packagePath}/domain/model/read/`，命名为 `<ClassName>Row`。读模型不是 HTTP VO，不得由 Controller 或 UseCase 直接返回；DAO 只负责从 Mapper/MP Page 组装 `PageResult<Row>`，Service 负责 Row/Entity 到业务结果或 HTTP VO 的转换；稳定跨能力的只读模型可以在后续演进为 `<ClassName>Projection`，但不应与包迁移同时批量重命名。
+
+layered 分页边界：Controller 可以接收现有 `org.dromara.common.mybatis.core.page.PageQuery`，但必须在调用 UseCase 前解包为页码、页大小和排序基础值。UseCase 与 Service 不得导入 `PageQuery` 或 MyBatis `Page`；DAO 在内部构造分页对象并将结果收敛为 `PageResult<Row>`。
+
+## AGENTS 模板
+
+`agents/backend-module.AGENTS.md.ftl` 与 `agents/frontend-package.AGENTS.md.ftl` 只生成模块导读，不复制工程规范。每份手册保持短小，说明作用、组成、入口、依赖、最小验证和下一步阅读；详细规则继续由 `.agents/skills` 提供。
 
 ## 校验
 

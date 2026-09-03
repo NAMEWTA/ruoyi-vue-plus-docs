@@ -20,12 +20,21 @@
 | `parentMenuId` | 菜单父节点 ID |
 | `clientPk` | `sys_client.id` 的数据库主键；不要与 OAuth `clientId` 字符串混用 |
 | `dicts`、`dictsNoSymbol` | Vue/React 字典参数表达式及无引号名称列表 |
-| `architectureMode` | 后端模板模式：`classic` 或 `layered`；缺省为 `classic`，layered 必须显式选择 |
+| `moduleLifecycle` | 模块生命周期：`new` 或 `legacy`，必填 |
+| `architectureMode` | 后端模板模式：新模块只能为 `layered`，legacy 模块只能为 `classic`，必填 |
 | `controllerSurface` | layered Controller 访问面：`admin`、`self` 或 `anonymous` |
-| `transactionalCommands` | layered UseCase 中需要 `@DSTransactional` 的命令方法集合 |
+| `transactionalCommands` | layered UseCase 中需要 `@DSTransactional` 的命令方法集合；事务边界不下沉 Service/DAO |
 | `generateService` | layered 是否生成语义明确的 Service，强制为 `true` |
+| `agentsRole` | AGENTS 导读角色：`aggregator`、`runnable-app`、`contract-module`、`capability-module` 或 `tooling` |
+| `modulePath` | AGENTS 输出目录，相对对应子仓库根目录 |
+| `modulePurpose` | AGENTS 的一句话职责 |
+| `moduleComponents` | AGENTS 要点组件列表 |
+| `entryPoints` | AGENTS 具体入口文件/类列表 |
+| `dependencies` | AGENTS 直接依赖与主要消费者 |
+| `verificationCommands` | AGENTS 最小验证命令 |
+| `readNext` | AGENTS 后续阅读路径列表 |
 
-读模型模板使用同一组 `packageName`、`packagePath`、`ClassName`、`functionName`、`tableName`、`columns` 上下文，输出到 `domain/model/read/${ClassName}Row.java`。列别名必须与 `javaField` 对应，读模型只作为 Mapper/DAO/Service 查询边界，不属于 HTTP 输出合同。
+读模型模板使用同一组 `packageName`、`packagePath`、`ClassName`、`functionName`、`tableName`、`columns` 上下文，输出到 `domain/model/read/${ClassName}Row.java`。列别名必须与 `javaField` 对应，读模型只作为 Mapper/DAO/Service 查询边界，不属于 HTTP 输出合同。DAO 可以把 MP `Page<Row>` 收敛成 `PageResult<Row>`，Service 负责唯一的 Row/Entity 到业务结果或 VO 转换。
 
 ## 列字段
 
@@ -57,4 +66,6 @@
 
 `sql/mysql.sql.ftl` 是待合并片段，不生成独立部署脚本。表结构变更合并到 `release-artifacts/docker/infrastructure/mysql/init/50-namewta-ddl.sql`；初始化数据、菜单和回填合并到 `release-artifacts/docker/infrastructure/mysql/init/60-namewta-dml.sql`。
 
-当 `architectureMode=layered` 时，生成结果必须满足：Controller 只注入 UseCase；UseCase 只注入 Service；Service 只注入 DAO 和明确外部端口；DAO 只注入 Mapper。不得生成 `IService`、`ServiceImpl` 继承、`DataSupport` 或 DAO/Repository 双套结构。
+渲染前必须验证：`moduleLifecycle=new` 只能配 `architectureMode=layered`，`moduleLifecycle=legacy` 只能配 `architectureMode=classic`，且两个字段不得缺失。当 `architectureMode=layered` 时，生成结果必须满足：Controller/Listener/API Adapter 只注入 UseCase；UseCase 只编排 Service；UseCase/Service 不导入 `PageQuery` 或 MyBatis `Page`；Service 只依赖自身 DAO 和明确外部 Port；Service 不调用另一个 Service；DAO 只依赖本 owner Mapper；DAO/API Adapter 不跨层调用；Mapper 方法与 XML statement 一一对应。事务命令由 UseCase 持有 `@DSTransactional`。不得生成 `IService`、`ServiceImpl` 继承、`DataSupport` 或 DAO/Repository 双套结构。
+
+新模块模板输出的自有 Java 类型和显式方法必须带有简明中文 Javadoc；对外方法应根据实际合同补充参数、返回值、异常、事务、锁、幂等和外部副作用说明，不能用“处理业务”等空泛句式代替职责描述。业务代码中的 JSON 和 ID 生成只能调用项目统一的 `JsonUtils`、`IdGeneratorUtil`，模板不得生成 `new JsonMapper`、`ObjectMapper` 或 `IdWorker` 直连代码；这两个统一入口已兼容无 Spring 测试上下文的 fallback。

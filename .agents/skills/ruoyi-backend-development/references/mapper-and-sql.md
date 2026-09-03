@@ -33,7 +33,7 @@ public interface XxxMapper extends BaseMapperPlus<Xxx, XxxVo> {
 ```
 
 - 只有确有 join 查询时再附加 `MPJBaseMapper<Xxx>`。
-- 可复用且紧贴查询的 wrapper builder 在 classic 可放 Mapper default method；layered 的业务查询条件统一放 DAO，Mapper default method 不调用其他 Mapper。
+- 可复用且紧贴查询的 wrapper builder 在 classic 可放 Mapper default method；layered 的业务查询条件统一放 DAO，Mapper default method 只能使用本 Mapper 的数据访问能力，不调用其他 Mapper 或业务层。
 - 方法名表达查询或写入语义，参数使用 `@Param` 显式匹配 XML；批量方法明确空集合和返回值语义。
 - 不注入 Service，不发外部请求，不维护缓存，不捕获并吞掉数据库异常。
 - 分页、VO 映射和 batch 优先复用 `BaseMapperPlus`，不复制公共实现。

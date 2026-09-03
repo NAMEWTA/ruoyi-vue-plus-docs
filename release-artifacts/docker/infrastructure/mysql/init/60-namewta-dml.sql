@@ -37,18 +37,17 @@ update sys_role set client_id = 1762000000000000001 where client_id is null;
 update sys_menu set client_id = 1762000000000000001 where client_id is null;
 
 -- ----------------------------
--- 用户端默认角色（不写入 sys_user_role，登录时按 Client 合并）
+-- 只保留管理端和用户端两个 Client，以及各自的默认角色
 -- ----------------------------
-insert into sys_role (role_id, client_id, role_name, role_key, role_sort, data_scope, menu_check_strictly, dept_check_strictly, status, del_flag, create_dept, create_by, create_time, remark)
-values (1761300000000000010, 1762000000000000002, '数据采集用户', 'app_user', 1, '5', 1, 1, '0', '0', 1761000000000000103, 1761100000000000001, sysdate(), '数据采集端默认角色'),
-       (1761300000000000011, 1762000000000000003, '数超大赛用户', 'app_user', 1, '5', 1, 1, '0', '0', 1761000000000000103, 1761100000000000001, sysdate(), '数超大赛端默认角色'),
-       (1761300000000000012, 1762000000000000004, 'Token 中继用户', 'app_user', 1, '5', 1, 1, '0', '0', 1761000000000000103, 1761100000000000001, sysdate(), 'Token 中继端默认角色');
+delete from sys_role_menu where role_id in (1761300000000000003, 1761300000000000004);
+delete from sys_user_role where role_id in (1761300000000000003, 1761300000000000004);
+delete from sys_role where role_id in (1761300000000000003, 1761300000000000004);
+delete from sys_menu where client_id in (1762000000000000003, 1762000000000000004);
+delete from sys_client where id in (1762000000000000003, 1762000000000000004);
 
--- ----------------------------
--- 回填已有 Client，并补充两个演示用户端
--- pc / e5cd7e4891bf95d1d19206ce24a7b32e 继续作为管理后台
--- app / 428a8310cd442757ae699df5d894f051 作为数据采集端
--- ----------------------------
+insert into sys_role (role_id, client_id, role_name, role_key, role_sort, data_scope, menu_check_strictly, dept_check_strictly, status, del_flag, create_dept, create_by, create_time, remark)
+values (1761300000000000010, 1762000000000000002, '应用用户', 'app_user', 1, '5', 1, 1, '0', '0', 1761000000000000103, 1761100000000000001, sysdate(), '用户端默认角色');
+
 update sys_client
 set user_type_id     = 1762100000000000001,
     register_enabled = 0,
@@ -57,19 +56,14 @@ where id = 1762000000000000001;
 
 update sys_client
 set user_type_id     = 1762100000000000002,
-    register_enabled = 0,
-    default_role_id  = 1761300000000000010
+    register_enabled = 1,
+    default_role_id  = 1761300000000000010,
+    client_key       = 'home',
+    client_secret    = 'home123',
+    grant_type       = 'password,sms,social',
+    device_type      = 'pc',
+    access_path      = '/home/**'
 where id = 1762000000000000002;
-
-insert into sys_client (id, client_id, client_key, client_secret, grant_type, device_type, access_path, ip_whitelist,
-                        active_timeout, timeout, user_type_id, register_enabled, default_role_id, status, del_flag,
-                        create_dept, create_by, create_time, update_by, update_time)
-values (1762000000000000003, '78bff3d278ace982349f7e00f182b2c9', 'competition', 'comp123', 'password,sms,social', 'android',
-        '/app/**', null, 1800, 604800, 1762100000000000002, 1, 1761300000000000011, '0', '0',
-        1761000000000000103, 1761100000000000001, sysdate(), 1761100000000000001, sysdate()),
-       (1762000000000000004, 'a03e40daa0e9212a1e0101ed4d463bed', 'relay', 'relay123', 'password,sms,social', 'android',
-        '/app/**', null, 1800, 604800, 1762100000000000002, 0, 1761300000000000012, '0', '0',
-        1761000000000000103, 1761100000000000001, sysdate(), 1761100000000000001, sysdate());
 
 -- ----------------------------
 -- 登录域管理菜单（归属管理端 Client）
@@ -94,67 +88,24 @@ values (1761300000000000001, 1761400000000000124),
        (1761300000000000001, 1761400000000001074);
 
 -- ----------------------------
--- 三个用户端基础菜单（默认角色只给本 Client 工作台，不写入 sys_user_role）
--- ----------------------------
-insert into sys_menu (menu_id, client_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, is_cache, menu_type, visible, status, perms, icon, active_menu, ext, create_dept, create_by, create_time, remark)
-values (1761400000000002001, 1762000000000000002, '数据采集工作台', 0, 1, 'collection', 'business/data-collection/index', '', 'N', 'Y', 'C', '0', '0', 'app:collection:workspace', 'dashboard', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '数据采集端工作台'),
-       (1761400000000002002, 1762000000000000003, '数超大赛工作台', 0, 1, 'competition', 'business/data-competition/index', '', 'N', 'Y', 'C', '0', '0', 'app:competition:workspace', 'trophy', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '数超大赛端工作台'),
-       (1761400000000002003, 1762000000000000004, 'Token 中继工作台', 0, 1, 'relay', 'business/token-relay/index', '', 'N', 'Y', 'C', '0', '0', 'app:relay:workspace', 'link', '', '', 1761000000000000103, 1761100000000000001, sysdate(), 'Token 中继端工作台');
-
-insert into sys_role_menu (role_id, menu_id)
-values (1761300000000000010, 1761400000000002001),
-       (1761300000000000011, 1761400000000002002),
-       (1761300000000000012, 1761400000000002003);
-
--- ----------------------------
 -- 删除全局注册开关，改由 Client.register_enabled 控制
 -- ----------------------------
 delete from sys_config where config_key = 'sys.account.registerUser';
 
 -- ============================================================================
 -- 变更标识：NAMEWTA-BASE-DSL-002
--- 变更内容：为已执行旧基线但缺少菜单的环境补充三个用户端基础菜单
+-- 用户端基础菜单已由当前基座统一初始化，旧补偿块不再执行。
 -- 执行前置：已执行 NAMEWTA-BASE-DSL-001 或旧 003_initial_data.sql
--- 适用范围：缺少对应菜单或角色菜单关系的升级环境；全新环境执行时自动无操作
+-- 适用范围：历史升级记录；当前完整基座不执行旧菜单补偿。
 -- 重复执行：是
--- 回滚方式：删除三个固定 menu_id 及对应 role_id、menu_id 关系
+-- 回滚方式：无。
 -- ============================================================================
-
-insert into sys_menu (menu_id, client_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, is_cache, menu_type, visible, status, perms, icon, active_menu, ext, create_dept, create_by, create_time, remark)
-select 1761400000000002001, 1762000000000000002, '数据采集工作台', 0, 1, 'collection', 'business/data-collection/index', '', 'N', 'Y', 'C', '0', '0', 'app:collection:workspace', 'dashboard', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '数据采集端工作台'
-from dual
-where not exists (select 1 from sys_menu where menu_id = 1761400000000002001);
-
-insert into sys_menu (menu_id, client_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, is_cache, menu_type, visible, status, perms, icon, active_menu, ext, create_dept, create_by, create_time, remark)
-select 1761400000000002002, 1762000000000000003, '数超大赛工作台', 0, 1, 'competition', 'business/data-competition/index', '', 'N', 'Y', 'C', '0', '0', 'app:competition:workspace', 'trophy', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '数超大赛端工作台'
-from dual
-where not exists (select 1 from sys_menu where menu_id = 1761400000000002002);
-
-insert into sys_menu (menu_id, client_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, is_cache, menu_type, visible, status, perms, icon, active_menu, ext, create_dept, create_by, create_time, remark)
-select 1761400000000002003, 1762000000000000004, 'Token 中继工作台', 0, 1, 'relay', 'business/token-relay/index', '', 'N', 'Y', 'C', '0', '0', 'app:relay:workspace', 'link', '', '', 1761000000000000103, 1761100000000000001, sysdate(), 'Token 中继端工作台'
-from dual
-where not exists (select 1 from sys_menu where menu_id = 1761400000000002003);
-
-insert into sys_role_menu (role_id, menu_id)
-select 1761300000000000010, 1761400000000002001
-from dual
-where not exists (select 1 from sys_role_menu where role_id = 1761300000000000010 and menu_id = 1761400000000002001);
-
-insert into sys_role_menu (role_id, menu_id)
-select 1761300000000000011, 1761400000000002002
-from dual
-where not exists (select 1 from sys_role_menu where role_id = 1761300000000000011 and menu_id = 1761400000000002002);
-
-insert into sys_role_menu (role_id, menu_id)
-select 1761300000000000012, 1761400000000002003
-from dual
-where not exists (select 1 from sys_role_menu where role_id = 1761300000000000012 and menu_id = 1761400000000002003);
 
 -- ============================================================================
 -- 变更标识：NAMEWTA-OSS-NOTIFY-DSL-001
 -- 变更内容：通知监控动态菜单与功能权限
 -- 执行前置：已执行 NAMEWTA-OSS-NOTIFY-DDL-001
--- 适用范围：全新环境；已完成 NAMEWTA-BASE-DSL-002 的升级环境
+-- 适用范围：全新环境；已完成当前基础数据初始化
 -- 重复执行：是
 -- 回滚方式：先撤销角色授权，再删除以下固定 menu_id；不删除通知日志数据
 -- ============================================================================
@@ -176,28 +127,30 @@ from dual
 where not exists (select 1 from sys_menu where menu_id = 1761400000000001081);
 
 -- ============================================================================
--- NAMEWTA-BASE-DSL-003
--- 变更内容：下线尚未具备业务合同的三个用户端工作台菜单
--- 变更标识：2026-08-24_01:42:05
--- 执行前置：已执行 NAMEWTA-BASE-DSL-002
--- 适用范围：fresh 与已存在三个用户端基础菜单的 upgrade 环境
--- 重复执行：是
--- 回滚方式：业务页面完成后将三个 menu_id 的 visible/status 恢复为 '0'，并按固定 role_id/menu_id 恢复三条关系
--- ============================================================================
-
+-- NAMEWTA-BASE-DSL-004
+-- 当前完整基座只保留管理端与用户端两个 Client、两个角色和用户档案中心。
 delete from sys_role_menu
-where (role_id = 1761300000000000010 and menu_id = 1761400000000002001)
-   or (role_id = 1761300000000000011 and menu_id = 1761400000000002002)
-   or (role_id = 1761300000000000012 and menu_id = 1761400000000002003);
+where role_id in (1761300000000000003, 1761300000000000004, 1761300000000000011, 1761300000000000012)
+   or menu_id in (1761400000000002001, 1761400000000002002, 1761400000000002003);
+delete from sys_user_role
+where role_id in (1761300000000000003, 1761300000000000004, 1761300000000000011, 1761300000000000012);
+delete from sys_menu
+where menu_id in (1761400000000002001, 1761400000000002002, 1761400000000002003)
+   or client_id in (1762000000000000003, 1762000000000000004);
+delete from sys_role
+where role_id in (1761300000000000003, 1761300000000000004, 1761300000000000011, 1761300000000000012);
+delete from sys_client where id in (1762000000000000003, 1762000000000000004);
 
-update sys_menu
-set visible = '1',
-    status = '1',
-    update_by = 1761100000000000001,
-    update_time = sysdate()
-where menu_id in (1761400000000002001, 1761400000000002002, 1761400000000002003);
+insert into sys_menu (menu_id, client_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, is_cache, menu_type, visible, status, perms, icon, active_menu, ext, create_dept, create_by, create_time, remark)
+values (2100500000000000100, 1762000000000000002, '档案中心', 0, 1, 'profile', 'profile/center/index', '', 'N', 'Y', 'M', '0', '0', '', 'id-card', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '用户档案认证中心'),
+       (2100500000000000101, 1762000000000000002, '个人认证', 2100500000000000100, 1, 'person', 'profile/person/application', '', 'N', 'Y', 'C', '1', '0', 'profile:person:apply', 'user', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '个人实名认证申请'),
+       (2100500000000000102, 1762000000000000002, '企业认证', 2100500000000000100, 2, 'enterprise', 'profile/enterprise/application', '', 'N', 'Y', 'C', '1', '0', 'profile:enterprise:apply', 'building', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '企业实名认证申请');
+insert into sys_role_menu (role_id, menu_id)
+values (1761300000000000010, 2100500000000000100),
+       (1761300000000000010, 2100500000000000101),
+       (1761300000000000010, 2100500000000000102);
 
--- NAMEWTA-BASE-DSL-003-END
+-- NAMEWTA-BASE-DSL-004-END
 
 -- NAMEWTA-PASSWORD-DSL-001
 -- ============================================================================
@@ -1103,36 +1056,36 @@ values
      '1761100000000000001', sysdate(), '1761100000000000001', '0');
 
 insert into flow_node
-    (id, node_type, definition_id, node_code, node_name, permission_flag, coordinate,
+    (id, node_type, definition_id, node_code, node_name, permission_flag, node_ratio, coordinate,
      form_custom, form_path, version, create_time, create_by, update_time, update_by, del_flag)
 values
     (2100610000000000001, 0, 2100600000000000001, 'person_apply', '提交申请', null,
-     '100,100', 'N', null, '1', sysdate(), '1761100000000000001', sysdate(), '1761100000000000001', '0'),
+     '0', '100,100|100,100', 'N', null, '1', sysdate(), '1761100000000000001', sysdate(), '1761100000000000001', '0'),
     (2100610000000000002, 1, 2100600000000000001, 'person_review', '人工复核',
-     'role:1761300000000000001', '300,100', 'Y', 'profile/person/review', '1', sysdate(),
+     'role:1761300000000000001', '0', '300,100|300,100', 'Y', 'profile/person/review', '1', sysdate(),
      '1761100000000000001', sysdate(), '1761100000000000001', '0'),
     (2100610000000000003, 2, 2100600000000000001, 'person_finish', '复核完成', null,
-     '500,100', 'N', null, '1', sysdate(), '1761100000000000001', sysdate(), '1761100000000000001', '0'),
+     '0', '500,100|500,100', 'N', null, '1', sysdate(), '1761100000000000001', sysdate(), '1761100000000000001', '0'),
     (2100610000000000011, 0, 2100600000000000002, 'enterprise_apply', '提交申请', null,
-     '100,100', 'N', null, '1', sysdate(), '1761100000000000001', sysdate(), '1761100000000000001', '0'),
+     '0', '100,100|100,100', 'N', null, '1', sysdate(), '1761100000000000001', sysdate(), '1761100000000000001', '0'),
     (2100610000000000012, 1, 2100600000000000002, 'enterprise_review', '人工复核',
-     'role:1761300000000000001', '300,100', 'Y', 'profile/enterprise/review', '1', sysdate(),
+     'role:1761300000000000001', '0', '300,100|300,100', 'Y', 'profile/enterprise/review', '1', sysdate(),
      '1761100000000000001', sysdate(), '1761100000000000001', '0'),
     (2100610000000000013, 2, 2100600000000000002, 'enterprise_finish', '复核完成', null,
-     '500,100', 'N', null, '1', sysdate(), '1761100000000000001', sysdate(), '1761100000000000001', '0');
+     '0', '500,100|500,100', 'N', null, '1', sysdate(), '1761100000000000001', sysdate(), '1761100000000000001', '0');
 
 insert into flow_skip
     (id, definition_id, now_node_code, now_node_type, next_node_code, next_node_type,
      skip_name, skip_type, coordinate, create_time, create_by, update_time, update_by, del_flag)
 values
     (2100620000000000001, 2100600000000000001, 'person_apply', 0, 'person_review', 1,
-     '提交', 'PASS', '200,100', sysdate(), '1761100000000000001', sysdate(), '1761100000000000001', '0'),
+     '提交', 'PASS', '120,100;250,100', sysdate(), '1761100000000000001', sysdate(), '1761100000000000001', '0'),
     (2100620000000000002, 2100600000000000001, 'person_review', 1, 'person_finish', 2,
-     '完成', 'PASS', '400,100', sysdate(), '1761100000000000001', sysdate(), '1761100000000000001', '0'),
+     '完成', 'PASS', '350,100;480,100', sysdate(), '1761100000000000001', sysdate(), '1761100000000000001', '0'),
     (2100620000000000011, 2100600000000000002, 'enterprise_apply', 0, 'enterprise_review', 1,
-     '提交', 'PASS', '200,100', sysdate(), '1761100000000000001', sysdate(), '1761100000000000001', '0'),
+     '提交', 'PASS', '120,100;250,100', sysdate(), '1761100000000000001', sysdate(), '1761100000000000001', '0'),
     (2100620000000000012, 2100600000000000002, 'enterprise_review', 1, 'enterprise_finish', 2,
-     '完成', 'PASS', '400,100', sysdate(), '1761100000000000001', sysdate(), '1761100000000000001', '0');
+     '完成', 'PASS', '350,100;480,100', sysdate(), '1761100000000000001', sysdate(), '1761100000000000001', '0');
 
 insert into sys_dict_type
     (dict_id, dict_name, dict_type, create_dept, create_by, create_time, remark)

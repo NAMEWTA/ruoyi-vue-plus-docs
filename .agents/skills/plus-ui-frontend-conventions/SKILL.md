@@ -10,7 +10,8 @@ description: 为 plus-ui-namewta 多 App monorepo 提供架构边界、领域资
 ## 使用流程
 
 1. 确认变更归属 `plus-ui-namewta/`，先按父级 `engineering-standards` 读取适用规范，再读取受影响包 README、`package.json#exports`、相邻测试和 App 消费入口。
-2. 按主题加载引用：
+2. 先读取变更路径最近的 `AGENTS.md`。它只提供包/应用用途、组成、公开入口、验证命令和下一步索引；具体规范仍以本 Skill、父级工程规范和源码为准。根 `AGENTS.md` 适用于整个前端仓库，含 `package.json` 的工作区目录必须有自己的短索引，子目录规则优先于父目录。
+3. 按主题加载引用：
    - 架构边界、依赖方向和当前 App 组合：[architecture.md](references/architecture.md)
    - 目录与命名：[naming-and-layout.md](references/naming-and-layout.md)
    - 新增领域能力或终端：[implementation.md](references/implementation.md)
@@ -18,11 +19,11 @@ description: 为 plus-ui-namewta 多 App monorepo 提供架构边界、领域资
    - 工具链与编码：[coding-style.md](references/coding-style.md)
    - 注释：[comments.md](references/comments.md)
    - 动态路由与权限：[permission-routing.md](references/permission-routing.md)
-3. 涉及前端 CRUD、树表、资源目录或 domain/web-domain 纵切片时，必须读取父仓库 `docs/fm/README.md`、`docs/fm/catalog.json`、`docs/fm/context-contract.md` 和相关 `docs/fm/vue/*.ftl`。模板是当前结构与合同基线，但同 owner、同形态的成熟源码及当前公开合同优先；发现模板滞后时同步修正模板，不能在业务代码中复制偏差。
-4. 先由后端 Maven 模块确定一级 domain，再由实际消费的 Controller base path 确定 `src` 下的 kebab-case 资源目录；回调或没有前端消费者的接口不创建空资源目录。
-5. 只从包 `exports` 公开入口导入；资源目录与 `package.json#exports` 同步，禁止深层导入、跨工作区相对导入和 App 互相导入。
-6. App 在编译期同时显式选择服务、web-domain manifest 和工作区依赖。缺失 runtime/domain、未选择能力、重复 registration 或未知组件键必须失败关闭。
-7. 修改后先跑受影响包测试，再按工程规范运行适用的根级架构、lint、typecheck、test、E2E 和 build 门禁。
+4. 涉及前端 CRUD、树表、资源目录或 domain/web-domain 纵切片时，必须读取父仓库 `docs/fm/README.md`、`docs/fm/catalog.json`、`docs/fm/context-contract.md` 和相关 `docs/fm/vue/*.ftl`。模板是当前结构与合同基线，但同 owner、同形态的成熟源码及当前公开合同优先；发现模板滞后时同步修正模板，不能在业务代码中复制偏差。
+5. 先由后端 Maven 模块确定一级 domain，再由实际消费的 Controller base path 确定 `src` 下的 kebab-case 资源目录；回调或没有前端消费者的接口不创建空资源目录。
+6. 只从包 `exports` 公开入口导入；资源目录与 `package.json#exports` 同步，禁止深层导入、跨工作区相对导入和 App 互相导入。
+7. App 在编译期同时显式选择服务、web-domain manifest 和工作区依赖。缺失 runtime/domain、未选择能力、重复 registration 或未知组件键必须失败关闭。
+8. 修改后先跑受影响包测试，再按工程规范运行适用的根级架构、lint、typecheck、test、E2E 和 build 门禁。
 
 ## 硬边界
 
@@ -33,6 +34,8 @@ description: 为 plus-ui-namewta 多 App monorepo 提供架构边界、领域资
 - `index.ts` 的“薄”按职责判断，不按行数判断：只做显式导出、资源元数据或 module/manifest 组合，不实现 HTTP、模型集合、页面状态或顶层副作用。
 - 后端是最终授权者；前端菜单、路由和按钮权限只负责当前 App 的投影、可见性与失败关闭。
 - `client-web`、`mobile-web`、`miniapp-taro` 和 Taro 适配器在独立规格激活前保持 README-only。
+- 前端不套用后端 `Controller -> UseCase -> Service -> DAO -> Mapper` 五层；前端保持 `App -> web-domain -> domain -> platform`，`adapters` 和 `web-kit` 只能通过公开平台合同参与组合。
+- `AGENTS.md` 是渐进式索引，不复制本 Skill 的完整规则。新增或移动含 `package.json` 的包时同步创建/更新短索引，并保持公开入口、README 和实际源码一致。
 
 ## 当前仓库锚点
 

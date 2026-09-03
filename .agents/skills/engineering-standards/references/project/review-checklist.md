@@ -7,7 +7,7 @@
 - [ ] 前端分页/树表返回类型、VO/Form/Query、请求 `params`/`data`、ID 和日期范围合同与后端一致。
 - [ ] CRUD 只读查询使用 GET，变更操作使用 POST，不使用 PUT/PATCH/DELETE；每个 POST 业务方法均有 `@Log`，`title`、`BusinessType` 和敏感数据保存配置准确；各操作 URL 无冲突且前后端一致。
 - [ ] 前端 loading、dialog、搜索重置、选择、树展开等状态优先复用现有 hooks；请求失败或取消后状态可恢复。
-- [ ] 后端目录保持 `controller`、`domain/{bo,vo}`、`mapper`、`service/impl` 主轴；管理端在 `controller/admin`，`@SaIgnore` 在 `controller/anonymous`，没有为未来客户端预建目录；匿名接口仍有签名、重放、幂等、审计和脱敏保护。
+- [ ] 后端目录按[模块模式登记表](03-backend-module-modes.md)执行：classic 存量保持 `controller`、`domain/{bo,vo}`、`mapper`、`service/impl`；layered 新模块保持 `controller`、`listener`、`usecase`、`service`、`dao`、`mapper`、`port/adapter`、`support`、`domain/model/read`，调用链完整且同层无互调。管理端在 `controller/admin`，`@SaIgnore` 在 `controller/anonymous`，没有为未来客户端预建目录；匿名接口仍有签名、重放、幂等、审计和脱敏保护。
 - [ ] 后端 entity/BO/VO/mapper/service/controller 职责未混用；查询条件、排序、唯一性、删除前校验和树不变量完整；Mapper 遵循 BaseMapperPlus -> wrapper/QueryBuilder -> MPJ -> XML 阶梯，没有堆叠长篇注解 SQL。
 - [ ] 数据权限字段与实际 SQL/alias 一致；新建/实质修改的业务事务使用 `@DSTransactional`，未与 Spring `@Transactional` 混用；事务事件使用匹配的 `@DsTxEventListener`；缓存写后失效，翻译避免逐项 N+1。
 - [ ] 依赖只通过允许的 public contract，未产生循环、前后端源码耦合或跨 Maven 模块深依赖。

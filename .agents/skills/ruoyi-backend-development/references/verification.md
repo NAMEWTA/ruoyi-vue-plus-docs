@@ -48,13 +48,15 @@ node docs/fm/scripts/validate.mjs
 
 ## 目录与 Controller 静态检查
 
+先读取模块模式登记表。classic 只检查兼容目录和新增依赖不扩散；layered 额外运行 `validate-module-mode.mjs` 检查五层目录、入口/API Adapter、port/adapter/listener/support/domain 边界、事务注解位置、Service 同层互调、MyBatis import 和 Row 命名。
+
 针对受影响模块检查：
 
 ```bash
 find <module>/src/main/java -type f | sort
 find <module>/src/main/java -type d \
   \( -path '*/service/*' ! -path '*/service/impl' ! -path '*/service/impl/*' \)
-rg -n 'class .*DataSupport|package .*\.(dao|repository|manager);' <module>/src/main/java
+rg -n 'class .*DataSupport|package .*\.(repository|manager);' <module>/src/main/java
 rg -n '@SaIgnore|@SaCheckPermission|@GetMapping|@PostMapping|@PutMapping|@PatchMapping|@DeleteMapping' <module>/src/main/java
 rg -n '@Log|@RepeatSubmit|@DSTransactional|@Transactional' <module>/src/main/java
 ```
@@ -62,7 +64,9 @@ rg -n '@Log|@RepeatSubmit|@DSTransactional|@Transactional' <module>/src/main/jav
 逐项确认：
 
 - 管理端在 `controller/admin`，匿名端在 `controller/anonymous`；没有无真实客户端的预建目录。
-- `service` 没有 `impl` 之外的生产子目录，也没有包装单一 Mapper 的 `*DataSupport`、DAO、Repository 或 Manager。
+- classic `service` 没有 `impl` 之外的生产子目录，也没有包装单一 Mapper 的 `*DataSupport`、DAO、Repository 或 Manager；layered `service`、`dao`、`usecase` 只保留语义明确的 owner，DAO 不调用其他 DAO/Service/外部端口。
+- layered `port` 只声明外部能力合同，`adapter/{api,gateway,provider,store}` 只实现入口或端口，`listener` 只能调用 UseCase，`support` 不得声明 Spring Bean 或 I/O；`domain/model/read` 使用单数 `<Capability>Row`/`<Capability>Projection`。仅 Profile 存量迁移暂时 allowlist `PersonAdminRows`、`EnterpriseAdminRows` 两个精确路径，禁止以此为新命名模板，拆分完成后移除例外。
+- layered Service/DAO/Mapper 不得持有 `@DSTransactional`；事务命令必须由 UseCase 持有，Service 不得导入 `PageQuery`、MyBatis `Page` 或直接调用另一个 Service。
 - 每个 `@SaIgnore` 端点仍有签名/重放/幂等/审计/脱敏合同。
 - CRUD 查询 GET、变更 POST；每个 POST 的 `@Log`、`BusinessType` 和敏感保存配置准确。
 - 新增/实质修改业务事务没有误用 Spring `@Transactional`。

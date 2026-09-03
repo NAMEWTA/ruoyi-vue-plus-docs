@@ -19,8 +19,8 @@ const templates = files(root)
 const catalog = JSON.parse(readFileSync(join(root, 'catalog.json'), 'utf8'));
 const catalogTemplates = catalog.templates.map(item => item.source).sort();
 
-if (catalog.schemaVersion !== 3) {
-  failures.push(`catalog.json schemaVersion 必须为 3，当前为 ${catalog.schemaVersion}`);
+if (catalog.schemaVersion !== 4) {
+  failures.push(`catalog.json schemaVersion 必须为 4，当前为 ${catalog.schemaVersion}`);
 }
 
 if (JSON.stringify(templates) !== JSON.stringify(catalogTemplates)) {
@@ -35,9 +35,24 @@ for (const item of catalog.templates) {
   if (!item.target || !Array.isArray(item.categories) || item.categories.length === 0) {
     failures.push(`模板 ${item.source} 必须声明 target 和至少一个 category`);
   }
+  if (!Array.isArray(item.lifecycle) || item.lifecycle.length === 0) {
+    failures.push(`模板 ${item.source} 必须声明 lifecycle`);
+  }
+  if (item.architectureModes && !Array.isArray(item.architectureModes)) {
+    failures.push(`模板 ${item.source} 的 architectureModes 必须为数组`);
+  }
   if (item.source.startsWith('java/layered/') &&
       JSON.stringify(item.architectureModes || []) !== JSON.stringify(['layered'])) {
     failures.push(`分层模板 ${item.source} 必须声明 architectureModes: [layered]`);
+  }
+  if (item.source.startsWith('java/layered/') &&
+      JSON.stringify(item.lifecycle || []) !== JSON.stringify(['new'])) {
+    failures.push(`分层模板 ${item.source} 只能声明 lifecycle: [new]`);
+  }
+  if (item.source.startsWith('java/') && !item.source.startsWith('java/layered/') &&
+      ['java/controller.java.ftl', 'java/mapper.java.ftl', 'java/service.java.ftl', 'java/serviceImpl.java.ftl'].includes(item.source) &&
+      JSON.stringify(item.lifecycle || []) !== JSON.stringify(['legacy'])) {
+    failures.push(`classic 模板 ${item.source} 只能声明 lifecycle: [legacy]`);
   }
 }
 
@@ -76,6 +91,13 @@ for (const forbidden of ["method: 'put'", "method: 'delete'", "method: 'patch'",
   if (allSource.includes(forbidden)) failures.push(`CRUD 模板仍包含禁用 method: ${forbidden}`);
 }
 
+for (const path of templates.filter(path => path.startsWith('java/') && path.endsWith('.ftl'))) {
+  const source = readFileSync(join(root, path), 'utf8');
+  if (!source.includes('/**') || !/[\u3400-\u9fff]/u.test(source)) {
+    failures.push(`${path} 必须生成中文 Javadoc`);
+  }
+}
+
 const controller = readFileSync(join(root, 'java/controller.java.ftl'), 'utf8');
 const postMappings = [...controller.matchAll(/@PostMapping(?:\([^\n]*\))?/g)].length;
 const logs = [...controller.matchAll(/@Log\(/g)].length;
@@ -85,6 +107,8 @@ const layeredContracts = {
   'java/layered/controller.java.ftl': [
     ['.usecase.', 'Controller 必须依赖 UseCase'],
     ['${controllerSurface}', 'Controller 模板必须使用 controllerSurface'],
+    ['@Log(', 'layered Controller 必须生成操作日志'],
+    ['pageQuery.getPageNum()', 'Controller 必须在入口解包分页参数'],
   ],
   'java/layered/usecase.java.ftl': [
     ['UseCase', 'UseCase 模板必须生成 UseCase 合同'],
@@ -96,10 +120,15 @@ const layeredContracts = {
   'java/layered/service.java.ftl': [
     ['.dao.', 'Service 必须依赖 DAO'],
     ['class ${ClassName}Service', 'Service 模板必须生成业务 Service'],
+    ['PageResult<${ClassName}Row>', 'Service 必须消费 DAO 收敛后的 PageResult<Row>'],
+    ['page.getRows()', 'Service 必须在业务层完成 Row 到 VO 的转换'],
   ],
   'java/layered/dao.java.ftl': [
     ['.mapper.', 'DAO 必须依赖 Mapper'],
     ['@Repository', 'DAO 模板必须标记 Repository'],
+    ['selectPageByCondition', 'DAO 模板必须通过显式 Mapper 查询方法访问数据库'],
+    ['new PageQuery(pageSize, pageNum)', 'DAO 必须在持久化边界构造 PageQuery'],
+    ['PageResult<${ClassName}Row>', 'DAO 必须向 Service 收敛为 PageResult<Row>'],
   ],
   'java/layered/mapper.java.ftl': [
     ['.domain.model.read.', 'layered Mapper 必须依赖 Read Model'],
@@ -115,8 +144,9 @@ for (const [path, contracts] of Object.entries(layeredContracts)) {
 
 const layeredForbidden = {
   'java/layered/controller.java.ftl': ['.service.', 'Mapper'],
-  'java/layered/usecaseImpl.java.ftl': ['.dao.', '.mapper.', 'IService', 'BaseMapper'],
-  'java/layered/service.java.ftl': ['.mapper.', 'BaseMapper', 'QueryWrapper', 'LambdaQueryWrapper'],
+  'java/layered/usecase.java.ftl': ['PageQuery', 'Page<', 'com.baomidou.mybatisplus'],
+  'java/layered/usecaseImpl.java.ftl': ['.dao.', '.mapper.', 'IService', 'BaseMapper', 'PageQuery', 'Page<', 'com.baomidou.mybatisplus'],
+  'java/layered/service.java.ftl': ['.mapper.', 'BaseMapper', 'QueryWrapper', 'LambdaQueryWrapper', 'PageQuery', 'Page<', 'com.baomidou.mybatisplus'],
   'java/layered/dao.java.ftl': ['UseCase', 'Service', 'Gateway', 'ProfileService'],
   'java/layered/mapper.java.ftl': ['domain.vo.', '.service.', 'UseCase', 'Dao'],
 };
@@ -124,6 +154,13 @@ for (const [path, tokens] of Object.entries(layeredForbidden)) {
   const source = readFileSync(join(root, path), 'utf8');
   for (const token of tokens) {
     if (source.includes(token)) failures.push(`${path} 不得包含越层依赖: ${token}`);
+  }
+}
+
+for (const path of templates.filter(path => path.startsWith('agents/'))) {
+  const source = readFileSync(join(root, path), 'utf8');
+  for (const token of ['## Scope', '## Purpose', '## Components', '## Entry Points', '## Dependencies', '## Verification', '## Read Next']) {
+    if (!source.includes(token)) failures.push(`${path} 缺少 AGENTS 最小索引章节: ${token}`);
   }
 }
 

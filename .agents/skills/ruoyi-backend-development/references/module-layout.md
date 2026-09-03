@@ -45,6 +45,10 @@ ruoyi-modules/<artifact>/
       <Capability>Dao.java
     mapper/
       <Capability>Mapper.java
+    port/                         # 外部端口合同（仅接口/不可变合同）
+    adapter/{api,gateway,provider,store}/ # 入口 API 适配或端口实现；有真实边界时才建立
+    listener/                     # 事件入口，只调用 UseCase
+    support/                      # 纯无状态辅助，不是 Spring Bean
     domain/{entity,bo,vo,model,policy,event,exception}/
   src/main/resources/mapper/<module>/<Capability>Mapper.xml
 ```
@@ -80,16 +84,19 @@ ruoyi-modules/<artifact>/
 - BO 承载查询/新增/编辑输入及 validation groups，不继承 Entity，不作为数据库返回值。
 - VO 承载 Mapper 查询投影、HTTP 响应与导出合同，不把 Entity 直接暴露给 HTTP 或跨模块调用；含敏感或仅供持久化编排的内部查询投影不得被 Controller 直接返回。
 - 只为稳定子领域建立 `domain/<subdomain>`；不能因为文件多就按任意技术动作分散 BO/VO。
+- `domain` 根目录只放持久化 Entity；`bo` 只放入口输入，`vo` 只放 HTTP 输出，`model/read` 只放 Mapper 结果。
+- `policy`、`codec`、`converter` 只能是无状态纯辅助；`event`、`exception` 表达领域事件和失败合同。读模型使用 `<Capability>Row` 或 `<Capability>Projection` 顶层类型，不用含义宽泛的 `*Rows` 容器承载多个嵌套结果。校验器仅对当前 Profile 迁移窗口的 `org/dromara/profile/person/domain/model/read/PersonAdminRows.java` 与 `org/dromara/profile/enterprise/domain/model/read/EnterpriseAdminRows.java` 保留精确兼容例外；该 allowlist 不适用于新模块、新能力或其他路径，完成聚合拆分后应删除。
 
 ### UseCase（layered）
 
 - 表达完整用户场景、事务边界、幂等和跨 Service 编排。
 - 只能依赖一个或多个 Service 及 domain 类型；不得直接调用 DAO、Mapper、Gateway、Store、Provider 或外部 API。
 - 不包含 MyBatis-Plus Wrapper、SQL 或持久化条件。
+- 不得依赖 DAO、Mapper、Gateway、Store、Provider 或外部 API；分页输入使用已经解包的基础值/领域查询类型，不导入 `PageQuery`。
 
 ### DAO（layered）
 
-- 唯一允许持有 Mapper 的业务层；封装 Wrapper、QueryBuilder、分页、条件更新、行锁和 `domain/model/read` Row/Entity 转换。
+- 唯一允许持有 Mapper 的业务层；封装 Wrapper、QueryBuilder、分页、条件更新、行锁，并把 MP Page 收敛为 `PageResult<Row>`。Row/Entity 到业务结果或 HTTP VO 的转换由 Service 负责。
 - 只能依赖本 owner 的一个或多个 Mapper、domain 持久化类型和纯工具；禁止 DAO->DAO、DAO->Service、DAO->外部 API。
 
 ### Mapper
@@ -103,12 +110,21 @@ ruoyi-modules/<artifact>/
 - interface 描述业务用例，不机械暴露 mapper 的每个方法。
 - classic implementation 负责查询条件、映射、唯一性、领域不变量、删除前校验、事务、关系维护、缓存失效和提交后副作用。
 - layered Service 强制存在，负责业务规则和外部端口适配，只依赖自己的 DAO、Domain Policy 和 Gateway/Provider/Store/API；不得 import Mapper/MyBatis 或调用另一个 Service。
+- layered Service 不导入 `PageQuery` 或 MyBatis `Page`；分页参数由 UseCase 传入基础值/领域查询类型，DAO 负责构造持久化分页。
 - classic 的 `service/impl` 是标准实现目录；layered 的 `service` 直接放语义明确的 `<Capability>Service`。不要并列创建 `manager`、`handler`、`repository` 来转发同一调用。
 - 不建立 `service/application`、`service/material`、`service/provider`、`service/verification`、`service/workflow` 等横切实现目录。
-- Controller、Listener 和 ServiceImpl 之间的业务调用面向 `service` 根接口；不要跨类注入或导入具体 `*ServiceImpl`。同一个实现类内的私有步骤不为此拆成伪接口。
+- classic Controller、Listener 和其他入口之间的业务调用面向 `service` 根接口；不要跨类注入或导入具体 `*ServiceImpl`。layered 入口只依赖 UseCase，UseCase 只依赖 Service。仅供单个实现使用的步骤继续保持私有方法，不为满足形式制造伪接口。
 - classic `ServiceImpl` 可直接依赖一个或多个 Mapper；classic 禁止增加 DAO 或用 `*DataSupport`、`*Repository`、`*Manager` 包装单一 Mapper。
 - layered 禁止 ServiceImpl 直接依赖 Mapper；DAO 必须存在且只能依赖 Mapper。layered 同样禁止 `*DataSupport`、同义 Repository/Manager 或 DAO 镜像转发。
 - 只有外部系统、缓存存储或提供者确有真实 adapter 时才保留 Gateway、Store、Provider、Policy 一类端口；layered 端口由 owning Service 使用，`@ConfigurationProperties` 落在模块根 `config`。
+
+### Port、Adapter、Listener 与 Support
+
+- `port/` 只声明可替换的外部能力合同；端口不得持有 Spring Bean、Mapper、数据库会话或直接发起副作用。
+- `adapter/` 只实现端口或协议适配。`gateway` 面向外部系统，`provider` 面向可替换提供方，`store` 面向 Redis/其他非关系存储；实现可使用框架入口，但不得调用 UseCase、DAO 或 Mapper。
+- `listener/` 是入口适配器，只把事件转换为命令并调用 UseCase；不得注入 Service、DAO、Mapper 或外部实现。
+- `support/` 只放无状态、可单测的纯函数/转换器；不得标记 Spring Bean，不得访问数据库、缓存、远程 API 或登录上下文。
+- API Adapter 与 Controller 同属入口面，必须遵循 `API Adapter -> UseCase`；禁止 `API Adapter -> DAO/Mapper`。
 
 ## 何时允许额外目录
 

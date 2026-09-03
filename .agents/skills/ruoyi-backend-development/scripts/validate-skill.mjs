@@ -23,12 +23,14 @@ const requiredReferences = [
   'module-layout.md',
   'implementation.md',
   'mapper-and-sql.md',
+  'framework-usage.md',
   'verification.md',
 ];
 const requiredFiles = [
   'SKILL.md',
   ...requiredReferences.map(name => `references/${name}`),
   'scripts/validate-skill.mjs',
+  'scripts/validate-module-mode.mjs',
 ];
 
 for (const relativePath of requiredFiles) {
@@ -74,7 +76,13 @@ const requiredTokens = [
   'classic',
   'layered',
   'UseCase -> Service -> DAO -> Mapper',
-  '分层模式禁止 `IService` 和 `ServiceImpl`',
+  'Controller/Listener/API Adapter -> UseCase -> Service -> DAO -> Mapper -> XML',
+  'adapter/{api,gateway,provider,store}',
+  '`support` 不得声明 Spring Bean 或 I/O',
+  'Service 不调用 Service',
+  'PageResult<Row>',
+  '@DSTransactional',
+  'layered 模式禁止 `IService` 和 `ServiceImpl`',
   'BaseMapperPlus<Entity, Row>',
   'domain/model/read',
   '`*DataSupport`',
@@ -82,6 +90,12 @@ const requiredTokens = [
   'BaseMapperPlus -> wrapper/QueryBuilder -> MPJ -> XML',
   '50-namewta-ddl.sql',
   '60-namewta-dml.sql',
+  'JsonUtils',
+  'RedisUtils',
+  'LoginHelper',
+  'OssFactory',
+  'NotifyDispatcher',
+  'validate-module-mode.mjs',
 ];
 for (const token of requiredTokens) {
   if (!allMarkdown.includes(token)) fail(`Skill 文档缺少强制合同: ${token}`);
@@ -129,13 +143,16 @@ if (JSON.stringify(sqlTemplates) !== JSON.stringify(['mysql.sql.ftl'])) {
 const catalog = JSON.parse(read(join(fmRoot, 'catalog.json')) || '{}');
 const mysqlCatalog = catalog.templates?.find(item => item.source === 'sql/mysql.sql.ftl');
 const expectedSqlTarget = 'release-artifacts/docker/infrastructure/mysql/init/60-namewta-dml.sql';
-if (catalog.schemaVersion !== 3 || mysqlCatalog?.target !== expectedSqlTarget || mysqlCatalog?.writeMode !== 'merge') {
+if (catalog.schemaVersion !== 4 || mysqlCatalog?.target !== expectedSqlTarget || mysqlCatalog?.writeMode !== 'merge') {
   fail('docs/fm catalog 未声明 MySQL 模板以 merge 方式进入 60-namewta-dml.sql');
 }
 
 for (const name of ['50-namewta-ddl.sql', '60-namewta-dml.sql']) {
   read(join(workspaceRoot, 'release-artifacts/docker/infrastructure/mysql/init', name));
 }
+
+const moduleModes = join(workspaceRoot, '.agents/skills/engineering-standards/references/project/03-backend-module-modes.md');
+if (!existsSync(moduleModes)) fail(`缺少后端模块模式登记表: ${moduleModes}`);
 
 const systemRoot = join(
   workspaceRoot,

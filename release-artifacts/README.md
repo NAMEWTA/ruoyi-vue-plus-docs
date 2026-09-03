@@ -22,7 +22,7 @@ cp release-artifacts/.env.example release-artifacts/.env
 
 `ADMIN_WEB_PREFIX` 不含首尾斜杠。构建脚本会将其转换为 Vite 的 `/<prefix>/` 和 `/<prefix>/<env>-api`，不修改前端源码环境文件。
 
-当前项目只有 `apps/admin-web` 是可构建 App；`client-web`、`mobile-web` 和 `miniapp-taro` 仍是占位目录，不会进入发布产物。
+当前项目只发布 `apps/admin-web` 管理端和 `apps/home-web` 用户端；旧的 `client-web`、`mobile-web` 和 `miniapp-taro` 入口已清理。
 
 ## 构建
 

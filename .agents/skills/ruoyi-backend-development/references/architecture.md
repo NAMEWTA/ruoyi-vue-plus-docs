@@ -30,7 +30,7 @@ business module A -> ruoyi-api/common SPI <- business module B
 - 业务模块不引用其他业务模块的 mapper、entity、BO、VO、controller 或 service implementation。
 - 跨模块调用在同一 JVM 内通过 Spring 注入 `ruoyi-api` Service 或明确 common SPI；当前仓库没有通用 Feign/Dubbo 远程层。
 - `ruoyi-admin` 的组装可见性不能成为业务依赖理由。
-- repository/port 抽象只在存在稳定端口或多个真实 adapter 时建立；单一 MyBatis Mapper 已经是数据访问层，不额外套 `dao`、同义 repository、`*DataSupport` 或 manager。标准调用链是 `Controller -> Service -> ServiceImpl -> Mapper -> Mapper XML`。
+- classic 存量模块可沿用 `Controller -> Service -> ServiceImpl -> Mapper -> Mapper XML`；layered 新模块必须使用 `Controller/Listener/API Adapter -> UseCase -> Service -> DAO -> Mapper -> Mapper XML`。layered DAO 是唯一业务持久化入口，禁止以 `*DataSupport`、同义 repository、manager 或空壳转发类替代真实 DAO。Gateway/Provider/Store 仅在存在稳定外部端口或真实 adapter 时建立，并由 Service 使用。
 
 ## 新建子模块清单
 
@@ -46,7 +46,7 @@ business module A -> ruoyi-api/common SPI <- business module B
 
 - 可选 workflow 的 controller、service、listener、rule/config 等入口保持一致的启用条件，禁用时不得留下缺依赖 Bean。
 - 业务模块拥有自身业务状态；工作流通过公开门面、businessId 和事件协作，不直接写业务模块私表。
-- 触及工作流时加载 `ruoyi-workflow-module-guide`；触及 system 服务时加载 `ruoyi-system-module-guide`。
+- 触及工作流或 system 服务时加载统一的 `ruoyi-module-guide` 对应 module reference；旧的专用 Skill 仅作为兼容入口。
 
 ## 安全边界
 

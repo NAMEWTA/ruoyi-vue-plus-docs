@@ -64,7 +64,7 @@
 - 非终态且任务未结束时 `determineFlowStatus` 返回 `null`，此时没有总体 `ProcessEvent`，但仍可能有 `ProcessTaskEvent`。需要节点副作用时监听任务事件，不要假设每次办理都有 `ProcessEvent`。
 - 监听器用默认 `@EventListener`（与发布同线程），不是事务同步监听。
 
-事件类型路径：`ruoyi-vue-plus-namewta/ruoyi-api/src/main/java/org/dromara/workflow/api/event/`  
+事件类型路径：`ruoyi-vue-plus-namewta/ruoyi-api/src/main/java/org/dromara/workflow/api/event/`
 发布：`ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-workflow/src/main/java/org/dromara/workflow/handler/FlowProcessEventHandler.java`
 
 ## 表单页

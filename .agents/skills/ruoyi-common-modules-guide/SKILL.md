@@ -16,8 +16,10 @@ description: 映射 ruoyi-common 子模块与工具类索引：27 个 artifact�
 ## 分工
 
 - 工程规范、依赖方向、质量门禁：读取 [engineering-standards](../engineering-standards/SKILL.md)。不要把规范条文复制进本 Skill。
-- 字典/权限/脱敏的 **system 实现** 与跨模块 `ruoyi-api`：读取 [ruoyi-system-module-guide](../ruoyi-system-module-guide/SKILL.md)。本 Skill 只标 SPI 接口位置。
+- 字典/权限/脱敏的 **system 实现** 与跨模块 `ruoyi-api`：读取统一的 [ruoyi-module-guide](../ruoyi-module-guide/SKILL.md) system reference。本 Skill 只标 SPI 接口位置。
 - common 子模块选择、工具类 FQN：用本 Skill。
+
+新业务模块的五层边界由 [engineering-standards](../engineering-standards/SKILL.md) 和 [ruoyi-backend-development](../ruoyi-backend-development/SKILL.md) 裁决；本 Skill 不新增业务层，也不允许用 common 工具绕过 `UseCase -> Service -> DAO -> Mapper`。工具调用位置、事务和外部副作用必须同时遵守后端[框架公共入口与分层用法](../ruoyi-backend-development/references/framework-usage.md)。
 
 ## 硬约束
 
@@ -25,6 +27,9 @@ description: 映射 ruoyi-common 子模块与工具类索引：27 个 artifact�
 - 引入 `ruoyi-common-bom` 只锁版本，不会把 26 个 jar 传进 classpath。
 - 本仓库无 `ExcelUtil`。导入导出用 `ExcelBuilder` / `ExcelWriterWrapper`。
 - `DictService`、`PermissionService`、`SensitiveService` 只在 common 定义接口；实现在 `ruoyi-system`。注入 SPI，不要在 common 里找实现类。
+- `JsonUtils`、`RedisUtils`、`LoginHelper`、`OssFactory/OssClient`、`NotifyDispatcher/NotifyClient`、`PushHelper`、`ExcelBuilder` 和 `@Log` 等公共入口必须复用源码中的准确 FQN；不要直接引入底层 Jackson、Redisson、OSS/通知渠道 SDK 或自行创建同义包装。
+- `JsonUtils`、`IdGeneratorUtil` 在无 Spring 测试上下文时提供内部 fallback，但这不改变业务层的调用约束；业务代码仍不得自行创建 `JsonMapper`/`ObjectMapper`、直连 `IdWorker` 或缓存容器 Bean。
+- layered 业务模块中，DAO 只持有 Mapper；Redis/OSS/Notify 等外部能力只能由 Service 使用明确的 Gateway/Provider/Store 端口，或由提交后 support listener 适配，不能由 UseCase 直连实现类，也不能由 DAO 绕过 Mapper 调用。
 - 多数 core `*Utils` 继承 Hutool / Commons Lang。项目约定优先用这些 FQN，不要直接调 Hutool 同名类（除非本仓库没有对应封装）。
 - `job` / `ai` / `elasticsearch` 是第三方 starter 的薄包装。业务 API 在 SnailJob / SnailAi / Easy-Es，不要把本模块 1–2 个 `@Configuration` 当成完整 API。
 
@@ -34,7 +39,7 @@ description: 映射 ruoyi-common 子模块与工具类索引：27 个 artifact�
 2. JSON：`ruoyi-common-json`（会带 core）。
 3. 缓存 / 锁 / 限流 / 防重复提交：`ruoyi-common-redis`，用 `RedisUtils` 与 `@RepeatSubmit` / `@RateLimiter`。
 4. 登录态：`ruoyi-common-satoken` 的 `LoginHelper`（会带 core + redis）。Web CRUD 通常再加 `ruoyi-common-mybatis` + `ruoyi-common-web` + `ruoyi-common-security`。
-5. 文件：`OssFactory` / `OssClient`（`ruoyi-common-oss`）。统一通知：`NotifyDispatcher`（`ruoyi-common-notify`）；邮件与短信是通知渠道适配。推送：`PushHelper`。Excel：`ExcelBuilder`。
+5. 文件：业务模块优先注入 `ruoyi-api` 的 `OssService`；只有 OSS 基础设施实现才使用 `OssFactory` / `OssClient`（`ruoyi-common-oss`）。统一通知：`NotifyDispatcher` / `NotifyClient`（`ruoyi-common-notify`）；邮件与短信是通知渠道适配，不在业务中直连渠道 SDK。推送：`PushHelper`。Excel：`ExcelBuilder`。
 6. 先看目标业务模块 POM 的显式 `ruoyi-common-*`，再谈传递。不要假设 `ruoyi-workflow/pom.xml` 写了 `ruoyi-common-core`（它没有；mybatis/web/security 会带进来）。
 
 27 个子模块、内部依赖分层、system/workflow/admin 消费方见 [module-map.md](references/module-map.md)。

@@ -32,11 +32,20 @@
 ### DEC-003 保留项目目录主轴
 
 - Scope: `module:plus-ui-namewta`, `module:ruoyi-vue-plus-namewta`
-- Decision: 前端保持 `apps`、`domains`、`web-domains`、`platform`、`adapters`、`web-kit`、`api-contracts`、`tooling` 的所有权主轴；后端保持 Maven 模块和模块内 `controller`、`domain/{bo,vo}`、`mapper`、`service/impl` 主轴，Mapper XML 位于 `src/main/resources/mapper/<module>/`。
+- Decision: 前端保持 `apps`、`domains`、`web-domains`、`platform`、`adapters`、`web-kit`、`api-contracts`、`tooling` 的所有权主轴；后端由[模块模式登记表](03-backend-module-modes.md)裁决目录主轴：登记为 classic 的存量模块保持 `controller`、`domain/{bo,vo}`、`mapper`、`service/impl`，新建或登记为 layered 的模块使用 `controller`、`usecase`、`service`、`dao`、`mapper` 和 `domain/model/read`。所有 Mapper XML 位于 `src/main/resources/mapper/<module>/`。
 - Source: `repository-fact`
 - Rationale: 前端多 App 领域重构已完成且有架构工具持续检查；后端仍保持稳定模块边界。
 - Migration: 新前端能力放入真实 owner 并由 App 显式选择；移动端和小程序在独立规格激活前保持 README-only。
 - Verification: module map review；`pnpm architecture:check`; 工作区 build；Maven build。
+
+### DEC-009 新后端业务模块默认五层
+
+- Scope: `path:ruoyi-vue-plus-namewta/ruoyi-modules/**`
+- Decision: 新增后端业务模块默认登记为 `layered`，强制 `Controller/Listener/API Adapter -> UseCase -> Service -> DAO -> Mapper -> Mapper XML`。DAO 不继承 MyBatis-Plus `IService`；Service 不继承 `IService`/`ServiceImpl`，只承载业务规则并通过 DAO 持久化。`ruoyi-system`、`ruoyi-workflow`、`ruoyi-job`、`ruoyi-demo`、`ruoyi-ai` 在本阶段登记为 classic，保持现状。
+- Source: `user-decision` + `repository-fact` (`ruoyi-profile`)
+- Rationale: 编排、业务规则和持久化条件分离，避免 ServiceImpl 变成 SQL、事务、关系和外部副作用的耦合中心，同时保留存量模块兼容窗口。
+- Migration: 新模块直接使用 layered；存量只按 Ratchet 收紧。classic -> layered 必须提供旧路径、公开合同、调用方、SQL、测试和回滚映射，不以本决策授权无关重构。
+- Verification: 模块注册表、目录/import 静态检查、五层链路测试、Maven 测试和构建；通过 `validate-module-mode.mjs` 检查 layered 依赖方向。
 
 ### DEC-004 上游与产品分支隔离
 
@@ -110,6 +119,15 @@
 - Created: existing repository state
 - Expires/removal condition: axios/typescript 类型兼容方式允许删除 adapter 断言，或项目建立精确本地类型包装。
 - Verification: `pnpm lint`, `pnpm typecheck`, `pnpm build:prod`，review axios adapter 中断言是否扩散。
+
+### EX-002 Profile 测试兼容构造桥
+
+- Scope: `ruoyi-profile` 生产 Service 中标记为 `@Deprecated` 的旧构造方法。
+- Rule: Spring 主构造只能注入本模块 `port` 和公开 API；新代码不得通过旧构造直接注入 `WorkflowService`、具体 Provider 或具体 Store。
+- Reason: Profile 迁移期间保留既有单元/E2E 测试的构造签名，避免一次重构破坏测试夹具；正式 Bean 装配已统一使用 `WorkflowGateway`、Provider/Store 等端口。
+- Compensation: 兼容构造不参与 Spring 自动注入，转换逻辑只建立本模块端口桥；新增测试直接使用端口合同。
+- Expires/removal condition: 测试夹具全部迁移到 `port` 合同后删除旧构造、旧 `I*Service` 兼容接口及相关 import。
+- Verification: Profile strict layered validator、Maven test-compile 和模块测试；确认生产主构造不依赖实现模块。
 
 ## 待确认
 

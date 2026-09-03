@@ -10,7 +10,7 @@ Level: MUST
 
 Source: `repository-fact` (`docs/fm/java/{domain,bo,vo,mapper,service,serviceImpl,controller}.java.ftl`, `docs/fm/xml/mapper.xml.ftl`, `ruoyi-system/**`, `ruoyi-demo/**/TestDemo*`)
 
-Rule: 标准业务 CRUD 保持 entity、BO、VO、mapper、service/interface、service/impl、controller 的职责分离。逐项引用精确模板：Entity 用 `docs/fm/java/domain.java.ftl`，BO 用 `bo.java.ftl`，VO 用 `vo.java.ftl`，Mapper 用 `mapper.java.ftl`，Service 接口用 `service.java.ftl`，实现用 `serviceImpl.java.ftl`，Controller 用 `controller.java.ftl`，自定义 XML 用 `docs/fm/xml/mapper.xml.ftl`。模板只建立骨架；修改 system/workflow 等成熟模块时，保留同模块已有的关系维护、权限、缓存、事务、导入导出和条件装配，不把复杂用例退化成模板 CRUD。已知不规范、处于待重构状态的模块不得作为新代码样例。
+Rule: CRUD 目录和调用链必须先读取模块模式登记表。classic 存量模块保持 entity、BO、VO、mapper、service/interface、service/impl、controller 的兼容职责；layered 新模块强制 `Controller/Listener/API Adapter -> UseCase -> Service -> DAO -> Mapper -> XML`，并使用对应 layered 模板。逐项引用精确模板：Entity 用 `docs/fm/java/domain.java.ftl`，BO 用 `bo.java.ftl`，VO 用 `vo.java.ftl`，Read Model 用 `read.java.ftl`，Mapper 按模式选择 `mapper.java.ftl` 或 `layered/mapper.java.ftl`，classic Service 用 `service.java.ftl`/`serviceImpl.java.ftl`，layered 使用 `layered/service.java.ftl`、`layered/dao.java.ftl` 和 UseCase 模板，Controller 按模式选择对应模板，自定义 XML 用 `docs/fm/xml/mapper.xml.ftl`。模板只建立骨架；修改 system/workflow 等成熟模块时，保留同模块已有的关系维护、权限、缓存、事务、导入导出和条件装配，不把复杂用例退化成模板 CRUD。已知不规范、处于待重构状态的模块不得作为新代码样例。
 
 Verification: 全链路文件与同模块最近实现对照；controller/service/mapper 职责 review；受影响 Maven reactor build/test。
 
@@ -44,9 +44,9 @@ Scope: service query builders and `ruoyi-common-mybatis`
 
 Level: MUST
 
-Source: `repository-fact` (`QueryBuilder`, `BaseMapperPlus.lambda()`, `LambdaCrudChainWrapper`, `docs/fm/java/serviceImpl.java.ftl`)
+Source: `repository-fact` (`QueryBuilder`, `BaseMapperPlus.lambda()`, `LambdaCrudChainWrapper`, `docs/fm/java/serviceImpl.java.ftl`, `docs/fm/java/layered/dao.java.ftl`)
 
-Rule: 动态查询使用 `QueryBuilder.lambda`、`Wrappers.lambdaQuery` 或 mapper 的 fresh `lambda()`，根据类型选择 `eqIfPresent`、`eqIfText`、`likeIfText`、`betweenParams` 等条件，并给出确定排序。链式 wrapper 有可变查询/更新状态，不得跨请求、线程或独立操作缓存复用；每个操作取得新实例，复用同一实例时必须先明确 `clear()` 能否完整清除所用状态。
+Rule: 动态查询使用 `QueryBuilder.lambda`、`Wrappers.lambdaQuery` 或 mapper 的 fresh `lambda()`，根据类型选择 `eqIfPresent`、`eqIfText`、`likeIfText`、`betweenParams` 等条件，并给出确定排序。classic 模式可由 Service 构建简单 Wrapper；layered 模式的查询条件、分页、条件更新和行锁必须统一封装在 DAO，Service/UseCase 不得出现 MyBatis-Plus Wrapper。链式 wrapper 有可变查询/更新状态，不得跨请求、线程或独立操作缓存复用；每个操作取得新实例，复用同一实例时必须先明确 `clear()` 能否完整清除所用状态。
 
 Verification: 空字符串/null/日期范围/排序测试；review wrapper 创建位置和 Bean 字段；并发与重复调用测试。
 
@@ -58,7 +58,7 @@ Level: MUST
 
 Source: `repository-fact` (`TestDemoServiceImpl`, `docs/fm/java/serviceImpl.java.ftl`, system service implementations)
 
-Rule: service 负责 `buildQueryWrapper`、映射、领域不变量、唯一性和删除前校验。insert 成功后按合同回填生成主键；update/status/sort 只更新允许字段；唯一性检查在编辑时排除当前主键；无权限或违反不变量使用现有 `ServiceException` 合同失败，不以 mapper 返回 0 静默掩盖关键业务失败。
+Rule: classic service 负责 `buildQueryWrapper`、映射、领域不变量、唯一性和删除前校验；layered DAO 负责查询条件、分页、条件更新、行锁和持久化映射，layered Service 负责业务规则、唯一性、状态/删除校验和外部端口，UseCase 负责跨 Service 编排与事务边界。insert 成功后按合同回填生成主键；update/status/sort 只更新允许字段；唯一性检查在编辑时排除当前主键；无权限或违反不变量使用现有 `ServiceException` 合同失败，不以 mapper 返回 0 静默掩盖关键业务失败。
 
 Verification: insert/update/duplicate/delete forbidden 测试；review `validEntityBeforeSave` 和 checkUnique；事务集成测试。
 

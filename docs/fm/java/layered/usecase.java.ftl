@@ -3,7 +3,6 @@ package ${packageName}.usecase;
 import ${packageName}.domain.bo.${ClassName}Bo;
 import ${packageName}.domain.vo.${ClassName}Vo;
 import org.dromara.common.core.domain.PageResult;
-import org.dromara.common.mybatis.core.page.PageQuery;
 
 import java.util.List;
 
@@ -30,10 +29,17 @@ public interface ${ClassName}UseCase {
      * 分页查询 ${functionName}。
      *
      * @param command 查询条件
-     * @param pageQuery 分页参数
+     * @param pageNum 当前页码，可为空
+     * @param pageSize 每页条数，可为空
+     * @param orderByColumn 排序字段，可为空
+     * @param isAsc 排序方向，可为空
      * @return 分页结果
      */
-    PageResult<${ClassName}Vo> queryPageList(${ClassName}Bo command, PageQuery pageQuery);
+    PageResult<${ClassName}Vo> queryPageList(${ClassName}Bo command,
+                                             Integer pageNum,
+                                             Integer pageSize,
+                                             String orderByColumn,
+                                             String isAsc);
 </#if>
 
     /**

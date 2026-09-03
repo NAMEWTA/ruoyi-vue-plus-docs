@@ -24,6 +24,22 @@ Rule: 可部署应用负责组装，业务模块依赖 `ruoyi-api` 与最小 `ru
 
 Verification: `./mvnw clean package`; review 变更模块的 `pom.xml` 与 import；新增依赖说明方向、必要性和替代方案。
 
+### ARCH-002A 新业务模块五层调用链
+
+Scope: `path:ruoyi-vue-plus-namewta/ruoyi-modules/**`
+
+Level: MUST
+
+Source: `user-decision` + `repository-fact` (`ruoyi-profile` layered implementation)
+
+Rule: 新增后端业务模块必须使用 `Controller/Listener/API Adapter -> UseCase -> Service -> DAO -> Mapper -> Mapper XML` 调用链。入口只能依赖 UseCase 合同；UseCase 只能编排 Service；Service 只能调用本模块自己的 DAO、明确声明的外部 Port 及无状态 domain policy/codec/converter；DAO 只能调用本 owner 的 Mapper；Mapper 只负责 SQL。UseCase 不得直连 DAO、Mapper、Gateway、Store、Provider 或外部 API；Service 不得调用另一个 Service，不得导入 `PageQuery`、MyBatis/Mapper 或继承/实现 `IService`、`ServiceImpl`；DAO 不得调用 DAO、UseCase、Service、Gateway、Store、Provider、跨模块 API，也不得继承/实现 `IService`、`ServiceImpl`；API Adapter/Listener 同样不得直连 DAO/Mapper。事务命令和锁查询由 UseCase 经 Service 在事务内调用。Listener 和 API Adapter 是入口适配器，不能绕过 UseCase。support、domain policy、codec、converter 只能辅助主链路；support 不得持有 Spring Bean、数据库或远程调用。
+
+数据库用例必须能验证完整 Entry -> UseCase -> Service -> DAO -> Mapper -> XML 链路。`domain/vo` 只承载 HTTP 输出；Mapper 读结果使用 `domain/model/read` 下的 `<Capability>Row` 或 `<Capability>Projection`，Row/Projection 不是第六层，也不得作为 Controller 返回值。
+
+存量模块按[后端模块模式登记表](../project/03-backend-module-modes.md)维持已登记的 classic 形态；不得借新规则发动 `ruoyi-system`、`ruoyi-workflow`、`ruoyi-job`、`ruoyi-demo` 或 `ruoyi-ai` 的无关迁移。新文件和实质修改文件遵循 Target，存量偏差按 Ratchet 处理。
+
+Verification: 对 layered 模块运行 `validate-module-mode.mjs`，检查入口、UseCase、Service、DAO、Mapper 的 import 方向和五层存在性，并检查 API Adapter/Listener、port/adapter/support/domain 边界、事务注解位置、Service 同层互调、MyBatis 类型和 Row 命名；对每个数据库用例追踪至 XML statement，并运行受影响 Maven 测试/构建。
+
 ### ARCH-003 前端边界
 
 Scope: `module:plus-ui-namewta`

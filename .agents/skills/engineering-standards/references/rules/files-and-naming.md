@@ -20,7 +20,7 @@ Level: MUST
 
 Source: `repository-fact` + `user-decision` (`DEC-003`)
 
-Rule: 前端保持 `apps`、`packages/domains`、`packages/web-domains`、`packages/platform`、`packages/adapters`、`packages/web-kit`、`packages/api-contracts` 与 `tooling` 的所有权主轴。后端标准业务模块保持以下主轴，不能为单个用例任意发明平级 `application/repository/manager/facade` 等目录：
+Rule: 前端保持 `apps`、`packages/domains`、`packages/web-domains`、`packages/platform`、`packages/adapters`、`packages/web-kit`、`packages/api-contracts` 与 `tooling` 的所有权主轴。后端目录主轴由模块模式登记表裁决：classic 存量模块保持以下兼容形态；layered 新模块使用后续五层形态。不能为单个用例任意发明平级 `application/repository/manager/facade` 等目录：
 
 ```text
 src/main/java/org/dromara/<module>/<business>/
@@ -34,12 +34,41 @@ src/main/java/org/dromara/<module>/<business>/
   mapper/
   service/
     impl/
-src/main/resources/mapper/<module>/
+  src/main/resources/mapper/<module>/
+```
+
+layered 新模块主轴为：
+
+```text
+src/main/java/org/dromara/<module>/<business>/
+  controller/{admin,anonymous}/
+  listener/                    # 事件入口，只调用 UseCase
+  port/                        # 外部端口合同
+  adapter/{api,gateway,provider,store}/ # API 入口或外部端口实现
+  support/                     # 纯无状态辅助
+  usecase/{<Capability>UseCase.java,impl/<Capability>UseCaseImpl.java}
+  service/<Capability>Service.java
+  dao/<Capability>Dao.java
+  mapper/<Capability>Mapper.java
+  domain/{<Entity>.java,bo/,vo/,model/read/,policy/,codec/,converter/,event/,exception/}
+src/main/resources/mapper/<module>/<Capability>Mapper.xml
 ```
 
 只有真实存在并有独立合同的其他客户端才建立 `controller/<actual-client>`；不要预建未来客户端目录。已登录自服务接口若不属于管理端，先在业务规格中裁决访问面。只有形成稳定职责、独立生命周期、所有权或依赖方向时新增目录/模块；`index`/barrel 只用于已有公开入口或框架/生成器合同。
 
 Verification: module map review；检查新增目录的 owner、依赖和导航价值；扫描 controller 路径与 `@SaIgnore` 是否一致；前端运行 `pnpm lint`、`pnpm typecheck`、`pnpm build:prod`，后端运行适用 Maven 门禁。
+
+### FILES-005 Domain 类型与读模型归属
+
+Scope: `path:ruoyi-vue-plus-namewta/ruoyi-modules/**/domain/**`
+
+Level: MUST
+
+Source: `user-decision` + `repository-fact` (`ruoyi-profile/domain`)
+
+Rule: `domain` 按生命周期和所有权分类，而不是按文件数量堆叠目录：根目录 Entity 只映射持久化表；BO 只承载入口输入和校验；VO 只承载 HTTP 输出；`model/read` 只承载 Mapper 查询结果，使用顶层 `<Capability>Row` 或 `<Capability>Projection` 命名；`policy`、`codec`、`converter` 只能是无状态纯辅助；`event`、`exception` 表达业务事件和失败合同。Row/Projection 不是独立业务层，不能被 Controller 或 UseCase 直接依赖；禁止把 Entity、BO、Mapper、Service 或 HTTP 响应混放在同一类型。外部端口合同位于 `port/`，其实现位于 `adapter/{gateway,provider,store}/`；`listener/` 和 API Adapter 只能进入 UseCase；`support/` 不得成为 Spring Bean 或 I/O 容器。
+
+Verification: review 每个 domain 类型的生产者和消费者；扫描 Controller/UseCase 对 `domain.model.read` 的 import；对照 Mapper 返回类型、DAO 转换和 VO 输出测试。
 
 ### FILES-003 保留生成器、框架与大小写合同
 

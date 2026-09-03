@@ -6,8 +6,15 @@ import ${packageName}.usecase.${ClassName}UseCase;
 import lombok.RequiredArgsConstructor;
 import org.dromara.common.core.domain.PageResult;
 import org.dromara.common.core.domain.R;
+import org.dromara.common.core.validate.AddGroup;
+import org.dromara.common.core.validate.EditGroup;
+import org.dromara.common.log.annotation.Log;
+import org.dromara.common.log.enums.BusinessType;
 import org.dromara.common.mybatis.core.page.PageQuery;
 import org.dromara.common.web.core.BaseController;
+<#if controllerSurface == "admin">
+import cn.dev33.satoken.annotation.SaCheckPermission;
+</#if>
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -44,7 +51,9 @@ public class ${ClassName}Controller extends BaseController {
     @GetMapping("/list")
 <#if table.crud>
     public R<PageResult<${ClassName}Vo>> list(${ClassName}Bo command, PageQuery pageQuery) {
-        return R.ok(${className}UseCase.queryPageList(command, pageQuery));
+        return R.ok(${className}UseCase.queryPageList(command,
+            pageQuery.getPageNum(), pageQuery.getPageSize(),
+            pageQuery.getOrderByColumn(), pageQuery.getIsAsc()));
     }
 <#else>
     public R<List<${ClassName}Vo>> list(${ClassName}Bo command) {
@@ -69,8 +78,12 @@ public class ${ClassName}Controller extends BaseController {
      * @param command 新增命令
      * @return 操作结果
      */
+    @Log(title = "${functionName}", businessType = BusinessType.INSERT)
+<#if controllerSurface == "admin">
+    @SaCheckPermission("${permissionPrefix}:add")
+</#if>
     @PostMapping
-    public R<Void> add(@RequestBody ${ClassName}Bo command) {
+    public R<Void> add(@Validated(AddGroup.class) @RequestBody ${ClassName}Bo command) {
         return toAjax(${className}UseCase.create(command));
     }
 
@@ -80,8 +93,12 @@ public class ${ClassName}Controller extends BaseController {
      * @param command 修改命令
      * @return 操作结果
      */
+    @Log(title = "${functionName}", businessType = BusinessType.UPDATE)
+<#if controllerSurface == "admin">
+    @SaCheckPermission("${permissionPrefix}:edit")
+</#if>
     @PostMapping("/edit")
-    public R<Void> edit(@RequestBody ${ClassName}Bo command) {
+    public R<Void> edit(@Validated(EditGroup.class) @RequestBody ${ClassName}Bo command) {
         return toAjax(${className}UseCase.update(command));
     }
 
@@ -91,6 +108,10 @@ public class ${ClassName}Controller extends BaseController {
      * @param ${pkColumn.javaField}s 待删除主键
      * @return 操作结果
      */
+    @Log(title = "${functionName}", businessType = BusinessType.DELETE)
+<#if controllerSurface == "admin">
+    @SaCheckPermission("${permissionPrefix}:remove")
+</#if>
     @PostMapping("/remove/{${pkColumn.javaField}s}")
     public R<Void> remove(@PathVariable ${pkColumn.javaType}[] ${pkColumn.javaField}s) {
         return toAjax(${className}UseCase.remove(${pkColumn.javaField}s));

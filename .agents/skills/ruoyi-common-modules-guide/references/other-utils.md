@@ -6,6 +6,8 @@
 
 依赖哪个 artifact 见 [module-map.md](module-map.md)。
 
+新业务层级约束见后端[框架公共入口与分层用法](../../ruoyi-backend-development/references/framework-usage.md)：优先调用本页列出的项目入口，不直接复制底层实现。`RedisUtils` 内部已经封装 `RedissonClient`；只有明确的 Store/Provider owner 需要原子、锁或队列特性时才允许直接使用 Redisson。`OssFactory`/`OssClient` 是基础设施入口，业务 Service 优先依赖 `ruoyi-api` 的 OSS 合同；通知统一走 `NotifyClient`/`NotifyDispatcher`，不要直连短信或邮件渠道。
+
 ## 目录
 
 1. [redis](#redis)
@@ -42,7 +44,7 @@
 
 | FQN | 职责 | 路径 |
 |---|---|---|
-| `org.dromara.common.json.utils.JsonUtils` | JSON 工具类。内部用 Jackson `JsonMapper`（`tools.jackson`） | `ruoyi-common/ruoyi-common-json/src/main/java/org/dromara/common/json/utils/JsonUtils.java` |
+| `org.dromara.common.json.utils.JsonUtils` | JSON 工具类。内部用 Jackson `JsonMapper`（`tools.jackson`）；无 Spring 测试上下文时使用内部 fallback，容器 Bean 可用后优先使用 Bean | `ruoyi-common/ruoyi-common-json/src/main/java/org/dromara/common/json/utils/JsonUtils.java` |
 
 ## encrypt
 
@@ -62,7 +64,7 @@
 
 | FQN | 职责 | 路径 |
 |---|---|---|
-| `org.dromara.common.mybatis.utils.IdGeneratorUtil` | ID 生成工具类。委托 MyBatis-Plus `IdentifierGenerator` / `IdWorker` | `src/main/java/org/dromara/common/mybatis/utils/IdGeneratorUtil.java` |
+| `org.dromara.common.mybatis.utils.IdGeneratorUtil` | ID 生成工具类。优先委托 MyBatis-Plus `IdentifierGenerator`，无 Spring 测试上下文时回退 `IdWorker`；业务代码不得直连底层实现 | `src/main/java/org/dromara/common/mybatis/utils/IdGeneratorUtil.java` |
 | `org.dromara.common.mybatis.helper.DataPermissionHelper` | 数据权限助手。Sa-Token Storage 键 `data:permission` | `.../mybatis/helper/DataPermissionHelper.java` |
 | `org.dromara.common.mybatis.helper.DataBaseHelper` | 数据库助手。动态数据源 / 库类型 | `.../mybatis/helper/DataBaseHelper.java` |
 | `org.dromara.common.mybatis.core.query.AggregateSelectUtils` | 聚合查询字段 SQL 构造工具。 | `.../mybatis/core/query/AggregateSelectUtils.java` |

@@ -34,6 +34,8 @@ packages/web-domains/<module>/src/<resource>/
 
 `profile` 的资源可定位基线是 `material-tags`、`person/application`、`person/rebind`、`person/materials`、`person/archive`、`enterprise/application`、`enterprise/transfer`、`enterprise/materials`、`enterprise/archive`。管理页面可由较粗的 Web owner 聚合多个 headless Controller；该选择必须在 README/manifest 可追溯，并保持后端菜单已有 componentKey。不要为 verification callback 创建空前端资源。
 
+Profile 当前 OpenAPI 快照 `packages/api-contracts/openapi/current.json` 尚无 `/profile/**`。过渡期可在 domain 资源 `service.ts` 中维护已核实的 typed HTTP 合同，并用 URL/方法测试固定；快照纳入后必须使用 `tooling/openapi` 生成 transport，再由 domain 映射。页面只能使用 domain-owned 类型。`material-tags` 是 domain/backend 名称，`material-tag` 是 Web 页面 owner 别名，组件键 `profile/materialTag/index` 保持不变。
+
 ## 文件职责
 
 - `types.ts` 只声明资源拥有的领域语义。Identifier、响应壳等确被多个资源共用的合同可放包级 `types.ts` 或既有 platform 合同；不要在每个资源复制一套后再由根 `export *` 合并。

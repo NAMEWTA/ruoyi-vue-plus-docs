@@ -1,11 +1,13 @@
 package ${packageName}.service;
 
 import ${packageName}.dao.${ClassName}Dao;
+import ${packageName}.domain.${ClassName};
 import ${packageName}.domain.bo.${ClassName}Bo;
+import ${packageName}.domain.model.read.${ClassName}Row;
 import ${packageName}.domain.vo.${ClassName}Vo;
+import org.dromara.common.core.utils.MapstructUtils;
 import lombok.RequiredArgsConstructor;
 import org.dromara.common.core.domain.PageResult;
-import org.dromara.common.mybatis.core.page.PageQuery;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,7 +33,8 @@ public class ${ClassName}Service {
      * @return ${functionName}
      */
     public ${ClassName}Vo queryById(${pkColumn.javaType} ${pkColumn.javaField}) {
-        return ${className}Dao.queryById(${pkColumn.javaField});
+        ${ClassName}Row row = ${className}Dao.queryById(${pkColumn.javaField});
+        return MapstructUtils.convert(row, ${ClassName}Vo.class);
     }
 
 <#if table.crud>
@@ -39,11 +42,21 @@ public class ${ClassName}Service {
      * 分页查询 ${functionName}。
      *
      * @param command 查询条件
-     * @param pageQuery 分页参数
+     * @param pageNum 当前页码，可为空
+     * @param pageSize 每页条数，可为空
+     * @param orderByColumn 排序字段，可为空
+     * @param isAsc 排序方向，可为空
      * @return 分页结果
      */
-    public PageResult<${ClassName}Vo> queryPageList(${ClassName}Bo command, PageQuery pageQuery) {
-        return ${className}Dao.queryPageList(command, pageQuery);
+    public PageResult<${ClassName}Vo> queryPageList(${ClassName}Bo command,
+                                                    Integer pageNum,
+                                                    Integer pageSize,
+                                                    String orderByColumn,
+                                                    String isAsc) {
+        PageResult<${ClassName}Row> page = ${className}Dao.queryPageList(
+            command, pageNum, pageSize, orderByColumn, isAsc);
+        return new PageResult<>(MapstructUtils.convert(List.copyOf(page.getRows()), ${ClassName}Vo.class),
+            page.getTotal());
     }
 </#if>
 
@@ -54,7 +67,7 @@ public class ${ClassName}Service {
      * @return 查询结果
      */
     public List<${ClassName}Vo> queryList(${ClassName}Bo command) {
-        return ${className}Dao.queryList(command);
+        return MapstructUtils.convert(${className}Dao.queryList(command), ${ClassName}Vo.class);
     }
 
     /**
@@ -64,7 +77,7 @@ public class ${ClassName}Service {
      * @return 是否新增成功
      */
     public Boolean create(${ClassName}Bo command) {
-        return ${className}Dao.insert(command);
+        return ${className}Dao.insert(MapstructUtils.convert(command, ${ClassName}.class));
     }
 
     /**
@@ -74,7 +87,7 @@ public class ${ClassName}Service {
      * @return 是否修改成功
      */
     public Boolean update(${ClassName}Bo command) {
-        return ${className}Dao.update(command);
+        return ${className}Dao.update(MapstructUtils.convert(command, ${ClassName}.class));
     }
 
     /**

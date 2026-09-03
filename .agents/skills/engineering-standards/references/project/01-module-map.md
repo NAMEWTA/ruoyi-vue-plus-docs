@@ -34,7 +34,7 @@
 | `ruoyi-common/ruoyi-common-mqtt` | Spring MQTT 集成 | package surface | none |
 | `ruoyi-common/ruoyi-common-mybatis` | Spring/MyBatis 数据访问基础 | package surface | none |
 | `ruoyi-common/ruoyi-common-nacos` | Nacos 配置解密与启动集成 | package surface | none |
-| `ruoyi-common/ruoyi-common-openapi` | 默认关闭的机器调用协议、注册表、网关与 Sa-Token Session 桥 | `@OpenApi`, OpenAPI SPI, auto-configuration | `src/test/java`; protocol/registry/gateway/assembly tests |
+| `ruoyi-common/ruoyi-common-openapi` | 默认开启、可由 `OPENAPI_ENABLED=false` 显式关闭的机器调用协议、注册表、网关与 Sa-Token Session 桥 | `@OpenApi`, OpenAPI SPI, auto-configuration | `src/test/java`; protocol/registry/gateway/assembly tests |
 | `ruoyi-common/ruoyi-common-oss` | 对象存储适配 | package surface | none |
 | `ruoyi-common/ruoyi-common-push` | Spring 推送/WebSocket/SSE 基础 | package surface | none |
 | `ruoyi-common/ruoyi-common-redis` | Spring/Redis 缓存、锁与限流 | package surface | none |
@@ -77,7 +77,7 @@
 | 前端领域纵切片 | 后端 controller/BO/VO/OpenAPI 合同 | `packages/domains/demo/**`、`packages/web-domains/demo/**`、Admin 显式组合 | transport -> domain mapper/model/service -> web-domain 页面/manifest -> App 选择 |
 | 前端树表 CRUD | 后端业务合同，无本地根级模板 | `packages/domains/demo/**`、`packages/web-domains/demo/**` | 保持非分页列表、树转换、父节点选择和展开状态语义，并由领域测试与页面测试分别验证 |
 | 前端复用状态 | 无单一模板替代 | 各 `web-domain` 的局部 composable、稳定 `web-kit`、App 私有 hooks | 状态先留在真实 owner；只有多消费者形成稳定合同时才提取 |
-| 标准 CRUD 模板 | `docs/fm/{java,vue,react,xml,sql}/**` | 后端 `ruoyi-modules/ruoyi-demo/**/TestDemo*` 与前端 demo domain/web-domain | 对照前后端资源纵切片、entity/BO/VO/mapper/service/controller 全链路及数据权限覆盖 |
+| 标准 CRUD 模板 | `docs/fm/{java,vue,react,xml,sql}/**` | classic 后端 `ruoyi-modules/ruoyi-demo/**/TestDemo*`；layered 后端 `ruoyi-profile`；前端 demo domain/web-domain | 先按[后端模块模式登记表](03-backend-module-modes.md)选模式，再对照资源纵切片、entity/BO/VO/mapper/service/controller 或 UseCase/Service/DAO/Mapper 全链路及数据权限覆盖 |
 | 后端复杂系统能力 | 静态模板只提供 CRUD 起点 | `ruoyi-modules/ruoyi-system/**`、`ruoyi-modules/ruoyi-workflow/**` | 关系表、缓存、Client、事务、条件装配和工作流逻辑按同模块成熟实现增量修改 |
 | 数据访问与翻译 | 公共 API 本身 | `ruoyi-common-mybatis`、`ruoyi-common-translation` | 复用 `BaseMapperPlus`、`QueryBuilder`、fresh chain wrapper 与批量翻译合同 |
 

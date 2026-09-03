@@ -11,6 +11,7 @@ services:
     environment:
       TZ: Asia/Shanghai
       APP_ADMIN_WEB_PREFIX: "${ADMIN_WEB_PREFIX:?ADMIN_WEB_PREFIX is required}"
+      APP_HOME_WEB_PREFIX: "${HOME_WEB_PREFIX:?HOME_WEB_PREFIX is required}"
       LB_SERVER_NAME: "${LB_SERVER_NAME:-localhost}"
       NGINX_ENVSUBST_FILTER: "^(APP_|BACKEND_|LB_)"
     ports:
@@ -30,6 +31,7 @@ services:
     environment:
       TZ: Asia/Shanghai
       APP_ADMIN_WEB_PREFIX: "${ADMIN_WEB_PREFIX:?ADMIN_WEB_PREFIX is required}"
+      APP_HOME_WEB_PREFIX: "${HOME_WEB_PREFIX:?HOME_WEB_PREFIX is required}"
       LB_SERVER_NAME: "${LB_SERVER_NAME:?LB_SERVER_NAME is required}"
       NGINX_ENVSUBST_FILTER: "^(APP_|BACKEND_|LB_)"
     ports:
@@ -56,6 +58,23 @@ services:
       - ./frontend/nginx/apps/nginx-admin-web.conf.template:/etc/nginx/templates/default.conf.template:ro
       - ./frontend/nginx/html/admin-web:/usr/share/nginx/html:ro
       - ./frontend/nginx/log/admin-web:/var/log/nginx
+    logging: *nginx-logging
+    restart: unless-stopped
+    networks: [namewta]
+
+  namewta-nginx-home-web:
+    image: "${NGINX_IMAGE:-nginx:1.31.1}"
+    container_name: namewta-nginx-home-web
+    environment:
+      TZ: Asia/Shanghai
+      APP_PREFIX: "${HOME_WEB_PREFIX:?HOME_WEB_PREFIX is required}"
+      NGINX_ENVSUBST_FILTER: "^(APP_|BACKEND_|LB_)"
+    ports:
+      - "${NAMEWTA_BIND_HOST:-127.0.0.1}:${HOME_WEB_PORT:-41082}:80"
+    volumes:
+      - ./frontend/nginx/apps/nginx-home-web.conf.template:/etc/nginx/templates/default.conf.template:ro
+      - ./frontend/nginx/html/home-web:/usr/share/nginx/html:ro
+      - ./frontend/nginx/log/home-web:/var/log/nginx
     logging: *nginx-logging
     restart: unless-stopped
     networks: [namewta]

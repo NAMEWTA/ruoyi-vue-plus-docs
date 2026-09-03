@@ -38,7 +38,7 @@
 | 渠道无关通知、幂等、附件快照 | `ruoyi-common-notify` | `NotifyDispatcher`、`NotifyClient`、`NotifyChannelAdapter` |
 | 邮件 | `ruoyi-common-mail` | `MailBuilder` |
 | 推送 | `ruoyi-common-push` | `PushHelper` |
-| 机器调用协议、显式开放注册表、签名网关与机器 Session | `ruoyi-common-openapi` | `@OpenApi`、`OpenApiCanonicalizer`、OpenAPI SPI；默认关闭，业务凭据与授权实现位于 system |
+| 机器调用协议、显式开放注册表、签名网关与机器 Session | `ruoyi-common-openapi` | `@OpenApi`、`OpenApiCanonicalizer`、OpenAPI SPI；admin 默认开启，可用 `OPENAPI_ENABLED=false` 显式关闭，业务凭据与授权实现位于 system |
 | 字典标签 / 角色菜单权限 / 是否脱敏 | 注入 SPI，不要在 common 找实现 | 见 [SPI](#spi-接口-vs-system-实现) |
 | 定时任务 / AI / ES | 对应薄包装模块 | 业务 API 在第三方 starter |
 
@@ -298,4 +298,4 @@
 | `OpenApiCredentialResolver` | `ruoyi-common/ruoyi-common-openapi/src/main/java/org/dromara/common/openapi/spi/OpenApiCredentialResolver.java` | `.../openapi/credential/service/SystemOpenApiCredentialResolver.java` |
 | `OpenApiCallEventPublisher` | `ruoyi-common/ruoyi-common-openapi/src/main/java/org/dromara/common/openapi/spi/OpenApiCallEventPublisher.java` | 组装层可覆盖；common auto-configuration 提供 no-op 缺省实现 |
 
-调用约定与方法语义见 [ruoyi-system-module-guide](../../ruoyi-system-module-guide/SKILL.md)，不要在本 Skill 复制。
+调用约定与方法语义见统一的 [ruoyi-module-guide](../../ruoyi-module-guide/SKILL.md) system reference，不要在本 Skill 复制。

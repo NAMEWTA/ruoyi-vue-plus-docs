@@ -18,7 +18,7 @@ NAMEWTA 是 RuoYi-Vue-Plus / Plus-UI 的增强发行线。上游仍是基础能�
 | `packages/web-kit/*` | 多个 Web 消费者共同使用的壳层、基础组件和设计 token |
 | `packages/api-contracts` | 可追溯、确定性生成的 OpenAPI 传输合同 |
 
-当前只激活 `admin-web`。`client-web`、移动 Web 和小程序仅保留 README 规划入口，不属于工作区包；多 App 分层是可扩展架构边界，不表示所有占位终端已经实现。
+当前激活 `admin-web` 和 `home-web` 两个终端。前者是管理端，后者是应用用户门户与用户中心；旧的 `client-web`、移动 Web 和小程序入口已清理，不属于工作区包。
 
 domain 与后端模块一一对应为 `admin`、`system`、`workflow`、`demo`、`gen`、`ai`；包内第二层按 Controller 的稳定 HTTP 资源命名。由此可以从 `/system/client` 直接定位到 `domains/system/src/client`，再定位到 `web-domains/system/src/client` 的 Web 表现层。
 

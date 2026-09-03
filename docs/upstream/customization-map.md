@@ -16,7 +16,7 @@
 
 | 层级 | 当前 owner | 必须保持的不变量 |
 |---|---|---|
-| App | `apps/admin-web`；`apps/{client-web,mobile-web,miniapp-taro}` 为占位 | 激活 App 在 `package.json`、`application/services.ts` 和 manifest registry 同步选择领域与 Client，拥有布局、品牌、启动和终端组合；占位目录保持 README-only |
+| App | `apps/admin-web` 管理端、`apps/home-web` 应用用户端 | 两个 App 在 `package.json`、`application/services.ts` 和 manifest registry 同步选择领域与 Client，拥有独立布局、品牌、启动和会话；未纳入范围的终端不保留源码 |
 | Domain | `packages/domains/{admin,ai,demo,profile,system,workflow}` | 按后端模块及实际消费的 Controller 资源组织显式 `index.ts`、`types.ts` 和按需 `transport.ts`/`service.ts`；headless，不依赖 Vue、DOM 或具体 adapter；资源子路径由 package exports 公开 |
 | Web-domain | `packages/web-domains/{admin,ai,demo,profile,system,workflow}` | 拥有领域页面、局部 composable、runtime port、registration 与 manifest；不拥有 App 壳层、全局单例或终端选择，只从 domain 公开 exports 导入 |
 | Platform | `packages/platform/{contracts,auth,http,permission,app-runtime}` | 提供跨领域端口和运行时合同；不反向依赖 App/domain，不实现具体浏览器技术 |
@@ -54,11 +54,11 @@
 
 | 定制点 | 当前落位 | 上游同步必须保持的不变量 |
 |---|---|---|
-| 协议与装配 | `ruoyi-common-openapi`、`OpenApiAutoConfiguration`、`application.yml` | full/core 使用同一 common artifact；`openapi.enabled` 在所有环境默认 `false`；启用时 KEK、Redis、Sa-Token、MVC mapping、唯一 credential/authorization SPI 任一缺失或无效都必须阻止启动，不得回退到本地状态或空权限 |
+| 协议与装配 | `ruoyi-common-openapi`、`OpenApiAutoConfiguration`、`application.yml` | full/core 使用同一 common artifact；admin 运行时 `openapi.enabled` 默认 `true`，可由 `OPENAPI_ENABLED=false` 显式关闭；启用时 KEK、Redis、Sa-Token、MVC mapping、唯一 credential/authorization SPI 任一缺失或无效都必须阻止启动，不得回退到本地状态或空权限 |
 | 凭据、目录与失效 | `ruoyi-system` 的 OpenAPI credential/catalog Controller、Service、Mapper 和 RBAC/身份写后失效调用点 | secret 仅创建/重置时返回一次并以 KEK 加密保存；self/admin scope 在后端裁决；权限或身份写入成功前完成机器 Session 注销，失败不得静默成功 |
 | 数据与菜单 | `release-artifacts/docker/infrastructure/mysql/init/{50-namewta-ddl,60-namewta-dml}.sql` | 直接维护当前完整基座并保持 DDL/DML 分类；存量环境只执行由源/目标 Git Tag 差异形成且已评审的升级 SQL，生产数据库不随代码集成自动变更 |
 | 前端入口 | system domain `open-api`、system web-domain 的 `OpenApiWorkspace`/manifest、admin `system/openApi/index` 动态页和 profile 静态 tab | admin 入口显式选择目标用户，个人入口固定当前用户；权限隐藏不能替代后端授权；一次性 secret 在所有弹窗关闭路径清空，不写 storage、URL、缓存或日志 |
-| 发布与恢复 | common-openapi README、部署环境变量与发布 Evidence | 顺序固定为备份、批准并执行 additive SQL、部署默认关闭代码、配置 Redis/KEK、另行批准启用；恢复先置 `OPENAPI_ENABLED=false`。KEK 下发、生产启用、真实迁移和远程发布均不是代码集成动作 |
+| 发布与恢复 | common-openapi README、部署环境变量与发布 Evidence | 顺序固定为备份、批准并执行 additive SQL、生产部署显式设置 `OPENAPI_ENABLED=false` 或交付 KEK 后启用、配置 Redis/KEK、另行批准启用；恢复先置 `OPENAPI_ENABLED=false`。KEK 下发、生产启用、真实迁移和远程发布均不是代码集成动作 |
 
 ## 上游评估热点
 

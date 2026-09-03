@@ -54,7 +54,7 @@
 
 ## 公开合同 ruoyi-api
 
-唯一推荐 Java 门面：`ruoyi-vue-plus-namewta/ruoyi-api/src/main/java/org/dromara/workflow/api/WorkflowService.java`  
+唯一推荐 Java 门面：`ruoyi-vue-plus-namewta/ruoyi-api/src/main/java/org/dromara/workflow/api/WorkflowService.java`
 实现：`ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-workflow/src/main/java/org/dromara/workflow/service/impl/WorkflowServiceImpl.java`（`@ConditionalOnEnable` + `@Service`）
 
 | 方法 | 行为（以接口 JavaDoc + 实现为准） |
@@ -91,7 +91,7 @@ DTO（`ruoyi-vue-plus-namewta/ruoyi-api/src/main/java/org/dromara/workflow/api/d
 
 ## 内部 IFlw 服务
 
-目录：`ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-workflow/src/main/java/org/dromara/workflow/service/`  
+目录：`ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-workflow/src/main/java/org/dromara/workflow/service/`
 其他业务模块不要直接 import。
 
 | 接口 | 方法要点 | 路径 |

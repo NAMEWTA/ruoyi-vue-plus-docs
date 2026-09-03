@@ -45,21 +45,21 @@
 
 ## Service 实现
 
-本节的直接持有 Mapper 规则只适用于 `classic`。`layered` 模块必须遵循 `UseCase -> Service -> DAO -> Mapper`：UseCase 只编排 Service，Service 只持有自己的 DAO 和外部端口，DAO 持有 Mapper 并封装全部 Wrapper/QueryBuilder/分页/锁条件。layered Service 和 UseCase 禁止导入 MyBatis、Mapper 或 `IService`/`ServiceImpl`。
+本节的直接持有 Mapper 规则只适用于 `classic`。`layered` 模块必须遵循 `UseCase -> Service -> DAO -> Mapper`：UseCase 只编排 Service，Service 只持有自己的 DAO 和外部端口，DAO 持有 Mapper 并封装全部 Wrapper/QueryBuilder/分页/锁条件。Controller 可以接收 `PageQuery`，但应在入口解包为页码、页大小和排序基础值；UseCase/Service 禁止导入 `PageQuery`、MyBatis `Page`、Mapper 或 `IService`/`ServiceImpl`。DAO 可以在内部使用这些持久化类型，并将 `Page<Row>` 收敛为 `PageResult<Row>`。
 
-Service implementation 拥有完整业务用例：
+classic ServiceImpl 拥有完整业务用例；layered Service 只拥有业务规则和外部端口，完整用例由 UseCase 编排：
 
-1. 构建 fresh 查询 wrapper，处理 null、空文本、日期区间和确定排序。
-2. 将 BO 映射为 Entity，将 Entity/查询结果映射为 VO。
-3. 校验唯一性、引用存在性、Client/用户类型、状态迁移、删除约束和树不变量。
-4. 在一个业务事务中更新主体、关系表和必要状态。
-5. 成功后失效所有相关缓存；外部通知、会话或事件说明提交前后与失败补偿。
+1. classic ServiceImpl 构建 fresh 查询 wrapper；layered DAO 处理 null、空文本、日期区间、确定排序和持久化映射。
+2. DAO 将 MP Page 收敛为 `PageResult<Row>`；Service 将 BO 映射为 Entity、将 Entity/Row 映射为业务模型，并负责业务模型到 VO 的转换。
+3. Service 校验唯一性、引用存在性、Client/用户类型、状态迁移、删除约束和树不变量，不调用另一个 Service。
+4. UseCase 在一个业务事务中编排主体、关系表和必要状态；事务边界、跨 Service 组合和锁查询不得下沉到 Service 或 DAO。
+5. 成功后按 owner 合同失效所有相关缓存；外部通知、会话或事件说明提交前后与失败补偿。
 
 关键业务失败使用现有 `ServiceException` 合同，不用 mapper 返回 0 静默掩盖。insert 按合同回填主键；update/status/sort 只写允许字段；唯一性编辑检查排除当前主键。不要让 Controller 或 Mapper 接管这些规则。
 
-`docs/fm/java/serviceImpl.java.ftl` 的依赖形态是 classic 模式默认值：ServiceImpl 直接注入 Mapper。layered 模式必须使用 `docs/fm/java/layered/` 模板并新增 DAO；不要把 classic ServiceImpl 规则套到 profile。layered 中不得使用 `*DataSupport`、同义 repository/manager 或 `IService`/`ServiceImpl`，跨 DAO 的事务编排属于 UseCase，跨 Mapper 的持久化组合属于 owner DAO。只有存在真实可替换基础设施实现时才抽取 Gateway、Store、Provider 或 Policy 端口。
+`docs/fm/java/serviceImpl.java.ftl` 的依赖形态只适用于登记的 classic 存量模块：ServiceImpl 直接注入 Mapper。layered 模式必须使用 `docs/fm/java/layered/` 模板并新增 DAO；不得把 classic ServiceImpl 规则套到新模块。layered 中不得使用 `*DataSupport`、同义 repository/manager 或 `IService`/`ServiceImpl`，跨 DAO 的事务编排属于 UseCase，跨 Mapper 的持久化组合属于 owner DAO。只有存在真实可替换基础设施实现时才抽取 Gateway、Store、Provider 或 Policy 端口。
 
-业务协作者统一注入 `service` 根接口：Controller、Listener 或另一个 ServiceImpl 不得依赖具体 `*ServiceImpl`。需要跨用例调用的方法应进入对应模块内 Service 接口；仅供单个实现使用的步骤继续保持私有方法，不为满足形式制造接口。
+classic 业务协作者统一注入 `service` 根接口；layered 入口只注入 UseCase，UseCase 只注入 Service。任何模式下 Controller、Listener 或其他实现都不得依赖具体 `*ServiceImpl`。需要跨用例调用的方法应进入对应模块内 Service 合同；仅供单个实现使用的步骤继续保持私有方法，不为满足形式制造接口。
 
 ## 事务与并发
 
@@ -94,4 +94,4 @@ Service implementation 拥有完整业务用例：
 - `SysOssConfigMapper`：短小静态注解 SQL 的窄例外，不是把业务 SQL 写进注解的依据。
 - `notify`、`openapi`、`oss` 子树：只有稳定 owner/生命周期时才增加子领域目录。
 
-具体 system 能力先加载 `ruoyi-system-module-guide`；不要绕过其公开 API 直接依赖内部实现。
+具体 system 能力先加载 `ruoyi-module-guide` 的 system reference；不要绕过其公开 API 直接依赖内部实现。

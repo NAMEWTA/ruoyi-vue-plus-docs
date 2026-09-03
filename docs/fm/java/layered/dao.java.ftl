@@ -3,14 +3,11 @@ package ${packageName}.dao;
 import ${packageName}.domain.${ClassName};
 import ${packageName}.domain.bo.${ClassName}Bo;
 import ${packageName}.domain.model.read.${ClassName}Row;
-import ${packageName}.domain.vo.${ClassName}Vo;
 import ${packageName}.mapper.${ClassName}Mapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
-import org.dromara.common.core.domain.PageResult;
-import org.dromara.common.core.utils.MapstructUtils;
 import org.dromara.common.mybatis.core.page.PageQuery;
+import org.dromara.common.core.domain.PageResult;
 import org.springframework.stereotype.Repository;
 
 import java.util.Arrays;
@@ -19,8 +16,8 @@ import java.util.List;
 /**
  * ${functionName} 数据访问对象。
  *
+ * <p>DAO 统一封装查询条件、分页、锁语义和 Mapper 调用，只返回实体或读模型。</p>
  * @author ${author}
- * <p>DAO 统一封装查询条件、分页、锁语义和 Mapper 调用，并在本边界将读模型转换为 VO。</p>
  *
  * @date ${datetime}
  */
@@ -36,9 +33,8 @@ public class ${ClassName}Dao {
      * @param ${pkColumn.javaField} 主键
      * @return ${functionName}，不存在时返回 {@code null}
      */
-    public ${ClassName}Vo queryById(${pkColumn.javaType} ${pkColumn.javaField}) {
-        ${ClassName}Row row = ${className}Mapper.selectVoById(${pkColumn.javaField});
-        return MapstructUtils.convert(row, ${ClassName}Vo.class);
+    public ${ClassName}Row queryById(${pkColumn.javaType} ${pkColumn.javaField}) {
+        return ${className}Mapper.selectRowById(${pkColumn.javaField});
     }
 
 <#if table.crud>
@@ -46,13 +42,22 @@ public class ${ClassName}Dao {
      * 按查询条件分页查询 ${functionName}。
      *
      * @param command 查询条件
-     * @param pageQuery 分页参数
-     * @return 分页结果
+     * @param pageNum 当前页码，可为空
+     * @param pageSize 每页条数，可为空
+     * @param orderByColumn 排序字段，可为空
+     * @param isAsc 排序方向，可为空
+     * @return 分页读模型
      */
-    public PageResult<${ClassName}Vo> queryPageList(${ClassName}Bo command, PageQuery pageQuery) {
-        Page<${ClassName}Row> result = ${className}Mapper.selectVoPage(pageQuery.build(),
-            Wrappers.lambdaQuery(${ClassName}.class));
-        return PageResult.build(MapstructUtils.convert(result.getRecords(), ${ClassName}Vo.class), result.getTotal());
+    public PageResult<${ClassName}Row> queryPageList(${ClassName}Bo command,
+                                                     Integer pageNum,
+                                                     Integer pageSize,
+                                                     String orderByColumn,
+                                                     String isAsc) {
+        PageQuery pageQuery = new PageQuery(pageSize, pageNum);
+        pageQuery.setOrderByColumn(orderByColumn);
+        pageQuery.setIsAsc(isAsc);
+        Page<${ClassName}Row> page = ${className}Mapper.selectPageByCondition(pageQuery.build(), command);
+        return new PageResult<>(page.getRecords(), page.getTotal());
     }
 </#if>
 
@@ -62,29 +67,28 @@ public class ${ClassName}Dao {
      * @param command 查询条件
      * @return 查询结果
      */
-    public List<${ClassName}Vo> queryList(${ClassName}Bo command) {
-        List<${ClassName}Row> rows = ${className}Mapper.selectVoList(Wrappers.lambdaQuery(${ClassName}.class));
-        return MapstructUtils.convert(rows, ${ClassName}Vo.class);
+    public List<${ClassName}Row> queryList(${ClassName}Bo command) {
+        return ${className}Mapper.selectListByCondition(command);
     }
 
     /**
      * 持久化新增命令。
      *
-     * @param command 新增命令
+     * @param entity 待持久化实体
      * @return 是否新增成功
      */
-    public Boolean insert(${ClassName}Bo command) {
-        return ${className}Mapper.insert(MapstructUtils.convert(command, ${ClassName}.class)) > 0;
+    public Boolean insert(${ClassName} entity) {
+        return ${className}Mapper.insertRecord(entity) > 0;
     }
 
     /**
      * 持久化修改命令。
      *
-     * @param command 修改命令
+     * @param entity 待持久化实体
      * @return 是否修改成功
      */
-    public Boolean update(${ClassName}Bo command) {
-        return ${className}Mapper.updateById(MapstructUtils.convert(command, ${ClassName}.class)) > 0;
+    public Boolean update(${ClassName} entity) {
+        return ${className}Mapper.updateRecord(entity) > 0;
     }
 
     /**
@@ -94,6 +98,6 @@ public class ${ClassName}Dao {
      * @return 是否删除成功
      */
     public Boolean remove(${pkColumn.javaType}[] ${pkColumn.javaField}s) {
-        return ${className}Mapper.deleteByIds(Arrays.asList(${pkColumn.javaField}s)) > 0;
+        return ${className}Mapper.deleteRecords(Arrays.asList(${pkColumn.javaField}s)) > 0;
     }
 }

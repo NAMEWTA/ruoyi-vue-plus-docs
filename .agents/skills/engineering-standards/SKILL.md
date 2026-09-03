@@ -29,6 +29,7 @@ description: 为 ruoyi-vue-plus-docs 聚合工作区及其 Vue/TypeScript 前端
 | `ruoyi-vue-plus-namewta` 通用后端模块、Controller/Service/Mapper、CRUD/API、事务、SQL、Maven 验证或交付 | [ruoyi-backend-development](../ruoyi-backend-development/SKILL.md) |
 | `ruoyi-system` 对外能力、`ruoyi-api`、system 实现边界、字典/部门/用户/OSS/消息调用 | [ruoyi-system-module-guide](../ruoyi-system-module-guide/SKILL.md) |
 | `ruoyi-workflow`、Warm-Flow、流程启动/办理、`businessId`、事件、待办或业务审批接入 | [ruoyi-workflow-module-guide](../ruoyi-workflow-module-guide/SKILL.md) |
+| `ruoyi-profile` 的 person/enterprise 申请、认证、材料、绑定、转移、UseCase/Service/DAO/Mapper 重构 | [ruoyi-profile-module-guide](../ruoyi-profile-module-guide/SKILL.md) |
 | `ruoyi-common` 子模块选择、BOM、Maven 依赖、Utils/Helper、Redis/Login/JSON/Excel/OSS 等公共入口 | [ruoyi-common-modules-guide](../ruoyi-common-modules-guide/SKILL.md) |
 
 ## 约束

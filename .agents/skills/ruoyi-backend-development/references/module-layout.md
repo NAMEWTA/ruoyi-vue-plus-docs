@@ -2,7 +2,7 @@
 
 ## 目录主轴
 
-以 `ruoyi-modules/ruoyi-system/src/main/java/org/dromara/system` 的 `controller/domain/mapper/service` 分层和 `src/main/resources/mapper/system` 资源布局为规范证据。新业务子模块使用以下标准形态：
+以 `ruoyi-modules/ruoyi-system/src/main/java/org/dromara/system` 的 `controller/domain/mapper/service` 分层和 `src/main/resources/mapper/system` 资源布局为 classic 兼容证据。新业务子模块必须显式选择模式：classic 继续使用既有形态；复杂新增模块使用 layered 形态。
 
 ```text
 ruoyi-modules/<artifact>/
@@ -28,6 +28,25 @@ ruoyi-modules/<artifact>/
   src/main/resources/mapper/<module>/
     <Business>Mapper.xml
   src/test/java/org/dromara/<module>/<business>/
+```
+
+layered 模块使用以下主轴：
+
+```text
+ruoyi-modules/<artifact>/
+  src/main/java/org/dromara/<module>/<business>/
+    controller/{admin,self,anonymous}/
+    usecase/
+      <Capability>UseCase.java
+      impl/<Capability>UseCaseImpl.java
+    service/
+      <Capability>Service.java
+    dao/
+      <Capability>Dao.java
+    mapper/
+      <Capability>Mapper.java
+    domain/{entity,bo,vo,model,policy,event,exception}/
+  src/main/resources/mapper/<module>/<Capability>Mapper.xml
 ```
 
 `admin` 或 `anonymous` 只在存在对应接口时创建，不保留空目录。没有自定义 SQL 时不需要创建空 XML；若模块已有框架要求的空 XML 兼容文件，保留但不要把它当作新模块必须复制的样例。
@@ -62,21 +81,34 @@ ruoyi-modules/<artifact>/
 - VO 承载 Mapper 查询投影、HTTP 响应与导出合同，不把 Entity 直接暴露给 HTTP 或跨模块调用；含敏感或仅供持久化编排的内部查询投影不得被 Controller 直接返回。
 - 只为稳定子领域建立 `domain/<subdomain>`；不能因为文件多就按任意技术动作分散 BO/VO。
 
+### UseCase（layered）
+
+- 表达完整用户场景、事务边界、幂等和跨 Service 编排。
+- 只能依赖一个或多个 Service 及 domain 类型；不得直接调用 DAO、Mapper、Gateway、Store、Provider 或外部 API。
+- 不包含 MyBatis-Plus Wrapper、SQL 或持久化条件。
+
+### DAO（layered）
+
+- 唯一允许持有 Mapper 的业务层；封装 Wrapper、QueryBuilder、分页、条件更新、行锁和 `domain/model/read` Row/Entity 转换。
+- 只能依赖本 owner 的一个或多个 Mapper、domain 持久化类型和纯工具；禁止 DAO->DAO、DAO->Service、DAO->外部 API。
+
 ### Mapper
 
-- interface 继承 `BaseMapperPlus<Entity, Vo>`；确有类型化 join 时再实现 `MPJBaseMapper<Entity>`。
+- classic interface 继承 `BaseMapperPlus<Entity, Vo>`；layered interface 使用 `BaseMapperPlus<Entity, Row>`，其中 Row 位于 `domain/model/read`，由 DAO 转换为 HTTP VO；确有类型化 join 时再实现 `MPJBaseMapper<Entity>`。
 - 简单查询优先 wrapper/`QueryBuilder`，复杂自定义 SQL 放 resources 下对应 XML。
 - mapper 只拥有数据访问，不承担业务状态机、权限策略选择、缓存编排和外部副作用。
 
 ### Service
 
 - interface 描述业务用例，不机械暴露 mapper 的每个方法。
-- implementation 负责查询条件、映射、唯一性、领域不变量、删除前校验、事务、关系维护、缓存失效和提交后副作用。
-- `service/impl` 是唯一标准实现目录；不要并列创建 `manager`、`handler`、`repository` 来转发同一调用。
-- 标准业务包的 `service` 根目录只放业务服务接口和确有替代实现的稳定端口，生产代码子目录只允许 `service/impl`；禁止建立 `service/application`、`service/material`、`service/provider`、`service/verification`、`service/workflow` 等按功能横切的实现目录。
+- classic implementation 负责查询条件、映射、唯一性、领域不变量、删除前校验、事务、关系维护、缓存失效和提交后副作用。
+- layered Service 强制存在，负责业务规则和外部端口适配，只依赖自己的 DAO、Domain Policy 和 Gateway/Provider/Store/API；不得 import Mapper/MyBatis 或调用另一个 Service。
+- classic 的 `service/impl` 是标准实现目录；layered 的 `service` 直接放语义明确的 `<Capability>Service`。不要并列创建 `manager`、`handler`、`repository` 来转发同一调用。
+- 不建立 `service/application`、`service/material`、`service/provider`、`service/verification`、`service/workflow` 等横切实现目录。
 - Controller、Listener 和 ServiceImpl 之间的业务调用面向 `service` 根接口；不要跨类注入或导入具体 `*ServiceImpl`。同一个实现类内的私有步骤不为此拆成伪接口。
-- `ServiceImpl` 直接依赖一个或多个 Mapper。禁止增加 `dao`，也禁止用 `*DataSupport`、`*Repository`、`*Manager` 包装单一 Mapper 或转发同一组调用。
-- 只有外部系统、缓存存储或提供者确有多个真实 adapter 时才保留 Gateway、Store、Provider、Policy 一类端口；端口不是 DAO，具体实现仍落在 `service/impl`，`@ConfigurationProperties` 落在模块根 `config`。
+- classic `ServiceImpl` 可直接依赖一个或多个 Mapper；classic 禁止增加 DAO 或用 `*DataSupport`、`*Repository`、`*Manager` 包装单一 Mapper。
+- layered 禁止 ServiceImpl 直接依赖 Mapper；DAO 必须存在且只能依赖 Mapper。layered 同样禁止 `*DataSupport`、同义 Repository/Manager 或 DAO 镜像转发。
+- 只有外部系统、缓存存储或提供者确有真实 adapter 时才保留 Gateway、Store、Provider、Policy 一类端口；layered 端口由 owning Service 使用，`@ConfigurationProperties` 落在模块根 `config`。
 
 ## 何时允许额外目录
 
@@ -94,7 +126,8 @@ ruoyi-modules/<artifact>/
 ## 命名与文件数量
 
 - Java package 全小写；类型使用 PascalCase；方法/字段 lowerCamelCase；数据库字段 snake_case。
-- 标准名为 `<Entity>`、`<Business>Bo`、`<Business>Vo`、`<Business>Mapper`、`I<Business>Service`、`<Business>ServiceImpl`、`<Business>Controller`。
+- classic 标准名为 `<Entity>`、`<Business>Bo`、`<Business>Vo`、`<Business>Mapper`、`I<Business>Service`、`<Business>ServiceImpl`、`<Business>Controller`。
+- layered 标准名为 `<Capability>UseCase`、`<Capability>UseCaseImpl`、`<Capability>Service`、`<Capability>Dao`、`<Capability>Mapper`、`<Capability>Controller`；layered 默认不使用 `I` 前缀或 `IService`。
 - 一个文件聚焦一个主要类型/职责；文件多不是问题，职责无 owner、重复转发和跨层混放才是问题。
 - 大文件只触发职责审查，不按行数机械拆分。提取后必须形成可命名、可测试的真实边界。
 - 测试包镜像被测 owner；按行为和风险组织测试，不要求生产类与测试类一一对应。

@@ -71,7 +71,12 @@ const requiredTokens = [
   'controller/anonymous',
   'service/impl',
   '不注入具体 `*ServiceImpl`',
-  '禁止增加 `dao`',
+  'classic',
+  'layered',
+  'UseCase -> Service -> DAO -> Mapper',
+  '分层模式禁止 `IService` 和 `ServiceImpl`',
+  'BaseMapperPlus<Entity, Row>',
+  'domain/model/read',
   '`*DataSupport`',
   '@SaIgnore',
   'BaseMapperPlus -> wrapper/QueryBuilder -> MPJ -> XML',
@@ -102,6 +107,13 @@ const expectedTemplates = [
   'java/service.java.ftl',
   'java/serviceImpl.java.ftl',
   'java/controller.java.ftl',
+  'java/read.java.ftl',
+  'java/layered/controller.java.ftl',
+  'java/layered/usecase.java.ftl',
+  'java/layered/usecaseImpl.java.ftl',
+  'java/layered/service.java.ftl',
+  'java/layered/dao.java.ftl',
+  'java/layered/mapper.java.ftl',
   'xml/mapper.xml.ftl',
   'sql/mysql.sql.ftl',
 ];
@@ -117,7 +129,7 @@ if (JSON.stringify(sqlTemplates) !== JSON.stringify(['mysql.sql.ftl'])) {
 const catalog = JSON.parse(read(join(fmRoot, 'catalog.json')) || '{}');
 const mysqlCatalog = catalog.templates?.find(item => item.source === 'sql/mysql.sql.ftl');
 const expectedSqlTarget = 'release-artifacts/docker/infrastructure/mysql/init/60-namewta-dml.sql';
-if (catalog.schemaVersion !== 2 || mysqlCatalog?.target !== expectedSqlTarget || mysqlCatalog?.writeMode !== 'merge') {
+if (catalog.schemaVersion !== 3 || mysqlCatalog?.target !== expectedSqlTarget || mysqlCatalog?.writeMode !== 'merge') {
   fail('docs/fm catalog 未声明 MySQL 模板以 merge 方式进入 60-namewta-dml.sql');
 }
 

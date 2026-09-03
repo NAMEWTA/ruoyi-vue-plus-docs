@@ -20,6 +20,12 @@
 | `parentMenuId` | 菜单父节点 ID |
 | `clientPk` | `sys_client.id` 的数据库主键；不要与 OAuth `clientId` 字符串混用 |
 | `dicts`、`dictsNoSymbol` | Vue/React 字典参数表达式及无引号名称列表 |
+| `architectureMode` | 后端模板模式：`classic` 或 `layered`；缺省为 `classic`，layered 必须显式选择 |
+| `controllerSurface` | layered Controller 访问面：`admin`、`self` 或 `anonymous` |
+| `transactionalCommands` | layered UseCase 中需要 `@DSTransactional` 的命令方法集合 |
+| `generateService` | layered 是否生成语义明确的 Service，强制为 `true` |
+
+读模型模板使用同一组 `packageName`、`packagePath`、`ClassName`、`functionName`、`tableName`、`columns` 上下文，输出到 `domain/model/read/${ClassName}Row.java`。列别名必须与 `javaField` 对应，读模型只作为 Mapper/DAO/Service 查询边界，不属于 HTTP 输出合同。
 
 ## 列字段
 
@@ -50,3 +56,5 @@
 模板运行器依据 [catalog.json](./catalog.json) 选择模板和目标路径。Vue resource 输出后仍需由所属 domain/web-domain 的公开 exports、service 组合、manifest 与目标 App 显式接入；模板不得通过副作用修改这些共享文件。
 
 `sql/mysql.sql.ftl` 是待合并片段，不生成独立部署脚本。表结构变更合并到 `release-artifacts/docker/infrastructure/mysql/init/50-namewta-ddl.sql`；初始化数据、菜单和回填合并到 `release-artifacts/docker/infrastructure/mysql/init/60-namewta-dml.sql`。
+
+当 `architectureMode=layered` 时，生成结果必须满足：Controller 只注入 UseCase；UseCase 只注入 Service；Service 只注入 DAO 和明确外部端口；DAO 只注入 Mapper。不得生成 `IService`、`ServiceImpl` 继承、`DataSupport` 或 DAO/Repository 双套结构。

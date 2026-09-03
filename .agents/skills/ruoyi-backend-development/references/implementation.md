@@ -9,7 +9,8 @@
 | Entity | `docs/fm/java/domain.java.ftl` | 表映射、主键、审计/版本/逻辑删除字段分支 | 当前 50 DDL、nullable、枚举与敏感字段 |
 | BO | `docs/fm/java/bo.java.ftl` | 输入字段、AutoMapper、Add/Edit groups | 跨字段校验、访问面输入白名单 |
 | VO | `docs/fm/java/vo.java.ftl` | 响应字段、AutoMapper、Excel/Translation 分支 | 对外可见性、脱敏、导出合同 |
-| Mapper | `docs/fm/java/mapper.java.ftl` | `BaseMapperPlus<Entity, Vo>` 基线 | 数据权限、MPJ/XML 和锁语义 |
+| Read Model | `docs/fm/java/read.java.ftl` | Mapper 查询读模型骨架 | 查询字段、SQL alias、DAO/Service 可见边界 |
+| Mapper | `docs/fm/java/mapper.java.ftl`；layered 使用 `docs/fm/java/layered/mapper.java.ftl` | classic 为 `BaseMapperPlus<Entity, Vo>`；layered 为 `BaseMapperPlus<Entity, Row>` | 数据权限、MPJ/XML 和锁语义；layered 的 Row 放在 `domain/model/read` |
 | Service 接口 | `docs/fm/java/service.java.ftl` | CRUD 用例合同 | 业务命名、批量/失败语义、公开边界 |
 | Service 实现 | `docs/fm/java/serviceImpl.java.ftl` | wrapper、映射、唯一性、树、CRUD | 事务、关系、缓存、并发与副作用 |
 | Controller | `docs/fm/java/controller.java.ftl` | GET/POST、权限、校验、`@Log`、Excel | admin/anonymous 目录、Client/签名/重放合同 |
@@ -22,7 +23,7 @@
 - 新建 NAMEWTA 自有表按工程持久化规范包含 `version/create_dept/create_time/create_by/update_time/update_by/del_flag`；Entity 与 DDL 一致。
 - Entity 继承 `BaseEntity` 获得审计字段；不得为方便 HTTP 直接在 Entity 堆请求校验和展示注解。
 - BO 使用 `@AutoMapper(target = ..., reverseConvertGenerate = false)`、Serializable、Add/Edit validation groups。Query、Form 若业务差异显著可拆分，但不能建立多个内容相同的 DTO。
-- 对外 VO 只公开调用方需要的字段；敏感、凭据、内部状态和逻辑删除字段默认不出现在响应。复杂 Mapper XML 所需的类型化查询投影仍放 `domain/vo`，但内部投影不等于 HTTP 合同，禁止由 Controller 直接返回。
+- 对外 VO 只公开调用方需要的字段；敏感、凭据、内部状态和逻辑删除字段默认不出现在响应。复杂 Mapper XML 所需的类型化查询投影放在 `domain/model/read`，不得把内部读模型放入 `domain/vo` 或直接由 Controller 返回。
 - 跨层转换沿用 `MapstructUtils`/项目 AutoMapper 合同，不手写散落字段复制，也不把 Entity 直接用作 Controller 返回或跨模块 DTO。
 - OAuth 字符串 `clientId` 与数据库 Long `clientId/clientPk` 不混用；必要时在 BO/VO 使用更明确名称。
 
@@ -44,6 +45,8 @@
 
 ## Service 实现
 
+本节的直接持有 Mapper 规则只适用于 `classic`。`layered` 模块必须遵循 `UseCase -> Service -> DAO -> Mapper`：UseCase 只编排 Service，Service 只持有自己的 DAO 和外部端口，DAO 持有 Mapper 并封装全部 Wrapper/QueryBuilder/分页/锁条件。layered Service 和 UseCase 禁止导入 MyBatis、Mapper 或 `IService`/`ServiceImpl`。
+
 Service implementation 拥有完整业务用例：
 
 1. 构建 fresh 查询 wrapper，处理 null、空文本、日期区间和确定排序。
@@ -54,7 +57,7 @@ Service implementation 拥有完整业务用例：
 
 关键业务失败使用现有 `ServiceException` 合同，不用 mapper 返回 0 静默掩盖。insert 按合同回填主键；update/status/sort 只写允许字段；唯一性编辑检查排除当前主键。不要让 Controller 或 Mapper 接管这些规则。
 
-`docs/fm/java/serviceImpl.java.ftl` 的依赖形态是本项目默认值：ServiceImpl 直接注入 Mapper。不要为了缩短 ServiceImpl、复用私有映射方法或隔离 MyBatis 名称而增加 `dao`、`*DataSupport`、同义 repository/manager；跨 Mapper 的事务编排仍属于对应业务 ServiceImpl。只有存在真实可替换基础设施实现时才抽取 Gateway、Store、Provider 或 Policy 端口。
+`docs/fm/java/serviceImpl.java.ftl` 的依赖形态是 classic 模式默认值：ServiceImpl 直接注入 Mapper。layered 模式必须使用 `docs/fm/java/layered/` 模板并新增 DAO；不要把 classic ServiceImpl 规则套到 profile。layered 中不得使用 `*DataSupport`、同义 repository/manager 或 `IService`/`ServiceImpl`，跨 DAO 的事务编排属于 UseCase，跨 Mapper 的持久化组合属于 owner DAO。只有存在真实可替换基础设施实现时才抽取 Gateway、Store、Provider 或 Policy 端口。
 
 业务协作者统一注入 `service` 根接口：Controller、Listener 或另一个 ServiceImpl 不得依赖具体 `*ServiceImpl`。需要跨用例调用的方法应进入对应模块内 Service 接口；仅供单个实现使用的步骤继续保持私有方法，不为满足形式制造接口。
 

@@ -47,3 +47,13 @@ Source: `repository-fact` + `builder-baseline`
 Rule: 不新增无上下文 TODO/FIXME、统一版权头或 `@author` 文件头。确需 TODO 时关联 owner/issue，写明原因和完成/删除条件；既有第三方或生成文件头按所有权保留。
 
 Verification: review 新增 `TODO|FIXME|HACK|XXX|@author|Copyright`；确认来源、owner 和删除条件；不为统一外观重写无关文件。
+
+### DOC-005 Profile Java 类型与业务方法使用中文 Javadoc
+
+Scope: `path:ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-profile/**/src/main/java/**`
+
+Level: MUST
+
+Rule: `ruoyi-profile` 生产代码中的每个自有类、接口、枚举、record 以及显式声明的方法，必须在声明前提供简明中文 Javadoc。注释至少说明职责、输入输出或业务边界；对锁、事务、幂等、脱敏、外部调用和兼容适配等非直观约束必须说明原因。Lombok 生成的 getter/setter、record 自动 accessor 和纯覆盖且语义已由接口完整说明的方法可以不重复展开，但新增或修改的 public contract 必须补充 `@param`、`@return`、`@throws` 等调用方所需信息。不得用统一的无意义句式替代真实职责说明。
+
+Verification: 评审 `ruoyi-profile` 新增/修改 Java 源码，确认类型和显式方法均有中文 Javadoc；对外 Controller、UseCase、Service、DAO、Mapper 方法核对参数、返回值、失败语义和副作用；运行 Profile 架构测试、Maven 测试和构建。

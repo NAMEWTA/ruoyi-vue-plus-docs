@@ -19,8 +19,8 @@ const templates = files(root)
 const catalog = JSON.parse(readFileSync(join(root, 'catalog.json'), 'utf8'));
 const catalogTemplates = catalog.templates.map(item => item.source).sort();
 
-if (catalog.schemaVersion !== 2) {
-  failures.push(`catalog.json schemaVersion 必须为 2，当前为 ${catalog.schemaVersion}`);
+if (catalog.schemaVersion !== 3) {
+  failures.push(`catalog.json schemaVersion 必须为 3，当前为 ${catalog.schemaVersion}`);
 }
 
 if (JSON.stringify(templates) !== JSON.stringify(catalogTemplates)) {
@@ -34,6 +34,10 @@ if (new Set(catalogTemplates).size !== catalogTemplates.length) {
 for (const item of catalog.templates) {
   if (!item.target || !Array.isArray(item.categories) || item.categories.length === 0) {
     failures.push(`模板 ${item.source} 必须声明 target 和至少一个 category`);
+  }
+  if (item.source.startsWith('java/layered/') &&
+      JSON.stringify(item.architectureModes || []) !== JSON.stringify(['layered'])) {
+    failures.push(`分层模板 ${item.source} 必须声明 architectureModes: [layered]`);
   }
 }
 
@@ -76,6 +80,52 @@ const controller = readFileSync(join(root, 'java/controller.java.ftl'), 'utf8');
 const postMappings = [...controller.matchAll(/@PostMapping(?:\([^\n]*\))?/g)].length;
 const logs = [...controller.matchAll(/@Log\(/g)].length;
 if (postMappings !== logs) failures.push(`Java POST/@Log 数量不一致: POST=${postMappings}, Log=${logs}`);
+
+const layeredContracts = {
+  'java/layered/controller.java.ftl': [
+    ['.usecase.', 'Controller 必须依赖 UseCase'],
+    ['${controllerSurface}', 'Controller 模板必须使用 controllerSurface'],
+  ],
+  'java/layered/usecase.java.ftl': [
+    ['UseCase', 'UseCase 模板必须生成 UseCase 合同'],
+  ],
+  'java/layered/usecaseImpl.java.ftl': [
+    ['private final ${ClassName}Service', 'UseCaseImpl 必须编排 Service'],
+    ['@DSTransactional', 'UseCaseImpl 必须保留事务命令入口'],
+  ],
+  'java/layered/service.java.ftl': [
+    ['.dao.', 'Service 必须依赖 DAO'],
+    ['class ${ClassName}Service', 'Service 模板必须生成业务 Service'],
+  ],
+  'java/layered/dao.java.ftl': [
+    ['.mapper.', 'DAO 必须依赖 Mapper'],
+    ['@Repository', 'DAO 模板必须标记 Repository'],
+  ],
+  'java/layered/mapper.java.ftl': [
+    ['.domain.model.read.', 'layered Mapper 必须依赖 Read Model'],
+    ['BaseMapperPlus<${ClassName}, ${ClassName}Row>', 'layered Mapper 必须以 Row 作为读类型'],
+  ],
+};
+for (const [path, contracts] of Object.entries(layeredContracts)) {
+  const source = readFileSync(join(root, path), 'utf8');
+  for (const [token, message] of contracts) {
+    if (!source.includes(token)) failures.push(`${path} ${message}`);
+  }
+}
+
+const layeredForbidden = {
+  'java/layered/controller.java.ftl': ['.service.', 'Mapper'],
+  'java/layered/usecaseImpl.java.ftl': ['.dao.', '.mapper.', 'IService', 'BaseMapper'],
+  'java/layered/service.java.ftl': ['.mapper.', 'BaseMapper', 'QueryWrapper', 'LambdaQueryWrapper'],
+  'java/layered/dao.java.ftl': ['UseCase', 'Service', 'Gateway', 'ProfileService'],
+  'java/layered/mapper.java.ftl': ['domain.vo.', '.service.', 'UseCase', 'Dao'],
+};
+for (const [path, tokens] of Object.entries(layeredForbidden)) {
+  const source = readFileSync(join(root, path), 'utf8');
+  for (const token of tokens) {
+    if (source.includes(token)) failures.push(`${path} 不得包含越层依赖: ${token}`);
+  }
+}
 
 const resourceFieldPredicate = '<#if column.list || column.pk || column.insert || column.edit>';
 for (const path of ['java/vo.java.ftl', 'react/types.ts.ftl', 'vue/transport.ts.ftl', 'vue/types.ts.ftl']) {

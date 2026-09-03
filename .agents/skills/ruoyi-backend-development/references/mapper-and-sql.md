@@ -14,7 +14,7 @@
 
 ## 查询实现阶梯
 
-每个查询选择能清晰表达需求的最低层，不以“SQL 能跑”为完成标准：
+每个查询选择能清晰表达需求的最低层，不以“SQL 能跑”为完成标准。`classic` 允许 Service 构建简单 Wrapper；`layered` 必须把 Wrapper、QueryBuilder、分页和条件更新封装在 DAO：
 
 1. `BaseMapperPlus` 内建主键、VO、分页、batch 和 lambda 能力。
 2. fresh lambda wrapper 或 `QueryBuilder`，使用类型化字段和 `eqIfPresent`、`eqIfText`、`likeIfText`、`betweenParams` 等条件。
@@ -33,7 +33,7 @@ public interface XxxMapper extends BaseMapperPlus<Xxx, XxxVo> {
 ```
 
 - 只有确有 join 查询时再附加 `MPJBaseMapper<Xxx>`。
-- 可复用且紧贴查询的 wrapper builder 可以是 mapper default method；业务状态决策留在 service。
+- 可复用且紧贴查询的 wrapper builder 在 classic 可放 Mapper default method；layered 的业务查询条件统一放 DAO，Mapper default method 不调用其他 Mapper。
 - 方法名表达查询或写入语义，参数使用 `@Param` 显式匹配 XML；批量方法明确空集合和返回值语义。
 - 不注入 Service，不发外部请求，不维护缓存，不捕获并吞掉数据库异常。
 - 分页、VO 映射和 batch 优先复用 `BaseMapperPlus`，不复制公共实现。

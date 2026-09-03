@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "templates": [
     { "source": "java/bo.java.ftl", "target": "main/java/${packagePath}/domain/bo/${ClassName}Bo.java", "categories": ["crud", "tree"] },
     { "source": "java/controller.java.ftl", "target": "main/java/${packagePath}/controller/${ClassName}Controller.java", "categories": ["crud", "tree"] },
@@ -8,6 +8,13 @@
     { "source": "java/service.java.ftl", "target": "main/java/${packagePath}/service/I${ClassName}Service.java", "categories": ["crud", "tree"] },
     { "source": "java/serviceImpl.java.ftl", "target": "main/java/${packagePath}/service/impl/${ClassName}ServiceImpl.java", "categories": ["crud", "tree"] },
     { "source": "java/vo.java.ftl", "target": "main/java/${packagePath}/domain/vo/${ClassName}Vo.java", "categories": ["crud", "tree"] },
+    { "source": "java/read.java.ftl", "target": "main/java/${packagePath}/domain/model/read/${ClassName}Row.java", "categories": ["layered"] },
+    { "source": "java/layered/controller.java.ftl", "target": "main/java/${packagePath}/controller/${controllerSurface}/${ClassName}Controller.java", "architectureModes": ["layered"], "categories": ["layered"] },
+    { "source": "java/layered/dao.java.ftl", "target": "main/java/${packagePath}/dao/${ClassName}Dao.java", "architectureModes": ["layered"], "categories": ["layered"] },
+    { "source": "java/layered/mapper.java.ftl", "target": "main/java/${packagePath}/mapper/${ClassName}Mapper.java", "architectureModes": ["layered"], "categories": ["layered"] },
+    { "source": "java/layered/service.java.ftl", "target": "main/java/${packagePath}/service/${ClassName}Service.java", "architectureModes": ["layered"], "categories": ["layered"] },
+    { "source": "java/layered/usecase.java.ftl", "target": "main/java/${packagePath}/usecase/${ClassName}UseCase.java", "architectureModes": ["layered"], "categories": ["layered"] },
+    { "source": "java/layered/usecaseImpl.java.ftl", "target": "main/java/${packagePath}/usecase/impl/${ClassName}UseCaseImpl.java", "architectureModes": ["layered"], "categories": ["layered"] },
     { "source": "xml/mapper.xml.ftl", "target": "main/resources/mapper/${moduleName}/${ClassName}Mapper.xml", "categories": ["crud", "tree"] },
     { "source": "sql/mysql.sql.ftl", "target": "release-artifacts/docker/infrastructure/mysql/init/60-namewta-dml.sql", "writeMode": "merge", "categories": ["crud", "tree"] },
     { "source": "react/api.ts.ftl", "target": "react/api/${moduleName}/${businessName}/index.ts", "categories": ["crud", "tree"] },

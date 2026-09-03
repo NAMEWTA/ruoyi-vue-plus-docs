@@ -21,6 +21,19 @@ description: 为 NAMEWTA RuoYi-Vue-Plus 后端提供 Maven 子模块、规范目
 5. 修改前建立受影响映射：POM、Java、resources、SQL、测试、`ruoyi-api`、admin bundle、前端调用方和部署资产。结构重构先记录旧路径到新路径与行为 owner，不能边移动边猜职责。
 6. 先运行受影响模块或测试类，再按风险执行根级门禁；准确记录通过、失败、跳过和环境限制。
 
+## 架构模式
+
+后端新模块必须在规格中声明 `classic` 或 `layered`：
+
+- `classic`：存量基础模块兼容模式，保持 `Controller -> Service -> Mapper`，沿用当前 ServiceImpl 模板。
+- `layered`：新增复杂模块模式，强制 `Controller/Listener/API Adapter -> UseCase -> Service -> DAO -> Mapper -> XML`。
+
+`ruoyi-profile` 的 person/enterprise 统一使用 `layered`。`ruoyi-system`、`ruoyi-workflow`、`ruoyi-job`、`ruoyi-demo`、`ruoyi-ai` 本次保持 `classic`，不得借重构之名扩散改造。
+
+layered 模式的依赖边界：入口只注入 UseCase；UseCase 只编排 Service；Service 只调用自己的 DAO 和明确外部端口；DAO 只能调用 Mapper；Mapper 只负责数据库语句。UseCase 不直连 DAO，Service 不调用 Service，DAO 不调用 DAO。涉及数据库的每条业务路径都必须经过完整五层。
+Controller、Listener、API Adapter 不注入具体 `*ServiceImpl`；layered 模式禁止 `IService` 和 `ServiceImpl`。
+分层模式禁止 `IService` 和 `ServiceImpl`，Profile 的 Service 只通过 DAO 持久化。
+
 ## 精确模板索引
 
 标准 CRUD 逐层读取对应模板，禁止只看一个 Controller 或 Service 后自由发挥目录与职责：
@@ -30,12 +43,15 @@ description: 为 NAMEWTA RuoYi-Vue-Plus 后端提供 Maven 子模块、规范目
 | Entity | [`docs/fm/java/domain.java.ftl`](../../../docs/fm/java/domain.java.ftl) |
 | BO | [`docs/fm/java/bo.java.ftl`](../../../docs/fm/java/bo.java.ftl) |
 | VO | [`docs/fm/java/vo.java.ftl`](../../../docs/fm/java/vo.java.ftl) |
-| Mapper | [`docs/fm/java/mapper.java.ftl`](../../../docs/fm/java/mapper.java.ftl) |
+| Mapper Read Model | [`docs/fm/java/read.java.ftl`](../../../docs/fm/java/read.java.ftl) |
+| Mapper | [`docs/fm/java/mapper.java.ftl`](../../../docs/fm/java/mapper.java.ftl)；layered 使用 [`docs/fm/java/layered/mapper.java.ftl`](../../../docs/fm/java/layered/mapper.java.ftl) |
 | Service 接口 | [`docs/fm/java/service.java.ftl`](../../../docs/fm/java/service.java.ftl) |
 | Service 实现 | [`docs/fm/java/serviceImpl.java.ftl`](../../../docs/fm/java/serviceImpl.java.ftl) |
 | Controller | [`docs/fm/java/controller.java.ftl`](../../../docs/fm/java/controller.java.ftl) |
 | 自定义 Mapper XML | [`docs/fm/xml/mapper.xml.ftl`](../../../docs/fm/xml/mapper.xml.ftl) |
 | MySQL 菜单 DML 片段 | [`docs/fm/sql/mysql.sql.ftl`](../../../docs/fm/sql/mysql.sql.ftl) |
+
+layered 模式额外读取 `docs/fm/java/layered/` 下的 UseCase、Service、DAO 模板；这些模板通过 `architectureMode=layered` 显式选择，不能改变 classic 默认产物。
 
 模板定义标准骨架，不替代业务规格。`ruoyi-system` 提供关系维护、Client、缓存、数据权限、MPJ/XML、导入导出等复杂实现证据；只复制与当前用例同形态的部分。
 
@@ -48,8 +64,11 @@ description: 为 NAMEWTA RuoYi-Vue-Plus 后端提供 Maven 子模块、规范目
 
 ## 不可突破的边界
 
-- 标准模块保持 `controller`、`domain/{bo,vo}`、`mapper`、`service/impl` 主轴；Mapper XML 放 `src/main/resources/mapper/<module>/`。不要为单个用例发明平级架构层。
-- `service` 根只放业务接口和真实可替换端口，生产子目录只允许 `impl`；Controller、Listener 及其他业务 Service 依赖 Service 接口，不注入具体 `*ServiceImpl`。ServiceImpl 按 `docs/fm/java/serviceImpl.java.ftl` 直接依赖 Mapper，禁止增加 DAO、`*DataSupport`、同义 Repository/Manager 或 `service/<feature>` 横切目录。
+- classic 模块保持 `controller`、`domain/{bo,vo}`、`mapper`、`service/impl` 主轴；Mapper XML 放 `src/main/resources/mapper/<module>/`。不要为存量模块强行增加 layered 层。
+- layered 模块使用 `controller`、`usecase/impl`、`service`、`dao`、`mapper` 主轴；Service/UseCase 不直接依赖 Mapper 或 MyBatis，DAO 是唯一业务持久化入口。不得用 `*DataSupport`、同义 Repository/Manager 或空壳转发类替代真实 owner。
+- layered 模块不继承/实现 MyBatis-Plus `IService` 或 `ServiceImpl`；使用 `BaseMapperPlus` 的基础能力由 DAO 组合。
+- layered Mapper 查询结果使用 `domain/model/read` 下的 `<Capability>Row` 或 `<Capability>Projection`，`domain/vo` 只保留 HTTP 输出，Controller/UseCase 不得直接引用读模型。
+- classic ServiceImpl 可按现有模板直接依赖 Mapper；该规则不适用于 layered profile。
 - 受保护管理端放 `controller/admin`；`@SaIgnore` 匿名接口放 `controller/anonymous`。只为真实存在的客户端建立目录，不预建未来端；已登录自服务接口先由业务规格裁决访问面。
 - `@SaIgnore` 不免除签名、时间戳、重放防护、幂等、审计与日志脱敏。
 - 跨业务模块只使用 `ruoyi-api` 或明确 common SPI，不依赖其他模块的 mapper、entity、domain、VO 或实现类。

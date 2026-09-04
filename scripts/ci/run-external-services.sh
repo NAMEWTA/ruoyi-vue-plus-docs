@@ -69,14 +69,19 @@ done
 curl --fail --silent "http://127.0.0.1:$minio_port/minio/health/ready" >/dev/null
 
 cd "$workspace_root/ruoyi-vue-plus-namewta"
-./mvnw -pl ruoyi-admin -am test \
-  -Dtest=RedisNotifyIdempotencyStoreIntegrationTest,RedisOssUploadTicketStoreIntegrationTest,NotifyMonitorMySqlIntegrationTest,MinioOssClientIntegrationTest,BusinessMenuRetirementMySqlIntegrationTest \
+./mvnw -Pdev -pl ruoyi-admin -am test \
+  -Dtest=RedisNotifyIdempotencyStoreIntegrationTest,RedisOssUploadTicketStoreIntegrationTest,NotifyMonitorMySqlIntegrationTest,MinioOssClientIntegrationTest,BusinessMenuRetirementMySqlIntegrationTest,ThirdSchemaMySqlIntegrationTest,ThirdRedisIntegrationTest \
   -Dsurefire.failIfNoSpecifiedTests=false \
   -Dnotify.redis.integration.port="$redis_port" \
   -Doss.upload.redis.integration.port="$redis_port" \
+  -Dthird.redis.integration.port="$redis_port" \
   -Dnotify.mysql.integration.url="jdbc:mysql://127.0.0.1:$mysql_port/namewta_ci?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai" \
   -Dnotify.mysql.integration.username=root \
   -Dnotify.mysql.integration.password=namewta-ci \
+  -Dthird.mysql.integration.url="jdbc:mysql://127.0.0.1:$mysql_port/namewta_ci?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai" \
+  -Dthird.mysql.integration.username=root \
+  -Dthird.mysql.integration.password=namewta-ci \
+  -Dthird.mysql.integration.exact-schema=true \
   -Doss.minio.integration.endpoint="http://127.0.0.1:$minio_port" \
   -Doss.minio.integration.access-key=namewta \
   -Doss.minio.integration.secret-key=namewta123 \

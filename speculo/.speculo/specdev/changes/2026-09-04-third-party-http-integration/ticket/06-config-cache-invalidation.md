@@ -53,7 +53,7 @@ Sources: `US-002`, `US-003`, `US-004`, `AC-003`, `AC-004`, `AC-005`, `AC-010`, `
 - Cache keys contain stable provider/endpoint codes only; they never contain credentials, request values, or raw URLs.
 - The cache adapter owns Redis mechanics. The pipeline consumes `ThirdConfigSnapshotPort` and does not import a DAO or `RedisUtils` directly.
 
-### 2.1 Required Skills and engineering baseline
+## 2.1 必须加载的 Skill 与工程基线
 
 The implementer must load and apply all of these before changing files:
 

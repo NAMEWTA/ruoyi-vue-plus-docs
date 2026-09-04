@@ -11,14 +11,14 @@ case "$mode" in
 esac
 
 workspace_root=$(git rev-parse --show-toplevel)
-artifact="$workspace_root/ruoyi-vue-plus-namewta/ruoyi-admin/target/ruoyi-admin.jar"
+artifact="${ADMIN_ARTIFACT:-$workspace_root/ruoyi-vue-plus-namewta/ruoyi-admin/target/ruoyi-admin.jar}"
 if [[ ! -f "$artifact" ]]; then
   echo "missing admin artifact: $artifact" >&2
   exit 1
 fi
 
 entries=$(jar tf "$artifact")
-required=(ruoyi-system ruoyi-common-notify ruoyi-common-oss)
+required=(ruoyi-system ruoyi-common-notify ruoyi-common-oss ruoyi-third)
 optional=(ruoyi-job ruoyi-ai ruoyi-demo ruoyi-workflow)
 
 contains_artifact() {

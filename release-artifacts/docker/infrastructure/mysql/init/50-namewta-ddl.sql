@@ -1183,6 +1183,7 @@ create table third_endpoint (
     create_time datetime default null, update_by bigint(20) default null,
     update_time datetime default null, del_flag char(1) not null default '0',
     primary key (endpoint_id), unique key uk_third_endpoint_code(provider_code, endpoint_code),
+    unique key uk_third_endpoint_owner(provider_id, endpoint_id),
     key idx_third_endpoint_provider(provider_id),
     constraint fk_third_endpoint_provider foreign key(provider_id) references third_provider(provider_id)
 ) engine=innodb comment='第三方 HTTP Endpoint 元数据';
@@ -1196,12 +1197,18 @@ create table third_credential (
     kek_version varchar(64) not null, expires_at datetime default null,
     version int not null default 0, create_dept bigint(20) default null, create_by bigint(20) default null,
     create_time datetime default null, update_by bigint(20) default null, update_time datetime default null,
-    del_flag char(1) not null default '0', primary key (credential_id),
-    unique key uk_third_credential_scope(scope_type, provider_id, endpoint_id, credential_type),
+    del_flag char(1) not null default '0',
+    active_scope_key varchar(192) generated always as (
+        case when del_flag='0' then concat(scope_type, ':',
+            case when scope_type='PROVIDER' then cast(provider_id as char) else cast(endpoint_id as char) end,
+            ':', credential_type) else null end
+    ) stored comment '仅活动凭据唯一键',
+    primary key (credential_id),
+    unique key uk_third_credential_active_scope(active_scope_key),
     key idx_third_credential_provider(provider_id), key idx_third_credential_endpoint(endpoint_id),
-    constraint ck_third_credential_scope check ((scope_type='PROVIDER' and provider_id is not null and endpoint_id is null) or (scope_type='ENDPOINT' and endpoint_id is not null)),
+    constraint ck_third_credential_scope check ((scope_type='PROVIDER' and provider_id is not null and endpoint_id is null) or (scope_type='ENDPOINT' and provider_id is not null and endpoint_id is not null)),
     constraint fk_third_credential_provider foreign key(provider_id) references third_provider(provider_id),
-    constraint fk_third_credential_endpoint foreign key(endpoint_id) references third_endpoint(endpoint_id)
+    constraint fk_third_credential_endpoint_owner foreign key(provider_id, endpoint_id) references third_endpoint(provider_id, endpoint_id)
 ) engine=innodb comment='第三方 HTTP 密文凭据';
 
 create table third_invocation (
@@ -1223,6 +1230,8 @@ create table third_statistic (
     attempt_count bigint not null default 0, success_count bigint not null default 0,
     failure_count bigint not null default 0, timeout_count bigint not null default 0,
     rejected_count bigint not null default 0, quota_value bigint not null default 0,
-    primary key(statistic_id), unique key uk_third_statistic_dimension(provider_code, endpoint_code, stat_date),
+    endpoint_dimension varchar(64) generated always as (ifnull(endpoint_code, '')) stored comment '供应商汇总使用空维度',
+    primary key(statistic_id), unique key uk_third_statistic_dimension(provider_code, endpoint_dimension, stat_date),
+    constraint ck_third_statistic_endpoint check (endpoint_code is null or endpoint_code <> ''),
     key idx_third_statistic_date(stat_date)
 ) engine=innodb comment='第三方 HTTP 调用聚合统计';

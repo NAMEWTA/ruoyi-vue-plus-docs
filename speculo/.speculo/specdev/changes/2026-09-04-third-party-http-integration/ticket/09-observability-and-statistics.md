@@ -56,7 +56,7 @@ Sources: `US-009`, `AC-011`, `AC-013`, `AC-014`, `ADR-006`, and `ADR-009`.
 - The admin query is read-only and returns sanitized VO data; it never returns raw body, credential ciphertext, or stack traces.
 - Logging failures do not turn a successful external call into a business failure, but metrics and health signals must expose sink failure.
 
-### 2.1 Required Skills and engineering baseline
+## 2.1 必须加载的 Skill 与工程基线
 
 The implementer must load:
 

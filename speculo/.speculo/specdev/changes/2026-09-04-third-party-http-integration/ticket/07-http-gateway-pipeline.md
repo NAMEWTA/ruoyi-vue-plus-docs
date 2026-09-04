@@ -56,7 +56,7 @@ Sources: `US-001`, `US-005`, `US-006`, `US-009`, `AC-003`, `AC-006`, `AC-007`, `
 - Supported body formats are JSON, query, and form. Supported response formats are JSON, text, and bytes. Dynamic values use constrained `JsonNode`; typed calls use `Class<T>` or `ParameterizedTypeReference<T>`.
 - HTTP 2xx means transport success only. A provider adapter may map a provider business error to the stable `PROVIDER` category without returning the raw body in the business response.
 
-### 2.1 Required Skills and engineering baseline
+## 2.1 必须加载的 Skill 与工程基线
 
 The implementer must load:
 

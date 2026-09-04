@@ -91,7 +91,7 @@ Implementation authorization is recorded in the change status as `USER-DECISION:
 
 Verified locally: backend `ruoyi-third` compile, `validate-module-mode.mjs ... --mode layered`, and local-profile crypto/path/sanitizer tests (12 passing); frontend domain, web-domain, and admin typecheck/lint/build/test; architecture check; admin production build. The backend module now follows `controller/admin -> usecase/impl -> service -> dao -> mapper -> XML`, with runtime ports/adapters/support boundaries, and `ruoyi-module-guide` registers the module. The latest backend result is `d5f7dc0b`; frontend result is `1fa13dc`; root menu SQL is integrated at `bed64ec`.
 
-Required external gates are intentionally not claimed: Docker is unavailable in this workspace, so MySQL 8.4 fresh-init, Redis multi-instance fail-closed checks, local HTTP server/redirect tests, and browser permission E2E must run in the release environment before changing the change status to `completed`.
+Required external gates are intentionally not claimed. The host has reachable MySQL/Redis services, but Docker CLI and an isolated fresh-init/counting test stack are unavailable. The legacy `18080` JAR predates `ruoyi-third` and returned `404`; a current classpath launch loaded the module and opened `18081`, then exited when the existing system OSS runner hit a shared Redis cache-invalidation acknowledgement timeout for the second instance. MySQL 8.4 fresh-init, isolated Redis multi-instance fail-closed checks, local HTTP server/redirect tests, SysLog canary, and browser permission E2E must run in the approved release environment before changing the change status to `completed`.
 
 ## 3. 范围边界
 

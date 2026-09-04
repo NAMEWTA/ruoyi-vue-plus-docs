@@ -269,18 +269,18 @@ current/direct-parent 每个 Ticket 的基线、implementation commit、父 HEAD
 
 The user authorized implementation commits and direct-parent integration with decision `USER-DECISION:2026-09-04-execute-goal-plan`. T-01 is integrated; T-02 through T-12 have local implementation results and remain in `review` until the release gate; T-13 is the active release gate, all owned by `codex:/root`. Backend implementation is at `d5f7dc0b` (including the layered-boundary refactor, port-based adapter dependencies, parameterized response conversion, physical attempt preservation on transport failures, hardened header/path metadata validation, runtime snapshot revalidation, safe endpoint header overrides, and sanitized JSON persistence); frontend implementation is at `1fa13dc` with four page registrations, nested credential editing, and endpoint header override input. Root menu SQL is integrated at `bed64ec`; DDL remains at `c49f562`. The Skill navigation includes `ruoyi-third` and its layered module guide.
 
-Completed local gates: backend module compile, layered module-mode validation, local-profile crypto/path/sanitizer tests (12 passing), frontend domain/web-domain/admin typecheck, lint, package build/test gates, architecture check, and admin production build. External MySQL 8.4 fresh-init, Redis multi-instance, local HTTP integration, SysLog canary, and browser permission E2E were not executable in this workspace because Docker and the required service stack are unavailable; they remain explicit release prerequisites and are recorded as pending in T-13 evidence. The change remains `in_progress` until those required external gates are run by the release environment.
+Completed local gates: backend module compile, layered module-mode validation, local-profile crypto/path/sanitizer tests (12 passing), frontend domain/web-domain/admin typecheck, lint, package build/test gates, architecture check, and admin production build. Runtime probing found reachable MySQL/Redis services and confirmed that a current classpath launch loads `ruoyi-third` and opens HTTP `18081`; the launch exits in the existing system OSS runner when the shared Redis cache-invalidation acknowledgement times out for a second instance. The legacy `18080` JAR predates this module and returned `404` for `/third/provider/list`. Docker CLI, isolated fresh-init/counting provider infrastructure, SysLog canary, and browser permission E2E remain unavailable or unapproved; they remain explicit release prerequisites and are recorded as pending in T-13 evidence. The change remains `in_progress` until those required external gates are run by the release environment.
 
 当前执行状态以本节和 `.status.json` 为准：用户已通过 `USER-DECISION:2026-09-04-execute-goal-plan` 授权本地实现、验证、Evidence 与 direct-parent 更新；远程、部署、生产迁移、凭据写入和真实供应商调用仍未授权。
 
 - Goal Plan：`active`，`ready_for_execution=true`；T-01 至 T-12 已形成实现提交并完成本地定向检查，T-13 负责剩余 release Gate。
 - 集成状态：T-01 至 T-12 为 `integrated/review`，T-13 为 `review`；所有实现工作树使用 current/direct-parent，没有创建 worktree。
 - 最新检查点：backend `d5f7dc0b`，frontend `1fa13dc`，DDL `c49f562`，菜单 DML `bed64ec`；tickets/implement 校验均为 0 error/0 warning。
-- 外部 Gate：MySQL 8.4 fresh-init、Redis 多实例失效、确定性本地 HTTP、SysLog canary、浏览器权限 E2E 和 full/core 完整构建仍需 release 环境执行，当前均记录为 pending。
+- 外部 Gate：MySQL 8.4 fresh-init、隔离 Redis 多实例失效、确定性本地 HTTP、SysLog canary、浏览器权限 E2E 和 full/core 完整构建仍需 release 环境执行；当前运行态已确认旧 JAR 404 和新类路径实例被共享 Redis invalidation acknowledgement timeout 阻断，均记录为 pending。
 
 ### Pending Decisions and Blockers
 
-- **当前阻塞：** release 环境尚未提供 Docker、MySQL 8.4、Redis 多实例、可计数本地 HTTP、SysLog sink 和浏览器 E2E 服务；这些是完成 G1-G7 所需的真实验证接缝。
+- **当前阻塞：** 当前没有隔离的 MySQL 8.4 fresh-init、Redis 多实例/可计数本地 HTTP、SysLog sink 和浏览器 E2E 验证接缝；现有远程 Redis 的共享 cache invalidation acknowledgement timeout 也不能作为多实例通过证据。这些是完成 G1-G7 所需的真实验证接缝。
 - **仍保持禁止：** worktree、remote push/PR/merge、生产 DDL/DML/赋权、凭据/主密钥写入、真实供应商调用。
 - 外部服务可用后，必须从 T-13 继续，重读父 HEAD、运行各项 Gate、写入 Evidence，再决定是否将 change 标记 completed。
 

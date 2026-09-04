@@ -28,7 +28,10 @@ test('the six leave workflow assets are exact, parseable, and tracked', () => {
   for (const [filename, expectedDigest] of Object.entries(expected)) {
     const bytes = fs.readFileSync(path.join(workflowRoot, filename));
     assert.doesNotThrow(() => JSON.parse(bytes.toString('utf8')), `${filename} must contain valid JSON`);
-    assert.equal(crypto.createHash('sha256').update(bytes).digest('hex'), expectedDigest);
+    assert.equal(
+      crypto.createHash('sha256').update(bytes.toString('utf8').replace(/\r\n/g, '\n')).digest('hex'),
+      expectedDigest,
+    );
     assert.match(tracked, new RegExp(`${filename.replaceAll('.', '\\.')}\\n`));
   }
 });

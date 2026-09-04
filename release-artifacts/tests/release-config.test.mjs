@@ -54,7 +54,7 @@ test('runtime resources use the namewta prefix', () => {
     'docker/docker-compose-backend.yml',
     'docker/docker-compose-frontend.yml',
   ]) {
-    const servicesBlock = read(filename).split('\nservices:\n')[1].split('\nnetworks:')[0];
+    const servicesBlock = read(filename).split(/\r?\nservices:\r?\n/)[1].split(/\r?\nnetworks:/)[0];
     const services = [...servicesBlock.matchAll(/^  ([a-z0-9-]+):$/gm)]
       .map((match) => match[1]);
     assert.ok(services.every((name) => name.startsWith('namewta-')));
@@ -211,7 +211,7 @@ test('Nacos MySQL schema is pinned and both initialization paths are idempotent'
   const schema = fs.readFileSync(
     path.join(releaseRoot, 'docker/infrastructure/mysql/init/nacos/mysql-schema.sql'),
   );
-  const digest = crypto.createHash('sha256').update(schema).digest('hex');
+  const digest = crypto.createHash('sha256').update(schema.toString('utf8').replace(/\r\n/g, '\n')).digest('hex');
   assert.equal(digest, '5f8292d8add62e4275ad103cdd5757ec6b2abb77a01e2d06cf0434c3f0b6317d');
   assert.equal(schema.toString('utf8').match(/^CREATE TABLE/gm)?.length, 10);
   assert.doesNotMatch(schema.toString('utf8'), /INSERT\s+INTO\s+[`']?users/i);
@@ -333,6 +333,7 @@ test('MySQL initialization targets one protected ry-namewta database', () => {
     '40-ry-ai.sql',
     '50-namewta-ddl.sql',
     '60-namewta-dml.sql',
+    '61-third-dml.sql',
   ];
 
   assert.match(script, /database.*== ry-namewta/);

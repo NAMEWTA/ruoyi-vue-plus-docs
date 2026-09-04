@@ -431,6 +431,7 @@ stage_mysql_init() {
     "40-ry-ai.sql"
     "50-namewta-ddl.sql"
     "60-namewta-dml.sql"
+    "61-third-dml.sql"
   )
   local nacos_assets=(
     "15-nacos-init.sh"
@@ -463,7 +464,7 @@ stage_mysql_init() {
     error "MySQL 基座文件数量异常: ${index}，预期 ${#sql_files[@]}"
     return 1
   }
-  info "MySQL 基座校验通过：六份 SQL 由 release-artifacts 直接维护，未执行复制或改写"
+  info "MySQL 基座校验通过：七份 SQL 由 release-artifacts 直接维护，未执行复制或改写"
 }
 
 stage_release() {

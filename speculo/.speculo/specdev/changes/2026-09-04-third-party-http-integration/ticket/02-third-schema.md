@@ -69,7 +69,7 @@ shared_path_owners:
 - **必须先读的参考：** <Path>.agents/skills/engineering-standards/references/project/00-project-profile.md</Path>、<Path>.agents/skills/engineering-standards/references/project/01-module-map.md</Path>、<Path>.agents/skills/engineering-standards/references/project/02-decisions-and-exceptions.md</Path>、<Path>.agents/skills/engineering-standards/references/project/03-backend-module-modes.md</Path>、<Path>.agents/skills/ruoyi-backend-development/references/persistence-transactions-and-ddl.md</Path>、<Path>.agents/skills/ruoyi-backend-development/references/mapper-and-sql.md</Path>、<Path>.agents/skills/ruoyi-backend-development/references/framework-usage.md</Path>、<Path>.agents/skills/ruoyi-backend-development/references/verification.md</Path>。
 - **目录与代码最低要求：** ruoyi-third 按 layered 持久化边界组织 domain/entity、domain/model/read、mapper、mapper XML；DAO 是唯一业务持久化入口，Service/UseCase 不导入 MyBatis/Mapper。Entity、Row/Projection、BO、VO 职责分离，禁止把数据库实体或密文模型放入 ruoyi-api。
 - **SQL 最低要求：** 只支持 MySQL 8.4；项目自有表使用现有主键、version、审计列和 del_flag 基线；DDL 只能进入 <Path>release-artifacts/docker/infrastructure/mysql/init/50-namewta-ddl.sql</Path>，不得创建 script/、模块私有 SQL 或其他方言。Mapper 遵守 BaseMapperPlus → wrapper/query builder → MPJ → XML 阶梯，复杂 SQL 必须落 XML。
-- **执行停止条件：** 未先验证 10→50→60 基座、把完整报文/明文凭据落库、绕过 DAO、修改基础表或把 DDL 写入非 owner 文件时立即停止并升级 T-02/Lead。
+- **执行停止条件：** 未先验证 10→20→30→40→50→60→61 基座、把完整报文/明文凭据落库、绕过 DAO、修改基础表或把 DDL 写入非 owner 文件时立即停止并升级 T-02/Lead。
 
 ## 3. 范围边界
 
@@ -113,7 +113,7 @@ fresh-init 环境能够持久化两级配置、独立凭据和不含完整报文
 |---|---|---|---|---|
 | 正常路径 | MySQL/Mapper | 以 10→50 初始化后运行 third Mapper 集成测试 | 表、关联、筛选和聚合查询成立 | `<Path>{roots.state}/specdev/changes/{change}/evidence/T-02.md</Path>` |
 | 失败路径 | DB 约束 | 重复 provider/endpoint/credential 与超长原始载荷尝试 | 唯一/长度约束拒绝，历史不被级联删除 | 同上 |
-| 回归 | fresh-init | MySQL 8.4 执行完整 10→60 初始化 | 既有基座和 later DML 均不报错 | 同上 |
+| 回归 | fresh-init | MySQL 8.4 执行完整 10→20→30→40→50→60→61 初始化 | 既有基座和 third menu DML 均不报错 | 同上 |
 
 - **Workspace checks：** source/current workspace 运行 Maven Mapper 测试和 SQL 静态校验。
 - **E2E disposition：** required：真实 MySQL 8.4 DDL、约束与事务边界无法由纯单元测试证明。

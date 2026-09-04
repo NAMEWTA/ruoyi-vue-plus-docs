@@ -89,9 +89,9 @@ shared_path_owners:
 
 Implementation authorization is recorded in the change status as `USER-DECISION:2026-09-04-execute-goal-plan`. T-01..T-13 are implemented by `codex:/root` and their ticket frontmatter is `done`.
 
-Verified locally: backend `ruoyi-third` compile, `validate-module-mode.mjs ... --mode layered`, and local-profile crypto/path/sanitizer/origin/loopback Gateway tests (26 passing, including redirect refusal, bounded retry, provider-owned endpoint adapter validation, typed `@HttpExchange`, physical-attempt log capture, sink health, outbound log sanitization, and provider key-header redaction); frontend domain, web-domain, and admin typecheck/lint/build/test; architecture check; admin production build. The backend module now follows `controller/admin -> usecase/impl -> service -> dao -> mapper -> XML`, with runtime ports/adapters/support boundaries, and `ruoyi-module-guide` registers the module. The latest backend result is `8d9d03238`; frontend result is `1fa13dc`; root menu SQL is integrated at `bed64ec`.
+Verified locally: backend `ruoyi-third` compile, `validate-module-mode.mjs ... --mode layered`, and local-profile crypto/path/sanitizer/origin/loopback Gateway tests (28 passing, including redirect refusal, bounded retry, provider-owned endpoint adapter validation, typed `@HttpExchange`, physical-attempt log capture, sink health, outbound log sanitization, provider key-header redaction, immutable provider-code identity, and deleted-credential reactivation rejection); frontend domain, web-domain, and admin typecheck/lint/build/test; architecture check; admin production build. The backend module now follows `controller/admin -> usecase/impl -> service -> dao -> mapper -> XML`, with runtime ports/adapters/support boundaries, and `ruoyi-module-guide` registers the module. The latest backend result is `2dacefcfb`; frontend result is `1fa13dc`; root menu SQL is integrated at `bed64ec`.
 
-The full/core bundle gate is also verified from an isolated export of backend `8d9d03238` at `D:\Document\code\namewta-release-verify-20260905-v2`: both clean package commands completed all 47 reactor projects, and direct `BOOT-INF/lib` inspection found `ruoyi-third-6.0.0.jar` in both packages. Optional job/ai/demo/workflow artifacts are present in full and absent from core. Verified copies are `D:\Document\code\namewta-full-admin-20260905-v3.jar` and `D:\Document\code\namewta-core-admin-20260905-v3.jar`. The isolated export was required because the original workspace's running legacy `ruoyi-admin` process locks the target JAR.
+The full/core bundle gate is also verified from an isolated export of backend `2dacefcfb` at `D:\Document\code\namewta-release-verify-20260905-v2`: both clean package commands completed all 47 reactor projects, and direct `BOOT-INF/lib` inspection found `ruoyi-third-6.0.0.jar` in both packages. Optional job/ai/demo/workflow artifacts are present in full and absent from core. Verified copies are `D:\Document\code\namewta-full-admin-20260905-v4.jar` and `D:\Document\code\namewta-core-admin-20260905-v4.jar`. The isolated export was required because the original workspace's running legacy `ruoyi-admin` process locks the target JAR.
 
 Required external gates are intentionally not claimed. The host has reachable MySQL/Redis services, but Docker CLI and an isolated fresh-init/counting test stack are unavailable. The legacy `18080` JAR predates `ruoyi-third` and returned `404`; a current classpath launch loaded the module and opened `18081`, then exited when the existing system OSS runner hit a shared Redis cache-invalidation acknowledgement timeout for the second instance. The new loopback unit test covers normal delivery and pre-send zero-request rejection, while MySQL 8.4 fresh-init, isolated Redis multi-instance fail-closed checks, application-context HTTP status/redirect/retry tests, SysLog canary, and browser permission E2E must run in the approved release environment before changing the change status to `completed`.
 
@@ -138,7 +138,7 @@ Lead 在全部前序 result 已汇合的 parent-candidate/current workspace 启�
 |---|---|---|---|---|
 | 正常路径 | full stack | Provider/Endpoint/credential 管理后动态+typed 调用并查日志/统计 | AC-001 至 AC-015/017 全链路成立 | `<Path>{roots.state}/specdev/changes/{change}/evidence/T-13.md</Path>` |
 | 失败路径 | security/permission/fault | URL/header/secret/Redis/timeout/limit/adapter/权限矩阵 | 零越权发送、稳定错误、无敏感泄漏 | 同上 |
-| 回归 | release gates | backend full/core、frontend 全门禁、MySQL 10→60 fresh-init | AC-016/018 与既有功能均通过 | 同上 |
+| 回归 | release gates | backend full/core、frontend 全门禁、MySQL 10→50→60→61 fresh-init | AC-016/018 与既有功能均通过 | 同上 |
 
 - **Workspace checks：** 按 Goal Plan 在 source/current workspace 只做 Skills 静态检查；所有产品 Gate 由 Lead 在共同集成状态运行。
 - **E2E disposition：** required：本 Ticket 的唯一价值就是跨 MySQL、Redis、HTTP、backend、browser 和 bundle 的最终证明。
@@ -147,7 +147,7 @@ Lead 在全部前序 result 已汇合的 parent-candidate/current workspace 启�
 
 ## 9. 发布、迁移与恢复
 
-- **迁移顺序：** Gate 使用 fresh-init 顺序 10→50→60；正式发布建议 DDL → backend → frontend → DML/赋权。
+- **迁移顺序：** Gate 使用 fresh-init 顺序 10→50→60→61；正式发布建议 DDL → backend → frontend → 61-third-dml.sql → DML/赋权。
 - **兼容窗口：** 新模块/菜单 additive；public API 保持兼容，未知配置 fail-closed。
 - **监控信号：** 全部拒绝/错误分类、attempt 守恒、cache invalidation、日志写失败、unknown component、403。
 - **回滚或前向恢复：** 先撤菜单/权限并禁用 Provider，再回退 App；保留 schema、密文和历史，产品缺陷前向修复。

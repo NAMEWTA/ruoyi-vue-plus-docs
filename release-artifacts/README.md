@@ -41,7 +41,7 @@ bash release-artifacts/scripts/release-manage.sh backup
 # 将 current_prod 投放到 Docker 构建上下文与 Nginx 静态目录
 bash release-artifacts/scripts/release-manage.sh stage --env prod
 
-# 只读校验六份有序 MySQL 初始化 SQL
+# 只读校验七份有序 MySQL 初始化 SQL
 bash release-artifacts/scripts/release-manage.sh stage-mysql
 
 # 生成独立部署包
@@ -113,9 +113,10 @@ RuoYi、SnailJob、WarmFlow、AI 与 NAMEWTA 增量统一初始化到 `ry-namewt
 40-ry-ai.sql
 50-namewta-ddl.sql
 60-namewta-dml.sql
+61-third-dml.sql
 ```
 
-上述目录是项目唯一 SQL 事实源，六份文件均为可直接修改的当前完整 MySQL 8.4 基座，并全部由 Git 跟踪。`50-namewta-ddl.sql` 只保存 NAMEWTA 结构，`60-namewta-dml.sql` 只保存 NAMEWTA 数据；不要新增版本、临时、备份 SQL，也不要在后端仓库恢复 `script/` 或其他数据库方言。
+上述目录是项目唯一 SQL 事实源，七份文件均为可直接修改的当前完整 MySQL 8.4 基座，并全部由 Git 跟踪。`50-namewta-ddl.sql` 只保存 NAMEWTA 结构，`60-namewta-dml.sql` 保存通用 NAMEWTA 数据，`61-third-dml.sql` 保存三方接口管理菜单及权限数据；不要新增版本、临时、备份 SQL，也不要在后端仓库恢复 `script/` 或其他数据库方言。
 
 已有共享 MySQL 容器时，先准备 SQL，再运行受保护的初始化脚本。脚本拒绝已存在的数据库或应用账号，失败时只清理本次新建的 `ry-namewta` 和 `namewta_app`：
 
@@ -126,9 +127,9 @@ bash release-artifacts/scripts/init-mysql-container.sh \
   --env-file release-artifacts/.env
 ```
 
-运行密钥只进入被忽略且权限为 `0600` 的 `.env`，不会写回六份 SQL。共享 MySQL 的其他数据库及其 entrypoint 初始化文件不属于该脚本的操作范围。
+运行密钥只进入被忽略且权限为 `0600` 的 `.env`，不会写回七份 SQL。共享 MySQL 的其他数据库及其 entrypoint 初始化文件不属于该脚本的操作范围。
 
-已有数据库不得执行上述初始化流程。升级必须明确源 Git Tag 与目标 Git Tag，先备份，再比较两 Tag 下六份基座并形成临时差异 SQL；完成评审和隔离演练后才能执行。差异 SQL、账密、备份位置和执行记录写入被忽略的 `temp/relase/`，不作为第七份基座提交。
+已有数据库不得执行上述初始化流程。升级必须明确源 Git Tag 与目标 Git Tag，先备份，再比较两 Tag 下七份基座并形成临时差异 SQL；完成评审和隔离演练后才能执行。差异 SQL、账密、备份位置和执行记录写入被忽略的 `temp/relase/`，不作为第八份基座提交。
 
 初始化脚本会将 `minio` 设置为唯一启用的默认 OSS，并强制使用 `access_policy=0`
 （`PRIVATE`）；当前枚举中的 `access_policy=2` 表示 `PUBLIC_READ`，不能用于默认私桶。

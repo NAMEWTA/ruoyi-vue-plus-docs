@@ -7,5 +7,6 @@
 !40-ry-ai.sql
 !50-namewta-ddl.sql
 !60-namewta-dml.sql
+!61-third-dml.sql
 !nacos/
 !nacos/**

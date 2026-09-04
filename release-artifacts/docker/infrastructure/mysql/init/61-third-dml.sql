@@ -1,3 +1,13 @@
+SET NAMES utf8mb4;
+
+-- ============================================================================
+-- 变更标识：NAMEWTA-THIRD-MENU-DML-001
+-- 变更内容：三方接口管理菜单及按钮权限
+-- 执行前置：已完整执行 50-namewta-ddl.sql
+-- 适用范围：全新环境；已有环境按源/目标 Git Tag 生成并评审差异 SQL
+-- 重复执行：否
+-- ============================================================================
+
 insert into sys_menu
     (menu_id, client_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, is_cache,
      menu_type, visible, status, perms, icon, active_menu, ext, create_dept, create_by, create_time, remark)

@@ -95,7 +95,7 @@ The new backend module is registered as layered and must keep `controller/admin 
 
 Implementation commits and verification evidence are recorded in the per-ticket files under `evidence/`. The deterministic loopback Gateway test now covers constrained delivery and pre-send zero-request rejection; isolated full/core bundle composition is also verified. External MySQL 8.4, Redis multi-instance, application-context HTTP status/redirect/retry, and browser E2E checks remain release prerequisites and are recorded as pending when the required services or approvals are unavailable.
 
-The execution overlay is authoritative over the planning table below: T-01 is integrated, T-02 through T-12 are in review with local results, and T-13 owns the remaining release gate. The latest backend checkpoint is `8d9d03238`; `validate-module-mode.mjs ... --mode layered` passes after provider-owned endpoint adapter validation, safe endpoint header overrides, sanitized JSON hardening, loopback Gateway coverage, explicit 302 refusal, bounded retry policy, typed `@HttpExchange` transport, physical-attempt outbound log capture, sink health signal, transport failures preserving the physical attempt count, expanded key-header redaction, and ACK-based `ClusterCacheInvalidationCoordinator` wiring for the `third:config` namespace. The latest frontend checkpoint is `1fa13dc`, covering the four-page web-domain manifest, nested credential workflow, and endpoint override input. External MySQL/Redis, application-context HTTP, production SysLog persistence, and browser E2E remain pending release gates.
+The execution overlay is authoritative over the planning table below: T-01 is integrated, T-02 through T-12 are in review with local results, and T-13 owns the remaining release gate. The latest backend checkpoint is `2dacefcfb`; `validate-module-mode.mjs ... --mode layered` passes after provider-owned endpoint adapter validation, safe endpoint header overrides, sanitized JSON hardening, loopback Gateway coverage, explicit 302 refusal, bounded retry policy, typed `@HttpExchange` transport, physical-attempt outbound log capture, sink health signal, transport failures preserving the physical attempt count, expanded key-header redaction, ACK-based `ClusterCacheInvalidationCoordinator` wiring for the `third:config` namespace, immutable provider-code identity, and deleted-credential reactivation protection. The latest frontend checkpoint is `1fa13dc`, covering the four-page web-domain manifest, nested credential workflow, and endpoint override input. External MySQL/Redis, application-context HTTP, production SysLog persistence, and browser E2E remain pending release gates.
 
 ## 3. 依赖 DAG
 
@@ -203,7 +203,7 @@ Goal Plan 已确定 workspace strategy=current、integration_gate=direct-parent�
 - **韧性：** timeout 有界，非幂等只发一次，幂等有限重试；Provider/Endpoint 两层 Redisson 限制均在发送前，quota 仅展示。
 - **可观测性：** attempt 是物理发送，最终结果是逻辑调用；业务表无完整 body；全部 third 出站自动进入 common SysLog sink 且强制脱敏/截断。
 - **前端：** third 源码独立于 system，菜单仅投影在 System Management；SQL/Controller/domain/manifest 权限字符串完全一致。
-- **发布：** 无真实 Provider 预置；fresh-init 顺序 10→50→60；生产 DDL/DML、密钥、角色赋权和 Endpoint 启用均需外部批准。
+- **发布：** 无真实 Provider 预置；fresh-init 顺序 10→50→60→61；生产 DDL/DML、密钥、角色赋权和 Endpoint 启用均需外部批准。
 
 ## 8. 同步规则
 

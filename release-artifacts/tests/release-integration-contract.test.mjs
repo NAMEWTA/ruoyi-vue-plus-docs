@@ -16,6 +16,7 @@ const sqlFiles = [
   '40-ry-ai.sql',
   '50-namewta-ddl.sql',
   '60-namewta-dml.sql',
+  '61-third-dml.sql',
 ];
 
 function read(relativePath) {
@@ -56,7 +57,7 @@ test('当前治理声明直接维护基座并要求按标签升级已有库', ()
     '.agents/skills/deploy-namewta-environment/references/upgrade-and-rollback.md',
   ].map(read).join('\n');
 
-  assert.match(currentAuthority, /六份.*完整基座/s);
+  assert.match(currentAuthority, /七份.*完整基座/s);
   assert.match(currentAuthority, /直接修改/);
   assert.match(currentAuthority, /源 Git Tag/);
   assert.match(currentAuthority, /目标 Git Tag/);

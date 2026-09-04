@@ -16,13 +16,14 @@ const sqlFiles = [
   '40-ry-ai.sql',
   '50-namewta-ddl.sql',
   '60-namewta-dml.sql',
+  '61-third-dml.sql',
 ];
 
 function digest(filename) {
   return crypto.createHash('sha256').update(fs.readFileSync(path.join(sqlRoot, filename))).digest('hex');
 }
 
-test('the six ordered MySQL files are non-empty UTF-8 baselines tracked by Git', () => {
+test('the seven ordered MySQL files are non-empty UTF-8 baselines tracked by Git', () => {
   const actual = fs.readdirSync(sqlRoot)
     .filter((name) => /^\d{2}-.*\.sql$/.test(name))
     .sort();

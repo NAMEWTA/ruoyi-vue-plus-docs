@@ -45,7 +45,7 @@
 - `sys.user.passwordPolicy` 是所有新密码生成与写入的唯一策略源，服务端负责最终裁决；公开端点只投影长度和字符类别等非敏感约束，存量弱 BCrypt 密码保持登录兼容并在下一次写入时收敛。
 - 临时密码使用独立权限、用户级 60 秒覆盖语义和 Redis 不可逆校验值；错误尝试不消费，正确认证只能原子消费一次，成功后签发普通会话且不改变永久密码，业务审计不得保存凭据明文。
 - 模块间优先通过 `ruoyi-api`、common SPI 或公开 Service 合同协作，不跨模块依赖 Controller 或实现细节。
-- 数据库事实源仅为父仓库 `release-artifacts/docker/infrastructure/mysql/init/` 的六份 MySQL 8.4 完整基座；迭代直接修改对应文件，`50-namewta-ddl.sql` 只含结构语句，`60-namewta-dml.sql` 只含数据语句。全新库按 `10 -> 20 -> 30 -> 40 -> 50 -> 60` 初始化；已有库必须按源/目标 Git Tag 生成并评审差异，禁止重放完整基座。
+- 数据库事实源仅为父仓库 `release-artifacts/docker/infrastructure/mysql/init/` 的七份 MySQL 8.4 完整基座；迭代直接修改对应文件，`50-namewta-ddl.sql` 只含结构语句，`60-namewta-dml.sql` 含通用数据，`61-third-dml.sql` 含三方菜单权限数据。全新库按 `10 -> 20 -> 30 -> 40 -> 50 -> 60 -> 61` 初始化；已有库必须按源/目标 Git Tag 生成并评审差异，禁止重放完整基座。
 - OSS、通知、工作流与权限修改必须同时验证 API 合同、数据隔离、失败语义和对应集成测试。
 - 完整 HTTP 系统日志必须保留 requestId 关联、同步/异步/异常终态、正文大小与媒体类型策略；日志采集失败不得改变业务响应。
 - OpenAPI 机器身份只有同时具备服务端验签 request attribute、`openapi` userType 和空 Client 字段时，才可跳过浏览器 Client 校验；普通 Token、伪造 header 和泄漏的内部 Token 均不得触发该分支。
@@ -56,7 +56,7 @@
 |---|---|---|
 | 协议与装配 | `ruoyi-common-openapi`、`OpenApiAutoConfiguration`、`application.yml` | full/core 使用同一 common artifact；admin 运行时 `openapi.enabled` 默认 `true`，可由 `OPENAPI_ENABLED=false` 显式关闭；启用时 KEK、Redis、Sa-Token、MVC mapping、唯一 credential/authorization SPI 任一缺失或无效都必须阻止启动，不得回退到本地状态或空权限 |
 | 凭据、目录与失效 | `ruoyi-system` 的 OpenAPI credential/catalog Controller、Service、Mapper 和 RBAC/身份写后失效调用点 | secret 仅创建/重置时返回一次并以 KEK 加密保存；self/admin scope 在后端裁决；权限或身份写入成功前完成机器 Session 注销，失败不得静默成功 |
-| 数据与菜单 | `release-artifacts/docker/infrastructure/mysql/init/{50-namewta-ddl,60-namewta-dml}.sql` | 直接维护当前完整基座并保持 DDL/DML 分类；存量环境只执行由源/目标 Git Tag 差异形成且已评审的升级 SQL，生产数据库不随代码集成自动变更 |
+| 数据与菜单 | `release-artifacts/docker/infrastructure/mysql/init/{50-namewta-ddl,60-namewta-dml,61-third-dml}.sql` | 直接维护当前完整基座并保持 DDL/DML 分类；存量环境只执行由源/目标 Git Tag 差异形成且已评审的升级 SQL，生产数据库不随代码集成自动变更 |
 | 前端入口 | system domain `open-api`、system web-domain 的 `OpenApiWorkspace`/manifest、admin `system/openApi/index` 动态页和 profile 静态 tab | admin 入口显式选择目标用户，个人入口固定当前用户；权限隐藏不能替代后端授权；一次性 secret 在所有弹窗关闭路径清空，不写 storage、URL、缓存或日志 |
 | 发布与恢复 | common-openapi README、部署环境变量与发布 Evidence | 顺序固定为备份、批准并执行 additive SQL、生产部署显式设置 `OPENAPI_ENABLED=false` 或交付 KEK 后启用、配置 Redis/KEK、另行批准启用；恢复先置 `OPENAPI_ENABLED=false`。KEK 下发、生产启用、真实迁移和远程发布均不是代码集成动作 |
 

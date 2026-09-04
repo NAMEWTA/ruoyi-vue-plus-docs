@@ -58,9 +58,9 @@ Token 明确区分 OAuth `clientId`、数据库 Client 主键和登录域。角�
 
 `ruoyi-admin` 保持组合入口，业务能力位于 `ruoyi-modules`，跨模块服务与 DTO 通过 `ruoyi-api` 或 common SPI 暴露。默认 full bundle 和 `bundle-core` 都有明确的 Maven profile 与验证方式。
 
-NAMEWTA 当前只支持并验收 MySQL 8.4。数据库初始化资产由父仓库 `release-artifacts/docker/infrastructure/mysql/init/` 统一拥有，六份 SQL 是可直接修改的当前完整基座：`10` 至 `40` 分别承载 RuoYi、Job、Workflow、AI，`50-namewta-ddl.sql` 只承载 NAMEWTA 结构，`60-namewta-dml.sql` 只承载 NAMEWTA 数据。后端仓库不再保存 `script/` 或 SQL 副本，也不维护 PostgreSQL、Oracle、SQL Server 方言。
+NAMEWTA 当前只支持并验收 MySQL 8.4。数据库初始化资产由父仓库 `release-artifacts/docker/infrastructure/mysql/init/` 统一拥有，七份 SQL 是可直接修改的当前完整基座：`10` 至 `40` 分别承载 RuoYi、Job、Workflow、AI，`50-namewta-ddl.sql` 只承载 NAMEWTA 结构，`60-namewta-dml.sql` 承载通用 NAMEWTA 数据，`61-third-dml.sql` 承载三方接口管理菜单与权限数据。后端仓库不再保存 `script/` 或 SQL 副本，也不维护 PostgreSQL、Oracle、SQL Server 方言。
 
-全新环境按文件名前缀顺序执行全部六份基座。已有环境不得重放基座；升级时必须指定源 Git Tag 与目标 Git Tag，备份现场，在隔离库中生成、评审并演练差异 SQL，再执行获批的升级步骤。
+全新环境按文件名前缀顺序执行全部七份基座。已有环境不得重放基座；升级时必须指定源 Git Tag 与目标 Git Tag，备份现场，在隔离库中生成、评审并演练差异 SQL，再执行获批的升级步骤。
 
 ## 上游能力吸收
 

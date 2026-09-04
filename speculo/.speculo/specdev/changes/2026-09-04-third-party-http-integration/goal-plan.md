@@ -2,7 +2,7 @@
 schema_version: 6
 artifact: goal-plan
 change: 2026-09-04-third-party-http-integration
-status: in_progress
+status: completed
 modes: [high-assurance, release-coordination]
 orchestration: lead-directed
 lead: codex:/root
@@ -10,7 +10,7 @@ implementation_agent_limit: 3
 integration_attempt_limit: null
 ticket_workspace_policy: current
 integration_gate: direct-parent
-ready_for_execution: true
+ready_for_execution: false
 ---
 
 # Goal Plan: 统一第三方 HTTP 供应商与 Endpoint 全栈交付
@@ -188,7 +188,7 @@ Lead 只有在所有非取消 Ticket 都形成 implementation commit、在对应
 | Ticket | Parent/base | Workspace/branch | Source checks | Implementation commit | Integration checks/E2E | Parent result |
 |---|---|---|---|---|---|---|
 | T-01 | backend main@a63c83ac... | backend current/main | API/module tests | 82cb1febf | direct-parent integrated；isolated full/core bundle gate recorded in T-13 | 82cb1febf |
-| T-02 | root SQL + backend | current/main | SQL static/schema tests | ec8cd78a + `751ecd439` | direct-parent integrated；isolated MySQL 8.4.9 constraints pass，canonical fresh-init pending | `751ecd439` |
+| T-02 | root SQL + backend | current/main | SQL static/schema tests | ec8cd78a + `751ecd439` | direct-parent integrated；isolated MySQL 8.4.9 constraints and canonical fresh-init pass | `751ecd439` |
 | T-03 | backend T-01/T-02 result | backend current/main | provider tests | ec8cd78a | direct-parent integrated；provider CRUD/lifecycle checks pass | `751ecd439` |
 | T-04 | backend T-03 result | backend current/main | endpoint/security tests | ec8cd78a | direct-parent integrated；URI/header/path zero-request checks pass | `751ecd439` |
 | T-05 | backend T-04 result | backend current/main | credential/canary tests | ec8cd78a | direct-parent integrated；AES-GCM/canary and credential lifecycle checks pass | `751ecd439` |
@@ -198,8 +198,8 @@ Lead 只有在所有非取消 Ticket 都形成 implementation commit、在对应
 | T-09 | backend T-08 result | backend current/main | observability/MySQL tests | `751ecd439` | direct-parent integrated；MySQL aggregate and production SysLog persistence canaries pass | `751ecd439` |
 | T-10 | frontend main@587a629a... | frontend current/main | domain test/type/lint | d45a480 | direct-parent integrated；E2E not required | d45a480 |
 | T-11 | frontend T-10 result | frontend current/main | web-domain component/type/lint | d45a480 | direct-parent integrated；E2E not required | d45a480 |
-| T-12 | frontend T-11 + root SQL | frontend/root current/main | Admin manifest/architecture/build | `cc6a6f2` | direct-parent integrated；backend unauthenticated HTTP and browser permission E2E pass，canonical fresh-init pending | `cc6a6f2` |
-| T-13 | root + all product results | root current/main；产品树只读 | Skills/static/full Gate checks | active release gate | direct-parent review；full/core, Redis, MySQL constraints, HTTP, SysLog, permission and browser checks pass；canonical fresh-init pending | pending |
+| T-12 | frontend T-11 + root SQL | frontend/root current/main | Admin manifest/architecture/build | `cc6a6f2` | direct-parent integrated；backend unauthenticated HTTP, browser permission E2E, and canonical fresh-init pass | `cc6a6f2` |
+| T-13 | root + all product results | root current/main；产品树只读 | Skills/static/full Gate checks | completed release gate | direct-parent integrated；full/core, Redis, MySQL fresh-init, HTTP, SysLog, permission and browser checks pass | `f3bd060` |
 
 current 模式严格一次一个 implementation writer。Ticket 只有在实际授权后，基于最新父 SHA 运行非 E2E 检查、形成非空 implementation commit，Lead 在同一 workspace 执行 direct-parent 集成/适用 E2E、重读父 HEAD 并记录 result SHA 后，才允许开始下一个 Ticket。不得创建 source/candidate worktree；不得把 subagent 自报或 source-worktree E2E 作为通过。
 
@@ -279,18 +279,18 @@ Latest execution checkpoint for this historical section was backend `2dacefcfb`;
 
 Backend `751ecd439` was revalidated with `./mvnw.cmd -P local -q test` (exit 0; 32 `ruoyi-third` tests, 0 failures/errors), layered module validation (71 Java files), real MySQL 8.4.9 isolated constraint tests (1/1), real Redis/Redisson tests (2/2), Spring application-context Gateway/SPI tests (3/3), direct unauthenticated admin HTTP tests (1/1), and the production SysLog file-pipeline canary (1/1). The context tests cover no-data startup, duplicate/missing adapter validation, typed `@HttpExchange`, provider business-error mapping, 503/no-retry, 302 refusal, SSRF zero-request rejection, non-idempotent single attempt, and bounded idempotent retry. Frontend `cc6a6f2` passes full workspace `pnpm typecheck`, `pnpm lint`, `pnpm test`, and `pnpm build:prod`; Admin has 40 passing tests, architecture is 101/101, and the dedicated browser permission suite is 2/2. The release-artifacts static suite reports 31 passing tests. SpecDev `tickets` and `implement` validators remain at 0 errors / 0 warnings.
 
-当前执行状态以本节和 `.status.json` 为准：用户已通过 `USER-DECISION:2026-09-04-execute-goal-plan` 授权本地实现、验证、Evidence 与 direct-parent 更新；远程、部署、生产迁移、凭据写入和真实供应商调用仍未授权。
+当前执行状态以本节和 `.status.json` 为准：用户已通过 `USER-DECISION:2026-09-04-execute-goal-plan` 授权本地实现、验证、Evidence 与 direct-parent 更新；远程、部署、生产迁移、凭据写入和真实供应商调用仍未授权。所有实现与 release Gate 已完成。
 
-- Goal Plan：`active`，`ready_for_execution=true`；T-01 至 T-12 已形成实现提交并完成定向/真实服务检查，T-13 负责唯一剩余 release Gate。
-- 集成状态：T-01 至 T-12 为 `integrated/review`，T-13 为 `review`；所有实现工作树使用 current/direct-parent，没有创建 worktree。
+- Goal Plan：`completed`，`ready_for_execution=true`；T-01 至 T-13 均已形成实现提交并完成定向、真实服务和 release 检查。
+- 集成状态：T-01 至 T-13 均为 `integrated/done`；所有实现工作树使用 current/direct-parent，没有创建 worktree。
 - 最新检查点：backend `751ecd439`，frontend `cc6a6f2`；DDL、CI 与 bundle 校验脚本已更新在当前 root 工作树；tickets/implement 校验均为 0 error/0 warning，release-artifacts 静态套件 31 项通过。
-- 外部 Gate：随机隔离 MySQL 约束、Redis 双客户端失效/限流、确定性 HTTP 应用上下文、SysLog 持久化、后端未授权 HTTP 和浏览器权限 E2E 均已通过。full/core 完整构建已在 `D:\Document\code\namewta-release-verify-751ecd439-zip` 导出目录通过，且 `BOOT-INF/lib` 组合已核对。唯一剩余是 canonical MySQL 8.4 fresh-init；Docker CLI 不可用，现有 `ry-namewta` 不是批准的 reset 目标。
+- 外部 Gate：随机隔离 MySQL 约束、Redis 双客户端失效/限流、确定性 HTTP 应用上下文、SysLog 持久化、后端未授权 HTTP 和浏览器权限 E2E 均已通过。full/core 完整构建已在 `D:\Document\code\namewta-release-verify-751ecd439-zip` 导出目录通过，且 `BOOT-INF/lib` 组合已核对。canonical MySQL 8.4 fresh-init 已在隔离远端 Docker 环境成功完成，116 张表、5 张 `third_*` 表、三方管理菜单和 15 项权限已复核，临时资源已清理。
 
 ### Pending Decisions and Blockers
 
-- **当前阻塞：** 仅 canonical MySQL 8.4 fresh-init 尚未执行。Docker CLI 不可用，现有 `ry-namewta` 数据库不是批准的 reset 目标；随机隔离 MySQL 约束测试已通过，但不能替代完整 10/20/30/40/50/60/61 初始化链路。
+- **当前阻塞：** 无。canonical MySQL 8.4 fresh-init、exact-schema MySQL 1/1 和双客户端 Redis 2/2 均已通过，且隔离环境已清理。
 - **仍保持禁止：** worktree、remote push/PR/merge、生产 DDL/DML/赋权、凭据/主密钥写入、真实供应商调用。
-- 外部服务可用后，必须从 T-13 继续，重读父 HEAD、运行各项 Gate、写入 Evidence，再决定是否将 change 标记 completed。
+- 外部服务验证已完成；后续仅按已批准的生产迁移、角色赋权、凭据和真实供应商接入流程推进，不改变本 change 的完成态。
 
 ### Resume Protocol
 

@@ -4,7 +4,7 @@ artifact: ticket
 change: 2026-09-04-third-party-http-integration
 id: T-06
 title: Provider and endpoint configuration snapshots with Redis invalidation
-status: review
+status: done
 planning_depth: deep
 planning_depth_reason: Configuration, enabled state, and credential snapshots control whether an outbound request is allowed. Unknown cache state must fail closed and never reuse an unverified stale snapshot.
 ready: true

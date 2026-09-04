@@ -4,7 +4,7 @@ artifact: ticket
 change: 2026-09-04-third-party-http-integration
 id: T-03
 title: 交付 Provider 管理与供应商级状态边界
-status: review
+status: done
 planning_depth: deep
 planning_depth_reason: Provider 是所有请求的安全目标和聚合根，涉及 trusted base URL、权限、启停优先级和受控逻辑删除。
 ready: true

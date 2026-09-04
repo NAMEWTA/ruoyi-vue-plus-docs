@@ -4,7 +4,7 @@ artifact: ticket
 change: 2026-09-04-third-party-http-integration
 id: T-08
 title: 增加强制超时、幂等重试与双层 Redisson 限制
-status: review
+status: done
 planning_depth: deep
 planning_depth_reason: 超时、重试、限流和并发控制决定是否实际发送及发送次数，需防止非幂等重复副作用并在 Redis 未知时关闭。
 ready: true

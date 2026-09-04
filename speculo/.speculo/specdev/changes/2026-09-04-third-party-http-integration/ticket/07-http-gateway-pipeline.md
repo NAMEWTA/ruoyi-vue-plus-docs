@@ -4,7 +4,7 @@ artifact: ticket
 change: 2026-09-04-third-party-http-integration
 id: T-07
 title: RestClient gateway pipeline with HttpExchange and provider SPI
-status: review
+status: done
 planning_depth: deep
 planning_depth_reason: This is the only outbound HTTP execution boundary. It combines dynamic endpoint metadata, typed HttpExchange contracts, URI security, credential resolution, adapter mapping, and stable public response semantics.
 ready: true

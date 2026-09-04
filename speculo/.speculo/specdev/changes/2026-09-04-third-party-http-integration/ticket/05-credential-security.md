@@ -4,7 +4,7 @@ artifact: ticket
 change: 2026-09-04-third-party-http-integration
 id: T-05
 title: 交付分 scope 凭据与 AES-GCM 密文管理
-status: review
+status: done
 planning_depth: deep
 planning_depth_reason: 凭据写入、覆盖、解密和日志边界涉及高敏感数据与主密钥外置，任何失败必须在发送前关闭。
 ready: true

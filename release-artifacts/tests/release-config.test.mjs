@@ -338,7 +338,7 @@ test('MySQL initialization targets one protected ry-namewta database', () => {
 
   assert.match(script, /database.*== ry-namewta/);
   assert.match(script, /refusing existing database/);
-  assert.match(script, /EXPECTED_TABLES=87/);
+  assert.match(script, /EXPECTED_TABLES=116/);
   assert.match(script, /--default-character-set=utf8mb4/);
   assert.match(script, /access_policy='0'/);
   assert.match(script, /config_key='minio' THEN 'Y' ELSE 'N'/);

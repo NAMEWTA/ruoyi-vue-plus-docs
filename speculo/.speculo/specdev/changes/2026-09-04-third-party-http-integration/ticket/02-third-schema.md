@@ -4,7 +4,7 @@ artifact: ticket
 change: 2026-09-04-third-party-http-integration
 id: T-02
 title: 建立 Provider、Endpoint、凭据与调用统计数据基座
-status: review
+status: done
 planning_depth: deep
 planning_depth_reason: 新增安全凭据和审计统计相关 MySQL schema、唯一约束、逻辑删除与跨后续切片共享的持久化模型。
 ready: true

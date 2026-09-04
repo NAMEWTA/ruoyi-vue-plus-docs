@@ -4,7 +4,7 @@ artifact: ticket
 change: 2026-09-04-third-party-http-integration
 id: T-12
 title: 组合 Admin Web 与系统管理下三方接口菜单
-status: review
+status: done
 planning_depth: deep
 planning_depth_reason: 修改 App 全局组合、动态 manifest、workspace lock 和菜单权限 DML，必须保证 SQL、后端、domain 与路由键原子一致。
 ready: true

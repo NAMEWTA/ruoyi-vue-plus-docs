@@ -4,7 +4,7 @@ artifact: ticket
 change: 2026-09-04-third-party-http-integration
 id: T-13
 title: 同步工程事实并执行 ruoyi-third 全栈发布 Gate
-status: review
+status: done
 planning_depth: deep
 planning_depth_reason: 13 个跨后端、SQL、Redis、日志和前端切片需要在共同父状态执行完整兼容、安全、双 bundle 与发布验证，并将真实模块事实回写唯一 Skill。
 ready: true

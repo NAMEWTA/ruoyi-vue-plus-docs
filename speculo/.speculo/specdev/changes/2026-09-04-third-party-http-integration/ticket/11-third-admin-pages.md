@@ -4,7 +4,7 @@ artifact: ticket
 change: 2026-09-04-third-party-http-integration
 id: T-11
 title: 交付三方接口管理四个 Admin 页面
-status: review
+status: done
 planning_depth: standard
 planning_depth_reason: 新增四个工作型 CRUD/查询页面、凭据编辑与权限状态，但完全消费已冻结 domain 合同且不拥有 App 组合。
 ready: true

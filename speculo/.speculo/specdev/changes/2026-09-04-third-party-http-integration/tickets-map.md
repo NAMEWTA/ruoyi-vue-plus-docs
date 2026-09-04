@@ -2,7 +2,7 @@
 schema_version: 3
 artifact: tickets-map
 change: 2026-09-04-third-party-http-integration
-status: in_progress
+status: completed
 ---
 
 # Tickets Map: 统一第三方 HTTP 供应商与 Endpoint 管理
@@ -81,7 +81,7 @@ Ticket frontmatter 是状态、依赖、深度和路径访问契约的权威；�
 
 ## 2.1 Implementation status and Skill gate result
 
-T-01 is integrated; T-02 through T-12 have local implementation results and remain in `review` until the release gate; T-13 is the active release gate. Every ticket has implementation owner `codex:/root`. Before implementation, the owner loaded the Skills declared by each ticket. The minimum required matrix is authoritative:
+T-01 through T-13 are integrated and done; the release gate is closed. Every ticket has implementation owner `codex:/root`. Before implementation, the owner loaded the Skills declared by each ticket. The minimum required matrix is authoritative:
 
 | Tickets | Required Skills |
 |---|---|
@@ -93,9 +93,9 @@ T-01 is integrated; T-02 through T-12 have local implementation results and rema
 
 The new backend module is registered as layered and must keep `controller/admin -> usecase/impl -> service -> dao -> mapper -> XML`; runtime infrastructure is isolated behind `port`, `adapter`, and pure `support` packages, and only stable contracts in `ruoyi-api` may be consumed by other business modules. The frontend remains `App -> web-domain -> domain -> platform`, with explicit package exports and App composition. No database script, SpEL, arbitrary reflection, full URL, arbitrary header, plaintext credential, or caller-side bypass is allowed.
 
-Implementation commits and verification evidence are recorded in the per-ticket files under `evidence/`. The current evidence includes randomized MySQL 8.4.9 constraint checks, isolated Redis/Redisson invalidation and limiter checks, Spring application-context HTTP/SPI checks, production SysLog persistence, direct unauthenticated management HTTP, browser permission E2E, and isolated full/core bundle composition. Only the canonical MySQL 8.4 fresh-init remains a release prerequisite; it is recorded as pending because Docker is unavailable and the existing database is not an approved reset target.
+Implementation commits and verification evidence are recorded in the per-ticket files under `evidence/`. The final evidence includes randomized and exact-schema MySQL 8.4.9 checks, canonical ordered fresh-init, isolated Redis/Redisson invalidation and limiter checks, Spring application-context HTTP/SPI checks, production SysLog persistence, direct unauthenticated management HTTP, browser permission E2E, and isolated full/core bundle composition. All release prerequisites are closed in the disposable verification environment.
 
-The execution overlay is authoritative over the planning table below: T-01 through T-12 are integrated, and T-13 owns the remaining release gate. The latest backend checkpoint is `751ecd439`; layered validation passes for 71 Java files after provider-owned adapter validation, typed `@HttpExchange`, bounded retry, ACK-based invalidation, physical-attempt logging, immutable provider identity, and credential lifecycle guards. The latest frontend checkpoint is `cc6a6f2`, covering the four-page web-domain manifest, nested credential workflow, endpoint override input, list-only permission hiding, and the `third -> ruoyi-third` architecture registration. Full workspace typecheck, lint, test, build, architecture, direct HTTP permission, browser E2E, and real Redis/MySQL/HTTP/SysLog checks pass as recorded in Evidence. Canonical MySQL fresh-init is the sole remaining release prerequisite.
+The execution overlay is authoritative over the planning table below: T-01 through T-13 are integrated and the release gate is closed. The latest backend checkpoint is `751ecd439`; layered validation passes for 71 Java files after provider-owned adapter validation, typed `@HttpExchange`, bounded retry, ACK-based invalidation, physical-attempt logging, immutable provider identity, and credential lifecycle guards. The latest frontend checkpoint is `cc6a6f2`, covering the four-page web-domain manifest, nested credential workflow, endpoint override input, list-only permission hiding, and the `third -> ruoyi-third` architecture registration. Full workspace typecheck, lint, test, build, architecture, direct HTTP permission, browser E2E, and real Redis/MySQL/HTTP/SysLog checks pass as recorded in Evidence, including the canonical MySQL fresh-init.
 
 ## 3. 依赖 DAG
 

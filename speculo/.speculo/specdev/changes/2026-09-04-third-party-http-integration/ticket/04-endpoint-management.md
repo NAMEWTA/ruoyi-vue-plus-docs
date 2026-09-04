@@ -4,7 +4,7 @@ artifact: ticket
 change: 2026-09-04-third-party-http-integration
 id: T-04
 title: 交付 Endpoint 元数据、继承覆盖与安全路径管理
-status: review
+status: done
 planning_depth: deep
 planning_depth_reason: 数据库驱动 method/path/参数结构会直接控制出站请求，需在管理写入与调用前共同锁定 URI、header 和模板安全边界。
 ready: true

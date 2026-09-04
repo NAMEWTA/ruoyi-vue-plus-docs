@@ -4,7 +4,7 @@ artifact: ticket
 change: 2026-09-04-third-party-http-integration
 id: T-09
 title: Outbound invocation logs and provider and endpoint statistics
-status: review
+status: done
 planning_depth: deep
 planning_depth_reason: Outbound traffic contains credentials and business payloads. Every physical attempt must be captured automatically, sanitized by a server-side blacklist, bounded in size, and separated from logical provider/endpoint outcome statistics.
 ready: true

@@ -4,7 +4,7 @@ artifact: ticket
 change: 2026-09-04-third-party-http-integration
 id: T-10
 title: 建立 third 前端 Domain 合同与权限投影
-status: review
+status: done
 planning_depth: standard
 planning_depth_reason: 新增独立前端领域包及四类资源 transport/model/permission，但不涉及 App 路由组合或页面交互。
 ready: true

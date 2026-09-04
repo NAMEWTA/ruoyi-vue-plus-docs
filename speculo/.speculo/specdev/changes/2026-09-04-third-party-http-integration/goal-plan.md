@@ -275,6 +275,10 @@ The release bundle gate was subsequently verified from an isolated export of bac
 
 Latest execution checkpoint: backend `5401cbc08`; frontend `1fa13dc`; DDL `c49f562`; menu DML `bed64ec`. Isolated full/core packaging and `BOOT-INF/lib` composition checks pass. SpecDev `tickets` and `implement` validators remain at 0 errors / 0 warnings.
 
+#### Follow-up verification (2026-09-05)
+
+Backend `5401cbc08` was revalidated after the redirect/log-canary test additions: `./mvnw.cmd -P local -q test` exited 0, `ruoyi-third` reports 19 local-profile tests with 0 failures/errors, and layered module validation still passes for 68 Java files. A fresh isolated `bundle-full` package and a fresh isolated `bundle-core` package each completed all 47 reactor projects; direct inspection confirms `ruoyi-third` in both, job/ai/demo/workflow only in full. The SpecDev `tickets` and `implement` validators remain at 0 errors / 0 warnings. These checks supersede the earlier `b78b8c5e5` package/test checkpoint while preserving the pending external release gates below.
+
 当前执行状态以本节和 `.status.json` 为准：用户已通过 `USER-DECISION:2026-09-04-execute-goal-plan` 授权本地实现、验证、Evidence 与 direct-parent 更新；远程、部署、生产迁移、凭据写入和真实供应商调用仍未授权。
 
 - Goal Plan：`active`，`ready_for_execution=true`；T-01 至 T-12 已形成实现提交并完成本地定向检查，T-13 负责剩余 release Gate。

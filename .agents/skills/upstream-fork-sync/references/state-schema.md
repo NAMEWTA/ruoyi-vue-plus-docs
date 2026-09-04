@@ -1,8 +1,8 @@
-# State Schema
+# 状态 Schema
 
-State schema version 2 separates the compact current pointer from each assessment's evidence. Git history remains the authority for ancestry.
+状态 Schema 版本 2 将紧凑的当前指针与每次评估的证据分离。Git 历史仍是祖先关系的权威来源。
 
-## Top-level fields
+## 顶层字段
 
 ```json
 {
@@ -20,18 +20,18 @@ State schema version 2 separates the compact current pointer from each assessmen
 }
 ```
 
-The global file is only the current synchronization index:
+全局文件只能作为当前同步索引：
 
-- `integrated_upstream_sha`: upstream point already proven in product `main`.
-- `main_merge_sha`: product merge commit that integrated that point, or `null` for a graph-derived merge-base.
-- `observed_upstream_sha`: frozen upstream target of the current assessment.
-- `current_change`: directory owning the detailed state and reports.
+- `integrated_upstream_sha`：已在产品 `main` 中得到证明的上游点。
+- `main_merge_sha`：集成该上游点的产品合并提交；如果是从提交图推导的 merge-base，则为 `null`。
+- `observed_upstream_sha`：本次评估冻结的上游目标。
+- `current_change`：拥有详细状态和报告的目录。
 
-It must not contain run history, ref configuration, dirty paths, file inventories, conflict data, verification logs, or integration events.
+其中不得包含运行历史、ref 配置、脏路径、文件清单、冲突数据、验证日志或集成事件。
 
-## Per-change state
+## 单次 change 状态
 
-`docs/upstream/current/state.json` contains only:
+`docs/upstream/current/state.json` 只包含：
 
 ```json
 {
@@ -45,14 +45,14 @@ It must not contain run history, ref configuration, dirty paths, file inventorie
 }
 ```
 
-Only repositories with an upstream delta are listed. `main_merge_sha` stays `null` until the exact upstream target has been merged into product `main` and recorded. Detailed facts remain in the two Markdown reports.
+只列出存在上游增量的仓库。在精确的上游目标合并到产品 `main` 并完成记录前，`main_merge_sha` 保持为 `null`。详细事实保留在两份 Markdown 报告中。
 
-## Update rules
+## 更新规则
 
-- `assess` may create an initial graph-derived checkpoint, replace the current report directory, and replace the global current index.
-- Fetching, advancing mirrors, generating reports, or observing a new upstream target must not change `integrated_upstream_sha`.
-- `record-integration` requires a merge commit reachable from `refs/heads/main`, an exact non-first parent equal to `--upstream-sha`, and at least one verification evidence string.
-- It must also match the frozen `upstream_sha` in the selected change state before filling `main_merge_sha` and advancing the global checkpoint.
-- Schema v1 is accepted only for in-memory migration to the compact v2 structure; unknown versions and malformed state are rejected.
-- Schema v2 rejects extra top-level or repository fields so detailed run evidence cannot leak back into the global index.
-- Write both reports and per-change state before replacing the global JSON. A failed run must not advance the global pointer.
+- `assess` 可以创建初始的图推导检查点、替换当前报告目录并替换全局当前索引。
+- 获取上游、推进镜像、生成报告或观测新的上游目标，都不得修改 `integrated_upstream_sha`。
+- `record-integration` 要求合并提交可从 `refs/heads/main` 到达，存在一个与 `--upstream-sha` 精确相等的非首个父提交，并至少提供一条验证证据字符串。
+- 在填充 `main_merge_sha` 并推进全局检查点前，它还必须匹配选定 change 状态中冻结的 `upstream_sha`。
+- 仅接受 Schema v1 用于在内存中迁移到紧凑的 v2 结构；未知版本和格式错误的状态会被拒绝。
+- Schema v2 拒绝额外的顶层字段或仓库字段，防止详细运行证据泄漏回全局索引。
+- 替换全局 JSON 前，先写入两份报告和单次 change 状态。失败的运行不得推进全局指针。

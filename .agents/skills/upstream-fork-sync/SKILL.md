@@ -1,22 +1,22 @@
 ---
 name: upstream-fork-sync
-description: Safely assess and synchronize the ruoyi-vue-plus-docs upstream forks, persist actual integration checkpoints, and generate upstream diff and merge-conflict reports. Use for upstream 6.X or 6.X-Vue refreshes and integrations, not ordinary feature-branch merges.
+description: 安全评估并同步 ruoyi-vue-plus-docs 的上游 Fork，持久化实际集成检查点，并生成上游差异与合并冲突报告。用于上游 6.X 或 6.X-Vue 的刷新与集成，不用于普通功能分支合并。
 ---
 
-# Upstream Fork Sync
+# 上游 Fork 同步
 
-Keep three facts separate for each product repository: the latest fetched upstream tip, the local mirror tip, and the upstream commit actually integrated into product `main`. Fetching or fast-forwarding a mirror never advances the integrated checkpoint.
+对每个产品仓库分别记录以下三个事实：最近获取的上游末端提交、本地镜像末端提交，以及实际集成到产品 `main` 的上游提交。获取上游或快进镜像都不会推进已集成检查点。
 
-## Required context
+## 必需上下文
 
-1. Read the repository `AGENTS.md`, `.agents/skills/engineering-standards/SKILL.md`, and `docs/upstream/customization-map.md` before assessing or integrating.
-2. Read [repository-contract.md](references/repository-contract.md) for repository/ref ownership and side-effect gates.
-3. Read [state-schema.md](references/state-schema.md) before bootstrapping, repairing, or recording state.
-4. Read [report-contract.md](references/report-contract.md) when generating or reviewing reports.
+1. 在评估或集成前，读取仓库 `AGENTS.md`、`.agents/skills/engineering-standards/SKILL.md` 和 `docs/upstream/customization-map.md`。
+2. 读取 [repository-contract.md](references/repository-contract.md)，了解仓库/ref 所有权和副作用门禁。
+3. 在初始化、修复或记录状态前，读取 [state-schema.md](references/state-schema.md)。
+4. 生成或审查报告时，读取 [report-contract.md](references/report-contract.md)。
 
-## Assess
+## 评估
 
-Run from the parent repository root. Use an ASCII kebab-case topic.
+从父仓库根目录运行。主题使用 ASCII kebab-case 格式。
 
 ```bash
 node .agents/skills/upstream-fork-sync/scripts/upstream-sync.mjs assess \
@@ -24,26 +24,26 @@ node .agents/skills/upstream-fork-sync/scripts/upstream-sync.mjs assess \
   --topic <topic>
 ```
 
-The default is offline: it uses existing refs, atomically replaces `state.json`, `diff_report.md`, and `conflict_report.md` under `docs/upstream/current/`, then atomically replaces the compact `docs/upstream/upstream-sync-state.json` current pointer. Git history owns previous assessments; the working tree keeps only the current report.
+默认离线运行：使用已有 ref，原子替换 `docs/upstream/current/` 下的 `state.json`、`diff_report.md` 和 `conflict_report.md`，然后原子替换紧凑的当前指针 `docs/upstream/upstream-sync-state.json`。历史评估由 Git 历史保存，工作树只保留当前报告。
 
-- Add `--fetch` when the user asked to refresh network refs. A failed upstream fetch produces `freshness: stale`; never describe cached refs as latest.
-- Add `--advance-mirrors` only to fast-forward the local `6.X` and `6.X-Vue` mirror refs after fetch/preflight.
-- Add `--advance-products` only when the user asked to synchronize local product branches with `origin/main`. It is fast-forward-only and refuses dirty checked-out worktrees.
-- Use `--dry-run` to inspect the complete snapshot as JSON without writing reports or state.
+- 用户要求刷新网络 ref 时，添加 `--fetch`。上游获取失败会产生 `freshness: stale`；不得将缓存 ref 描述为最新。
+- 仅在获取/预检完成后需要快进本地 `6.X` 和 `6.X-Vue` 镜像 ref 时，添加 `--advance-mirrors`。
+- 仅在用户要求将本地产品分支与 `origin/main` 同步时，添加 `--advance-products`。该操作只允许快进，并拒绝处理已检出且包含未提交修改的工作树。
+- 使用 `--dry-run` 可将完整快照作为 JSON 查看，不写入报告或状态。
 
-After generation, inspect every reported conflict and high-risk overlap with exact `git diff <base>..<target> -- <path>` evidence. Use `customization-map.md` as the stable source checklist, then enrich the generated `现状 Merge 清单` only with conclusions supported by the frozen SHAs. Keep textual/tree conflicts, automatically merged overlaps, customization-contract risks, and dirty-worktree overlaps in separate categories. Never copy run-specific SHAs, dirty paths, conflict lists, or conclusions into `customization-map.md` or the global JSON.
+生成后，使用精确的 `git diff <base>..<target> -- <path>` 证据检查报告的每一项冲突和高风险重叠。以 `customization-map.md` 作为稳定的来源清单；然后仅根据冻结的 SHA 所支持的结论，补充生成的 `现状 Merge 清单`。将文本/树冲突、自动合并的重叠、定制契约风险和脏工作树重叠分为不同类别。不得将本次运行特有的 SHA、脏路径、冲突列表或结论复制到 `customization-map.md` 或全局 JSON。
 
-## Integrate
+## 集成
 
-Assessment does not authorize a product merge, commit, push, tag change, submodule pointer update, or cleanup. Obtain explicit authorization for the frozen product/upstream SHAs before those actions.
+评估不授权产品合并、提交、推送、标签变更、子模块指针更新或清理操作。在执行这些操作前，必须针对冻结的产品/上游 SHA 获得明确授权。
 
-For an authorized integration:
+对于已获授权的集成：
 
-1. Integrate backend and frontend independently in recoverable candidate branches/worktrees; preserve a `--no-ff` merge commit.
-2. Resolve reported conflicts and recheck every affected invariant in `docs/upstream/customization-map.md`.
-3. Run the applicable frontend/backend quality gates from the engineering standards. Do not treat skipped or unrun checks as passed.
-4. Advance product `main` only after candidate verification and authorization. Update the parent submodule pointers last.
-5. Record the new checkpoint only after the merge commit is reachable from product `main` and the supplied upstream SHA is one of its non-first parents:
+1. 在可恢复的候选分支/工作树中分别集成后端和前端；保留 `--no-ff` 合并提交。
+2. 解决报告中的冲突，并重新检查 `docs/upstream/customization-map.md` 中所有受影响的不变量。
+3. 运行工程规范要求的适用前端/后端质量门禁。不得将跳过或未运行的检查视为通过。
+4. 只有在候选验证和授权完成后，才推进产品 `main`。最后再更新父仓库的子模块指针。
+5. 仅当合并提交可从产品 `main` 到达，且所提供的上游 SHA 是该合并提交的非首个父提交之一时，记录新的检查点：
 
 ```bash
 node .agents/skills/upstream-fork-sync/scripts/upstream-sync.mjs record-integration \
@@ -55,8 +55,8 @@ node .agents/skills/upstream-fork-sync/scripts/upstream-sync.mjs record-integrat
   --verification '<command>: exit 0'
 ```
 
-`--change` defaults to the global `current_change`, which is `current` after assessment. Recording updates the current report's `main_merge_sha` and the compact global checkpoint; verification evidence remains command output or belongs in the current reports, not either JSON. Rerun `assess` only when a new upstream comparison is needed.
+`--change` 默认使用全局 `current_change`；评估后该值为 `current`。记录操作会更新当前报告的 `main_merge_sha` 和紧凑的全局检查点；验证证据应保留为命令输出或写入当前报告，不得写入任一 JSON。只有需要新的上游比较时才重新运行 `assess`。
 
-## Stop conditions
+## 停止条件
 
-Stop without changing refs or state when the mirror is not an ancestor of the fetched upstream ref, the saved checkpoint is absent from product history, the saved upstream SHA is not an ancestor of the observed upstream tip, there are multiple merge bases, or any target ref is missing. Report the exact repository, refs, and SHAs that require manual reconciliation.
+出现以下任一情况时，停止操作且不得更改 ref 或状态：镜像不是已获取上游 ref 的祖先；保存的检查点不在产品历史中；保存的上游 SHA 不是观测到的上游末端提交的祖先；存在多个合并基点；或任一目标 ref 缺失。报告需要人工协调的确切仓库、ref 和 SHA。

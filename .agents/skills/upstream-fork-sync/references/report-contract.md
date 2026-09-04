@@ -1,8 +1,8 @@
-# Report Contract
+# 报告契约
 
-## Output location
+## 输出位置
 
-Each assessment atomically replaces:
+每次评估都会原子替换：
 
 ```text
 docs/upstream/current/
@@ -11,33 +11,33 @@ docs/upstream/current/
 `-- conflict_report.md
 ```
 
-`state.json` holds only creation time, frozen upstream targets, and resulting product merge SHAs. Reports are in Chinese and identify all refs with full SHAs. Previous assessments remain available through Git history; do not retain dated report directories in the working tree.
+`state.json` 只保存创建时间、冻结的上游目标和最终产品合并 SHA。报告使用中文，并使用完整 SHA 标识所有 ref。历史评估仍可通过 Git 历史查看；不要在工作树中保留带日期的报告目录。
 
-All dynamic inventories belong in this directory. Do not persist dirty paths, changed files, conflicts, fetch details, or run history in `upstream-sync-state.json`; do not write them into `customization-map.md`.
+所有动态清单都属于该目录。不得将脏路径、变更文件、冲突、获取详情或运行历史持久化到 `upstream-sync-state.json`；不得将这些内容写入 `customization-map.md`。
 
-## Diff report
+## 差异报告
 
-For backend and frontend, include:
+后端和前端均须包含：
 
-- checkpoint source, integrated upstream SHA, observed upstream SHA, product SHA, merge base and freshness;
-- ordered upstream-only commits in `integrated_upstream_sha..observed_upstream_sha`;
-- complete name-status and numstat file inventory;
-- upstream paths also modified by the product since the checkpoint;
-- paths matching authentication, authorization, Client, menu, SQL, OSS, notification, workflow, dependency, or build hotspots;
-- reproducible Git commands using the frozen SHAs.
-- a `现状 Merge 清单` summarizing commit/file counts, Git conflicts, customization-risk paths, and current disposition for each repository.
+- 检查点来源、已集成上游 SHA、观测到的上游 SHA、产品 SHA、合并基点和新鲜度；
+- `integrated_upstream_sha..observed_upstream_sha` 中按顺序排列的仅上游提交；
+- 完整的 `name-status` 和 `numstat` 文件清单；
+- 自检查点以来也被产品修改的上游路径；
+- 匹配认证、授权、Client、菜单、SQL、OSS、通知、工作流、依赖或构建热点的路径；
+- 使用冻结 SHA 的可复现 Git 命令；
+- 一份 `现状 Merge 清单`，汇总每个仓库的提交/文件数量、Git 冲突、定制风险路径和当前处置。
 
-The script creates the objective checklist baseline. The agent then maps affected paths back to the stable `customization-map.md` invariants and adds only path-diff-supported semantic conclusions. The report does not embed an unbounded full patch.
+脚本会创建客观的清单基线。随后，Agent 将受影响路径映射回稳定的 `customization-map.md` 不变量，并只添加有路径差异支持的语义结论。报告不嵌入无界的完整补丁。
 
-## Conflict report
+## 冲突报告
 
-Use `git merge-tree --write-tree --messages <product-sha> <upstream-sha>` so assessment does not modify the index or worktree. The command may write unreachable tree objects to the Git object database; it does not create a product merge or move refs.
+使用 `git merge-tree --write-tree --messages <product-sha> <upstream-sha>`，确保评估不会修改索引或工作树。该命令可能向 Git 对象数据库写入不可达的树对象，但不会创建产品合并或移动 ref。
 
-Keep these categories separate:
+以下类别必须分开：
 
-1. `Git confirmed conflicts`: unmerged paths/stages returned by merge-tree.
-2. `Automatically mergeable overlaps`: both product and new upstream changed the path, but merge-tree did not report a tree/text conflict.
-3. `Customization contract risks`: high-risk upstream paths requiring semantic review even without overlap.
-4. `Dirty worktree overlaps`: uncommitted paths intersecting the upstream delta; excluded from the commit-based simulation.
+1. `Git 确认冲突`：merge-tree 返回的未合并路径/阶段。
+2. `可自动合并的双方重叠`：产品和新上游都修改了该路径，但 merge-tree 未报告树/文本冲突。
+3. `定制契约风险`：即使没有重叠，也需要进行语义审查的高风险上游路径。
+4. `未提交工作树重叠`：未提交路径与上游增量相交；从基于提交的模拟中排除。
 
-Always create the conflict report. Zero textual conflicts must be stated as zero, not omitted or described as a safe merge. Note that merge-tree cannot detect compilation, runtime, API, SQL migration, authorization, or behavioral regressions.
+始终创建冲突报告。文本冲突为零时必须明确写出为零，不得省略或描述为安全合并。注意，merge-tree 无法检测编译、运行时、API、SQL 迁移、授权或行为回归。

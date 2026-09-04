@@ -188,17 +188,17 @@ Lead 只有在所有非取消 Ticket 都形成 implementation commit、在对应
 | Ticket | Parent/base | Workspace/branch | Source checks | Implementation commit | Integration checks/E2E | Parent result |
 |---|---|---|---|---|---|---|
 | T-01 | backend main@a63c83ac... | backend current/main | API/module tests | 82cb1febf | direct-parent integrated；full-core fragment pending | 82cb1febf |
-| T-02 | root SQL + backend | current/main | SQL static/schema tests | 3bdfd61e | direct-parent integrated；MySQL 8.4 fresh-init pending | 3bdfd61e |
-| T-03 | backend T-01/T-02 result | backend current/main | provider tests | 3bdfd61e | direct-parent integrated；MVC/MySQL E2E pending | 3bdfd61e |
-| T-04 | backend T-03 result | backend current/main | endpoint/security tests | 3bdfd61e | direct-parent integrated；URI zero-request E2E pending | 3bdfd61e |
-| T-05 | backend T-04 result | backend current/main | credential/canary tests | 3bdfd61e | direct-parent integrated；MVC/log E2E pending | 3bdfd61e |
-| T-06 | backend T-05 result | backend current/main | resolver/cache tests | 3bdfd61e | direct-parent integrated；two-node Redis E2E pending | 3bdfd61e |
-| T-07 | backend T-06 result | backend current/main | Gateway/mock HTTP tests | 3bdfd61e | direct-parent integrated；local HTTP/redirect/SSRF E2E pending | 3bdfd61e |
-| T-08 | backend T-07 result | backend current/main | adapter/resilience、port/support、Redisson tests | 3bdfd61e | direct-parent integrated；Redis+HTTP count/timeout E2E pending | 3bdfd61e |
-| T-09 | backend T-08 result | backend current/main | observability/MySQL tests | 3bdfd61e | direct-parent integrated；SysLog/attempt/statistics E2E pending | 3bdfd61e |
-| T-10 | frontend main@587a629a... | frontend current/main | domain test/type/lint | 55deeacd | direct-parent integrated；E2E not required | 55deeacd |
-| T-11 | frontend T-10 result | frontend current/main | web-domain component/type/lint | 55deeacd | direct-parent integrated；E2E not required | 55deeacd |
-| T-12 | frontend T-11 + root SQL | frontend/root current/main | Admin manifest/architecture/build | 55deeacd | direct-parent integrated；browser/MySQL/backend E2E pending | 55deeacd |
+| T-02 | root SQL + backend | current/main | SQL static/schema tests | d5f7dc0b | direct-parent integrated；MySQL 8.4 fresh-init pending | d5f7dc0b |
+| T-03 | backend T-01/T-02 result | backend current/main | provider tests | d5f7dc0b | direct-parent integrated；MVC/MySQL E2E pending | d5f7dc0b |
+| T-04 | backend T-03 result | backend current/main | endpoint/security tests | d5f7dc0b | direct-parent integrated；URI zero-request E2E pending | d5f7dc0b |
+| T-05 | backend T-04 result | backend current/main | credential/canary tests | d5f7dc0b | direct-parent integrated；MVC/log E2E pending | d5f7dc0b |
+| T-06 | backend T-05 result | backend current/main | resolver/cache tests | d5f7dc0b | direct-parent integrated；two-node Redis E2E pending | d5f7dc0b |
+| T-07 | backend T-06 result | backend current/main | Gateway/mock HTTP tests | d5f7dc0b | direct-parent integrated；local HTTP/redirect/SSRF E2E pending | d5f7dc0b |
+| T-08 | backend T-07 result | backend current/main | adapter/resilience、port/support、Redisson tests | d5f7dc0b | direct-parent integrated；Redis+HTTP count/timeout E2E pending | d5f7dc0b |
+| T-09 | backend T-08 result | backend current/main | observability/MySQL tests | d5f7dc0b | direct-parent integrated；SysLog/attempt/statistics E2E pending | d5f7dc0b |
+| T-10 | frontend main@587a629a... | frontend current/main | domain test/type/lint | 1fa13dc | direct-parent integrated；E2E not required | 1fa13dc |
+| T-11 | frontend T-10 result | frontend current/main | web-domain component/type/lint | 1fa13dc | direct-parent integrated；E2E not required | 1fa13dc |
+| T-12 | frontend T-11 + root SQL | frontend/root current/main | Admin manifest/architecture/build | 1fa13dc | direct-parent integrated；browser/MySQL/backend E2E pending | 1fa13dc |
 | T-13 | root + all product results | root current/main；产品树只读 | Skills/static/full Gate checks | active release gate | direct-parent review；external E2E/full-core pending | pending |
 
 current 模式严格一次一个 implementation writer。Ticket 只有在实际授权后，基于最新父 SHA 运行非 E2E 检查、形成非空 implementation commit，Lead 在同一 workspace 执行 direct-parent 集成/适用 E2E、重读父 HEAD 并记录 result SHA 后，才允许开始下一个 Ticket。不得创建 source/candidate worktree；不得把 subagent 自报或 source-worktree E2E 作为通过。
@@ -267,15 +267,15 @@ current/direct-parent 每个 Ticket 的基线、implementation commit、父 HEAD
 
 #### Execution update (2026-09-04)
 
-The user authorized implementation commits and direct-parent integration with decision `USER-DECISION:2026-09-04-execute-goal-plan`. T-01 is integrated; T-02 through T-12 have local implementation results and remain in `review` until the release gate; T-13 is the active release gate, all owned by `codex:/root`. Backend implementation is at `3bdfd61e` (including the layered-boundary refactor, port-based adapter dependencies, parameterized response conversion, physical attempt preservation on transport failures, hardened header/path metadata validation, runtime snapshot revalidation, and sanitized JSON persistence); frontend implementation is at `55deeacd` with four page registrations and nested credential editing. Root menu SQL is integrated at `bed64ec`; DDL remains at `c49f562`. The Skill navigation includes `ruoyi-third` and its layered module guide.
+The user authorized implementation commits and direct-parent integration with decision `USER-DECISION:2026-09-04-execute-goal-plan`. T-01 is integrated; T-02 through T-12 have local implementation results and remain in `review` until the release gate; T-13 is the active release gate, all owned by `codex:/root`. Backend implementation is at `d5f7dc0b` (including the layered-boundary refactor, port-based adapter dependencies, parameterized response conversion, physical attempt preservation on transport failures, hardened header/path metadata validation, runtime snapshot revalidation, safe endpoint header overrides, and sanitized JSON persistence); frontend implementation is at `1fa13dc` with four page registrations, nested credential editing, and endpoint header override input. Root menu SQL is integrated at `bed64ec`; DDL remains at `c49f562`. The Skill navigation includes `ruoyi-third` and its layered module guide.
 
-Completed local gates: backend module compile, layered module-mode validation, local-profile crypto/path/sanitizer tests (11 passing), frontend domain/web-domain/admin typecheck, lint, package build/test gates, architecture check, and admin production build. External MySQL 8.4 fresh-init, Redis multi-instance, local HTTP integration, SysLog canary, and browser permission E2E were not executable in this workspace because Docker and the required service stack are unavailable; they remain explicit release prerequisites and are recorded as pending in T-13 evidence. The change remains `in_progress` until those required external gates are run by the release environment.
+Completed local gates: backend module compile, layered module-mode validation, local-profile crypto/path/sanitizer tests (12 passing), frontend domain/web-domain/admin typecheck, lint, package build/test gates, architecture check, and admin production build. External MySQL 8.4 fresh-init, Redis multi-instance, local HTTP integration, SysLog canary, and browser permission E2E were not executable in this workspace because Docker and the required service stack are unavailable; they remain explicit release prerequisites and are recorded as pending in T-13 evidence. The change remains `in_progress` until those required external gates are run by the release environment.
 
 当前执行状态以本节和 `.status.json` 为准：用户已通过 `USER-DECISION:2026-09-04-execute-goal-plan` 授权本地实现、验证、Evidence 与 direct-parent 更新；远程、部署、生产迁移、凭据写入和真实供应商调用仍未授权。
 
 - Goal Plan：`active`，`ready_for_execution=true`；T-01 至 T-12 已形成实现提交并完成本地定向检查，T-13 负责剩余 release Gate。
 - 集成状态：T-01 至 T-12 为 `integrated/review`，T-13 为 `review`；所有实现工作树使用 current/direct-parent，没有创建 worktree。
-- 最新检查点：backend `3bdfd61e`，frontend `55deeacd`，DDL `c49f562`，菜单 DML `bed64ec`；tickets/implement 校验均为 0 error/0 warning。
+- 最新检查点：backend `d5f7dc0b`，frontend `1fa13dc`，DDL `c49f562`，菜单 DML `bed64ec`；tickets/implement 校验均为 0 error/0 warning。
 - 外部 Gate：MySQL 8.4 fresh-init、Redis 多实例失效、确定性本地 HTTP、SysLog canary、浏览器权限 E2E 和 full/core 完整构建仍需 release 环境执行，当前均记录为 pending。
 
 ### Pending Decisions and Blockers

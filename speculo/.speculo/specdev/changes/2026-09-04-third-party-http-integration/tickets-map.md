@@ -95,7 +95,7 @@ The new backend module is registered as layered and must keep `controller/admin 
 
 Implementation commits and verification evidence are recorded in the per-ticket files under `evidence/`. External MySQL 8.4, Redis multi-instance, local HTTP, and browser E2E checks remain release prerequisites; this workspace records them as not run when the required services are unavailable.
 
-The execution overlay is authoritative over the planning table below: T-01 is integrated, T-02 through T-12 are in review with local results, and T-13 owns the remaining release gate. The latest backend checkpoint is `3bdfd61e`; `validate-module-mode.mjs ... --mode layered` passes after runtime validation and sanitized JSON hardening, and transport failures preserve the physical attempt count. The latest frontend checkpoint is `55deeacd`, covering the four-page web-domain manifest and nested credential workflow.
+The execution overlay is authoritative over the planning table below: T-01 is integrated, T-02 through T-12 are in review with local results, and T-13 owns the remaining release gate. The latest backend checkpoint is `d5f7dc0b`; `validate-module-mode.mjs ... --mode layered` passes after runtime validation, safe endpoint header overrides, and sanitized JSON hardening, and transport failures preserve the physical attempt count. The latest frontend checkpoint is `1fa13dc`, covering the four-page web-domain manifest, nested credential workflow, and endpoint override input.
 
 ## 3. 依赖 DAG
 

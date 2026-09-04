@@ -130,9 +130,9 @@ Latest local evidence: `ThirdGatewayAdapterTest` uses a JDK loopback `HttpServer
 
 ## 10. 验收标准
 
-- [ ] AC-003 provider-first enablement and inherited base URL are enforced.
-- [ ] AC-006 supported request/response formats work through one pipeline.
-- [ ] AC-007 every origin/path/header/script/redirect rejection produces zero HTTP.
-- [ ] AC-008 provider adapters are Spring-registered, unique, and explicitly selected.
-- [ ] AC-011 transport and provider business outcomes remain distinct.
-- [ ] AC-012 dynamic and typed calls use the stable public contract without exposing persistence types.
+- [x] AC-003 provider-first enablement and inherited base URL are enforced.
+- [x] AC-006 supported request/response formats work through one pipeline.
+- [x] AC-007 every origin/path/header/script/redirect rejection produces zero HTTP.
+- [x] AC-008 provider adapters are Spring-registered, unique, and explicitly selected.
+- [x] AC-011 transport and provider business outcomes remain distinct.
+- [x] AC-012 dynamic and typed calls use the stable public contract without exposing persistence types.

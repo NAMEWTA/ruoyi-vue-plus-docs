@@ -125,8 +125,8 @@ Deploy code and namespace support before enabling a provider. Rollback disables 
 
 ## 10. 验收标准
 
-- [ ] AC-003 inheritance and provider-first enablement are enforced from a single immutable snapshot.
-- [ ] AC-004 successful writes immediately invalidate affected Redis keys and publish the event.
-- [ ] AC-005 credentials are represented only by the encrypted credential contract and never by cache plaintext.
-- [ ] AC-010 unknown Redis/configuration state fails closed before the HTTP client is reached.
-- [ ] Tests and evidence identify any unavailable external Redis/MySQL gate.
+- [x] AC-003 inheritance and provider-first enablement are enforced from a single immutable snapshot.
+- [x] AC-004 successful writes immediately invalidate affected Redis keys and publish the event.
+- [x] AC-005 credentials are represented only by the encrypted credential contract and never by cache plaintext.
+- [x] AC-010 unknown Redis/configuration state fails closed before the HTTP client is reached.
+- [x] Tests and evidence identify any unavailable external Redis/MySQL gate.

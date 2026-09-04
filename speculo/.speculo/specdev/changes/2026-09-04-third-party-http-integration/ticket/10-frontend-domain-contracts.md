@@ -124,7 +124,7 @@ shared_path_owners:
 
 ## 10. 验收标准
 
-- [ ] `AC-015/016` 所需四资源 transport、权限与脱敏类型已稳定导出。
-- [ ] domain 测试、类型、lint 和架构门禁通过。
-- [ ] writable/shared 路径仅由 T-10 修改并记录集成 Evidence。
-- [ ] E2E not-required 理由成立，无未批准偏差。
+- [x] `AC-015/016` 所需四资源 transport、权限与脱敏类型已稳定导出。
+- [x] domain 测试、类型、lint 和架构门禁通过。
+- [x] writable/shared 路径仅由 T-10 修改并记录集成 Evidence。
+- [x] E2E not-required 理由成立，无未批准偏差。

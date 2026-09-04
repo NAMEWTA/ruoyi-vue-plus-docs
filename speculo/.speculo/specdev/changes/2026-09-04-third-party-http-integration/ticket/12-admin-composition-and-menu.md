@@ -144,7 +144,7 @@ fresh-init 数据库提供菜单/按钮权限，Admin App 加载服务器菜单�
 
 ## 10. 验收标准
 
-- [ ] `AC-015`：系统管理下目录、四页面和动态 key 全部可达。
-- [ ] `AC-016`：菜单/按钮/直接请求的权限闭环成立。
-- [ ] lock、DML、manifest、权限字符串和 package composition 一致。
-- [ ] required 浏览器 E2E、提交与集成 Evidence 完整。
+- [x] `AC-015`：系统管理下目录、四页面和动态 key 全部可达。
+- [x] `AC-016`：菜单/按钮/直接请求的权限闭环成立。
+- [x] lock、DML、manifest、权限字符串和 package composition 一致。
+- [x] required 浏览器 E2E、提交与集成 Evidence 完整。

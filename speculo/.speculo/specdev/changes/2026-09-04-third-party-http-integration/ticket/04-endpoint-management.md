@@ -132,7 +132,7 @@ shared_path_owners: []
 
 ## 10. 验收标准
 
-- [ ] `AC-002/003`：Endpoint 管理、唯一性、继承覆盖和 Provider 优先级成立。
-- [ ] `AC-006/007`：格式/变量受限且危险 URL/header/script 全部拒绝。
-- [ ] `AC-016/017`：权限与受控删除后端合同成立。
-- [ ] required E2E、提交、路径和集成 Evidence 完整。
+- [x] `AC-002/003`：Endpoint 管理、唯一性、继承覆盖和 Provider 优先级成立。
+- [x] `AC-006/007`：格式/变量受限且危险 URL/header/script 全部拒绝。
+- [x] `AC-016/017`：权限与受控删除后端合同成立。
+- [x] required E2E、提交、路径和集成 Evidence 完整。

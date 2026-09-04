@@ -127,7 +127,7 @@ shared_path_owners: []
 
 ## 10. 验收标准
 
-- [ ] `AC-009`：幂等有限重试、非幂等一次与 requestId/attempt 语义成立。
-- [ ] `AC-010`：双层限制/Redis 未知零请求且错误码准确。
-- [ ] timeout、permit 释放和发送次数 Evidence 完整。
-- [ ] required E2E、提交和集成合同已执行。
+- [x] `AC-009`：幂等有限重试、非幂等一次与 requestId/attempt 语义成立。
+- [x] `AC-010`：双层限制/Redis 未知零请求且错误码准确。
+- [x] timeout、permit 释放和发送次数 Evidence 完整。
+- [x] required E2E、提交和集成合同已执行。

@@ -199,7 +199,7 @@ Lead 只有在所有非取消 Ticket 都形成 implementation commit、在对应
 | T-10 | frontend main@587a629a... | frontend current/main | domain test/type/lint | d45a480 | direct-parent integrated；E2E not required | d45a480 |
 | T-11 | frontend T-10 result | frontend current/main | web-domain component/type/lint | d45a480 | direct-parent integrated；E2E not required | d45a480 |
 | T-12 | frontend T-11 + root SQL | frontend/root current/main | Admin manifest/architecture/build | `cc6a6f2` | direct-parent integrated；backend unauthenticated HTTP, browser permission E2E, and canonical fresh-init pass | `cc6a6f2` |
-| T-13 | root + all product results | root current/main；产品树只读 | Skills/static/full Gate checks | completed release gate | direct-parent integrated；full/core, Redis, MySQL fresh-init, HTTP, SysLog, permission and browser checks pass | `f3bd060` |
+| T-13 | root + all product results | root current/main；产品树只读 | Skills/static/full Gate checks | completed release gate | direct-parent integrated；full/core, Redis, MySQL fresh-init, HTTP, SysLog, permission and browser checks pass | `339739d` |
 
 current 模式严格一次一个 implementation writer。Ticket 只有在实际授权后，基于最新父 SHA 运行非 E2E 检查、形成非空 implementation commit，Lead 在同一 workspace 执行 direct-parent 集成/适用 E2E、重读父 HEAD 并记录 result SHA 后，才允许开始下一个 Ticket。不得创建 source/candidate worktree；不得把 subagent 自报或 source-worktree E2E 作为通过。
 

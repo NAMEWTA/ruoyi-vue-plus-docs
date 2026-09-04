@@ -125,7 +125,7 @@ shared_path_owners:
 
 ## 10. 验收标准
 
-- [ ] `AC-015`：四页面和准确 component keys 可被 manifest 消费。
-- [ ] `AC-016`：页面/按钮权限和敏感信息防线成立。
-- [ ] 组件、typecheck、lint、架构与响应式验证记录完整。
-- [ ] E2E not-required 理由、提交和集成 Evidence 完整。
+- [x] `AC-015`：四页面和准确 component keys 可被 manifest 消费。
+- [x] `AC-016`：页面/按钮权限和敏感信息防线成立。
+- [x] 组件、typecheck、lint、架构与响应式验证记录完整。
+- [x] E2E not-required 理由、提交和集成 Evidence 完整。

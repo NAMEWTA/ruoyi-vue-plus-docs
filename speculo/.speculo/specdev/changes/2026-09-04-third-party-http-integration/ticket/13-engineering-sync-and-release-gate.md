@@ -158,8 +158,8 @@ Lead 在全部前序 result 已汇合的 parent-candidate/current workspace 启�
 
 ## 10. 验收标准
 
-- [ ] `AC-001` 至 `AC-018` 在共同集成状态全部 covered 且有可执行 Evidence。
-- [ ] backend full/core、MySQL/Redis/local HTTP、frontend 与浏览器 Gate 全部通过。
-- [ ] 敏感 canary、SSRF、权限和统计守恒负向合同成立。
-- [ ] Skills 只记录已证实事实，产品树无越界修改。
-- [ ] required E2E、提交、parent result 和最终重读 Evidence 完整。
+- [x] `AC-001` 至 `AC-018` 在共同集成状态全部 covered 且有可执行 Evidence。
+- [x] backend full/core、MySQL/Redis/local HTTP、frontend 与浏览器 Gate 全部通过。
+- [x] 敏感 canary、SSRF、权限和统计守恒负向合同成立。
+- [x] Skills 只记录已证实事实，产品树无越界修改。
+- [x] required E2E、提交、parent result 和最终重读 Evidence 完整。

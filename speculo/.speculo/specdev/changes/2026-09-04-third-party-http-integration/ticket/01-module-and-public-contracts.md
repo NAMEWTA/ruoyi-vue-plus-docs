@@ -144,7 +144,7 @@ shared_path_owners:
 
 ## 10. 验收标准
 
-- [ ] `AC-012`：动态与类型化公共合同稳定且不暴露底层实现。
-- [ ] `AC-018`：full/core 均装配 ruoyi-third，无 Provider 数据可启动。
-- [ ] 所有共享路径仅由 T-01 修改，验证与提交证据写入指定 Evidence。
-- [ ] E2E disposition 和 Goal Plan workspace 集成合同已执行，无未批准偏差。
+- [x] `AC-012`：动态与类型化公共合同稳定且不暴露底层实现。
+- [x] `AC-018`：full/core 均装配 ruoyi-third，无 Provider 数据可启动。
+- [x] 所有共享路径仅由 T-01 修改，验证与提交证据写入指定 Evidence。
+- [x] E2E disposition 和 Goal Plan workspace 集成合同已执行，无未批准偏差。

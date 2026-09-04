@@ -132,7 +132,7 @@ shared_path_owners: []
 
 ## 10. 验收标准
 
-- [ ] `AC-005`：scope 覆盖、认证密文和 fail-closed 全部成立。
-- [ ] `AC-016`：管理权限和后端明文防线可判定。
-- [ ] 测试 canary 未出现在 API、异常、日志或 DB 明文字段。
-- [ ] required E2E、提交和集成 Evidence 完整。
+- [x] `AC-005`：scope 覆盖、认证密文和 fail-closed 全部成立。
+- [x] `AC-016`：管理权限和后端明文防线可判定。
+- [x] 测试 canary 未出现在 API、异常、日志或 DB 明文字段。
+- [x] required E2E、提交和集成 Evidence 完整。

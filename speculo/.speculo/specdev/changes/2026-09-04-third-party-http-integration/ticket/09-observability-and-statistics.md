@@ -127,8 +127,8 @@ Deploy recorder and schema before enabling outbound providers. Rollback disables
 
 ## 10. 验收标准
 
-- [ ] AC-011 transport success and provider business outcome are distinct in response, detail, and aggregates.
-- [ ] AC-013 provider and endpoint statistics preserve physical attempt count and logical result counts.
-- [ ] AC-014 every outbound path is automatically logged through the immutable blacklist and size cap.
-- [ ] No complete request/response body or credential material is stored in the business tables.
-- [ ] External MySQL and SysLog gate status is recorded honestly in the evidence file.
+- [x] AC-011 transport success and provider business outcome are distinct in response, detail, and aggregates.
+- [x] AC-013 provider and endpoint statistics preserve physical attempt count and logical result counts.
+- [x] AC-014 every outbound path is automatically logged through the immutable blacklist and size cap.
+- [x] No complete request/response body or credential material is stored in the business tables.
+- [x] External MySQL and SysLog gate status is recorded honestly in the evidence file.

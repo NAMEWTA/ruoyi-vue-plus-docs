@@ -267,7 +267,7 @@ current/direct-parent 每个 Ticket 的基线、implementation commit、父 HEAD
 
 #### Execution update (2026-09-04)
 
-The user authorized implementation commits and direct-parent integration with decision `USER-DECISION:2026-09-04-execute-goal-plan`. T-01 is integrated; T-02 through T-12 have local implementation results and remain in `review` until the release gate; T-13 is the active release gate, all owned by `codex:/root`. Backend implementation is at `3bdfd61e` (including the layered-boundary refactor, port-based adapter dependencies, parameterized response conversion, physical attempt preservation on transport failures, hardened header/path metadata validation, runtime snapshot revalidation, and sanitized JSON persistence); frontend implementation is at `55deeacd` with four page registrations and nested credential editing. The root menu SQL update is the pending parent change; DDL remains at `c49f562`. The Skill navigation includes `ruoyi-third` and its layered module guide.
+The user authorized implementation commits and direct-parent integration with decision `USER-DECISION:2026-09-04-execute-goal-plan`. T-01 is integrated; T-02 through T-12 have local implementation results and remain in `review` until the release gate; T-13 is the active release gate, all owned by `codex:/root`. Backend implementation is at `3bdfd61e` (including the layered-boundary refactor, port-based adapter dependencies, parameterized response conversion, physical attempt preservation on transport failures, hardened header/path metadata validation, runtime snapshot revalidation, and sanitized JSON persistence); frontend implementation is at `55deeacd` with four page registrations and nested credential editing. Root menu SQL is integrated at `bed64ec`; DDL remains at `c49f562`. The Skill navigation includes `ruoyi-third` and its layered module guide.
 
 Completed local gates: backend module compile, layered module-mode validation, local-profile crypto/path/sanitizer tests (11 passing), frontend domain/web-domain/admin typecheck, lint, package build/test gates, architecture check, and admin production build. External MySQL 8.4 fresh-init, Redis multi-instance, local HTTP integration, SysLog canary, and browser permission E2E were not executable in this workspace because Docker and the required service stack are unavailable; they remain explicit release prerequisites and are recorded as pending in T-13 evidence. The change remains `in_progress` until those required external gates are run by the release environment.
 
@@ -275,7 +275,7 @@ Completed local gates: backend module compile, layered module-mode validation, l
 
 - Goal Plan：`active`，`ready_for_execution=true`；T-01 至 T-12 已形成实现提交并完成本地定向检查，T-13 负责剩余 release Gate。
 - 集成状态：T-01 至 T-12 为 `integrated/review`，T-13 为 `review`；所有实现工作树使用 current/direct-parent，没有创建 worktree。
-- 最新检查点：backend `3bdfd61e`，frontend `55deeacd`，DDL `c49f562`，菜单 DML 待根提交；tickets/implement 校验均为 0 error/0 warning。
+- 最新检查点：backend `3bdfd61e`，frontend `55deeacd`，DDL `c49f562`，菜单 DML `bed64ec`；tickets/implement 校验均为 0 error/0 warning。
 - 外部 Gate：MySQL 8.4 fresh-init、Redis 多实例失效、确定性本地 HTTP、SysLog canary、浏览器权限 E2E 和 full/core 完整构建仍需 release 环境执行，当前均记录为 pending。
 
 ### Pending Decisions and Blockers

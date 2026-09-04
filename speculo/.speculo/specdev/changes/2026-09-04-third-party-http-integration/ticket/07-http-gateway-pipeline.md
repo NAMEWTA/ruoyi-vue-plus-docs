@@ -51,6 +51,7 @@ Sources: `US-001`, `US-005`, `US-006`, `US-009`, `AC-003`, `AC-006`, `AC-007`, `
 - Facade only orchestrates. Registry/strategy only selects an adapter. Factory only creates the HTTP client. Pipeline owns request lifecycle. Decorators/interceptors handle cross-cutting concerns only.
 - Spring Bean registration is keyed by `providerCode`; duplicate codes fail application startup.
 - Provider `baseUrl` is trusted configuration. Endpoint metadata is only a validated relative path and a whitelist of method/query/header/body fields.
+- Endpoint `overrideJson` is limited to validated server-controlled shared headers; it cannot replace the Provider origin or introduce a complete URL.
 - Reject full URLs, `//host`, path traversal, arbitrary headers, scripts/expressions, arbitrary class-name reflection, cross-domain redirects, multipart, and streaming bodies in this first slice.
 - Supported body formats are JSON, query, and form. Supported response formats are JSON, text, and bytes. Dynamic values use constrained `JsonNode`; typed calls use `Class<T>` or `ParameterizedTypeReference<T>`.
 - HTTP 2xx means transport success only. A provider adapter may map a provider business error to the stable `PROVIDER` category without returning the raw body in the business response.

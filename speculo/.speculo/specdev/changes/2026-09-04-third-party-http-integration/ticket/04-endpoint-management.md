@@ -53,6 +53,7 @@ shared_path_owners: []
 - Endpoint 只保存校验后的相对 path、白名单 method/参数/header 名和结构化 body 变量，不保存完整 URL、脚本、SpEL 或任意类名。
 - 拒绝绝对 URL、`//host`、路径穿越、反斜线/控制字符、任意 header 和跨域 redirect 配置。
 - base URL、共享认证和策略默认继承 Provider；Endpoint 只能在 Provider 上限内覆盖；Provider 关闭优先。
+- Endpoint 覆盖首期只允许服务端共享请求头 `{\"headers\":{...}}`；base URL 永不由 Endpoint 元数据覆盖。
 - 删除仅允许 disabled Endpoint，历史调用保留编码。
 
 ### 已采用的低影响假设

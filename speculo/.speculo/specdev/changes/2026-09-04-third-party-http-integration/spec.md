@@ -63,6 +63,8 @@ sources:
 
 Provider 是共享 base URL、默认认证、策略、总开关和汇总统计的聚合根；Endpoint 在 Provider 内以 `provider_code + endpoint_code` 唯一，继承 Provider 配置并只能声明受约束覆盖。标准传输由安全元数据驱动，特殊行为由按唯一 `providerCode` 注册并在启动时校验的显式 SPI 承担。
 
+首期覆盖项仅限 Endpoint 的服务端共享请求头，格式为 `{\"headers\":{...}}`；Provider 的 base URL 始终是可信 origin，数据库 Endpoint 元数据不得改写它。
+
 Admin Web 新增独立 `@namewta/domain-third` 与 `@namewta/web-domain-third`，由 Admin App 显式注入 service、runtime、domain module 和 manifest。菜单显示在现有系统管理目录下，但源码不并入 system 包。
 
 ### 主要流程

@@ -29,6 +29,8 @@ The reference `cde-third` only has one API configuration and an asynchronous cou
 ### Decision
 Use a two-level Provider -> Endpoint aggregate. Provider shutdown overrides endpoint state. An endpoint is unique by `provider_code + endpoint_code`; base URL and shared authentication are inherited from Provider unless explicitly overridden. Standard method/path/query/header/body/JSON behavior is metadata-driven under a security whitelist. Special behavior is an explicit Java SPI/Spring Bean. Compose Facade, Registry/Strategy, Factory, Pipeline/Chain, and Decorator/Interceptor with one owner per concern. Forbid database scripts, SpEL, and arbitrary class-name reflection.
 
+The safe override boundary is explicit: Endpoint metadata may replace only server-controlled shared header values through a validated `{\"headers\":{...}}` object. The Provider base URL is always the trusted origin and cannot be overridden by database metadata.
+
 ### Trade-off
 This is more structured than a single API table, but keeps shared configuration, endpoint lifecycle, and provider-specific behavior replaceable and testable.
 

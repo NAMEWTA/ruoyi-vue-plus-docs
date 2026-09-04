@@ -1139,3 +1139,90 @@ create table profile_enterprise_transfer_record (
     unique key uk_profile_enterprise_transfer_challenge (challenge_id),
     key idx_profile_enterprise_transfer_profile (enterprise_profile_id, create_time)
 ) engine=innodb comment='企业负责人转移挑战与结果审计表';
+-- NAMEWTA-THIRD-HTTP-DDL-001
+-- 统一第三方 HTTP Provider、Endpoint、凭据、调用明细和聚合统计。
+create table third_provider (
+    provider_id bigint(20) not null comment '供应商主键',
+    provider_code varchar(64) not null comment '供应商编码',
+    provider_name varchar(128) not null comment '供应商名称',
+    base_url varchar(512) not null comment '可信基础 URL',
+    status char(1) not null default '0' comment '0启用 1停用',
+    timeout_connect_ms int not null default 3000 comment '连接超时毫秒',
+    timeout_read_ms int not null default 10000 comment '读取超时毫秒',
+    rate_limit int not null default 0 comment '供应商每秒限流，0不启用',
+    concurrency_limit int not null default 0 comment '供应商并发上限，0不启用',
+    shared_headers_json json default null comment '共享请求头白名单配置',
+    remark varchar(500) default null,
+    version int not null default 0,
+    create_dept bigint(20) default null, create_by bigint(20) default null,
+    create_time datetime default null, update_by bigint(20) default null,
+    update_time datetime default null, del_flag char(1) not null default '0',
+    primary key (provider_id), unique key uk_third_provider_code(provider_code),
+    key idx_third_provider_status(status)
+) engine=innodb comment='第三方 HTTP 供应商';
+
+create table third_endpoint (
+    endpoint_id bigint(20) not null comment 'Endpoint主键',
+    provider_id bigint(20) not null comment '供应商主键',
+    provider_code varchar(64) not null comment '供应商编码快照',
+    endpoint_code varchar(64) not null comment 'Endpoint编码',
+    endpoint_name varchar(128) not null comment 'Endpoint名称',
+    http_method varchar(10) not null comment 'HTTP方法白名单',
+    relative_path varchar(512) not null comment '相对路径，不允许完整URL',
+    request_mode varchar(16) not null default 'JSON' comment 'JSON/QUERY/FORM',
+    response_mode varchar(16) not null default 'JSON' comment 'JSON/TEXT/BYTES',
+    path_schema_json json default null, query_schema_json json default null,
+    header_schema_json json default null, body_schema_json json default null,
+    response_schema_json json default null, override_json json default null,
+    status char(1) not null default '0', idempotent tinyint(1) not null default 0,
+    rate_limit int not null default 0, concurrency_limit int not null default 0,
+    retry_count int not null default 0, sensitive_fields_json json default null,
+    adapter_code varchar(128) default null comment '显式SPI编码',
+    version int not null default 0,
+    create_dept bigint(20) default null, create_by bigint(20) default null,
+    create_time datetime default null, update_by bigint(20) default null,
+    update_time datetime default null, del_flag char(1) not null default '0',
+    primary key (endpoint_id), unique key uk_third_endpoint_code(provider_code, endpoint_code),
+    key idx_third_endpoint_provider(provider_id),
+    constraint fk_third_endpoint_provider foreign key(provider_id) references third_provider(provider_id)
+) engine=innodb comment='第三方 HTTP Endpoint 元数据';
+
+create table third_credential (
+    credential_id bigint(20) not null comment '凭据主键',
+    provider_id bigint(20) default null, endpoint_id bigint(20) default null,
+    scope_type varchar(16) not null comment 'PROVIDER/ENDPOINT',
+    credential_type varchar(32) not null comment 'API_KEY/SECRET/PRIVATE_KEY/ENCRYPTION_KEY',
+    ciphertext varbinary(4096) not null, nonce binary(12) not null, auth_tag binary(16) not null,
+    kek_version varchar(64) not null, expires_at datetime default null,
+    version int not null default 0, create_dept bigint(20) default null, create_by bigint(20) default null,
+    create_time datetime default null, update_by bigint(20) default null, update_time datetime default null,
+    del_flag char(1) not null default '0', primary key (credential_id),
+    unique key uk_third_credential_scope(scope_type, provider_id, endpoint_id, credential_type),
+    key idx_third_credential_provider(provider_id), key idx_third_credential_endpoint(endpoint_id),
+    constraint ck_third_credential_scope check ((scope_type='PROVIDER' and provider_id is not null and endpoint_id is null) or (scope_type='ENDPOINT' and endpoint_id is not null)),
+    constraint fk_third_credential_provider foreign key(provider_id) references third_provider(provider_id),
+    constraint fk_third_credential_endpoint foreign key(endpoint_id) references third_endpoint(endpoint_id)
+) engine=innodb comment='第三方 HTTP 密文凭据';
+
+create table third_invocation (
+    invocation_id bigint(20) not null, request_id varchar(64) not null,
+    provider_code varchar(64) not null, endpoint_code varchar(64) not null,
+    attempt_count int not null default 0, logical_status varchar(16) not null,
+    failure_category varchar(32) default null, http_status int default null,
+    provider_error_code varchar(128) default null, duration_ms bigint not null default 0,
+    sanitized_request_json json default null, sanitized_response_json json default null,
+    create_time datetime not null, primary key(invocation_id),
+    unique key uk_third_invocation_request(request_id),
+    key idx_third_invocation_provider_time(provider_code, create_time),
+    key idx_third_invocation_endpoint_time(provider_code, endpoint_code, create_time)
+) engine=innodb comment='第三方 HTTP 调用明细';
+
+create table third_statistic (
+    statistic_id bigint(20) not null, provider_code varchar(64) not null,
+    endpoint_code varchar(64) default null, stat_date date not null,
+    attempt_count bigint not null default 0, success_count bigint not null default 0,
+    failure_count bigint not null default 0, timeout_count bigint not null default 0,
+    rejected_count bigint not null default 0, quota_value bigint not null default 0,
+    primary key(statistic_id), unique key uk_third_statistic_dimension(provider_code, endpoint_code, stat_date),
+    key idx_third_statistic_date(stat_date)
+) engine=innodb comment='第三方 HTTP 调用聚合统计';

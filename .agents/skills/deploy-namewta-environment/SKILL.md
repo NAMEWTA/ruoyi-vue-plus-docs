@@ -5,7 +5,7 @@ description: 为 NAMEWTA RuoYi-Vue-Plus 全栈提供审计、接管、开发环�
 
 # NAMEWTA 全栈环境部署
 
-以仓库内发布资产为事实源，在不覆盖既有现场、不泄露凭据的前提下完成部署和交接。
+以仓库内发布资产为事实源，在不覆盖既有现场的前提下完成部署和交接。报告可以包含服务器和中间件账密，但只能写入被忽略的私密目录并保持 `0600`，不得回显或提交。
 
 ## 加载项目规范
 
@@ -24,7 +24,7 @@ description: 为 NAMEWTA RuoYi-Vue-Plus 全栈提供审计、接管、开发环�
 ## 准备输入
 
 1. 将 `assets/templates/deployment-profile.json.template` 复制到 Skill 目录之外，只填写非敏感拓扑；新发布使用 schema v2，并在现场身份核对后显式设置 `release.compose.identityConfirmed=true`。现场状态从 v2 `assets/templates/deployment-state.json.template` 创建。
-2. 只有托管凭据工具无法提供值时，才将 `assets/templates/deployment-secrets.json.template` 复制到被忽略的本地目录。
+2. 只有托管凭据工具无法提供值时，才将 `assets/templates/deployment-secrets.json.template` 复制到被忽略的本地目录；服务器 SSH 密码使用 `sshPassword` 或 `SSH_PASSWORD` 提供。
 3. 敏感输入和包含账密的报告一律设置为 `0600`。
 4. 连接服务器前执行校验：
 
@@ -33,7 +33,7 @@ node .agents/skills/deploy-namewta-environment/scripts/validate-profile.mjs \
   --profile temp/relase/deployment-profile.json
 ```
 
-不得提交密码、令牌、私钥、`.env`、`*local.yml` 或生成的报告；不得将它们粘贴到 SpecDev 文档、终端输出、对话或日志中。
+不得提交密码、令牌、私钥、`.env`、`*local.yml` 或生成的报告；不得将它们粘贴到 SpecDev 文档、终端输出、对话或日志中。只有 `temp/relase/namewta-deployment.md` 这类权限为 `0600` 的本地私密交接文件可以保存明文账密。
 
 ## 先盘点再写入
 
@@ -86,11 +86,12 @@ node .agents/skills/deploy-namewta-environment/scripts/verify-release-candidate.
 node .agents/skills/deploy-namewta-environment/scripts/generate-deployment-report.mjs \
   --profile temp/relase/deployment-profile.json \
   --secrets temp/relase/deployment-secrets.json \
+  --env-file temp/relase/namewta-release.env \
   --state temp/relase/deployment-state.json \
   --output temp/relase/namewta-deployment.md
 ```
 
-托管凭据不可读取时，报告应注明其保管位置和状态，不得编造值。报告必须包含入口、端口、账号、持久化路径、版本、验证证据、升级流程、回滚流程与未决风险。后续迭代按 [升级与回滚](references/upgrade-and-rollback.md) 执行。
+报告生成器必须使用中文标题、字段和状态；服务名、镜像标签、路径、URL、Schema、SHA-256 等标识符保留原文。报告的“账号与凭据”表必须包含服务器 SSH 账号和密码：密码从 `deployment-secrets.json.sshPassword` 或 `SSH_PASSWORD` 读取，未读取到时必须明确标注来源和补充位置，不能写“故意不记录”或编造值。报告必须包含入口、端口、账号、持久化路径、版本、验证证据、升级流程、回滚流程与未决风险。后续迭代按 [升级与回滚](references/upgrade-and-rollback.md) 执行。
 
 ## 安全边界
 

@@ -221,6 +221,8 @@ export function secretsFromEnv(env) {
     nacosDatabasePassword: env.NACOS_DB_PASSWORD,
     nacosUsername: env.NACOS_CONFIG_USERNAME,
     nacosPassword: env.NACOS_CONFIG_PASSWORD,
+    nacosConfigReaderUsername: env.NACOS_CONFIG_READER_USERNAME,
+    nacosConfigReaderPassword: env.NACOS_CONFIG_READER_PASSWORD,
     nacosAuthToken: env.NACOS_AUTH_TOKEN,
     nacosIdentityKey: env.NACOS_AUTH_IDENTITY_KEY,
     nacosIdentityValue: env.NACOS_AUTH_IDENTITY_VALUE,

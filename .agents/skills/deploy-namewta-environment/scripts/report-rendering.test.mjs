@@ -12,6 +12,11 @@ const imageId = `sha256:${'a'.repeat(64)}`;
 const indexSha256 = 'b'.repeat(64);
 const openApiKek = 'openapi-kek-secret-value';
 
+function assertPrivateMode(file) {
+  if (process.platform === 'win32') return;
+  assert.equal(fs.statSync(file).mode & 0o777, 0o600);
+}
+
 function profile() {
   const value = JSON.parse(fs.readFileSync(path.join(skillDir, 'assets/templates/deployment-profile.json.template'), 'utf8'));
   value.deployment.releaseId = '20260901-namewta-report';
@@ -28,7 +33,7 @@ function profile() {
 
 function secrets() {
   return {
-    sshPassword: '',
+    sshPassword: 'ssh-secret',
     mysqlRootPassword: 'mysql-root-secret',
     mysqlAppPassword: 'mysql-app-secret',
     redisPassword: 'redis-secret',
@@ -38,6 +43,8 @@ function secrets() {
     nacosDatabasePassword: 'nacos-db-secret',
     nacosUsername: 'nacos',
     nacosPassword: 'nacos-secret',
+    nacosConfigReaderUsername: 'nacos-reader',
+    nacosConfigReaderPassword: 'nacos-reader-secret',
     nacosAuthToken: 'token-secret',
     nacosIdentityKey: 'identity-key',
     nacosIdentityValue: 'identity-value',
@@ -181,7 +188,7 @@ test('渲染 production 前端与 OpenAPI release env，文件均为 0600 且 st
   assert.equal(result.status, 0, result.stderr);
 
   const names = ['release.env', 'application-local.yml', 'admin-web.env.development.local', 'admin-web.env.production.local'];
-  for (const name of names) assert.equal(fs.statSync(path.join(output, name)).mode & 0o777, 0o600);
+  for (const name of names) assertPrivateMode(path.join(output, name));
 
   const releaseEnv = fs.readFileSync(path.join(output, 'release.env'), 'utf8');
   assert.match(releaseEnv, /^NAMEWTA_ADMIN_IMAGE=namewta\/namewta-admin:6\.0\.0-openapi-ae3689e$/mu);
@@ -230,15 +237,39 @@ test('严格 v2 报告记录 Compose、构件、尝试、前端、数据保护�
   const reportFile = path.join(current.temporary, 'deployment.md');
   const result = spawnSync(process.execPath, [path.join(scriptDir, 'generate-deployment-report.mjs'), '--profile', current.profileFile, '--secrets', current.secretsFile, '--state', current.stateFile, '--output', reportFile], { encoding: 'utf8' });
   assert.equal(result.status, 0, result.stderr);
-  assert.equal(fs.statSync(reportFile).mode & 0o777, 0o600);
+  assertPrivateMode(reportFile);
   const report = fs.readFileSync(reportFile, 'utf8');
   for (const expected of [
-    'Compose 身份', 'namewta-backend', 'namewta/namewta-admin:6.0.0-openapi-ae3689e',
+    'Compose 身份', '服务器 SSH', 'ssh-secret', 'Nacos 配置只读账号', 'namewta-backend', 'namewta/namewta-admin:6.0.0-openapi-ae3689e',
     imageId, indexSha256, 'backend1', 'backend2', 'frontend', '/namewta/prod-api',
     '/data/namewta-data/backups/20260901.sql.gz', '/data/namewta-data/releases/failed-candidate',
   ]) assert.match(report, new RegExp(expected.replace(/[.*+?^${}()|[\]\\]/gu, '\\$&'), 'u'));
   assert.doesNotMatch(report, new RegExp(openApiKek, 'u'));
   assert.doesNotMatch(result.stdout, new RegExp(openApiKek, 'u'));
+  assert.doesNotMatch(report, /Project|Env file|Rollout|Context path|Base API|Asset prefix|Image ID|healthy|running|passed/u);
+  assert.doesNotMatch(result.stdout, /ssh-secret/u);
+});
+
+test('环境文件中的 SSH 密码不会被 secrets 模板占位值覆盖', (context) => {
+  const current = fixture(context);
+  const localSecrets = secrets();
+  localSecrets.sshPassword = '请仅在本地替换；将写入 0600 私密交接报告';
+  fs.writeFileSync(current.secretsFile, JSON.stringify(localSecrets));
+  const envFile = path.join(current.temporary, 'release.env');
+  fs.writeFileSync(envFile, 'SSH_PASSWORD=ssh-from-env\n');
+  const reportFile = path.join(current.temporary, 'env-credential-report.md');
+  const result = spawnSync(process.execPath, [
+    path.join(scriptDir, 'generate-deployment-report.mjs'),
+    '--profile', current.profileFile,
+    '--secrets', current.secretsFile,
+    '--env-file', envFile,
+    '--state', current.stateFile,
+    '--output', reportFile
+  ], { encoding: 'utf8' });
+  assert.equal(result.status, 0, result.stderr);
+  const report = fs.readFileSync(reportFile, 'utf8');
+  assert.match(report, /\| 服务器 SSH \| root \| ssh-from-env \|/u);
+  assert.doesNotMatch(report, /请仅在本地替换/u);
 });
 
 test('报告使用 profile 严格拒绝错误 Compose 候选并返回 2', (context) => {

@@ -30,7 +30,7 @@
 
 {{artifactSection}}
 
-## Rollout 尝试
+## 滚动发布尝试
 
 {{rolloutSection}}
 
@@ -50,11 +50,11 @@
 
 {{verificationSection}}
 
-## 后续升级 SOP
+## 后续升级步骤
 
 {{upgradeSection}}
 
-## 回滚 SOP
+## 回滚步骤
 
 {{rollbackSection}}
 

@@ -3,20 +3,71 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
-  markdownCell, parseArgs, readEnv, readJson, renderTemplate, requireArg,
+  isPlaceholder, markdownCell, parseArgs, readEnv, readJson, renderTemplate, requireArg,
   secretsFromEnv, validateProfile, writePrivateFile
 } from './lib.mjs';
 import { verifyState } from './verify-deployment-state.mjs';
 
-function credential(value, managedText = '由托管凭据工具保管，当前未读取') {
-  return value || managedText;
+function credential(value, managedText = '未提供；请补充本地敏感输入') {
+  return typeof value === 'string' && value.trim() && !isPlaceholder(value) ? value : managedText;
+}
+
+function credentialSourceLabel(source) {
+  const value = String(source ?? '').trim();
+  if (!value) return '未指定凭据来源';
+  if (/fileterm/iu.test(value)) return 'Fileterm 托管连接';
+  if (/user-provided|用户提供/iu.test(value)) return '用户提供的 SSH 凭据';
+  return value;
+}
+
+function sshCredential(profile, secrets) {
+  return credential(
+    secrets.sshPassword,
+    `未提供；凭据来源：${credentialSourceLabel(profile.server.credentialSource)}，请在 deployment-secrets.json 或 SSH_PASSWORD 中补充`
+  );
+}
+
+function statusLabel(value) {
+  return {
+    healthy: '健康',
+    running: '运行中',
+    passed: '通过',
+    failed: '失败',
+    skipped: '已跳过',
+    pending: '待处理'
+  }[value] ?? value;
+}
+
+function modeLabel(value) {
+  return {
+    audit: '审计',
+    takeover: '接管',
+    'fresh-dev': '全新开发环境',
+    'release-prod': '生产发布',
+    upgrade: '升级',
+    rollback: '回滚'
+  }[value] ?? value;
+}
+
+function environmentLabel(value) {
+  return { dev: '开发环境', prod: '生产环境' }[value] ?? value;
+}
+
+function mergeSecrets(base, overrides) {
+  const merged = { ...base };
+  for (const [key, value] of Object.entries(overrides ?? {})) {
+    if (value === undefined || value === null) continue;
+    if (isPlaceholder(value) && merged[key]) continue;
+    merged[key] = value;
+  }
+  return merged;
 }
 
 function serviceRows(state) {
   const rows = Object.entries(state.services ?? {}).map(([name, item]) =>
-    `| ${markdownCell(name)} | ${markdownCell(item.status)} | ${markdownCell(item.version ?? item.image ?? '未记录')} | ${markdownCell(item.imageId ?? '不适用')} | ${markdownCell(item.restartCount ?? '未记录')} | ${markdownCell(item.environmentDigest ?? '未记录')} |`
+    `| ${markdownCell(name)} | ${markdownCell(statusLabel(item.status))} | ${markdownCell(item.version ?? item.image ?? '未记录')} | ${markdownCell(item.imageId ?? '不适用')} | ${markdownCell(item.restartCount ?? '未记录')} | ${markdownCell(item.environmentDigest ?? '未记录')} |`
   );
-  return ['| 服务 | 状态 | 版本或镜像 | Image ID | 重启数 | 环境摘要 |', '|---|---|---|---|---|---|', ...rows].join('\n');
+  return ['| 服务 | 状态 | 版本或镜像 | 镜像 ID | 重启数 | 环境摘要 |', '|---|---|---|---|---|---|', ...rows].join('\n');
 }
 
 function composeSection(profile, state) {
@@ -26,9 +77,9 @@ function composeSection(profile, state) {
     : '- 未记录';
   return [
     `- 身份已确认：\`${compose.identityConfirmed === true}\``,
-    `- Project：\`${markdownCell(compose.project ?? '未记录')}\``,
-    `- Env file：\`${markdownCell(compose.envFile ?? '未记录')}\``,
-    `- Config 已渲染：\`${compose.rendered === true}\``,
+    `- Compose 项目：\`${markdownCell(compose.project ?? '未记录')}\``,
+    `- 环境文件：\`${markdownCell(compose.envFile ?? '未记录')}\``,
+    `- 配置已渲染：\`${compose.rendered === true}\``,
     `- 后端目标服务：\`${markdownCell(profile.release?.compose?.backendServices?.join(', ') ?? 'v1 未声明')}\``,
     `- 前端目标服务：\`${markdownCell(profile.release?.compose?.frontendServices?.join(', ') ?? 'v1 未声明')}\``,
     '',
@@ -44,7 +95,7 @@ function artifactSection(profile, state) {
     `- 后端候选镜像：\`${markdownCell(profile.release?.images?.admin ?? 'v1 未声明')}\``,
     `- 前端 index SHA-256：\`${markdownCell(state.frontend?.indexSha256 ?? '未记录')}\``,
     `- 前端资源：\`${markdownCell(state.frontend?.observedAssetPaths?.join(', ') ?? '未记录')}\``,
-    `- OpenAPI：启用=\`${openApi.enabled === true}\`，KEK version=\`${markdownCell(openApi.kekVersion ?? '未记录')}\`，KEK presence=\`${openApi.kekPresent === true}\``,
+    `- OpenAPI：启用=\`${openApi.enabled === true}\`，密钥版本=\`${markdownCell(openApi.kekVersion ?? '未记录')}\`，密钥已提供=\`${openApi.kekPresent === true}\``,
     `- OpenAPI 双实例摘要：\`${markdownCell(openApi.backendDigests?.join(', ') ?? '未记录')}\``
   ].join('\n');
 }
@@ -52,7 +103,7 @@ function artifactSection(profile, state) {
 function rolloutSection(state) {
   const rows = (state.rollout?.attempts ?? []).map((item, index) => {
     const identity = item.imageId ?? item.artifactSha256 ?? item.image ?? '未记录';
-    return `| ${index + 1} | ${markdownCell(item.target)} | ${markdownCell(item.result)} | ${markdownCell(identity)} | ${markdownCell(item.restartCount ?? '不适用')} | ${markdownCell(item.reason ?? '无')} | ${markdownCell(item.recovery ?? '不适用')} |`;
+    return `| ${index + 1} | ${markdownCell(item.target)} | ${markdownCell(statusLabel(item.result))} | ${markdownCell(identity)} | ${markdownCell(item.restartCount ?? '不适用')} | ${markdownCell(item.reason ?? '无')} | ${markdownCell(item.recovery ?? '不适用')} |`;
   });
   return [
     '| 顺序 | 目标 | 结果 | 镜像或构件身份 | 重启数 | 原因 | 恢复结果 |',
@@ -65,9 +116,9 @@ function frontendSection(state) {
   const frontend = state.frontend ?? {};
   const stable = frontend.stableWindow ?? {};
   return [
-    `- Context path：\`${markdownCell(frontend.contextPath ?? '未记录')}\``,
-    `- Base API：\`${markdownCell(frontend.baseApi ?? '未记录')}\``,
-    `- Asset prefix：\`${markdownCell(frontend.assetPrefix ?? '未记录')}\``,
+    `- 上下文路径：\`${markdownCell(frontend.contextPath ?? '未记录')}\``,
+    `- 基础 API：\`${markdownCell(frontend.baseApi ?? '未记录')}\``,
+    `- 静态资源前缀：\`${markdownCell(frontend.assetPrefix ?? '未记录')}\``,
     `- 连续成功：\`${markdownCell(stable.observedConsecutiveSuccesses ?? '未记录')} / ${markdownCell(stable.requiredConsecutiveSuccesses ?? '未记录')}\``,
     `- 窗口：\`${markdownCell(stable.elapsedSeconds ?? '未记录')}s / ${markdownCell(stable.timeoutSeconds ?? '未记录')}s\``,
     `- 瞬时失败：\`${markdownCell(JSON.stringify(stable.transientFailures ?? []))}\``
@@ -106,8 +157,8 @@ try {
   if (profileErrors.length) throw new Error(profileErrors.join('；'));
 
   let secrets = {};
-  if (args.secrets) secrets = readJson(path.resolve(args.secrets));
-  else if (args['env-file']) secrets = secretsFromEnv(readEnv(path.resolve(args['env-file'])));
+  if (args['env-file']) secrets = secretsFromEnv(readEnv(path.resolve(args['env-file'])));
+  if (args.secrets) secrets = mergeSecrets(secrets, readJson(path.resolve(args.secrets)));
 
   const strictReport = profile.schemaVersion === 2 && state.schemaVersion === 2;
   const verificationErrors = strictReport ? verifyState(state, { profile }) : verifyState(state);
@@ -131,16 +182,17 @@ try {
   ].map(([name, address, port]) => `| ${name} | ${address} | ${port} |`);
 
   const credentialRows = [
-    ['SSH', profile.server.sshUser, credential(secrets.sshPassword, profile.server.credentialSource || '由托管凭据工具保管')],
+    ['服务器 SSH', profile.server.sshUser, sshCredential(profile, secrets)],
     ['MySQL root', 'root', credential(secrets.mysqlRootPassword)],
     ['MySQL 应用', profile.services.mysqlUser, credential(secrets.mysqlAppPassword)],
     ['Redis', '无独立用户名', credential(secrets.redisPassword)],
     ['MinIO', secrets.minioRootUser ?? '未记录', credential(secrets.minioRootPassword)],
     ['Nacos 数据库', secrets.nacosDatabaseUser ?? '未记录', credential(secrets.nacosDatabasePassword)],
-    ['Nacos', secrets.nacosUsername ?? '未记录', credential(secrets.nacosPassword)],
+    ['Nacos 管理员', secrets.nacosUsername ?? '未记录', credential(secrets.nacosPassword)],
+    ['Nacos 配置只读账号', secrets.nacosConfigReaderUsername ?? '未记录', credential(secrets.nacosConfigReaderPassword)],
     ['Nacos 服务鉴权令牌', '不适用', credential(secrets.nacosAuthToken)],
     ['Nacos 服务身份', credential(secrets.nacosIdentityKey), credential(secrets.nacosIdentityValue)],
-    ['Monitor', secrets.monitorUsername ?? '未记录', credential(secrets.monitorPassword)],
+    ['监控平台', secrets.monitorUsername ?? '未记录', credential(secrets.monitorPassword)],
     ['Grafana', secrets.grafanaUsername ?? '未记录', credential(secrets.grafanaPassword)],
     ['业务管理端', '由 sys_user 管理', '密码为不可逆摘要，不在部署文件保存明文'],
     ['SnailJob / SnailAI', '由各服务运行配置管理', '当前发布 env 未提供独立控制台密码，生产交付前必须核对']
@@ -149,18 +201,18 @@ try {
   const values = {
     deploymentName: profile.deployment.name,
     generatedAt: new Date().toISOString(),
-    mode: profile.deployment.mode,
-    environment: profile.deployment.environment,
+    mode: modeLabel(profile.deployment.mode),
+    environment: environmentLabel(profile.deployment.environment),
     releaseId: profile.deployment.releaseId,
     verificationStatus: compatibilityNotice
       ? '兼容审计（必须升级 v2）'
       : (verificationErrors.length ? '未通过' : (state.risks?.length ? '有条件通过（存在待复核项）' : '通过')),
     serverSection: [
-      `- 服务器：\`${profile.server.sshUser}@${host}:${profile.server.sshPort}\``,
+      `- SSH 服务器：\`${profile.server.sshUser}@${host}:${profile.server.sshPort}\``,
       `- 授权根目录：\`${profile.server.root}\``,
       `- Docker 网络：\`${profile.network.dockerNetwork}\``,
       `- 持久化目录：\`${profile.server.root}/{mysql,redis,minio,nacos,loki,grafana,prometheus}\``,
-      '- 敏感配置权限：`0600`'
+      '- 敏感文件权限：`0600`'
     ].join('\n'),
     endpointSection: ['| 用途 | 地址 | 端口 |', '|---|---|---|', ...endpointRows].join('\n'),
     credentialSection: ['> 本文件包含敏感信息，仅限本机保存，权限必须为 `0600`。', '', '| 系统 | 账号 | 密码或保管位置 |', '|---|---|---|', ...credentialRows].join('\n'),

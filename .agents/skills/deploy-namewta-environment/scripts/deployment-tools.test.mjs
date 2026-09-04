@@ -11,6 +11,11 @@ import { verifyState } from './verify-deployment-state.mjs';
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const skillDir = path.resolve(scriptDir, '..');
 
+function assertPrivateMode(file) {
+  if (process.platform === 'win32') return;
+  assert.equal(fs.statSync(file).mode & 0o777, 0o600);
+}
+
 function validProfile() {
   const profile = JSON.parse(fs.readFileSync(path.join(skillDir, 'assets/templates/deployment-profile.json.template'), 'utf8'));
   profile.deployment.releaseId = '20260901-namewta-001';
@@ -101,13 +106,13 @@ test('本地配置和私密报告可生成且权限为 0600', (context) => {
   assert.equal(render.status, 0, render.stderr);
   for (const name of ['release.env', 'application-local.yml', 'admin-web.env.development.local']) {
     const file = path.join(renderedDir, name);
-    assert.equal(fs.statSync(file).mode & 0o777, 0o600);
+    assertPrivateMode(file);
   }
   assert.match(fs.readFileSync(path.join(renderedDir, 'application-local.yml'), 'utf8'), /mysql-app-secret/u);
 
   const report = spawnSync(process.execPath, [path.join(scriptDir, 'generate-deployment-report.mjs'), '--profile', profileFile, '--secrets', secretsFile, '--state', stateFile, '--output', reportFile], { encoding: 'utf8' });
   assert.equal(report.status, 0, report.stderr);
-  assert.equal(fs.statSync(reportFile).mode & 0o777, 0o600);
+  assertPrivateMode(reportFile);
   const content = fs.readFileSync(reportFile, 'utf8');
   assert.match(content, /部署交接/u);
   assert.match(content, /mysql-app-secret/u);

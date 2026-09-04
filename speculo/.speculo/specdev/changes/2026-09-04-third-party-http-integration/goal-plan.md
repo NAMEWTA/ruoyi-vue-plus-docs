@@ -187,7 +187,7 @@ Lead 只有在所有非取消 Ticket 都形成 implementation commit、在对应
 
 | Ticket | Parent/base | Workspace/branch | Source checks | Implementation commit | Integration checks/E2E | Parent result |
 |---|---|---|---|---|---|---|
-| T-01 | backend main@a63c83ac... | backend current/main | API/module tests | 82cb1febf | direct-parent integrated；full-core fragment pending | 82cb1febf |
+| T-01 | backend main@a63c83ac... | backend current/main | API/module tests | 82cb1febf | direct-parent integrated；isolated full/core bundle gate recorded in T-13 | 82cb1febf |
 | T-02 | root SQL + backend | current/main | SQL static/schema tests | ec8cd78a | direct-parent integrated；MySQL 8.4 fresh-init pending | ec8cd78a |
 | T-03 | backend T-01/T-02 result | backend current/main | provider tests | ec8cd78a | direct-parent integrated；MVC/MySQL E2E pending | ec8cd78a |
 | T-04 | backend T-03 result | backend current/main | endpoint/security tests | ec8cd78a | direct-parent integrated；URI zero-request E2E pending | ec8cd78a |
@@ -199,7 +199,7 @@ Lead 只有在所有非取消 Ticket 都形成 implementation commit、在对应
 | T-10 | frontend main@587a629a... | frontend current/main | domain test/type/lint | 1fa13dc | direct-parent integrated；E2E not required | 1fa13dc |
 | T-11 | frontend T-10 result | frontend current/main | web-domain component/type/lint | 1fa13dc | direct-parent integrated；E2E not required | 1fa13dc |
 | T-12 | frontend T-11 + root SQL | frontend/root current/main | Admin manifest/architecture/build | 1fa13dc | direct-parent integrated；browser/MySQL/backend E2E pending | 1fa13dc |
-| T-13 | root + all product results | root current/main；产品树只读 | Skills/static/full Gate checks | active release gate | direct-parent review；external E2E/full-core pending | pending |
+| T-13 | root + all product results | root current/main；产品树只读 | Skills/static/full Gate checks | active release gate | direct-parent review；isolated full/core pass，external E2E pending | pending |
 
 current 模式严格一次一个 implementation writer。Ticket 只有在实际授权后，基于最新父 SHA 运行非 E2E 检查、形成非空 implementation commit，Lead 在同一 workspace 执行 direct-parent 集成/适用 E2E、重读父 HEAD 并记录 result SHA 后，才允许开始下一个 Ticket。不得创建 source/candidate worktree；不得把 subagent 自报或 source-worktree E2E 作为通过。
 
@@ -271,14 +271,16 @@ The user authorized implementation commits and direct-parent integration with de
 
 Completed local gates: backend module compile, layered module-mode validation, local-profile crypto/path/sanitizer/origin/loopback Gateway tests (16 passing), full backend `./mvnw.cmd -P local -q test` (456 tests, 0 failures, 0 errors, 18 skipped), frontend domain/web-domain/admin typecheck, lint, package build/test gates, architecture check, and admin production build. Runtime probing found reachable MySQL/Redis services and confirmed that a current classpath launch loads `ruoyi-third` and opens HTTP `18081`; a read-only JDBC probe confirmed MySQL `8.4.9` but found no `third_*` tables in the existing `ry-namewta` database. The loopback Gateway test proves constrained delivery and pre-send zero-request rejection without external credentials. The launch exits in the existing system OSS runner when the shared Redis cache-invalidation acknowledgement times out for a second instance. The legacy `18080` JAR predates this module and returned `404` for `/third/provider/list`. Docker CLI, isolated fresh-init/counting provider infrastructure, application-context HTTP status/redirect/retry, SysLog canary, and browser permission E2E remain unavailable or unapproved; they remain explicit release prerequisites and are recorded as pending in T-13 evidence. The change remains `in_progress` until those required external gates are run by the release environment.
 
-Latest execution checkpoint: backend `b78b8c5e5`; frontend `1fa13dc`; DDL `c49f562`; menu DML `bed64ec`. SpecDev `tickets` and `implement` validators remain at 0 errors / 0 warnings.
+The release bundle gate was subsequently verified from an isolated export of backend `b78b8c5e5`: standard full `clean package -DskipTests` and `clean package -Pbundle-core -Dmaven.test.skip=true` both completed all 47 reactor projects with `ruoyi-admin` repackage success. Direct `BOOT-INF/lib` inspection found `ruoyi-third-6.0.0.jar` in both packages; job/ai/demo/workflow artifacts were present only in full. The isolated result is authoritative for bundle composition because the original workspace contains a running legacy `ruoyi-admin` process that locks `ruoyi-admin/target/ruoyi-admin.jar`.
+
+Latest execution checkpoint: backend `b78b8c5e5`; frontend `1fa13dc`; DDL `c49f562`; menu DML `bed64ec`. Isolated full/core packaging and `BOOT-INF/lib` composition checks pass. SpecDev `tickets` and `implement` validators remain at 0 errors / 0 warnings.
 
 当前执行状态以本节和 `.status.json` 为准：用户已通过 `USER-DECISION:2026-09-04-execute-goal-plan` 授权本地实现、验证、Evidence 与 direct-parent 更新；远程、部署、生产迁移、凭据写入和真实供应商调用仍未授权。
 
 - Goal Plan：`active`，`ready_for_execution=true`；T-01 至 T-12 已形成实现提交并完成本地定向检查，T-13 负责剩余 release Gate。
 - 集成状态：T-01 至 T-12 为 `integrated/review`，T-13 为 `review`；所有实现工作树使用 current/direct-parent，没有创建 worktree。
-- 最新检查点：backend `ec8cd78a`，frontend `1fa13dc`，DDL `c49f562`，菜单 DML `bed64ec`；tickets/implement 校验均为 0 error/0 warning。
-- 外部 Gate：MySQL 8.4 fresh-init、隔离 Redis 多实例失效、确定性本地 HTTP、SysLog canary、浏览器权限 E2E 和 full/core 完整构建仍需 release 环境执行；当前只读探测确认 MySQL 8.4.9 但 schema 尚未初始化，并确认旧 JAR 404 和新类路径实例被共享 Redis invalidation acknowledgement timeout 阻断，均记录为 pending。
+- 最新检查点：backend `b78b8c5e5`，frontend `1fa13dc`，DDL `c49f562`，菜单 DML `bed64ec`；tickets/implement 校验均为 0 error/0 warning。
+- 外部 Gate：MySQL 8.4 fresh-init、隔离 Redis 多实例失效、确定性本地 HTTP 应用上下文状态/重定向/重试、SysLog canary 和浏览器权限 E2E 仍需 release 环境执行；full/core 完整构建已在隔离 backend `b78b8c5e5` 导出目录通过，并完成 `BOOT-INF/lib` 组合核对。当前只读探测确认 MySQL 8.4.9 但 schema 尚未初始化，并确认旧 JAR 404 和新类路径实例被共享 Redis invalidation acknowledgement timeout 阻断，均记录为 pending。
 
 ### Pending Decisions and Blockers
 

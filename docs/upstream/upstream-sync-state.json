@@ -1,17 +1,17 @@
 {
   "schema_version": 2,
-  "updated_at": "2026-08-24T12:33:30+08:00",
-  "current_change": null,
+  "updated_at": "2026-09-03T21:12:57+08:00",
+  "current_change": "current",
   "repositories": {
     "backend": {
       "integrated_upstream_sha": "387c4f0a20e9232f44e762ef5a46c462f54bd464",
       "main_merge_sha": "af4bf65c71087c6080f52fed6155c542a162419b",
-      "observed_upstream_sha": "629e344af50cfc5163f0b5905d47328382b7cc1c"
+      "observed_upstream_sha": "79bd1db16fe52595099dfe34da53dc026a620843"
     },
     "frontend": {
       "integrated_upstream_sha": "0870ce17514895854ccff03600e102546d8c5046",
       "main_merge_sha": null,
-      "observed_upstream_sha": "0870ce17514895854ccff03600e102546d8c5046"
+      "observed_upstream_sha": "a85fa0aee44f6f12dc35198126914ce722ee8622"
     }
   }
 }

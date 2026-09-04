@@ -1,0 +1,13 @@
+{
+  "created_at": "2026-09-03T21:12:57+08:00",
+  "repositories": {
+    "backend": {
+      "upstream_sha": "79bd1db16fe52595099dfe34da53dc026a620843",
+      "main_merge_sha": null
+    },
+    "frontend": {
+      "upstream_sha": "a85fa0aee44f6f12dc35198126914ce722ee8622",
+      "main_merge_sha": null
+    }
+  }
+}

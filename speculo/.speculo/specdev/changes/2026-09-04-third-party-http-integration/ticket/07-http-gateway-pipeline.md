@@ -126,6 +126,8 @@ E2E disposition: required for the release gate; execution environment is `curren
 
 Deploy the gateway with no enabled provider first. Existing callers receive additive API behavior only. Rollback disables providers/endpoints and leaves invocation history intact. Any future dynamic endpoint capability must be a separately reviewed SPI and cannot weaken this whitelist.
 
+Latest local evidence: `ThirdGatewayAdapterTest` uses a JDK loopback `HttpServer` and passes 3/3 for constrained JSON POST delivery plus provider-disabled and rate-limit zero-request behavior. Redirect, typed/SPI mapping, and full application-context status/retry checks remain release-gate work.
+
 ## 10. 验收标准
 
 - [ ] AC-003 provider-first enablement and inherited base URL are enforced.

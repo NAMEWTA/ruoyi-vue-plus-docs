@@ -21,6 +21,7 @@ description: 为 RuoYi 新增或接入业务模块提供渐进式事实导航；
 | `ruoyi-profile` | 新模块五层架构试点；person/enterprise 资料、认证、材料、绑定和转移 | [`profile/index.md`](references/modules/profile/index.md) |
 | `ruoyi-system` | 存量基础模块；本轮保持 classic 目录和实现不变，只描述稳定 API 与内部边界 | [`system/index.md`](references/modules/system/index.md) |
 | `ruoyi-workflow` | 存量 Warm-Flow 模块；本轮保持内部实现不变，只通过 `ruoyi-api` 提供审批接入 | [`workflow/index.md`](references/modules/workflow/index.md) |
+| `ruoyi-third` | 新增分层的第三方 HTTP Provider/Endpoint 聚合、凭据、Gateway、SPI、限流与出站观测模块 | [`third/index.md`](references/modules/third/index.md) |
 
 新模块不能因为没有专用地图而复制 `ruoyi-system`/`ruoyi-workflow` 的内部实现。先在模块根 `AGENTS.md` 中确认职责、POM/package 组成、入口和本地验证命令；跨模块能力只能使用已公开的 API 或 common SPI。
 

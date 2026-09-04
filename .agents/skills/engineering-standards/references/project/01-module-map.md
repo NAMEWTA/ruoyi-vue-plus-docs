@@ -59,6 +59,7 @@
 | `ruoyi-modules/ruoyi-profile/ruoyi-profile-enterprise` | 企业资料与认证能力 | controller/service/mapper contracts | `src/test/java` |
 | `ruoyi-modules/ruoyi-system` | 用户、Client、角色、菜单、权限等核心系统能力 | controller/service/mapper contracts | none |
 | `ruoyi-modules/ruoyi-workflow` | WarmFlow 工作流能力 | controller/service contracts | none |
+| `ruoyi-modules/ruoyi-third` | 第三方 HTTP Provider/Endpoint 管理、凭据安全、RestClient Gateway、显式适配器 SPI、限流与出站观测 | `org.dromara.third.api.ThirdPartyGateway`；管理 API 位于 `org.dromara.third.controller.admin` | `src/test/java`; crypto/path security tests; external MySQL/Redis/HTTP/browser gates are recorded by the change release evidence |
 
 ## 依赖方向
 

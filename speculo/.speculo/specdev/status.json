@@ -66,6 +66,18 @@
         "specdev/implement"
       ],
       "claimed_investigations": []
+    },
+    {
+      "change": "2026-09-04-third-party-http-integration",
+      "current_work": "specdev/implement",
+      "works_run": [
+        "specdev/grill-with-docs",
+        "specdev/spec",
+        "specdev/tickets",
+        "specdev/goal-plan",
+        "specdev/implement"
+      ],
+      "claimed_investigations": []
     }
   ],
   "archived": [

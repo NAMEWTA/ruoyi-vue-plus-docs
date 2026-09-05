@@ -9,8 +9,8 @@
 
 | 固定项 | 值 |
 |---|---|
-| 产品 SHA | `751ecd43917211744402bbb00e003369dbcde62f` |
-| 已集成上游 SHA | `387c4f0a20e9232f44e762ef5a46c462f54bd464` |
+| 产品 SHA | `34766a607210873dd36af9a02effb0b49f5bb9f1` |
+| 已集成上游 SHA | `bffc39a89fd6ed196031e71cbceefd9986eecce8` |
 | 集成识别方式 | `recorded_merge` |
 | 产品 merge commit | `9b66010d29a37b577eb29e48ba7790ad04906119` |
 | 观测上游 SHA | `bffc39a89fd6ed196031e71cbceefd9986eecce8` |
@@ -72,8 +72,8 @@ git -C ruoyi-vue-plus-namewta diff 387c4f0a20e9232f44e762ef5a46c462f54bd464..bff
 
 | 固定项 | 值 |
 |---|---|
-| 产品 SHA | `cc6a6f22e1c3ee246426d4b75a7926a2a079aec0` |
-| 已集成上游 SHA | `0870ce17514895854ccff03600e102546d8c5046` |
+| 产品 SHA | `d1748f3506259fa75eced87d6983dd14292b9a68` |
+| 已集成上游 SHA | `a85fa0aee44f6f12dc35198126914ce722ee8622` |
 | 集成识别方式 | `derived_merge_base` |
 | 产品 merge commit | `d1748f3506259fa75eced87d6983dd14292b9a68` |
 | 观测上游 SHA | `a85fa0aee44f6f12dc35198126914ce722ee8622` |

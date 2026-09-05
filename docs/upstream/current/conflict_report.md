@@ -1,7 +1,7 @@
 # 上游合并冲突客观报告
 
-- 运行 ID：`2026-09-05T073158+0800-current`
-- 生成时间：`2026-09-05T07:31:58+08:00`
+- 运行 ID：`2026-09-05T081250+0800-current`
+- 生成时间：`2026-09-05T08:12:50+08:00`
 - 模拟方式：`git merge-tree --write-tree --messages <product-sha> <upstream-sha>`
 - 工作树说明：模拟只使用提交固定点；未提交修改不进入 merge-tree。
 
@@ -58,13 +58,6 @@ Auto-merging ruoyi-modules/ruoyi-workflow/src/main/java/org/dromara/workflow/ser
 git -C ruoyi-vue-plus-namewta merge-tree --write-tree --messages 751ecd43917211744402bbb00e003369dbcde62f bffc39a89fd6ed196031e71cbceefd9986eecce8
 ```
 
-### 路径级语义复核
-
-- Git 返回零文本/树冲突，但 `SqlLogInterceptor`、`OssClientConfig`、`WorkflowGlobalListener` 和 `FlwTaskServiceImpl` 均属于产品与上游同时修改的路径；必须逐段审查，不得以 merge-tree clean 代替行为验证。
-- `DataPermissionAdvice`/`PlusDataPermissionHandler` 的上下文生命周期、UNION 处理和 Client/RBAC 负向路径是必测项。
-- `FlwTaskServiceImpl` 的任务读取授权会触及系统事件通知；需保留产品 `WorkflowHistoryOssOwner`、附件和事务语义，并为无登录副作用路径提供内部收件人解析，不得绕过授权或吞异常。
-- `OssClientConfig` 只纳入默认 bucket CDN 分支，保留产品私有 ACL/访问基址方法；`SqlLogInterceptor` 只纳入无锁输出行为，保留产品脱敏和 requestId 规则。
-
 ## frontend
 
 | 固定项 | 值 |
@@ -111,12 +104,11 @@ CONFLICT (rename/delete): src/api/monitor/loginInfo/types.ts renamed to src/api/
 git -C plus-ui-namewta merge-tree --write-tree --messages cc6a6f22e1c3ee246426d4b75a7926a2a079aec0 a85fa0aee44f6f12dc35198126914ce722ee8622
 ```
 
-### 语义处置结论
-
-- 两个冲突都是上游旧 `src/api/monitor/loginInfo/**` 到 `logininfo/**` 的重命名与产品删除之间的 `rename/delete`。解决时保留产品删除，不恢复根 `src/api` 或兼容 facade。
-- 当前真实 owner 是 `packages/domains/system/src/monitor/login-info/**` 与 `packages/web-domains/system/src/monitor/login-info/**`；必须保留 package exports、`/monitor/loginInfo` URL、`monitor:logininfo:*` 权限和 `monitor/logininfo/index` manifest key。
-- 前端架构基线已在产品提交中修复并通过 101/101 架构测试；本次上游提交不应再次改动 `third` domain 或架构基线。
-
 ## 局限
 
 `merge-tree` 只能描述冻结提交的 Git 文本/树合并结果。零文本冲突不代表编译、运行时、API、权限、SQL 迁移或业务语义安全；必须继续执行 customization map 复核与项目质量门禁。
+
+## 实际集成结果
+
+- backend 已由 `9b66010d29a37b577eb29e48ba7790ad04906119` 合并上游 `bffc39a89fd6ed196031e71cbceefd9986eecce8`，并保留工作流通知副作用适配。
+- frontend 已由 `d1748f3506259fa75eced87d6983dd14292b9a68` 处理两个 rename/delete 冲突，保留产品 domain 路径和外部契约。

@@ -1,5 +1,24 @@
 SET NAMES utf8mb4;
 
+-- ----------------------------
+-- 富文本演示文档
+-- ----------------------------
+create table test_rich_text (
+    rich_text_id bigint(20) not null comment '富文本文档主键',
+    client_pk bigint(20) not null comment '归属客户端主键',
+    title varchar(120) not null comment '文档标题',
+    content_html mediumtext not null comment '规范化富文本 HTML',
+    version bigint(20) not null default 0 comment '乐观锁版本',
+    create_dept bigint(20) default null comment '创建部门',
+    create_time datetime not null comment '创建时间',
+    create_by bigint(20) default null comment '创建者',
+    update_time datetime default null comment '更新时间',
+    update_by bigint(20) default null comment '更新者',
+    del_flag char(1) not null default '0' comment '删除标志（0代表存在 1代表删除）',
+    primary key (rich_text_id),
+    key idx_test_rich_text_owner (client_pk, create_by, del_flag, update_time)
+) engine=innodb comment='富文本演示文档';
+
 -- ============================================================================
 -- NAMEWTA 表结构 SQL
 -- 本文件是可直接修改的当前完整 MySQL 8.4 结构基座，仅用于全新数据库初始化。

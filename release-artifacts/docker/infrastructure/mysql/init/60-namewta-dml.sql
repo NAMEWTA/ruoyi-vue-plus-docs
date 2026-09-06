@@ -1267,3 +1267,26 @@ values
     (2100460000000000131, 1, '系统', 'system', 'notify_message_category', '', 'info', 'Y', 1761000000000000103, 1761100000000000001, sysdate(), '系统消息'),
     (2100460000000000132, 2, '通知', 'notice', 'notify_message_category', '', 'success', 'N', 1761000000000000103, 1761100000000000001, sysdate(), '通知公告消息'),
     (2100460000000000133, 3, '工作流', 'workflow', 'notify_message_category', '', 'primary', 'N', 1761000000000000103, 1761100000000000001, sysdate(), '工作流消息');
+
+-- ============================================================================
+-- NAMEWTA-RICHTEXT-DML-001
+-- 富文本通用组件接入示例（测试菜单）。
+-- ============================================================================
+insert ignore into sys_menu
+    (menu_id, client_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, is_cache,
+     menu_type, visible, status, perms, icon, active_menu, ext, create_dept, create_by, create_time, remark)
+values
+    (2100800000000000001, 1762000000000000001, '富文本演示', 1761400000000000005, 3, 'rich-text', 'demo/rich-text/index', '', 'N', 'Y', 'C', '0', '0', 'demo:richtext:list', 'tabler:edit', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '富文本编辑、预览与 OSS 接入示例');
+
+insert ignore into sys_menu
+    (menu_id, client_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, is_cache,
+     menu_type, visible, status, perms, icon, active_menu, ext, create_dept, create_by, create_time, remark)
+values
+    (2100800000000000011, 1762000000000000001, '富文本查询', 2100800000000000001, 1, '', '', '', 'N', 'Y', 'F', '0', '0', 'demo:richtext:query', '#', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '富文本详情与资源访问'),
+    (2100800000000000012, 1762000000000000001, '富文本新增', 2100800000000000001, 2, '', '', '', 'N', 'Y', 'F', '0', '0', 'demo:richtext:add', '#', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '新建富文本文档'),
+    (2100800000000000013, 1762000000000000001, '富文本修改', 2100800000000000001, 3, '', '', '', 'N', 'Y', 'F', '0', '0', 'demo:richtext:edit', '#', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '修改富文本文档'),
+    (2100800000000000014, 1762000000000000001, '富文本删除', 2100800000000000001, 4, '', '', '', 'N', 'Y', 'F', '0', '0', 'demo:richtext:remove', '#', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '删除富文本文档'),
+    (2100800000000000015, 1762000000000000001, '富文本上传', 2100800000000000001, 5, '', '', '', 'N', 'Y', 'F', '0', '0', 'common:richtext:upload', '#', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '富文本图片、音频和附件上传');
+
+insert ignore into sys_role_menu (role_id, menu_id)
+select 1761300000000000001, menu_id from sys_menu where menu_id between 2100800000000000001 and 2100800000000000015;

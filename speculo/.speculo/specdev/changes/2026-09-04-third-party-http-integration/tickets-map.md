@@ -28,7 +28,7 @@ status: completed
 
 ## 1.1 Skill 加载与新模块最低工程基线
 
-每个 Ticket 开始前，implementation owner 必须完整读取其 Ticket 的“必须加载的 Skill 与工程基线”小节；不能以本 Map 的摘要代替 Skill 原文。所有 backend Ticket 还必须先读取 <Path>.agents/skills/engineering-standards/SKILL.md</Path> 的项目画像、模块地图、决策/例外、backend module modes 和命中的 Java/Spring/persistence/CRUD/security/testing references。所有 frontend Ticket 还必须读取 <Path>.agents/skills/plus-ui-frontend-conventions/SKILL.md</Path> 及 TypeScript/Vue/Browser/CRUD/API references。
+每个 Ticket 开始前，implementation owner 必须完整读取其 Ticket 的“必须加载的 Skill 与工程基线”小节；不能以本 Map 的摘要代替 Skill 原文。所有 backend Ticket 还必须先读取 <Path>.agents/skills/engineering-standards/SKILL.md</Path> 的项目画像、模块地图、决策/例外、backend module modes 和命中的 Java/Spring/persistence/CRUD/security/testing references。所有 frontend Ticket 还必须读取 <Path>.agents/skills/namewta-fullstack-development/SKILL.md</Path> 及 TypeScript/Vue/Browser/CRUD/API references。
 
 新 ruoyi-third 的不可放宽基线：
 
@@ -43,19 +43,19 @@ status: completed
 
 | Ticket | 必须加载的 Skill | 重点参考/门禁 |
 |---|---|---|
-| T-01 | engineering-standards、ruoyi-backend-development、ruoyi-module-guide、ruoyi-common-modules-guide、java-api-compatibility | layered 新模块、POM/common 按需依赖、ruoyi-api 公共兼容 |
-| T-02 | engineering-standards、ruoyi-backend-development、ruoyi-module-guide、ruoyi-common-modules-guide | persistence/DDL、Mapper/XML、50 DDL、MySQL 8.4 |
-| T-03 | engineering-standards、ruoyi-backend-development、ruoyi-module-guide、ruoyi-common-modules-guide | layered CRUD、GET/POST/@Log/@DSTransactional、权限/BO/VO |
-| T-04 | engineering-standards、ruoyi-backend-development、ruoyi-module-guide、ruoyi-common-modules-guide | security/data、metadata 白名单、运行时二次校验 |
-| T-05 | engineering-standards、ruoyi-backend-development、ruoyi-module-guide、ruoyi-common-modules-guide | 认证加密、密文边界、canary/日志负向验证 |
-| T-06 | engineering-standards、ruoyi-backend-development、ruoyi-module-guide、ruoyi-common-modules-guide | RedisUtils/Redisson、提交后失效、fail-closed |
-| T-07 | engineering-standards、ruoyi-backend-development、ruoyi-module-guide、ruoyi-common-modules-guide、java-api-compatibility | RestClient/@HttpExchange、SPI/Registry/Factory/Pipeline owner、URI 安全 |
-| T-08 | engineering-standards、ruoyi-backend-development、ruoyi-module-guide、ruoyi-common-modules-guide | timeout、幂等 retry、发送前 Redisson gate、permit 释放 |
-| T-09 | engineering-standards、ruoyi-backend-development、ruoyi-module-guide、ruoyi-common-modules-guide | SysLog writer/sink、脱敏/截断、attempt/逻辑统计 |
-| T-10 | engineering-standards、plus-ui-frontend-conventions | domain 资源纵切片、exports/AGENTS、transport mapper 和权限 |
-| T-11 | engineering-standards、plus-ui-frontend-conventions | web-domain 页面、局部状态、component key、敏感 DOM 和组件测试 |
-| T-12 | engineering-standards、plus-ui-frontend-conventions、ruoyi-backend-development、ruoyi-module-guide | App 三点组合、manifest/SQL/permission 一致、61-third-dml.sql 与浏览器 E2E |
-| T-13 | engineering-standards、ruoyi-backend-development、ruoyi-module-guide、ruoyi-common-modules-guide、java-api-compatibility、plus-ui-frontend-conventions | 事实同步、full/core、MySQL/Redis/HTTP/SysLog/frontend 全 Gate |
+| T-01 | engineering-standards、namewta-fullstack-development、ruoyi-module-guide、ruoyi-common-modules-guide、java-api-compatibility | layered 新模块、POM/common 按需依赖、ruoyi-api 公共兼容 |
+| T-02 | engineering-standards、namewta-fullstack-development、ruoyi-module-guide、ruoyi-common-modules-guide | persistence/DDL、Mapper/XML、50 DDL、MySQL 8.4 |
+| T-03 | engineering-standards、namewta-fullstack-development、ruoyi-module-guide、ruoyi-common-modules-guide | layered CRUD、GET/POST/@Log/@DSTransactional、权限/BO/VO |
+| T-04 | engineering-standards、namewta-fullstack-development、ruoyi-module-guide、ruoyi-common-modules-guide | security/data、metadata 白名单、运行时二次校验 |
+| T-05 | engineering-standards、namewta-fullstack-development、ruoyi-module-guide、ruoyi-common-modules-guide | 认证加密、密文边界、canary/日志负向验证 |
+| T-06 | engineering-standards、namewta-fullstack-development、ruoyi-module-guide、ruoyi-common-modules-guide | RedisUtils/Redisson、提交后失效、fail-closed |
+| T-07 | engineering-standards、namewta-fullstack-development、ruoyi-module-guide、ruoyi-common-modules-guide、java-api-compatibility | RestClient/@HttpExchange、SPI/Registry/Factory/Pipeline owner、URI 安全 |
+| T-08 | engineering-standards、namewta-fullstack-development、ruoyi-module-guide、ruoyi-common-modules-guide | timeout、幂等 retry、发送前 Redisson gate、permit 释放 |
+| T-09 | engineering-standards、namewta-fullstack-development、ruoyi-module-guide、ruoyi-common-modules-guide | SysLog writer/sink、脱敏/截断、attempt/逻辑统计 |
+| T-10 | engineering-standards、namewta-fullstack-development | domain 资源纵切片、exports/AGENTS、transport mapper 和权限 |
+| T-11 | engineering-standards、namewta-fullstack-development | web-domain 页面、局部状态、component key、敏感 DOM 和组件测试 |
+| T-12 | engineering-standards、namewta-fullstack-development、namewta-fullstack-development、ruoyi-module-guide | App 三点组合、manifest/SQL/permission 一致、61-third-dml.sql 与浏览器 E2E |
+| T-13 | engineering-standards、namewta-fullstack-development、ruoyi-module-guide、ruoyi-common-modules-guide、java-api-compatibility、namewta-fullstack-development | 事实同步、full/core、MySQL/Redis/HTTP/SysLog/frontend 全 Gate |
 
 任何 Ticket 若未完成规定 Skill 读取、目录模式验证或命中停止条件，必须暂停该 Ticket，不得以“沿用现有写法”替代新模块基线。
 
@@ -85,10 +85,10 @@ T-01 through T-13 are integrated and done; the release gate is closed. Every tic
 
 | Tickets | Required Skills |
 |---|---|
-| T-01..T-09 | `engineering-standards`, `ruoyi-backend-development`, `ruoyi-module-guide`, `ruoyi-common-modules-guide` |
+| T-01..T-09 | `engineering-standards`, `namewta-fullstack-development`, `ruoyi-module-guide`, `ruoyi-common-modules-guide` |
 | T-01, T-07 | `java-api-compatibility` |
-| T-10..T-11 | `engineering-standards`, `plus-ui-frontend-conventions` |
-| T-12 | frontend Skills above plus `ruoyi-backend-development`, `ruoyi-module-guide` |
+| T-10..T-11 | `engineering-standards`, `namewta-fullstack-development` |
+| T-12 | frontend Skills above plus `namewta-fullstack-development`, `ruoyi-module-guide` |
 | T-13 | all backend and frontend Skills above plus `java-api-compatibility` |
 
 The new backend module is registered as layered and must keep `controller/admin -> usecase/impl -> service -> dao -> mapper -> XML`; runtime infrastructure is isolated behind `port`, `adapter`, and pure `support` packages, and only stable contracts in `ruoyi-api` may be consumed by other business modules. The frontend remains `App -> web-domain -> domain -> platform`, with explicit package exports and App composition. No database script, SpEL, arbitrary reflection, full URL, arbitrary header, plaintext credential, or caller-side bypass is allowed.

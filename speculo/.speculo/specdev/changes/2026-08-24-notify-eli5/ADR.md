@@ -35,7 +35,7 @@ fork Austin 能获得另一套较完整的消息平台能力，但会带来技�
 ### Decision
 首期在 `ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-notify` 新增业务模块，并由 ruoyi-admin 组装到现有进程。前端对应新增 `packages/domains/notify` 与 `packages/web-domains/notify`，由 admin-web 通过 manifest 显式选择。
 
-现有 `sys_notify_log`、`sys_notify_delivery_log` 和监控 HTTP 合同继续复用。是否迁移 `system/notify` 的代码归属必须保持兼容并由后续设计决定，不以创建平行日志完成模块独立。
+公告、站内信、收件箱、投递链路和监控均由 `ruoyi-notify` 统一拥有；System 不再保留通知实现、菜单、接口或通知表。旧数据在初始化时迁移到 Notify 后删除旧表，MQTT 仍属于设备命令域。
 
 ### Trade-off
 独立服务可以提供进程级故障隔离和独立扩缩容，但现在会重复基础设施并扩大分布式复杂度；继续把所有能力放入 ruoyi-system 变更更少，却会让通知平台缺少自己的业务边界。新的业务模块增加一个 Maven 和前端领域边界，换取清晰所有权与未来可拆分性。
@@ -44,7 +44,7 @@ fork Austin 能获得另一套较完整的消息平台能力，但会带来技�
 首期通知平台与 ruoyi-admin 同生命周期、共享数据库和 Redis，不能宣称微服务级隔离。模块不得直接依赖 ruoyi-system 内部 Mapper、Entity 或 Service；跨模块能力使用 ruoyi-api 或明确 SPI。只有独立容量、SLA、团队发布节奏或故障域成为真实瓶颈时才重新评估独立部署。
 
 ### Verification / Migration
-后端全量和 core bundle 必须验证模块组装；前端架构检查必须验证 Domain/Web Domain 依赖和 manifest 注册；已有监控 URL、权限字符和历史日志保持兼容。
+后端全量和 core bundle 必须验证模块组装；前端架构检查必须验证 Domain/Web Domain 依赖和 manifest 注册；通知 URL、权限和前端路由统一切换到 `/notify/*`，旧入口不保留兼容。
 
 ## ADR-003: 统一发送 API 复用 NAMEWTA OpenAPI 机器认证边界
 

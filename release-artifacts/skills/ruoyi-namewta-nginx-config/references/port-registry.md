@@ -24,5 +24,5 @@
 实时台账：
 
 ```bash
-python3 release-artifacts/skills/ruoyi-namewta-nginx-config/scripts/add_app.py --list
+python release-artifacts/skills/ruoyi-namewta-nginx-config/scripts/add_app.py --list
 ```

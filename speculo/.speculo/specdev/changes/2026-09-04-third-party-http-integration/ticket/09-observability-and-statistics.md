@@ -61,7 +61,7 @@ Sources: `US-009`, `AC-011`, `AC-013`, `AC-014`, `ADR-006`, and `ADR-009`.
 The implementer must load:
 
 - `<Path>.agents/skills/engineering-standards/SKILL.md</Path>`
-- `<Path>.agents/skills/ruoyi-backend-development/SKILL.md</Path>`
+- `<Path>.agents/skills/namewta-fullstack-development/SKILL.md</Path>`
 - `<Path>.agents/skills/ruoyi-module-guide/SKILL.md</Path>`
 - `<Path>.agents/skills/ruoyi-common-modules-guide/SKILL.md</Path>`
 

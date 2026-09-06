@@ -17,10 +17,9 @@ function javaFiles(directory) {
   });
 }
 
-test('NAMEWTA structure and data contracts live in the canonical 50, 60, and 61 files', () => {
+test('NAMEWTA structure and data contracts live in the canonical 50 and 60 files', () => {
   const ddl = fs.readFileSync(path.join(sqlRoot, '50-namewta-ddl.sql'), 'utf8');
   const dml = fs.readFileSync(path.join(sqlRoot, '60-namewta-dml.sql'), 'utf8');
-  const thirdDml = fs.readFileSync(path.join(sqlRoot, '61-third-dml.sql'), 'utf8');
 
   for (const marker of [
     'NAMEWTA-OPENAPI-CREDENTIAL-DDL-001',
@@ -40,7 +39,7 @@ test('NAMEWTA structure and data contracts live in the canonical 50, 60, and 61 
     assert.match(dml, declaration);
     assert.doesNotMatch(ddl, declaration);
   }
-  assert.match(thirdDml, /^-- 变更标识：NAMEWTA-THIRD-MENU-DML-001$/m);
+  assert.match(dml, /^-- 变更标识：NAMEWTA-THIRD-MENU-DML-001$/m);
   assert.doesNotMatch(ddl, /NAMEWTA-THIRD-MENU-DML-001/);
 });
 

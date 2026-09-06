@@ -140,6 +140,8 @@ create table sys_oss_ref (
 -- 通知逻辑日志表
 -- client_pk 仅记录请求来源的 sys_client.id，不构成数据隔离或路由条件。
 -- ----------------------------
+/* legacy sys_notify_log removed: notify_intent is the canonical notification log */
+/*
 create table sys_notify_log (
     notify_log_id       bigint(20)    not null                   comment '通知日志主键',
     request_id          varchar(64)   not null                   comment '逻辑通知请求ID',
@@ -175,11 +177,13 @@ create table sys_notify_log (
     key idx_sys_notify_log_channel_status_time (channel, status, create_time),
     key idx_sys_notify_log_trace (trace_id)
 ) engine=innodb comment='通知逻辑日志表';
+*/
 
 -- ----------------------------
 -- 通知目标投递日志表
 -- 每行对应一个物理目标的实际 Provider attempt，ACCEPTED 不等同于 DELIVERED。
 -- ----------------------------
+/*
 create table sys_notify_delivery_log (
     notify_delivery_log_id bigint(20)    not null                   comment '通知投递日志主键',
     notify_log_id          bigint(20)    not null                   comment '通知逻辑日志主键',
@@ -205,6 +209,7 @@ create table sys_notify_delivery_log (
     key idx_sys_notify_delivery_status_time (status, create_time),
     key idx_sys_notify_delivery_provider_msg (provider_message_id)
 ) engine=innodb comment='通知目标投递日志表';
+*/
 
 -- ============================================================================
 -- 变更标识：NAMEWTA-OSS-NOTIFY-DDL-002
@@ -218,14 +223,6 @@ create table sys_notify_delivery_log (
 alter table sys_oss
     add column delete_state varchar(16) not null default 'ACTIVE'
         comment '删除状态（ACTIVE正常 PENDING等待供应商删除）' after expire_time;
-
-alter table sys_notify_log
-    drop index uk_sys_notify_log_request,
-    add key idx_sys_notify_log_request (request_id);
-
-alter table sys_notify_delivery_log
-    modify column target_value varchar(1000) not null
-        comment '物理目标（敏感审计策略下脱敏）';
 
 -- ============================================================================
 -- 变更标识：NAMEWTA-RUNTIME-GEN-RETIRE-DDL-001
@@ -1235,3 +1232,212 @@ create table third_statistic (
     constraint ck_third_statistic_endpoint check (endpoint_code is null or endpoint_code <> ''),
     key idx_third_statistic_date(stat_date)
 ) engine=innodb comment='第三方 HTTP 调用聚合统计';
+
+-- ============================================================================
+-- NAMEWTA-NOTIFY-CONTROL-001：统一通知控制面最终表结构
+-- 所有通知事实由 ruoyi-notify 拥有；Provider ACCEPTED 不代表用户已收到。
+-- ============================================================================
+create table notify_notice (
+    notice_id bigint(20) not null comment '通知公告主键',
+    notice_title varchar(50) not null comment '公告标题',
+    notice_type varchar(10) not null comment '公告类型',
+    notice_content longblob comment '公告内容',
+    recipient_type varchar(16) not null default 'ALL' comment '发送对象类型（ALL USER USER_TYPE）',
+    recipient_ids_json json default null comment '指定用户 ID 快照',
+    user_type_ids_json json default null comment '指定用户类型 ID 快照',
+    channels_json json default null comment '发送渠道快照',
+    status char(1) not null default '1' comment '草稿状态（0正常 1关闭）',
+    lifecycle varchar(16) not null default 'DRAFT' comment '生命周期（DRAFT PUBLISHED RETRACTED）',
+    published_at datetime default null comment '发布时间',
+    retracted_at datetime default null comment '撤回时间',
+    remark varchar(500) default null comment '备注',
+    create_dept bigint(20) default null comment '创建部门',
+    create_by bigint(20) default null comment '创建者',
+    create_time datetime not null comment '创建时间',
+    update_by bigint(20) default null comment '更新者',
+    update_time datetime default null comment '更新时间',
+    primary key (notice_id),
+    key idx_notify_notice_status_time (lifecycle, status, create_time)
+) engine=innodb comment='通知中心公告';
+
+create table notify_notice_snapshot (
+    snapshot_id bigint(20) not null comment '公告快照主键',
+    notice_id bigint(20) not null comment '公告主键',
+    snapshot_version int not null default 1 comment '公告发布快照版本',
+    title_snapshot varchar(500) not null comment '标题快照',
+    content_snapshot longblob comment '内容快照',
+    notice_type varchar(10) not null comment '公告类型快照',
+    path_snapshot varchar(500) default null comment '跳转路径快照',
+    published_at datetime not null comment '快照发布时间',
+    create_by bigint(20) default null comment '创建者',
+    create_time datetime not null comment '创建时间',
+    primary key (snapshot_id),
+    unique key uk_notify_notice_snapshot_notice_version (notice_id, snapshot_version),
+    key idx_notify_notice_snapshot_time (published_at)
+) engine=innodb comment='已发布公告不可变快照';
+
+create table notify_intent (
+    intent_id bigint(20) not null comment '通知意图主键',
+    app_id varchar(64) not null comment '通知应用标识',
+    scene_code varchar(128) not null comment '业务场景编码',
+    biz_type varchar(64) default null comment '业务类型',
+    biz_id varchar(128) default null comment '业务主键',
+    template_code varchar(128) not null comment '逻辑模板编码',
+    template_params_json json default null comment '模板参数快照',
+    strategy varchar(32) not null comment '编排策略',
+    mode varchar(16) not null comment '执行模式',
+    priority int not null default 0 comment '优先级',
+    scheduled_at datetime default null comment '计划发送时间',
+    expires_at datetime default null comment '截止时间',
+    idempotency_key varchar(255) default null comment '应用幂等键',
+    status varchar(32) not null comment '聚合状态',
+    title_snapshot varchar(500) default null comment '标题快照',
+    content_snapshot longtext default null comment '内容快照',
+    path_snapshot varchar(500) default null comment '跳转路径快照',
+    metadata_json json default null comment '脱敏元数据',
+    version int not null default 0 comment '乐观锁版本',
+    create_dept bigint(20) default null comment '创建部门',
+    create_time datetime not null comment '创建时间',
+    update_time datetime default null comment '更新时间',
+    create_by bigint(20) default null comment '创建者',
+    update_by bigint(20) default null comment '更新者',
+    primary key (intent_id),
+    unique key uk_notify_intent_app_idempotency (app_id, idempotency_key),
+    key idx_notify_intent_scene_time (scene_code, create_time),
+    key idx_notify_intent_status_time (status, create_time),
+    key idx_notify_intent_biz (biz_type, biz_id)
+) engine=innodb comment='统一通知意图';
+
+create table notify_recipient (
+    recipient_id bigint(20) not null comment '接收者主键',
+    intent_id bigint(20) not null comment '通知意图主键',
+    recipient_type varchar(16) not null comment '接收者类型',
+    recipient_key varchar(128) not null comment '接收者逻辑键',
+    user_id bigint(20) default null comment '系统用户主键',
+    target_snapshot_json json default null comment '联系方式快照',
+    status varchar(32) not null comment '接收者状态',
+    suppress_reason varchar(128) default null comment '抑制原因',
+    create_dept bigint(20) default null comment '创建部门',
+    create_time datetime not null comment '创建时间',
+    update_time datetime default null comment '更新时间',
+    create_by bigint(20) default null comment '创建者',
+    update_by bigint(20) default null comment '更新者',
+    primary key (recipient_id),
+    unique key uk_notify_recipient_intent_key (intent_id, recipient_key),
+    key idx_notify_recipient_user (user_id, create_time)
+) engine=innodb comment='通知接收者快照';
+
+create table notify_delivery (
+    delivery_id bigint(20) not null comment '投递主键',
+    intent_id bigint(20) not null comment '通知意图主键',
+    recipient_id bigint(20) not null comment '接收者主键',
+    user_id bigint(20) default null comment '系统用户主键',
+    channel varchar(32) not null comment '通知渠道',
+    target_value varchar(1000) default null comment '脱敏或加密目标',
+    status varchar(32) not null comment '投递状态',
+    attempt_count int not null default 0 comment '尝试次数',
+    provider_key varchar(64) default null comment '供应商标识',
+    provider_message_id varchar(255) default null comment '供应商消息标识',
+    error_code varchar(128) default null comment '错误码',
+    error_message varchar(2000) default null comment '清洗后的错误信息',
+    accepted_at datetime default null comment '供应商接受时间',
+    delivered_at datetime default null comment '最终送达时间',
+    read_at datetime default null comment '用户阅读时间',
+    version int not null default 0 comment '乐观锁版本',
+    create_dept bigint(20) default null comment '创建部门',
+    create_time datetime not null comment '创建时间',
+    update_time datetime default null comment '更新时间',
+    create_by bigint(20) default null comment '创建者',
+    update_by bigint(20) default null comment '更新者',
+    primary key (delivery_id),
+    unique key uk_notify_delivery_recipient_channel (recipient_id, channel),
+    key idx_notify_delivery_intent (intent_id),
+    key idx_notify_delivery_status_time (status, create_time),
+    unique key uk_notify_delivery_provider_message (provider_key, channel, provider_message_id),
+    key idx_notify_delivery_provider_message (provider_message_id)
+) engine=innodb comment='用户渠道投递';
+
+create table notify_attempt (
+    attempt_id bigint(20) not null comment 'Provider 尝试主键',
+    intent_id bigint(20) not null comment '通知意图主键',
+    delivery_id bigint(20) not null comment '投递主键',
+    attempt_no int not null comment '尝试序号',
+    provider_key varchar(64) default null comment '供应商标识',
+    status varchar(32) not null comment '尝试状态',
+    provider_message_id varchar(255) default null comment '供应商消息标识',
+    error_category varchar(64) default null comment '错误分类',
+    error_code varchar(128) default null comment '错误码',
+    error_message varchar(2000) default null comment '清洗后的错误信息',
+    cost_time bigint not null default 0 comment '调用耗时毫秒',
+    create_dept bigint(20) default null comment '创建部门',
+    create_time datetime not null comment '创建时间',
+    update_time datetime default null comment '更新时间',
+    create_by bigint(20) default null comment '创建者',
+    update_by bigint(20) default null comment '更新者',
+    primary key (attempt_id),
+    unique key uk_notify_attempt_delivery_no (delivery_id, attempt_no),
+    key idx_notify_attempt_provider_time (provider_key, create_time)
+) engine=innodb comment='供应商尝试';
+
+create table notify_outbox (
+    outbox_id bigint(20) not null comment 'Outbox 主键',
+    intent_id bigint(20) not null comment '通知意图主键',
+    delivery_id bigint(20) not null comment '投递主键',
+    status varchar(32) not null comment '任务状态',
+    available_at datetime not null comment '可领取时间',
+    attempt_count int not null default 0 comment '领取次数',
+    next_attempt_at datetime default null comment '下次尝试时间',
+    lease_owner varchar(128) default null comment '租约持有者',
+    lease_until datetime default null comment '租约截止时间',
+    lease_token varchar(64) default null comment '租约 fencing token',
+    max_attempts int not null default 5 comment '最大尝试次数',
+    last_error_code varchar(128) default null comment '最近错误码',
+    last_error_message varchar(2000) default null comment '最近清洗错误',
+    create_dept bigint(20) default null comment '创建部门',
+    create_time datetime not null comment '创建时间',
+    update_time datetime default null comment '更新时间',
+    create_by bigint(20) default null comment '创建者',
+    update_by bigint(20) default null comment '更新者',
+    primary key (outbox_id),
+    unique key uk_notify_outbox_delivery (delivery_id, status),
+    key idx_notify_outbox_ready (status, available_at, next_attempt_at),
+    key idx_notify_outbox_lease (lease_until)
+) engine=innodb comment='通知可靠 Outbox';
+
+create table notify_message (
+    message_id bigint(20) not null comment '站内消息主键',
+    category varchar(32) not null comment '消息分类',
+    notice_type varchar(10) default null comment '通知类型',
+    channels_json json default null comment '发送渠道快照',
+    type varchar(32) not null comment '消息类型',
+    source varchar(32) not null comment '消息来源',
+    title varchar(255) default null comment '消息标题',
+    message varchar(1000) default null comment '消息摘要',
+    content longtext comment '消息内容快照',
+    data_json json default null comment '扩展数据',
+    path varchar(500) default null comment '跳转路径',
+    send_user_ids varchar(4000) default null comment '发送用户快照',
+    create_dept bigint(20) default null comment '创建部门',
+    create_by bigint(20) default null comment '创建者',
+    create_time datetime not null comment '创建时间',
+    update_by bigint(20) default null comment '更新者',
+    update_time datetime default null comment '更新时间',
+    primary key (message_id),
+    key idx_notify_message_category_time (category, create_time)
+) engine=innodb comment='通知中心站内消息';
+
+create table notify_message_recipient (
+    message_recipient_id bigint(20) not null comment '收件关系主键',
+    message_id bigint(20) not null comment '站内消息主键',
+    user_id bigint(20) not null comment '用户主键',
+    seen_time datetime default null comment '已见时间',
+    read_time datetime default null comment '已读时间',
+    create_dept bigint(20) default null comment '创建部门',
+    create_by bigint(20) default null comment '创建者',
+    create_time datetime not null comment '创建时间',
+    update_by bigint(20) default null comment '更新者',
+    update_time datetime default null comment '更新时间',
+    primary key (message_recipient_id),
+    unique key uk_notify_message_recipient (message_id, user_id),
+    key idx_notify_message_recipient_user (user_id, read_time, create_time)
+) engine=innodb comment='通知中心收件人及阅读状态';

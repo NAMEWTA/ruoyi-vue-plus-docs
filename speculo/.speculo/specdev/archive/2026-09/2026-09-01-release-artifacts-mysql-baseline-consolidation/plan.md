@@ -128,7 +128,7 @@ ruoyi-vue-plus-namewta/
    - `application-dev.yml`、`application-prod.yml` 的 SQL 导航注释。
 3. 更新项目 Skill 和规范：
    - `<Path>.agents/skills/engineering-standards/</Path>`；
-   - `<Path>.agents/skills/ruoyi-backend-development/</Path>`；
+   - `<Path>.agents/skills/namewta-fullstack-development/</Path>`；
    - `<Path>.agents/skills/deploy-namewta-environment/</Path>`；
    - `<Path>.agents/skills/ruoyi-workflow-module-guide/</Path>`。
 4. 规范变化必须明确：MySQL-only、六文件直接编辑、`50/60` 分类、fresh/upgrade 分流、非 MySQL 方言退出、release-artifacts 唯一 owner。

@@ -333,12 +333,11 @@ test('MySQL initialization targets one protected ry-namewta database', () => {
     '40-ry-ai.sql',
     '50-namewta-ddl.sql',
     '60-namewta-dml.sql',
-    '61-third-dml.sql',
-  ];
+];
 
   assert.match(script, /database.*== ry-namewta/);
   assert.match(script, /refusing existing database/);
-  assert.match(script, /EXPECTED_TABLES=116/);
+  assert.match(script, /EXPECTED_TABLES=125/);
   assert.match(script, /--default-character-set=utf8mb4/);
   assert.match(script, /access_policy='0'/);
   assert.match(script, /config_key='minio' THEN 'Y' ELSE 'N'/);
@@ -371,40 +370,48 @@ test('reserved ingress routes cannot be used as an app prefix', () => {
   }
 });
 
-test('add_app.py registers a buildable app across compose and both LBs', () => {
+const pythonExecutable = process.platform === 'win32' ? 'python' : 'python3';
+let pythonAvailable = true;
+try {
+  execFileSync(pythonExecutable, ['--version'], { stdio: 'ignore' });
+} catch {
+  pythonAvailable = false;
+}
+
+(pythonAvailable ? test : test.skip)('add_app.py registers a buildable app across compose and both LBs', () => {
   const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'namewta-release-test-'));
   try {
     fs.cpSync(releaseRoot, path.join(tempRoot, 'release-artifacts'), { recursive: true });
-    const appRoot = path.join(tempRoot, 'plus-ui-namewta/apps/client-web');
+    const appRoot = path.join(tempRoot, 'plus-ui-namewta/apps/sample-web');
     fs.mkdirSync(appRoot, { recursive: true });
     fs.writeFileSync(
       path.join(appRoot, 'package.json'),
-      '{"name":"@namewta/client-web","scripts":{"build:dev":"vite","build:prod":"vite"}}\n',
+      '{"name":"@namewta/sample-web","scripts":{"build:dev":"vite","build:prod":"vite"}}\n',
     );
 
-    execFileSync('python3', [
+    execFileSync(pythonExecutable, [
       path.join(tempRoot, 'release-artifacts/skills/ruoyi-namewta-nginx-config/scripts/add_app.py'),
       '--repo-root', tempRoot,
-      '--app', 'client-web',
-      '--prefix', 'client',
+      '--app', 'sample-web',
+      '--prefix', 'sample',
       '--port', '41081',
     ], { stdio: 'pipe' });
 
     const compose = read('docker/docker-compose-frontend.yml', path.join(tempRoot, 'release-artifacts'));
-    assert.match(compose, /^  namewta-nginx-client-web:$/m);
-    assert.match(compose, /CLIENT_WEB_PREFIX/);
-    assert.match(compose, /CLIENT_WEB_PORT:-41081/);
+    assert.match(compose, /^  namewta-nginx-sample-web:$/m);
+    assert.match(compose, /SAMPLE_WEB_PREFIX/);
+    assert.match(compose, /SAMPLE_WEB_PORT:-41081/);
     for (const filename of ['nginx-lb-http.conf.template', 'nginx-lb-tls.conf.template']) {
       const lb = read(
         `docker/frontend/nginx/lb/${filename}`,
         path.join(tempRoot, 'release-artifacts'),
       );
-      assert.match(lb, /upstream app_client_web/);
-      assert.match(lb, /location \/\$\{APP_CLIENT_WEB_PREFIX\}\//);
+      assert.match(lb, /upstream app_sample_web/);
+      assert.match(lb, /location \/\$\{APP_SAMPLE_WEB_PREFIX\}\//);
     }
     assert.ok(fs.existsSync(path.join(
       tempRoot,
-      'release-artifacts/docker/frontend/nginx/apps/nginx-client-web.conf.template',
+      'release-artifacts/docker/frontend/nginx/apps/nginx-sample-web.conf.template',
     )));
   } finally {
     fs.rmSync(tempRoot, { recursive: true, force: true });

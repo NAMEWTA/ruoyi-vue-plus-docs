@@ -45,6 +45,6 @@
 
 ## 验证
 
-- layered 模块：`node .agents/skills/ruoyi-backend-development/scripts/validate-module-mode.mjs <module-path> --mode layered`，再运行受影响 Maven 测试和构建。
+- layered 模块：`node .agents/skills/namewta-fullstack-development/scripts/validate-module-mode.mjs <module-path> --mode layered`，再运行受影响 Maven 测试和构建。
 - classic 模块：确认没有新增 layered 强制目录；按已有 ServiceImpl、Mapper/XML、权限和事务合同验证。
 - 任何模块：交付报告列出实际命令、工作目录、退出码、跳过原因和未验证风险。

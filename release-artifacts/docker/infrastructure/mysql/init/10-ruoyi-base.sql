@@ -225,7 +225,6 @@ insert into sys_menu values(1761400000000000103, '部门管理', 176140000000000
 insert into sys_menu values(1761400000000000104, '岗位管理', 1761400000000000001, 5, 'post', 'system/post/index', '', 'N', 'Y', 'C', '0', '0', 'system:post:list', 'post', '', '', 1761000000000000103, 1761100000000000001, sysdate(), null, null, '岗位管理菜单');
 insert into sys_menu values(1761400000000000105, '字典管理', 1761400000000000001, 6, 'dict', 'system/dict/index', '', 'N', 'Y', 'C', '0', '0', 'system:dict:list', 'dict', '', '', 1761000000000000103, 1761100000000000001, sysdate(), null, null, '字典管理菜单');
 insert into sys_menu values(1761400000000000106, '参数设置', 1761400000000000001, 7, 'config', 'system/config/index', '', 'N', 'Y', 'C', '0', '0', 'system:config:list', 'edit', '', '', 1761000000000000103, 1761100000000000001, sysdate(), null, null, '参数设置菜单');
-insert into sys_menu values(1761400000000000107, '通知公告', 1761400000000000001, 8, 'notice', 'system/notice/index', '', 'N', 'Y', 'C', '0', '0', 'system:notice:list', 'message', '', '', 1761000000000000103, 1761100000000000001, sysdate(), null, null, '通知公告菜单');
 insert into sys_menu values(1761400000000000108, '日志管理', 1761400000000000001, 9, 'log', '', '', 'N', 'Y', 'M', '0', '0', '', 'log', '', '', 1761000000000000103, 1761100000000000001, sysdate(), null, null, '日志管理菜单');
 insert into sys_menu values(1761400000000000109, '在线用户', 1761400000000000002, 1, 'online', 'monitor/online/index', '', 'N', 'Y', 'C', '0', '0', 'monitor:online:list', 'online', '', '', 1761000000000000103, 1761100000000000001, sysdate(), null, null, '在线用户菜单');
 insert into sys_menu values(1761400000000000113, '缓存监控', 1761400000000000002, 5, 'cache', 'monitor/cache/index', '', 'N', 'Y', 'C', '0', '0', 'monitor:cache:list', 'redis', '', '', 1761000000000000103, 1761100000000000001, sysdate(), null, null, '缓存监控菜单');
@@ -685,56 +684,7 @@ create table sys_login_info (
 
 
 -- ----------------------------
--- 17、通知公告表
--- ----------------------------
-create table sys_notice (
-    notice_id         bigint(20)      not null                   comment '公告ID',
-    notice_title      varchar(50)     not null                   comment '公告标题',
-    notice_type       char(1)         not null                   comment '公告类型（1通知 2公告）',
-    notice_content    longblob        default null               comment '公告内容',
-    status            char(1)         default '0'                comment '公告状态（0正常 1关闭）',
-    create_dept       bigint(20)      default null               comment '创建部门',
-    create_by         bigint(20)      default null               comment '创建者',
-    create_time       datetime                                   comment '创建时间',
-    update_by         bigint(20)      default null               comment '更新者',
-    update_time       datetime                                   comment '更新时间',
-    remark            varchar(255)    default null               comment '备注',
-    primary key (notice_id)
-) engine=innodb comment = '通知公告表';
-
--- ----------------------------
--- 初始化-公告信息表数据
--- ----------------------------
-insert into sys_notice values(1761800000000000001, '温馨提醒：2018-07-01 新版本发布啦', '2', '新版本内容', '0', 1761000000000000103, 1761100000000000001, sysdate(), null, null, '管理员');
-insert into sys_notice values(1761800000000000002, '维护通知：2018-07-01 系统凌晨维护', '1', '维护内容', '0', 1761000000000000103, 1761100000000000001, sysdate(), null, null, '管理员');
-
-
--- ----------------------------
--- 18、消息记录表
--- ----------------------------
-create table sys_message (
-    message_id        bigint(20)      not null                   comment '消息ID',
-    category          varchar(20)     not null                   comment '消息分组(system/notice/workflow)',
-    type              varchar(20)     not null                   comment '消息类型',
-    source            varchar(20)     not null                   comment '消息来源',
-    title             varchar(100)    default ''                 comment '标题',
-    message           varchar(500)    default ''                 comment '摘要消息',
-    content           longtext                                   comment '详细内容',
-    data_json         longtext                                   comment '扩展数据JSON',
-    path              varchar(500)    default null               comment '前端跳转路径',
-    send_user_ids     varchar(2000)   not null default '0'       comment '目标用户ID串，0表示全局',
-    create_dept       bigint(20)      default null               comment '创建部门',
-    create_by         bigint(20)      default null               comment '创建者',
-    create_time       datetime                                   comment '创建时间',
-    update_by         bigint(20)      default null               comment '更新者',
-    update_time       datetime                                   comment '更新时间',
-    primary key (message_id),
-    key idx_sys_message_category_time (category, create_time)
-) engine=innodb comment = '消息记录表';
-
-
--- ----------------------------
--- 19、代码生成业务表
+-- 17、代码生成业务表
 -- ----------------------------
 create table gen_table (
     table_id          bigint(20)      not null                   comment '编号',

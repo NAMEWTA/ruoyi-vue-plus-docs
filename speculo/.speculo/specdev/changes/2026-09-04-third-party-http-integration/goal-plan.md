@@ -52,11 +52,11 @@ ready_for_execution: false
 
 每个 Ticket 开始时，Lead 必须确认 implementation owner 已完整读取该 Ticket 的“必须加载的 Skill 与工程基线”小节；该小节是执行前置条件，不是建议。全局最低集合为：
 
-- backend T-01 至 T-09：<Path>.agents/skills/engineering-standards/SKILL.md</Path>、<Path>.agents/skills/ruoyi-backend-development/SKILL.md</Path>、<Path>.agents/skills/ruoyi-module-guide/SKILL.md</Path>、<Path>.agents/skills/ruoyi-common-modules-guide/SKILL.md</Path>；T-01/T-07 另加 <Path>.agents/skills/java-api-compatibility/SKILL.md</Path>。
-- frontend T-10/T-11：<Path>.agents/skills/engineering-standards/SKILL.md</Path>、<Path>.agents/skills/plus-ui-frontend-conventions/SKILL.md</Path>；T-12 另加 backend/module guide 以校验 SQL/menu/permission。
+- backend T-01 至 T-09：<Path>.agents/skills/engineering-standards/SKILL.md</Path>、<Path>.agents/skills/namewta-fullstack-development/SKILL.md</Path>、<Path>.agents/skills/ruoyi-module-guide/SKILL.md</Path>、<Path>.agents/skills/ruoyi-common-modules-guide/SKILL.md</Path>；T-01/T-07 另加 <Path>.agents/skills/java-api-compatibility/SKILL.md</Path>。
+- frontend T-10/T-11：<Path>.agents/skills/engineering-standards/SKILL.md</Path>、<Path>.agents/skills/namewta-fullstack-development/SKILL.md</Path>；T-12 另加 backend/module guide 以校验 SQL/menu/permission。
 - T-13：以上全部 Skill，用于只读事实同步和全栈 Gate。
 
-所有 backend owner 必须先读取 <Path>.agents/skills/engineering-standards/references/project/00-project-profile.md</Path>、<Path>.agents/skills/engineering-standards/references/project/01-module-map.md</Path>、<Path>.agents/skills/engineering-standards/references/project/02-decisions-and-exceptions.md</Path>、<Path>.agents/skills/engineering-standards/references/project/03-backend-module-modes.md</Path>；所有 frontend owner 必须读取 <Path>.agents/skills/plus-ui-frontend-conventions/references/architecture.md</Path>、<Path>.agents/skills/plus-ui-frontend-conventions/references/naming-and-layout.md</Path>、<Path>.agents/skills/plus-ui-frontend-conventions/references/implementation.md</Path>。命中的 persistence、CRUD/API、security、Vue、Browser、permission 和 testing references 由 Ticket 小节逐项指定。
+所有 backend owner 必须先读取 <Path>.agents/skills/engineering-standards/references/project/00-project-profile.md</Path>、<Path>.agents/skills/engineering-standards/references/project/01-module-map.md</Path>、<Path>.agents/skills/engineering-standards/references/project/02-decisions-and-exceptions.md</Path>、<Path>.agents/skills/engineering-standards/references/project/03-backend-module-modes.md</Path>；所有 frontend owner 必须读取 <Path>.agents/skills/namewta-fullstack-development/references/frontend/architecture.md</Path>、<Path>.agents/skills/namewta-fullstack-development/references/frontend/naming-and-layout.md</Path>、<Path>.agents/skills/namewta-fullstack-development/references/frontend/implementation.md</Path>。命中的 persistence、CRUD/API、security、Vue、Browser、permission 和 testing references 由 Ticket 小节逐项指定。
 
 执行不可放宽的最低要求：
 

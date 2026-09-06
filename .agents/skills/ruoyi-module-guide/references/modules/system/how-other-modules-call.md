@@ -38,8 +38,8 @@ public class ExampleService {
 
 | 调用方 | POM | 注入 | 代表路径 |
 |---|---|---|---|
-| workflow | `ruoyi-modules/ruoyi-workflow/pom.xml` 依赖 `ruoyi-api`，无 `ruoyi-system` | `UserService`、`TaskAssigneeService`、`DeptService`、`RoleService`、`PostService`、`MessageService`；部分类用 `DictService` | `ruoyi-modules/ruoyi-workflow/src/main/java/org/dromara/workflow/service/impl/FlwTaskServiceImpl.java`（`UserService`）；`.../FlwTaskAssigneeServiceImpl.java`（`TaskAssigneeService` + User/Dept/Role/Post）；`.../FlwCommonServiceImpl.java`（`MessageService`）；`ruoyi-modules/ruoyi-workflow/src/main/java/org/dromara/workflow/rule/SpelRuleComponent.java`（`DeptService.selectDeptLeaderById`）；另有 `listener/WorkflowGlobalListener.java`、`listener/WorkflowSideEffectListener.java`、`liteflow/operation/TaskOpNotifyComponent.java`、`service/impl/FlwChartExtServiceImpl.java`、`service/impl/FlwNodeExtServiceImpl.java` |
-| demo | `ruoyi-modules/ruoyi-demo/pom.xml` 依赖 `ruoyi-api` | `MessageService` | `ruoyi-modules/ruoyi-demo/src/main/java/org/dromara/demo/controller/WebSocketController.java`：`publishAll` / `publishMessage` |
+| workflow | `ruoyi-modules/ruoyi-workflow/pom.xml` 依赖 `ruoyi-api`，无 `ruoyi-system` | `UserService`、`TaskAssigneeService`、`DeptService`、`RoleService`、`PostService`、`NotificationApplicationService`；部分类用 `DictService` | `ruoyi-modules/ruoyi-workflow/src/main/java/org/dromara/workflow/service/impl/FlwTaskServiceImpl.java`（`UserService`）；`.../FlwTaskAssigneeServiceImpl.java`（`TaskAssigneeService` + User/Dept/Role/Post）；流程通知统一走 `NotificationApplicationService`；`.../SpelRuleComponent.java`（`DeptService.selectDeptLeaderById`） |
+| demo | `ruoyi-modules/ruoyi-demo/pom.xml` 依赖 `ruoyi-api` | `PushHelper` 仅用于实时演示 | `ruoyi-modules/ruoyi-demo/src/main/java/org/dromara/demo/controller/WebSocketController.java`：在线广播不落通知业务数据 |
 | ai | 使用 `LoginUser` 模型 | 不注入 system Service | `ruoyi-modules/ruoyi-ai/src/main/java/org/dromara/ai/controller/SnailAiController.java` |
 | job / gen | 无 `org.dromara.system` 业务调用 | — | gen 仅生成器配置默认包名 `org.dromara.system`，不是运行时调用 |
 | common-translation | 依赖 `ruoyi-api` | `UserService`、`DeptService`、`OssService`、`DictService` | `ruoyi-common/ruoyi-common-translation/src/main/java/org/dromara/common/translation/core/impl/UserNameTranslationImpl.java`（`selectUserNameById`）；同目录 `NicknameTranslationImpl.java`、`DeptNameTranslationImpl.java`、`OssUrlTranslationImpl.java`、`DictTypeTranslationImpl.java` |
@@ -54,13 +54,13 @@ public class ExampleService {
 
 ## 代表调用（复制前先读源码）
 
-抄送人解析：`FlwTaskServiceImpl` 调 `userService.selectListByIds(...)`，再交给 workflow 自己的 `IFlwCommonService.sendMessage`。`FlwCommonServiceImpl` 注入 `MessageService` 发推送。
+抄送人解析：`FlwTaskServiceImpl` 调 `userService.selectListByIds(...)`，再交给 workflow 的通知适配器构造 `NotificationCommand`；持久化、幂等和渠道投递统一由 `NotificationApplicationService` 负责。
 
 办理人查询：`FlwTaskAssigneeServiceImpl.fetchTaskAssigneeData` 按类型调 `taskAssigneeService.selectUsers/Roles/Depts/PostsByTaskAssigneeList`。
 
 部门负责人：`SpelRuleComponent.selectDeptLeaderById` → `deptService.selectDeptLeaderById`。
 
-消息推送：`WebSocketController.send` → `userId == null` 时 `messageService.publishAll(payload)`，否则 `publishMessage(List.of(userId), payload)`。
+实时推送：`WebSocketController.send` → `userId == null` 时 `PushHelper.publishAll(payload)`，否则 `PushHelper.publishMessage(List.of(userId), payload)`；这条路径不替代通知业务合同。
 
 用户名翻译：`UserNameTranslationImpl.translation` → `userService.selectUserNameById`；批量走 `selectListByIds`。
 
@@ -72,7 +72,7 @@ public class ExampleService {
 |---|---|---|
 | `SysLoginService` | `ruoyi-admin/src/main/java/org/dromara/web/service/SysLoginService.java` | `ISysPermissionService`、`ISysSocialService`、`ISysRoleService`、`ISysDeptService`、`ISysPostService`、`SysUserMapper` |
 | `SysRegisterService` | `ruoyi-admin/src/main/java/org/dromara/web/service/SysRegisterService.java` | `ISysUserService`、`ISysClientService`、`ISysUserTypeService`、`ISysUserTypeRelService`。注册时按客户端 `userTypeId` 写入登录域关系 |
-| `AuthController` | `ruoyi-admin/src/main/java/org/dromara/web/controller/AuthController.java` | `ISysClientService`、`ISysSocialService`、`MessageService`；`@RequestMapping("/auth")` |
+| `AuthController` | `ruoyi-admin/src/main/java/org/dromara/web/controller/AuthController.java` | `ISysClientService`、`ISysSocialService`；`@RequestMapping("/auth")` |
 | `PasswordAuthStrategy`（Sms/Email/Social/Xcx 同类） | `ruoyi-admin/src/main/java/org/dromara/web/service/impl/PasswordAuthStrategy.java` | `SysUserMapper`、`ClientUserTypeAccessService`；读取 `SysUser` / `SysUserVo` / `SysClientVo`。登录成功前调 `clientUserTypeAccessService.requireLoginAccess(userId, client)` |
 
 登录准入必须走 `ClientUserTypeAccessService.requireLoginAccess(userId, client)`（admin 策略内）。权限与菜单查询必须带客户端主键。
@@ -86,7 +86,7 @@ public class ExampleService {
 | 角色名 / 岗位名 | `RoleService` / `PostService` |
 | 参数值 | `ConfigService`（外部使用未证实，先读接口再决定） |
 | OSS URL | `OssService` |
-| 推送/广播 | `MessageService` |
+| 业务通知 | `NotificationApplicationService`；实时广播才使用 `PushHelper` |
 | 流程办理人候选 | `TaskAssigneeService` |
 | 字典标签/值 | `DictService`（common SPI） |
 | 会话身份 | `LoginUser`（不要引入 `SysUser`） |

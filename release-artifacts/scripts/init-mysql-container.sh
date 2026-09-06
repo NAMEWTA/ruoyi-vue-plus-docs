@@ -7,8 +7,8 @@ RELEASE_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 ENV_FILE="${RELEASE_ROOT}/.env"
 SQL_DIR="${RELEASE_ROOT}/docker/infrastructure/mysql/init"
 MYSQL_CONTAINER="namewta-data-mysql"
-# The ordered 10/20/30/40/50/60/61 baseline currently creates 116 tables.
-EXPECTED_TABLES=116
+# The ordered 10/20/30/40/50/60 baseline currently creates 125 tables.
+EXPECTED_TABLES=125
 
 readonly SQL_FILES=(
   "10-ruoyi-base.sql"
@@ -17,7 +17,6 @@ readonly SQL_FILES=(
   "40-ry-ai.sql"
   "50-namewta-ddl.sql"
   "60-namewta-dml.sql"
-  "61-third-dml.sql"
 )
 
 info() { printf '[INFO] %s\n' "$*" >&2; }
@@ -29,7 +28,7 @@ Usage:
   init-mysql-container.sh [--env-file PATH] [--sql-dir PATH] [--container NAME]
 
 Creates the single ry-namewta database in an existing MySQL container, imports
-the seven ordered SQL files, creates the application account, and updates the
+the six ordered SQL files, creates the application account, and updates the
 runtime MinIO rows. The command refuses an existing database or application
 account and removes only objects created by a failed run.
 EOF

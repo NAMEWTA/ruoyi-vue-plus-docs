@@ -58,7 +58,7 @@ Sources: `US-002`, `US-003`, `US-004`, `AC-003`, `AC-004`, `AC-005`, `AC-010`, `
 The implementer must load and apply all of these before changing files:
 
 - `<Path>.agents/skills/engineering-standards/SKILL.md</Path>`
-- `<Path>.agents/skills/ruoyi-backend-development/SKILL.md</Path>`
+- `<Path>.agents/skills/namewta-fullstack-development/SKILL.md</Path>`
 - `<Path>.agents/skills/ruoyi-module-guide/SKILL.md</Path>`
 - `<Path>.agents/skills/ruoyi-common-modules-guide/SKILL.md</Path>`
 

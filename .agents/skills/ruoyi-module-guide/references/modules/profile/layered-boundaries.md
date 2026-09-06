@@ -1,6 +1,6 @@
 # Profile 试点边界
 
-五层调用规则、DAO/Mapper 职责、`domain` 分类、事务和中文 Javadoc 由 `engineering-standards` 与 `ruoyi-backend-development` 统一维护。本页只记录 Profile 的业务隔离和已确认的实现形状，避免把通用规范复制成另一份。
+五层调用规则、DAO/Mapper 职责、`domain` 分类、事务和中文 Javadoc 由 `engineering-standards` 与 `namewta-fullstack-development` 统一维护。本页只记录 Profile 的业务隔离和已确认的实现形状，避免把通用规范复制成另一份。
 
 ## 子域隔离
 

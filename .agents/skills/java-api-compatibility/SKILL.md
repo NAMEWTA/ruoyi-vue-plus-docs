@@ -1,6 +1,6 @@
 ---
 name: java-api-compatibility
-description: 为 ruoyi-vue-plus-docs 的 Java 公共 API 提供兼容演进与弃用标记流程。修改 ruoyi-api、公开 Service/SPI、共享 DTO/record、扩展点、旧方法、替代接口、方法重命名或计划移除 API 时使用；重点规范 @Deprecated(since = "6.0.0", forRemoval = false)、迁移 Javadoc、兼容桥接、调用方盘点和契约验证。
+description: 修改 ruoyi-api 或其他公开 Java Service、SPI、DTO、扩展点并涉及兼容演进时使用。
 ---
 
 # Java API 兼容演进

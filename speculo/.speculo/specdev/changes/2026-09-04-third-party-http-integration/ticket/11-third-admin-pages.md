@@ -59,8 +59,8 @@ shared_path_owners:
 
 ## 2.1 必须加载的 Skill 与工程基线
 
-- **必须加载：** <Path>.agents/skills/engineering-standards/SKILL.md</Path>、<Path>.agents/skills/plus-ui-frontend-conventions/SKILL.md</Path>。
-- **必须先读的参考：** <Path>.agents/skills/engineering-standards/references/project/00-project-profile.md</Path>、<Path>.agents/skills/engineering-standards/references/project/01-module-map.md</Path>、<Path>.agents/skills/plus-ui-frontend-conventions/references/architecture.md</Path>、<Path>.agents/skills/plus-ui-frontend-conventions/references/naming-and-layout.md</Path>、<Path>.agents/skills/plus-ui-frontend-conventions/references/implementation.md</Path>、<Path>.agents/skills/plus-ui-frontend-conventions/references/crud-resource-slices.md</Path>、<Path>.agents/skills/plus-ui-frontend-conventions/references/permission-routing.md</Path>。
+- **必须加载：** <Path>.agents/skills/engineering-standards/SKILL.md</Path>、<Path>.agents/skills/namewta-fullstack-development/SKILL.md</Path>。
+- **必须先读的参考：** <Path>.agents/skills/engineering-standards/references/project/00-project-profile.md</Path>、<Path>.agents/skills/engineering-standards/references/project/01-module-map.md</Path>、<Path>.agents/skills/namewta-fullstack-development/references/frontend/architecture.md</Path>、<Path>.agents/skills/namewta-fullstack-development/references/frontend/naming-and-layout.md</Path>、<Path>.agents/skills/namewta-fullstack-development/references/frontend/implementation.md</Path>、<Path>.agents/skills/namewta-fullstack-development/references/frontend/crud-resource-slices.md</Path>、<Path>.agents/skills/namewta-fullstack-development/references/frontend/permission-routing.md</Path>。
 - **目录与代码最低要求：** web-domain-third 只放 Vue 页面、局部状态、runtime port 和 manifest，目录与 domain 资源一一对应；页面组件使用既有命名/布局和显式 component key，公共逻辑提取到有真实 owner 的 composable，不创建 helpers/common 垃圾桶。测试与被测模块相邻，浏览器测试使用 e2e/**/*.spec.ts。
 - **交互与安全要求：** 表格/表单/分页/加载/空态/错误态遵守现有 CRUD 资源切片；权限用 v-hasPermi 等既有机制，后端仍是权威。secret 输入提交即清空，敏感值不得进入 URL、store、DOM、快照或通知。
 - **执行停止条件：** 页面直接请求后端、跨 domain deep import、catch-all manifest、把完整 raw body 做详情展示、隐藏后端 403、或以视觉通过替代类型/权限测试时立即停止。

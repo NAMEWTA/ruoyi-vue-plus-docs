@@ -61,8 +61,8 @@ shared_path_owners: []
 
 ## 2.1 必须加载的 Skill 与工程基线
 
-- **必须加载：** <Path>.agents/skills/engineering-standards/SKILL.md</Path>、<Path>.agents/skills/ruoyi-backend-development/SKILL.md</Path>、<Path>.agents/skills/ruoyi-module-guide/SKILL.md</Path>、<Path>.agents/skills/ruoyi-common-modules-guide/SKILL.md</Path>。
-- **必须先读的参考：** <Path>.agents/skills/engineering-standards/references/project/00-project-profile.md</Path>、<Path>.agents/skills/engineering-standards/references/project/01-module-map.md</Path>、<Path>.agents/skills/engineering-standards/references/project/03-backend-module-modes.md</Path>、<Path>.agents/skills/ruoyi-backend-development/references/framework-usage.md</Path>、<Path>.agents/skills/ruoyi-backend-development/references/security-and-data.md</Path>、<Path>.agents/skills/ruoyi-common-modules-guide/SKILL.md</Path>。
+- **必须加载：** <Path>.agents/skills/engineering-standards/SKILL.md</Path>、<Path>.agents/skills/namewta-fullstack-development/SKILL.md</Path>、<Path>.agents/skills/ruoyi-module-guide/SKILL.md</Path>、<Path>.agents/skills/ruoyi-common-modules-guide/SKILL.md</Path>。
+- **必须先读的参考：** <Path>.agents/skills/engineering-standards/references/project/00-project-profile.md</Path>、<Path>.agents/skills/engineering-standards/references/project/01-module-map.md</Path>、<Path>.agents/skills/engineering-standards/references/project/03-backend-module-modes.md</Path>、<Path>.agents/skills/namewta-fullstack-development/references/backend/framework-usage.md</Path>、<Path>.agents/skills/namewta-fullstack-development/references/backend/security-and-data.md</Path>、<Path>.agents/skills/ruoyi-common-modules-guide/SKILL.md</Path>。
 - **目录与代码最低要求：** policy 作为 Pipeline 的明确 stage/support，不让 Controller/UseCase 直连 Redisson；配置/错误分类和 limiter key 由 Service 端口封装。测试与实现遵守 layered 五层、GET/POST、@Log/@DSTransactional 和准确 common Redis FQN。
 - **韧性要求：** timeout 必须有界；只有显式幂等 endpoint 才允许固定次数重试；Provider/Endpoint gate 均在发送前，permit 在 finally 释放，quota 不得被误作阻断策略。
 - **执行停止条件：** 无限重试/动态脚本、非幂等重试、Redis fail-open、发送后才限流、permit 泄漏、或把熔断/自动降级作为默认实现时立即停止。

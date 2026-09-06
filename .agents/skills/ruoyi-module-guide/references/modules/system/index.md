@@ -9,6 +9,7 @@
 | 选择 `ruoyi-api`、HTTP 前缀、事件和模块结构 | [capability-map.md](capability-map.md) |
 | 给新业务模块接用户、部门、OSS、消息或办理人 | [how-other-modules-call.md](how-other-modules-call.md) |
 | 处理用户、角色、菜单、字典、配置、OSS、消息或登录域 | [domains.md](domains.md) |
+| 修改字典类型、字典值或前端回显 | [dictionary-management.md](dictionary-management.md) |
 
 ## 允许的调用面
 

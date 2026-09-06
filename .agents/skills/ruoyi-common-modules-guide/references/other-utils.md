@@ -6,7 +6,7 @@
 
 依赖哪个 artifact 见 [module-map.md](module-map.md)。
 
-新业务层级约束见后端[框架公共入口与分层用法](../../ruoyi-backend-development/references/framework-usage.md)：优先调用本页列出的项目入口，不直接复制底层实现。`RedisUtils` 内部已经封装 `RedissonClient`；只有明确的 Store/Provider owner 需要原子、锁或队列特性时才允许直接使用 Redisson。`OssFactory`/`OssClient` 是基础设施入口，业务 Service 优先依赖 `ruoyi-api` 的 OSS 合同；通知统一走 `NotifyClient`/`NotifyDispatcher`，不要直连短信或邮件渠道。
+新业务层级约束见后端[框架公共入口与分层用法](../../namewta-fullstack-development/references/backend/framework-usage.md)：优先调用本页列出的项目入口，不直接复制底层实现。`RedisUtils` 内部已经封装 `RedissonClient`；只有明确的 Store/Provider owner 需要原子、锁或队列特性时才允许直接使用 Redisson。`OssFactory`/`OssClient` 是基础设施入口，业务 Service 优先依赖 `ruoyi-api` 的 OSS 合同；通知统一走 `NotifyClient`/`NotifyDispatcher`，不要直连短信或邮件渠道。
 
 ## 目录
 

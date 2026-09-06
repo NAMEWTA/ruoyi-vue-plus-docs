@@ -26,7 +26,7 @@ status: done
 本次收尾修改限定为：
 
 - `<Path>.agents/skills/engineering-standards/SKILL.md</Path>`
-- `<Path>.agents/skills/plus-ui-frontend-conventions/SKILL.md</Path>`
+- `<Path>.agents/skills/namewta-fullstack-development/SKILL.md</Path>`
 - `<Path>{roots.state}/specdev/changes/2026-08-21-module-knowledge-skills/</Path>`
 - `<Path>{roots.state}/specdev/status.json</Path>`
 

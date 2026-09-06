@@ -61,7 +61,7 @@ Sources: `US-001`, `US-005`, `US-006`, `US-009`, `AC-003`, `AC-006`, `AC-007`, `
 The implementer must load:
 
 - `<Path>.agents/skills/engineering-standards/SKILL.md</Path>`
-- `<Path>.agents/skills/ruoyi-backend-development/SKILL.md</Path>`
+- `<Path>.agents/skills/namewta-fullstack-development/SKILL.md</Path>`
 - `<Path>.agents/skills/ruoyi-module-guide/SKILL.md</Path>`
 - `<Path>.agents/skills/ruoyi-common-modules-guide/SKILL.md</Path>`
 - `<Path>.agents/skills/java-api-compatibility/SKILL.md</Path>`

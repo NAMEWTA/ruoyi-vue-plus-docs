@@ -16,7 +16,6 @@ const sqlFiles = [
   '40-ry-ai.sql',
   '50-namewta-ddl.sql',
   '60-namewta-dml.sql',
-  '61-third-dml.sql',
 ];
 
 function read(relativePath) {
@@ -52,12 +51,12 @@ test('当前治理声明直接维护基座并要求按标签升级已有库', ()
     'docs/namewta-enhancements.md',
     'docs/upstream/customization-map.md',
     'release-artifacts/README.md',
-    '.agents/skills/ruoyi-backend-development/SKILL.md',
+    '.agents/skills/namewta-fullstack-development/SKILL.md',
     '.agents/skills/engineering-standards/references/java/persistence-transactions-and-ddl.md',
     '.agents/skills/deploy-namewta-environment/references/upgrade-and-rollback.md',
   ].map(read).join('\n');
 
-  assert.match(currentAuthority, /七份.*完整基座/s);
+  assert.match(currentAuthority, /六份.*完整基座/s);
   assert.match(currentAuthority, /直接修改/);
   assert.match(currentAuthority, /源 Git Tag/);
   assert.match(currentAuthority, /目标 Git Tag/);
@@ -73,14 +72,14 @@ test('CI 复用受保护初始化器并把唯一 SQL 根传给后端测试', () 
   assert.match(external, /init-mysql-container\.sh/);
   assert.match(external, /namewta\.sql\.root/);
   assert.match(external, /mysql:8\.4\.9/);
-  assert.match(read('release-artifacts/scripts/init-mysql-container.sh'), /EXPECTED_TABLES=116/);
+  assert.match(read('release-artifacts/scripts/init-mysql-container.sh'), /EXPECTED_TABLES=125/);
   assert.match(workflow, /release-contracts:/);
   assert.match(workflow, /verify-release\.sh/);
   assert.match(verifier, /tests\/\*\.test\.mjs/);
 });
 
 test('私密发布报告目录保持未跟踪', () => {
-  execFileSync('git', ['check-ignore', '--quiet', '--', 'temp/relase/deployment.md'], {
+  execFileSync('git', ['check-ignore', '--quiet', '--', 'temp/release/deployment.md'], {
     cwd: workspaceRoot,
   });
 });

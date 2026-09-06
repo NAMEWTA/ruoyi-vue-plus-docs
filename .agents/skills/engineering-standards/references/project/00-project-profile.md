@@ -12,7 +12,7 @@
 - `.agents/skills/**`、`AGENTS.md`：项目开发 Skill 只在父工作区集中维护；两个产品子仓库不保留 `.claude` 或 `.codex` Skill/Agent 副本。
 - `docs/upstream/customization-map.md`：NAMEWTA 相对上游的认证、权限、Client、菜单、SQL 和前端契约权威清单。
 - `plus-ui-namewta/package.json`、`pnpm-workspace.yaml`、`pnpm-lock.yaml`、各包 `package.json`/`tsconfig.json`：Vue 3、TypeScript 6、Vite 8、Pinia 4、pnpm 10、Node `>=20.19.0` 的多 App monorepo。
-- `plus-ui-namewta/apps/admin-web/src/main.ts`：当前唯一可构建和部署的浏览器 App；`apps/client-web`、`mobile-web`、`miniapp-taro` 为 README-only 占位。
+- `plus-ui-namewta/apps/admin-web/src/main.ts`：当前唯一可构建和部署的浏览器 App；其他未激活终端仅保留 README 占位。
 - `plus-ui-namewta/packages/{domains,web-domains,platform,adapters,web-kit}/**`：headless domain、Vue Web 表现、平台端口、运行时适配器与共享 Web 机制的依赖方向。
 - `plus-ui-namewta/packages/api-contracts/**`、`tooling/openapi/**`：生成 transport、不可变快照、来源与漂移检查；domain model 由各领域独立拥有。
 - `plus-ui-namewta/tooling/architecture/**`：使用 AST/SFC/YAML 结构化检查工作区、公开入口、依赖方向、终端纯度、占位目录和基线漂移。

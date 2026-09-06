@@ -1,6 +1,6 @@
 # Vue 资源纵切片模板
 
-本目录只生成单个业务资源的 domain 与 web-domain 切片。实现前先读取 `plus-ui-frontend-conventions` Skill、工程规范的前端 CRUD 规则，并对照同 owner 的成熟源码及当前后端 Controller/BO/VO/OpenAPI 合同；模板不是脱离项目现状的独立规范。
+本目录只生成单个业务资源的 domain 与 web-domain 切片。实现前先读取 `namewta-fullstack-development` Skill、工程规范的前端 CRUD 规则，并对照同 owner 的成熟源码及当前后端 Controller/BO/VO/OpenAPI 合同；模板不是脱离项目现状的独立规范。
 
 ## 目标结构
 

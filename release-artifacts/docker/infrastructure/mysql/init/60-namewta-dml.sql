@@ -69,7 +69,7 @@ where id = 1762000000000000002;
 -- 登录域管理菜单（归属管理端 Client）
 -- ----------------------------
 insert into sys_menu (menu_id, client_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, is_cache, menu_type, visible, status, perms, icon, active_menu, ext, create_dept, create_by, create_time, remark)
-values (1761400000000000124, 1762000000000000001, '登录域管理', 1761400000000000001, 12, 'userType', 'system/userType/index', '', 'N', 'Y', 'C', '0', '0', 'system:userType:list', 'people', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '登录域管理菜单');
+values (1761400000000000124, 1762000000000000001, '登录域管理', 1761400000000000001, 12, 'userType', 'system/userType/index', '', 'N', 'Y', 'C', '0', '0', 'system:userType:list', 'tabler:users', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '登录域管理菜单');
 
 insert into sys_menu (menu_id, client_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, is_cache, menu_type, visible, status, perms, icon, active_menu, ext, create_dept, create_by, create_time, remark)
 values (1761400000000001070, 1762000000000000001, '登录域查询', 1761400000000000124, 1, '', '', '', 'N', 'Y', 'F', '0', '0', 'system:userType:query', '#', '', '', 1761000000000000103, 1761100000000000001, sysdate(), ''),
@@ -112,7 +112,7 @@ delete from sys_config where config_key = 'sys.account.registerUser';
 
 -- 通知监控是全局运维功能。此处只定义菜单和权限，不自动扩大普通角色授权。
 insert into sys_menu (menu_id, client_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, is_cache, menu_type, visible, status, perms, icon, active_menu, ext, create_dept, create_by, create_time, remark)
-select 1761400000000000125, 1762000000000000001, '通知监控', 1761400000000000108, 3, 'notify', 'monitor/notify/index', '', 'N', 'Y', 'C', '0', '0', 'system:notify:list', 'message', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '通知监控菜单'
+select 1761400000000000125, 1762000000000000001, '通知监控', 1761400000000000108, 3, 'notify-monitor', 'notify/monitor/index', '', 'N', 'Y', 'C', '0', '0', 'notify:monitor:list', 'tabler:messages', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '通知监控菜单'
 from dual
 where not exists (select 1 from sys_menu where menu_id = 1761400000000000125);
 
@@ -142,9 +142,9 @@ where role_id in (1761300000000000003, 1761300000000000004, 1761300000000000011,
 delete from sys_client where id in (1762000000000000003, 1762000000000000004);
 
 insert into sys_menu (menu_id, client_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, is_cache, menu_type, visible, status, perms, icon, active_menu, ext, create_dept, create_by, create_time, remark)
-values (2100500000000000100, 1762000000000000002, '档案中心', 0, 1, 'profile', 'profile/center/index', '', 'N', 'Y', 'M', '0', '0', '', 'id-card', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '用户档案认证中心'),
-       (2100500000000000101, 1762000000000000002, '个人认证', 2100500000000000100, 1, 'person', 'profile/person/application', '', 'N', 'Y', 'C', '1', '0', 'profile:person:apply', 'user', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '个人实名认证申请'),
-       (2100500000000000102, 1762000000000000002, '企业认证', 2100500000000000100, 2, 'enterprise', 'profile/enterprise/application', '', 'N', 'Y', 'C', '1', '0', 'profile:enterprise:apply', 'building', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '企业实名认证申请');
+values (2100500000000000100, 1762000000000000002, '档案中心', 0, 1, 'profile', 'profile/center/index', '', 'N', 'Y', 'M', '0', '0', '', 'tabler:id', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '用户档案认证中心'),
+       (2100500000000000101, 1762000000000000002, '个人认证', 2100500000000000100, 1, 'person', 'profile/person/application', '', 'N', 'Y', 'C', '1', '0', 'profile:person:apply', 'tabler:user', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '个人实名认证申请'),
+       (2100500000000000102, 1762000000000000002, '企业认证', 2100500000000000100, 2, 'enterprise', 'profile/enterprise/application', '', 'N', 'Y', 'C', '1', '0', 'profile:enterprise:apply', 'tabler:building', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '企业实名认证申请');
 insert into sys_role_menu (role_id, menu_id)
 values (1761300000000000010, 2100500000000000100),
        (1761300000000000010, 2100500000000000101),
@@ -415,7 +415,7 @@ insert into sys_menu (menu_id, client_id, menu_name, parent_id, order_num, path,
                       create_dept, create_by, create_time, remark)
 values (2094360621561675776, 1762000000000000001, '应用开放管理', 1761400000000000001, 13,
         'openApi', 'system/openApi/index', '', 'N', 'Y', 'C', '0', '0',
-        'system:openApi:list', 'api', '', '', 1761000000000000103, 1761100000000000001,
+        'system:openApi:list', 'tabler:api', '', '', 1761000000000000103, 1761100000000000001,
         sysdate(), 'OpenAPI凭据与接口目录管理菜单');
 
 insert into sys_menu (menu_id, client_id, menu_name, parent_id, order_num, path, component, query_param,
@@ -509,7 +509,7 @@ insert into sys_menu (menu_id, client_id, menu_name, parent_id, order_num, path,
                       create_dept, create_by, create_time, remark)
 select 2094360621561675790, 1762000000000000001, '配置中心', 1761400000000000001, 14,
        'nacos', 'monitor/nacos/index', '', 'N', 'Y', 'C', '0', '0',
-       'system:nacos:console', 'server', '', '', 1761000000000000103, 1761100000000000001,
+       'system:nacos:console', 'tabler:server', '', '', 1761000000000000103, 1761100000000000001,
        sysdate(), 'Nacos 官方控制台入口；配置权限由 Nacos 独立鉴权'
 from dual
 where not exists (select 1 from sys_menu where menu_id = 2094360621561675790);
@@ -706,7 +706,7 @@ select if(
                   and visible <=> '0'
                   and status <=> '0'
                   and perms <=> 'system:openApi:list'
-                  and icon <=> 'api'
+                  and icon <=> 'tabler:api'
                   and active_menu <=> ''
                   and ext <=> ''
             )
@@ -841,7 +841,7 @@ select if(
               and visible <=> '0'
               and status <=> '0'
               and perms <=> 'system:nacos:console'
-              and icon <=> 'server'
+              and icon <=> 'tabler:server'
               and active_menu <=> ''
               and ext <=> ''
           )
@@ -880,7 +880,7 @@ insert into sys_menu (menu_id, client_id, menu_name, parent_id, order_num, path,
                       create_dept, create_by, create_time, remark)
 select 2094360621561675776, 1762000000000000001, 'OpenAPI管理', 1761400000000000001, 13,
        'openApi', 'system/openApi/index', '', 'N', 'Y', 'C', '0', '0',
-       'system:openApi:list', 'api', '', '', 1761000000000000103, 1761100000000000001,
+       'system:openApi:list', 'tabler:api', '', '', 1761000000000000103, 1761100000000000001,
        sysdate(), 'OpenAPI凭据与接口目录管理菜单'
 from dual
 where not exists (select 1 from sys_menu where menu_id = 2094360621561675776);
@@ -942,7 +942,7 @@ insert into sys_menu (menu_id, client_id, menu_name, parent_id, order_num, path,
                       create_dept, create_by, create_time, remark)
 select 2094360621561675790, 1762000000000000001, 'Nacos配置中心', 1761400000000000002, 8,
        'nacos', 'monitor/nacos/index', '', 'N', 'Y', 'C', '0', '0',
-       'system:nacos:console', 'server', '', '', 1761000000000000103, 1761100000000000001,
+       'system:nacos:console', 'tabler:server', '', '', 1761000000000000103, 1761100000000000001,
        sysdate(), 'Nacos 官方控制台入口；配置权限由 Nacos 独立鉴权'
 from dual
 where not exists (select 1 from sys_menu where menu_id = 2094360621561675790);
@@ -1115,18 +1115,155 @@ insert into sys_menu
     (menu_id, client_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, is_cache,
      menu_type, visible, status, perms, icon, active_menu, ext, create_dept, create_by, create_time, remark)
 values
-    (2100500000000000001, 1762000000000000001, '档案管理', 0, 6, 'profile', null, '', 'N', 'Y', 'M', '0', '0', '', 'id-card', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '个人、企业与材料标签管理目录'),
-    (2100500000000000010, 1762000000000000001, '个人档案', 2100500000000000001, 1, 'person', 'profile/person/index', '', 'N', 'Y', 'C', '0', '0', 'profile:person:query', 'user', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '个人档案管理'),
+    (2100500000000000001, 1762000000000000001, '档案管理', 0, 6, 'profile', null, '', 'N', 'Y', 'M', '0', '0', '', 'tabler:id', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '个人、企业与材料标签管理目录'),
+    (2100500000000000010, 1762000000000000001, '个人档案', 2100500000000000001, 1, 'person', 'profile/person/index', '', 'N', 'Y', 'C', '0', '0', 'profile:person:query', 'tabler:user', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '个人档案管理'),
     (2100500000000000011, 1762000000000000001, '个人认证申请', 2100500000000000010, 1, '', '', '', 'N', 'Y', 'F', '0', '0', 'profile:person:apply', '#', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '完整个人申请能力'),
     (2100500000000000012, 1762000000000000001, '个人材料办理', 2100500000000000010, 2, '', '', '', 'N', 'Y', 'F', '0', '0', 'profile:person:material', '#', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '完整个人材料能力'),
     (2100500000000000013, 1762000000000000001, '个人档案审核', 2100500000000000010, 3, '', '', '', 'N', 'Y', 'F', '0', '0', 'profile:person:review', '#', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '审核包含所需快照和材料读取'),
     (2100500000000000014, 1762000000000000001, '个人档案处置', 2100500000000000010, 4, '', '', '', 'N', 'Y', 'F', '0', '0', 'profile:person:manage', '#', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '完整个人档案管理能力'),
     (2100500000000000015, 1762000000000000001, '个人档案覆盖', 2100500000000000010, 5, '', '', '', 'N', 'Y', 'F', '0', '0', 'profile:person:override', '#', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '直建与管理员覆盖能力'),
-    (2100500000000000020, 1762000000000000001, '企业档案', 2100500000000000001, 2, 'enterprise', 'profile/enterprise/index', '', 'N', 'Y', 'C', '0', '0', 'profile:enterprise:query', 'building', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '企业档案管理'),
+    (2100500000000000020, 1762000000000000001, '企业档案', 2100500000000000001, 2, 'enterprise', 'profile/enterprise/index', '', 'N', 'Y', 'C', '0', '0', 'profile:enterprise:query', 'tabler:building', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '企业档案管理'),
     (2100500000000000021, 1762000000000000001, '企业认证申请', 2100500000000000020, 1, '', '', '', 'N', 'Y', 'F', '0', '0', 'profile:enterprise:apply', '#', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '完整企业申请能力'),
     (2100500000000000022, 1762000000000000001, '企业材料办理', 2100500000000000020, 2, '', '', '', 'N', 'Y', 'F', '0', '0', 'profile:enterprise:material', '#', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '完整企业材料能力'),
     (2100500000000000023, 1762000000000000001, '企业档案审核', 2100500000000000020, 3, '', '', '', 'N', 'Y', 'F', '0', '0', 'profile:enterprise:review', '#', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '审核包含所需快照和材料读取'),
     (2100500000000000024, 1762000000000000001, '企业档案处置', 2100500000000000020, 4, '', '', '', 'N', 'Y', 'F', '0', '0', 'profile:enterprise:manage', '#', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '完整企业档案管理能力'),
     (2100500000000000025, 1762000000000000001, '企业档案覆盖', 2100500000000000020, 5, '', '', '', 'N', 'Y', 'F', '0', '0', 'profile:enterprise:override', '#', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '直建与管理员覆盖能力'),
-    (2100500000000000030, 1762000000000000001, '材料标签', 2100500000000000001, 3, 'material-tag', 'profile/materialTag/index', '', 'N', 'Y', 'C', '0', '0', 'profile:material-tag:query', 'tree', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '档案材料标签树'),
+    (2100500000000000030, 1762000000000000001, '材料标签', 2100500000000000001, 3, 'material-tag', 'profile/materialTag/index', '', 'N', 'Y', 'C', '0', '0', 'profile:material-tag:query', 'tabler:hierarchy-2', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '档案材料标签树'),
     (2100500000000000031, 1762000000000000001, '材料标签管理', 2100500000000000030, 1, '', '', '', 'N', 'Y', 'F', '0', '0', 'profile:material-tag:manage', '#', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '完整材料目录管理能力');
+
+insert into sys_menu
+    (menu_id, client_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, is_cache,
+     menu_type, visible, status, perms, icon, active_menu, ext, create_dept, create_by, create_time, remark)
+values
+    (2100600000000000001, 1762000000000000001, '通知中心', 0, 7, 'notify', null, '', 'N', 'Y', 'M', '0', '0', '', 'tabler:messages', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '统一通知控制面'),
+    (2100600000000000010, 1762000000000000001, '通知监控', 2100600000000000001, 1, 'monitor', 'notify/monitor/index', '', 'N', 'Y', 'C', '0', '0', 'notify:monitor:list', 'tabler:chart-bar', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '跨渠道通知投递日志'),
+    (2100600000000000011, 1762000000000000001, '通知详情', 2100600000000000010, 1, '', '', '', 'N', 'Y', 'F', '0', '0', 'notify:monitor:query', '#', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '查询通知快照'),
+    (2100600000000000020, 1762000000000000001, '通知提交', 2100600000000000001, 2, '', '', '', 'N', 'Y', 'F', '0', '0', 'notify:notification:submit', '#', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '提交统一通知'),
+    (2100600000000000021, 1762000000000000001, '通知重试', 2100600000000000001, 3, '', '', '', 'N', 'Y', 'F', '0', '0', 'notify:notification:retry', '#', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '重试失败投递'),
+    (2100600000000000022, 1762000000000000001, '通知取消', 2100600000000000001, 4, '', '', '', 'N', 'Y', 'F', '0', '0', 'notify:notification:cancel', '#', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '取消待发送通知'),
+    (2100600000000000030, 1762000000000000001, '通知管理', 2100600000000000001, 2, 'notice', 'notify/notice/index', '', 'N', 'Y', 'C', '0', '0', 'notify:notice:list', 'tabler:messages', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '公告草稿发布与撤回'),
+    (2100600000000000040, 1762000000000000001, '通知收件箱', 2100600000000000001, 3, 'inbox', 'notify/inbox/index', '', 'N', 'Y', 'C', '0', '0', 'notify:inbox:list', 'tabler:messages', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '用户通知收件箱');
+
+insert ignore into sys_role_menu (role_id, menu_id)
+select 1761300000000000001, menu_id from sys_menu where menu_id in
+    (2100600000000000001, 2100600000000000010, 2100600000000000011, 2100600000000000020,
+     2100600000000000021, 2100600000000000022, 2100600000000000030, 2100600000000000040);
+
+-- 通知动作与收件箱阅读权限必须与 Controller/前端权限合同同步。
+insert ignore into sys_menu
+    (menu_id, client_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, is_cache,
+     menu_type, visible, status, perms, icon, active_menu, ext, create_dept, create_by, create_time, remark)
+values
+    (2100600000000000031, 1762000000000000001, '通知新增', 2100600000000000030, 1, '', '', '', 'N', 'Y', 'F', '0', '0', 'notify:notice:add', '#', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '保存通知草稿'),
+    (2100600000000000032, 1762000000000000001, '通知修改', 2100600000000000030, 2, '', '', '', 'N', 'Y', 'F', '0', '0', 'notify:notice:edit', '#', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '修改通知草稿'),
+    (2100600000000000033, 1762000000000000001, '通知发布', 2100600000000000030, 3, '', '', '', 'N', 'Y', 'F', '0', '0', 'notify:notice:publish', '#', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '发布通知'),
+    (2100600000000000034, 1762000000000000001, '通知撤回', 2100600000000000030, 4, '', '', '', 'N', 'Y', 'F', '0', '0', 'notify:notice:retract', '#', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '撤回通知'),
+    (2100600000000000035, 1762000000000000001, '通知删除', 2100600000000000030, 5, '', '', '', 'N', 'Y', 'F', '0', '0', 'notify:notice:remove', '#', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '删除通知草稿'),
+    (2100600000000000041, 1762000000000000001, '通知标记已见', 2100600000000000040, 1, '', '', '', 'N', 'Y', 'F', '0', '0', 'notify:inbox:seen', '#', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '标记通知已见'),
+    (2100600000000000042, 1762000000000000001, '通知标记已读', 2100600000000000040, 2, '', '', '', 'N', 'Y', 'F', '0', '0', 'notify:inbox:read', '#', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '标记通知已读');
+
+insert ignore into sys_role_menu (role_id, menu_id)
+select 1761300000000000001, menu_id from sys_menu where menu_id in
+    (2100600000000000031, 2100600000000000032, 2100600000000000033, 2100600000000000034,
+     2100600000000000035, 2100600000000000041, 2100600000000000042);
+
+insert ignore into sys_menu
+    (menu_id, client_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, is_cache,
+     menu_type, visible, status, perms, icon, active_menu, ext, create_dept, create_by, create_time, remark)
+values
+    (2100600000000000023, 1762000000000000001, '通知查询', 2100600000000000001, 5, '', '', '', 'N', 'Y', 'F', '0', '0', 'notify:notification:query', '#', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '查询统一通知'),
+    (2100600000000000036, 1762000000000000001, '公告查询', 2100600000000000030, 6, '', '', '', 'N', 'Y', 'F', '0', '0', 'notify:notice:query', '#', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '查询通知草稿');
+
+insert ignore into sys_role_menu (role_id, menu_id)
+select 1761300000000000001, menu_id from sys_menu where menu_id in
+    (2100600000000000023, 2100600000000000036);
+
+-- 通知域唯一入口：清理 System/日志管理中的旧菜单与权限。
+delete from sys_role_menu where menu_id in (
+    select menu_id from sys_menu where perms like 'system:notice:%' or perms like 'system:notify:%'
+        or component in ('system/notice/index', 'monitor/notify/index')
+);
+delete from sys_menu where perms like 'system:notice:%' or perms like 'system:notify:%'
+    or component in ('system/notice/index', 'monitor/notify/index');
+delete from sys_menu where menu_id in (1761400000000000125, 1761400000000001080, 1761400000000001081);
+
+-- 初始化通知中心公告数据。
+insert ignore into notify_notice
+    (notice_id, notice_title, notice_type, notice_content, recipient_type, recipient_ids_json,
+     user_type_ids_json, channels_json, status, lifecycle, published_at, remark,
+     create_dept, create_by, create_time, update_by, update_time)
+values
+    (1761800000000000001, '欢迎使用通知中心', '2', '通知中心用于查看系统公告和个人通知，请根据业务需要维护公告内容与发送对象。', 'ALL', '[]', '[]', '["IN_APP"]', '0', 'PUBLISHED', sysdate(), '系统初始化公告', 1761000000000000103, 1761100000000000001, sysdate(), null, null),
+    (1761800000000000002, '通知使用说明', '1', '管理员保存草稿后需单独发布。接收者可在通知收件箱查看已投递的站内消息。', 'ALL', '[]', '[]', '["IN_APP"]', '0', 'PUBLISHED', sysdate(), '系统初始化通知', 1761000000000000103, 1761100000000000001, sysdate(), null, null);
+insert ignore into notify_notice_snapshot
+    (snapshot_id, notice_id, snapshot_version, title_snapshot, content_snapshot, notice_type, path_snapshot, published_at, create_by, create_time)
+select notice_id, notice_id, 1, notice_title, notice_content, notice_type,
+       concat('/notify/notice?noticeId=', notice_id), published_at, create_by, create_time
+from notify_notice where lifecycle = 'PUBLISHED';
+
+-- ============================================================================
+-- 变更标识：NAMEWTA-THIRD-MENU-DML-001
+-- 变更内容：三方接口管理菜单及按钮权限
+-- 执行前置：已完整执行 50-namewta-ddl.sql
+-- 适用范围：全新环境；已有环境按源/目标 Git Tag 生成并评审差异 SQL
+-- 重复执行：否
+-- ============================================================================
+
+insert into sys_menu
+    (menu_id, client_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, is_cache,
+     menu_type, visible, status, perms, icon, active_menu, ext, create_dept, create_by, create_time, remark)
+values
+    (2100700000000000001, 1762000000000000001, '三方接口管理', 1761400000000000001, 14, 'third', null, '', 'N', 'Y', 'M', '0', '0', '', 'tabler:plug', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '第三方 HTTP 供应商与接口管理'),
+    (2100700000000000011, 1762000000000000001, '供应商管理', 2100700000000000001, 1, 'provider', 'third/provider/index', '', 'N', 'Y', 'C', '0', '0', 'third:provider:list', 'tabler:cloud', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '供应商开关、Base URL 与限额'),
+    (2100700000000000012, 1762000000000000001, '接口管理', 2100700000000000001, 2, 'endpoint', 'third/endpoint/index', '', 'N', 'Y', 'C', '0', '0', 'third:endpoint:list', 'tabler:link', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '接口路径、白名单与覆盖配置'),
+    (2100700000000000014, 1762000000000000001, '调用明细', 2100700000000000001, 3, 'invocation', 'third/invocation/index', '', 'N', 'Y', 'C', '0', '0', 'third:invocation:list', 'tabler:list', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '出站 HTTP 脱敏调用明细'),
+    (2100700000000000015, 1762000000000000001, '调用统计', 2100700000000000001, 4, 'statistics', 'third/statistics/index', '', 'N', 'Y', 'C', '0', '0', 'third:statistics:list', 'tabler:chart-bar', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '供应商与接口维度聚合统计');
+
+insert into sys_menu
+    (menu_id, client_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, is_cache,
+     menu_type, visible, status, perms, icon, active_menu, ext, create_dept, create_by, create_time, remark)
+values
+    (2100700000000000021, 1762000000000000001, '供应商查询', 2100700000000000011, 1, '', '', '', 'N', 'Y', 'F', '0', '0', 'third:provider:query', '#', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '供应商详情查询'),
+    (2100700000000000022, 1762000000000000001, '供应商新增', 2100700000000000011, 2, '', '', '', 'N', 'Y', 'F', '0', '0', 'third:provider:add', '#', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '供应商新增'),
+    (2100700000000000023, 1762000000000000001, '供应商修改', 2100700000000000011, 3, '', '', '', 'N', 'Y', 'F', '0', '0', 'third:provider:edit', '#', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '供应商修改、启停'),
+    (2100700000000000024, 1762000000000000001, '供应商删除', 2100700000000000011, 4, '', '', '', 'N', 'Y', 'F', '0', '0', 'third:provider:remove', '#', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '供应商受控删除'),
+    (2100700000000000025, 1762000000000000001, '接口查询', 2100700000000000012, 1, '', '', '', 'N', 'Y', 'F', '0', '0', 'third:endpoint:query', '#', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '接口详情查询'),
+    (2100700000000000026, 1762000000000000001, '接口新增', 2100700000000000012, 2, '', '', '', 'N', 'Y', 'F', '0', '0', 'third:endpoint:add', '#', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '接口新增'),
+    (2100700000000000027, 1762000000000000001, '接口修改', 2100700000000000012, 3, '', '', '', 'N', 'Y', 'F', '0', '0', 'third:endpoint:edit', '#', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '接口修改、启停'),
+    (2100700000000000028, 1762000000000000001, '接口删除', 2100700000000000012, 4, '', '', '', 'N', 'Y', 'F', '0', '0', 'third:endpoint:remove', '#', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '接口受控删除'),
+    (2100700000000000029, 1762000000000000001, '凭据查询', 2100700000000000011, 5, '', '', '', 'N', 'Y', 'F', '0', '0', 'third:credential:list', '#', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '凭据摘要查询'),
+    (2100700000000000030, 1762000000000000001, '凭据新增', 2100700000000000011, 6, '', '', '', 'N', 'Y', 'F', '0', '0', 'third:credential:add', '#', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '凭据新增或替换'),
+    (2100700000000000031, 1762000000000000001, '凭据删除', 2100700000000000011, 7, '', '', '', 'N', 'Y', 'F', '0', '0', 'third:credential:remove', '#', '', '', 1761000000000000103, 1761100000000000001, sysdate(), '凭据受控删除');
+
+insert into sys_dict_type
+    (dict_id, dict_name, dict_type, create_dept, create_by, create_time, remark)
+values
+    (2100450000000000011, '通知公告生命周期', 'notify_notice_lifecycle', 1761000000000000103, 1761100000000000001, sysdate(), '通知公告草稿、发布和撤回状态'),
+    (2100450000000000012, '通知渠道', 'notify_channel', 1761000000000000103, 1761100000000000001, sysdate(), '统一通知投递渠道'),
+    (2100450000000000013, '通知投递状态', 'notify_delivery_status', 1761000000000000103, 1761100000000000001, sysdate(), '统一通知投递状态'),
+    (2100450000000000014, '通知消息分类', 'notify_message_category', 1761000000000000103, 1761100000000000001, sysdate(), '消息盒子和通知收件箱分类');
+
+insert into sys_dict_data
+    (dict_code, dict_sort, dict_label, dict_value, dict_type, css_class, list_class, is_default,
+     create_dept, create_by, create_time, remark)
+values
+    (2100460000000000101, 1, '草稿', 'DRAFT', 'notify_notice_lifecycle', '', 'info', 'Y', 1761000000000000103, 1761100000000000001, sysdate(), '可编辑未发布公告'),
+    (2100460000000000102, 2, '已发布', 'PUBLISHED', 'notify_notice_lifecycle', '', 'success', 'N', 1761000000000000103, 1761100000000000001, sysdate(), '已发布公告'),
+    (2100460000000000103, 3, '已撤回', 'RETRACTED', 'notify_notice_lifecycle', '', 'warning', 'N', 1761000000000000103, 1761100000000000001, sysdate(), '已撤回公告，可再次编辑发布'),
+    (2100460000000000111, 1, '站内信', 'IN_APP', 'notify_channel', '', 'primary', 'Y', 1761000000000000103, 1761100000000000001, sysdate(), '站内收件箱'),
+    (2100460000000000112, 2, '短信', 'SMS', 'notify_channel', '', 'warning', 'N', 1761000000000000103, 1761100000000000001, sysdate(), '短信供应商'),
+    (2100460000000000113, 3, '邮件', 'MAIL', 'notify_channel', '', 'success', 'N', 1761000000000000103, 1761100000000000001, sysdate(), '邮件供应商'),
+    (2100460000000000121, 1, '排队中', 'QUEUED', 'notify_delivery_status', '', 'info', 'Y', 1761000000000000103, 1761100000000000001, sysdate(), '等待投递'),
+    (2100460000000000122, 2, '处理中', 'PROCESSING', 'notify_delivery_status', '', 'primary', 'N', 1761000000000000103, 1761100000000000001, sysdate(), '正在投递'),
+    (2100460000000000123, 3, '已接受', 'ACCEPTED', 'notify_delivery_status', '', 'primary', 'N', 1761000000000000103, 1761100000000000001, sysdate(), '供应商已接受'),
+    (2100460000000000124, 4, '部分失败', 'PARTIAL_FAILURE', 'notify_delivery_status', '', 'warning', 'N', 1761000000000000103, 1761100000000000001, sysdate(), '部分渠道失败'),
+    (2100460000000000125, 5, '已送达', 'DELIVERED', 'notify_delivery_status', '', 'success', 'N', 1761000000000000103, 1761100000000000001, sysdate(), '投递完成'),
+    (2100460000000000126, 6, '不可送达', 'UNDELIVERABLE', 'notify_delivery_status', '', 'danger', 'N', 1761000000000000103, 1761100000000000001, sysdate(), '目标不可达'),
+    (2100460000000000127, 7, '未知', 'UNKNOWN', 'notify_delivery_status', '', 'warning', 'N', 1761000000000000103, 1761100000000000001, sysdate(), '状态未知'),
+    (2100460000000000128, 8, '失败', 'FAILED', 'notify_delivery_status', '', 'danger', 'N', 1761000000000000103, 1761100000000000001, sysdate(), '投递失败'),
+    (2100460000000000129, 9, '已取消', 'CANCELLED', 'notify_delivery_status', '', 'info', 'N', 1761000000000000103, 1761100000000000001, sysdate(), '投递已取消'),
+    (2100460000000000130, 10, '已过期', 'EXPIRED', 'notify_delivery_status', '', 'info', 'N', 1761000000000000103, 1761100000000000001, sysdate(), '超过截止时间'),
+    (2100460000000000134, 11, '投递异常', 'DISPATCH_ERROR', 'notify_delivery_status', '', 'danger', 'N', 1761000000000000103, 1761100000000000001, sysdate(), '投递过程发生异常'),
+    (2100460000000000131, 1, '系统', 'system', 'notify_message_category', '', 'info', 'Y', 1761000000000000103, 1761100000000000001, sysdate(), '系统消息'),
+    (2100460000000000132, 2, '通知', 'notice', 'notify_message_category', '', 'success', 'N', 1761000000000000103, 1761100000000000001, sysdate(), '通知公告消息'),
+    (2100460000000000133, 3, '工作流', 'workflow', 'notify_message_category', '', 'primary', 'N', 1761000000000000103, 1761100000000000001, sysdate(), '工作流消息');

@@ -10,7 +10,7 @@
 2. [客户端 / 社交 / 个人信息 / 公告](#客户端--社交--个人信息--公告)
 3. [登录域（非租户）](#登录域非租户)
 4. [字典 / 参数配置](#字典--参数配置)
-5. [OSS / 消息](#oss--消息)
+5. [OSS / 通知与实时推送](#oss--通知与实时推送)
 6. [监控与日志](#监控与日志)
 7. [脱敏](#脱敏)
 
@@ -62,7 +62,7 @@
 | 客户端 | `service/ISysClientService.java`（`queryByClientId(String)`） | `controller/system/SysClientController.java` `/system/client` | 登录组装由 admin 使用；无 ruoyi-api ClientService |
 | 社交绑定 | `service/ISysSocialService.java`（`queryListByUserId` / `selectByAuthId`） | `controller/system/SysSocialController.java` `/system/social` | admin `AuthController` / `SysLoginService` 注入 |
 | 个人信息 | `ISysUserService` 的 `updateUserProfile` / `resetUserPwd` | `controller/system/SysProfileController.java` `/system/user/profile` | 当前登录用户；Controller 只注入 `ISysUserService` |
-| 通知公告 | `service/ISysNoticeService.java` | `controller/system/SysNoticeController.java` `/system/notice` | Controller 同时注入 `DictService` 与 `MessageService`；`add` 成功后向在线用户广播公告摘要 |
+| 通知公告 | `ruoyi-notify` 的 `NotifyNoticeUseCase` | `controller/admin/NotifyNoticeController.java` `/notify/notice` | 公告保存、发布、撤回和删除统一经过通知 UseCase 与异步 Outbox |
 
 会话踢出：`service/ClientSessionService.java`（具体类）。在线用户监控 HTTP `controller/monitor/SysUserOnlineController.java` `/monitor/online`，直连 Sa-Token/Redis，无独立 Service 字段。
 
@@ -83,6 +83,7 @@
 
 ### 字典
 
+- 前后端回显合同、`dictValue -> dictLabel` 示例、`listClass/cssClass` 规则、缓存和验收清单见 [dictionary-management.md](dictionary-management.md)；涉及字典显示时必须同时读取该文件。
 - 跨模块/翻译：注入 `org.dromara.common.core.service.DictService`（`ruoyi-common/ruoyi-common-core/src/main/java/org/dromara/common/core/service/DictService.java`），不是 ISysDict*。实现 `service/impl/SysDictTypeServiceImpl.java`。
 - 方法：`getDictLabel` / `getDictValue`、`getAllDictByDictType`、`getDictType`、`getDictData`。
 - 管理面：`service/ISysDictTypeService.java`（含 `resetDictCache`）、`ISysDictDataService.java`。HTTP `/system/dict/type`、`/system/dict/data`。
@@ -94,7 +95,7 @@
 - 管理面：`service/ISysConfigService.java`（`selectConfigByKey`、`resetConfigCache`）。HTTP `controller/system/SysConfigController.java` `/system/config`。
 - 缺口：system 外未找到 `ConfigService` 注入点。模块内导入用户用 `ISysConfigService.selectConfigByKey("sys.user.initPassword")`：`listener/SysUserImportListener.java`。
 
-## OSS / 消息
+## OSS / 通知与实时推送
 
 ### OSS
 
@@ -106,11 +107,11 @@
 - 配置变更：`event/OssConfigChangeEvent.java` + `listener/OssConfigChangeListener.java`，发布于 `service/impl/SysOssConfigServiceImpl.java`。被对象引用的配置不能通过普通编辑修改 configKey、Bucket 或访问策略，需走受控迁移。
 - 翻译兼容：`ruoyi-common/ruoyi-common-translation/src/main/java/org/dromara/common/translation/core/impl/OssUrlTranslationImpl.java` 仍调用旧批量接口；私有 URL 会过期，不得将翻译结果持久化或缓存为资源身份。
 
-### 消息
+### 通知与实时推送
 
-- 跨模块：`ruoyi-api/src/main/java/org/dromara/system/api/MessageService.java`。实现 `service/impl/SysMessageServiceImpl.java`（落库 + `PushHelper`）。DTO `api/domain/PushPayloadDTO.java`。
-- 管理面：`service/ISysMessageService.java` `queryMessageBox`（按系统消息、通知公告、工作流消息分类）；另有 `storeAll` / `storeUsers` 只落库。HTTP `controller/system/SysMessageController.java` `/resource/message`。
-- 样例：`ruoyi-modules/ruoyi-demo/src/main/java/org/dromara/demo/controller/WebSocketController.java`；admin `AuthController` 也注入 `MessageService`；workflow `service/impl/FlwCommonServiceImpl.java` 注入 `MessageService`。
+- 业务通知跨模块入口：`ruoyi-api/src/main/java/org/dromara/notify/api/NotificationApplicationService.java`。调用方提交 `NotificationCommand`，由 `ruoyi-notify` 的 UseCase 校验目标、保存意图并通过 Outbox 异步投递。
+- 渠道、目标、幂等键和回调合同见 [Notify 模块事实](../notify/index.md)。站内信统一查询 HTTP `/notify/inbox`；不要新建第二套消息盒子或通知收件箱。
+- 实时连接仍由 `ruoyi-common-push` 的 `PushHelper`、SSE/WebSocket 适配器承载；它只负责在线事件传输，不负责通知落库、权限或投递状态。
 
 ## 监控与日志
 

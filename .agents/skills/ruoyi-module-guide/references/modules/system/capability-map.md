@@ -37,7 +37,7 @@
 | `PostService.java` | `service/impl/SysPostServiceImpl.java`（`implements ISysPostService, PostService`） | 仅 `selectPostNamesByIds(Collection<Long>)` → `Map<Long,String>` |
 | `ConfigService.java` | `service/impl/SysConfigServiceImpl.java`（`implements ISysConfigService, ConfigService`） | `getConfigValue(String)`；接口 default：`getConfigBool/Int/Long/Decimal`；`getConfigMap` → Hutool `Dict`；`getConfigArrayMap` → `List<Dict>`；`getConfigObject(key, Class)`；`getConfigArray(key, Class)`。system 外注入点未找到。 |
 | `OssService.java` | `service/impl/SysOssServiceImpl.java`（`implements ISysOssService, OssService`） | `selectUrlByIds(String)` 逗号分隔 ossId → url 串；`selectByIds(String)` → `List<OssDTO>` |
-| `MessageService.java` | `service/impl/SysMessageServiceImpl.java`（`implements ISysMessageService, MessageService`） | `sendMessage(userId, text\|payload)` 指定用户；`sendMessage(text\|payload)` 广播；`publishMessage(List<Long>, PushPayloadDTO)`；`publishAll(text\|payload)` |
+| `NotificationApplicationService.java` | `ruoyi-modules/ruoyi-notify/service/runtime/NotificationApplicationServiceImpl.java` | 统一提交通知意图；支持 `ALL`、`USER`、`PHONE`、`EMAIL` 接收者和 `IN_APP`、`SMS`、`MAIL` 渠道。system 只提供 `UserService` 用户解析，不持有通知实现。 |
 | `TaskAssigneeService.java` | `service/impl/SysTaskAssigneeServiceImpl.java`（只实现 api，不实现 `ISys*`） | `selectRoles/Posts/Depts/UsersByTaskAssigneeList(TaskAssigneeBody)` → `TaskAssigneeDTO` |
 
 配套类型：
@@ -66,10 +66,10 @@
 | `ISysSocialService.java` | 社交绑定：`queryListByUserId` / `selectByAuthId` / `insertByBo` |
 | `ISysPermissionService.java` | `getRolePermission(userId, clientId)` / `getMenuPermission(userId, clientId)`、`getDataScopeRoleMap(List<RoleDTO>)` |
 | `ISysDataScopeService.java` | `getRoleCustom(roleId)` / `getDeptAndChild(deptId)` → 逗号分隔部门 id 串 |
-| `ISysMessageService.java` | 与 api `MessageService` 同名推送方法，另加 `queryMessageBox(userId)`、`storeAll` / `storeUsers`（落库） |
+| `UserService.java` | `searchActiveUsers`、`selectNotificationUsers`、`selectAllActiveUsers`、`selectUsersByUserTypeIds`；通知模块通过这些公开方法解析并校验接收者。 |
 | `ISysOperLogService.java` | 操作日志分页/清空；落库入口是实现类的 `@EventListener recordOper` |
 | `ISysLoginInfoService.java` | 登录日志分页/清空；落库入口是实现类的 `@EventListener recordLoginInfo` |
-| `ISysUserTypeService.java` | 登录域 CRUD：`queryById` / `queryByCode` / `insertByBo` / `updateByBo` / `optionselect`。实现 `service/impl/SysUserTypeServiceImpl.java` |
+| `ISysUserTypeService.java` | 登录域 CRUD：`queryById` / `queryByCode` / `insertByBo` / `updateByBo` / `options`。实现 `service/impl/SysUserTypeServiceImpl.java` |
 | `ISysUserTypeRelService.java` | 用户-登录域：`hasUserType`、`getActiveUserType`、`coverUserTypes`、`grantUserType`、`deleteByUserIds` |
 
 无 `I*` 前缀的内部服务（具体类，跨模块引用会硬耦合 system 实现）：
@@ -115,12 +115,12 @@
 | `/system/post` | `SysPostController` | `controller/system/SysPostController.java` |
 | `/system/client` | `SysClientController` | `controller/system/SysClientController.java` |
 | `/system/social` | `SysSocialController` | `controller/system/SysSocialController.java` |
-| `/system/notice` | `SysNoticeController` | `controller/system/SysNoticeController.java`（同时注入 `DictService` 与 `MessageService`，新增公告后广播） |
+| `/notify/notice` | `NotifyNoticeController` | `ruoyi-notify/controller/admin/NotifyNoticeController.java`（通过公告 UseCase 提交统一通知） |
 | `/system/openApi` | `SysOpenApiCredentialController` / `SysOpenApiCatalogController` | `controller/system/openapi/`；本人凭据、管理员目标用户凭据与按目标授权过滤的接口目录 |
 | `/system/userType` | `SysUserTypeController` | `controller/system/SysUserTypeController.java` |
 | `/resource/oss` | `SysOssController` | `controller/system/SysOssController.java` |
 | `/resource/oss/config` | `SysOssConfigController` | `controller/system/SysOssConfigController.java` |
-| `/resource/message` | `SysMessageController` | `controller/system/SysMessageController.java` |
+| `/notify/inbox` | `NotifyInboxController` | `ruoyi-modules/ruoyi-notify/controller/admin/NotifyInboxController.java` |
 | `/monitor/online` | `SysUserOnlineController` | `controller/monitor/SysUserOnlineController.java`（无 Service 字段；用 Sa-Token `StpUtil` 与 Redis） |
 | `/monitor/loginInfo` | `SysLoginInfoController` | `controller/monitor/SysLoginInfoController.java` |
 | `/monitor/operlog` | `SysOperlogController` | `controller/monitor/SysOperlogController.java` |

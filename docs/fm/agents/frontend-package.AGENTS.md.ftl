@@ -2,7 +2,7 @@
 
 ## Scope
 
-覆盖 `${modulePath}`；更深层 package 的 AGENTS 负责其自身资源。前端架构规范由 `plus-ui-frontend-conventions` 和 `engineering-standards` 统一维护。
+覆盖 `${modulePath}`；更深层 package 的 AGENTS 负责其自身资源。前端架构规范由 `namewta-fullstack-development` 和 `engineering-standards` 统一维护。
 
 ## Purpose
 

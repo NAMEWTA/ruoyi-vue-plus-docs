@@ -10,17 +10,18 @@
 
 配置使用 `.speculo/baselines/` 中的上次模板默认值执行 base/local/incoming 三方合并：模板新增项自动增加，模板删除项直接删除，未被用户修改的旧默认值跟随模板更新，用户覆盖值在满足目标合同的前提下保留。只有字段删除、显式 schema 迁移或结构化文件变换时，CLI 才把原文件写入 `back/` 并生成 targeted manifest；opaque 内容不会被整包复制到备份。
 
-`install.json` 使用 schema v2，记录包版本、已安装 workflows、managed manifest 路径和 baseline schema。初始化以项目锁、完整 staging、active fingerprint 复验、原子 rename 与失败 rollback 组成一个事务；冲突不会发布部分结果，也不会创建新的 pending marker。
+`install.json` 使用 schema v3，记录包版本、已安装 workflows、managed manifest 路径和 baseline schema。`kernel.json` 定义共享 change、风险、checkpoint、能力和 trace 位置。Speculo 1.0 不读取或迁移任何 0.x 安装；检测到旧 manifest 时必须先由用户移除或改名旧 `speculo/` 目录。初始化以项目锁、完整 staging、active fingerprint 复验、原子 rename 与失败 rollback 组成一个事务；冲突不会发布部分结果，也不会创建新的 pending marker。
 
 ## 读取顺序
 
 1. 读取 `workspace.json`，以当前打开项目为 `project_root` 解析公共 roots。
-2. 从 `../workflows/<workflow>/INDEX.md` 进入 workflow，再通过 `<Path>` 指针进入具体 work 入口文件。
-3. 读取 `<Path>{roots.state}/{workflow}/status.json</Path>`，再读取 `<Path>{roots.state}/{workflow}/changes/{change}/.status.json</Path>` 和当前 work 产物。
-4. 历史 change 只从 `<Path>{roots.state}/{workflow}/archive/{YYYY-MM}/{change}/</Path>` 读取。
-5. Command 报告位于 `<Path>{roots.state}/commands/{command}/*.md</Path>`，command state 位于 `<Path>{roots.state}/commands/{command}/state.json</Path>`。
-6. 独立 Skill 的运行记录位于 `<Path>{roots.state}/skills/{skill}/</Path>`，根级 `state.json` 仅在该 Skill 声明持久 checkpoint 时读取。
-7. 首次 docs-sync 确认后读取 `<Path>{roots.state}/{workflow}/docs-sync.json</Path>`；它分列该 workflow 的项目文档和私有 state 更新范围。
+2. 从 `../workflows/<workflow>/INDEX.md` 发现 workflow并按需读取其中声明的永久知识；这一步不读取 Work 条目或运行状态。
+3. 用户明确激活 workflow 或 work 后，读取 INDEX 指向的 workflow 根 `README.md`，从其中的 Work 条目选择目标并读取具体入口文件。
+4. 按激活合同读取 `<Path>{roots.state}/{workflow}/status.json</Path>`，再读取 `<Path>{roots.state}/{workflow}/changes/{change}/.status.json</Path>` 和当前 work 产物。
+5. 历史 change 只从 `<Path>{roots.state}/{workflow}/archive/{YYYY-MM}/{change}/</Path>` 读取。
+6. Command 报告位于 `<Path>{roots.state}/commands/{command}/*.md</Path>`，command state 位于 `<Path>{roots.state}/commands/{command}/state.json</Path>`。
+7. 独立 Skill 的运行记录位于 `<Path>{roots.state}/skills/{skill}/</Path>`，根级 `state.json` 仅在该 Skill 声明持久 checkpoint 时读取。
+8. 首次 docs-sync 确认后读取 `<Path>{roots.state}/{workflow}/docs-sync.json</Path>`；它分列该 workflow 的项目文档和私有 state 更新范围。
 
 ## 写入边界
 

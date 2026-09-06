@@ -1,18 +1,18 @@
 ---
 name: ruoyi-module-guide
-description: 为 RuoYi 新增或接入业务模块提供渐进式事实导航；按模块索引 Profile、System、Workflow 的公共合同、目录和集成边界。通用工程规范与五层依赖规则分别由 engineering-standards 和 ruoyi-backend-development 裁决。
+description: 新增模块、跨模块接入，或查询 Profile/System/Workflow/Notify/Third 模块事实时使用。
 ---
 
 # RuoYi 模块导航
 
-本 Skill 是模块事实和接入面路由器，不是第二套架构规范。处理新增模块、跨模块 API、Profile 业务、System 能力或 Workflow 审批时，先读取本入口，再按目标模块加载一个最小 reference。若模块没有专用 reference，则读取该模块根部的 `AGENTS.md`，并回到通用后端/前端 Skill。
+本 Skill 是模块事实和接入面路由器，不是第二套架构规范。处理新增模块、跨模块 API、Profile 业务、System 能力或 Workflow 审批时，先读取本入口，再按目标模块加载一个最小 reference。若模块没有专用 reference，则读取该模块根部的 `AGENTS.md`，并回到通用全栈 Skill。
 
 ## 使用顺序
 
 1. 确认任务目标模块和运行面（后端、前端或跨模块）。
 2. 读取对应 `references/modules/<module>/index.md`。
 3. 只读取 index 按当前问题指向的 capability、integration 或 domain reference；条目不清楚时直接按路径回读源码。
-4. 架构、目录、命名、注释、框架和质量门禁以 `engineering-standards`、`ruoyi-backend-development` 或 `plus-ui-frontend-conventions` 为准；本 Skill 不复制这些通用规则。
+4. 架构、目录、命名、注释、框架和质量门禁以 `engineering-standards` 或 `namewta-fullstack-development` 为准；本 Skill 不复制这些通用规则。
 
 ## 模块路由
 
@@ -22,6 +22,7 @@ description: 为 RuoYi 新增或接入业务模块提供渐进式事实导航；
 | `ruoyi-system` | 存量基础模块；本轮保持 classic 目录和实现不变，只描述稳定 API 与内部边界 | [`system/index.md`](references/modules/system/index.md) |
 | `ruoyi-workflow` | 存量 Warm-Flow 模块；本轮保持内部实现不变，只通过 `ruoyi-api` 提供审批接入 | [`workflow/index.md`](references/modules/workflow/index.md) |
 | `ruoyi-third` | 新增分层的第三方 HTTP Provider/Endpoint 聚合、凭据、Gateway、SPI、限流与出站观测模块 | [`third/index.md`](references/modules/third/index.md) |
+| `ruoyi-notify` | 统一通知意图、收件箱、公告、Outbox、渠道投递和供应商回调 | [`notify/index.md`](references/modules/notify/index.md) |
 
 新模块不能因为没有专用地图而复制 `ruoyi-system`/`ruoyi-workflow` 的内部实现。先在模块根 `AGENTS.md` 中确认职责、POM/package 组成、入口和本地验证命令；跨模块能力只能使用已公开的 API 或 common SPI。
 
@@ -45,3 +46,4 @@ description: 为 RuoYi 新增或接入业务模块提供渐进式事实导航；
 - Profile：person/enterprise 能力、公开合同和五层试点例外 → [`profile/index.md`](references/modules/profile/index.md)
 - System：`ruoyi-api`、common SPI、HTTP 管理面和存量内部服务 → [`system/index.md`](references/modules/system/index.md)
 - Workflow：`WorkflowService`、事件、businessId、待办 REST 和请假样例 → [`workflow/index.md`](references/modules/workflow/index.md)
+- Notify：`NotificationApplicationService`、公告 UseCase、Inbox、Outbox、回调验签和推送票据 → [`notify/index.md`](references/modules/notify/index.md)

@@ -66,8 +66,8 @@ shared_path_owners: []
 
 ## 2.1 必须加载的 Skill 与工程基线
 
-- **必须加载：** <Path>.agents/skills/engineering-standards/SKILL.md</Path>、<Path>.agents/skills/ruoyi-backend-development/SKILL.md</Path>、<Path>.agents/skills/ruoyi-module-guide/SKILL.md</Path>、<Path>.agents/skills/ruoyi-common-modules-guide/SKILL.md</Path>。
-- **必须先读的参考：** <Path>.agents/skills/engineering-standards/references/project/00-project-profile.md</Path>、<Path>.agents/skills/engineering-standards/references/project/01-module-map.md</Path>、<Path>.agents/skills/engineering-standards/references/project/03-backend-module-modes.md</Path>、<Path>.agents/skills/engineering-standards/references/java/security-and-data.md</Path>、<Path>.agents/skills/ruoyi-backend-development/references/framework-usage.md</Path>、<Path>.agents/skills/ruoyi-backend-development/references/implementation.md</Path>。
+- **必须加载：** <Path>.agents/skills/engineering-standards/SKILL.md</Path>、<Path>.agents/skills/namewta-fullstack-development/SKILL.md</Path>、<Path>.agents/skills/ruoyi-module-guide/SKILL.md</Path>、<Path>.agents/skills/ruoyi-common-modules-guide/SKILL.md</Path>。
+- **必须先读的参考：** <Path>.agents/skills/engineering-standards/references/project/00-project-profile.md</Path>、<Path>.agents/skills/engineering-standards/references/project/01-module-map.md</Path>、<Path>.agents/skills/engineering-standards/references/project/03-backend-module-modes.md</Path>、<Path>.agents/skills/engineering-standards/references/java/security-and-data.md</Path>、<Path>.agents/skills/namewta-fullstack-development/references/backend/framework-usage.md</Path>、<Path>.agents/skills/namewta-fullstack-development/references/backend/implementation.md</Path>。
 - **目录与代码最低要求：** credential codec/resolver 只能作为 layered Service 的明确端口或受控 support，Controller 只进 UseCase；密文 DTO、BO、VO、Entity 分离，任何 secret 不得进入 ruoyi-api、toString、异常或 @Log。公共加密入口按 common-modules-guide 的准确 FQN 复用，不复制同义 EncryptUtils。
 - **密码学与持久化要求：** 使用认证加密 envelope、随机 nonce、版本/算法字段和主密钥外置；DB 只存密文。事务写入遵守 @DSTransactional，查询/变更遵守 GET/POST，测试必须包含篡改、错误 key、版本未知和 canary 扫描。
 - **执行停止条件：** 主密钥写入代码/DB、固定 IV、明文回显、日志记录 secret、在 Controller/DAO 直接解密、或为方便修改 common-encrypt 公共契约时立即停止并升级 T-05/Lead。

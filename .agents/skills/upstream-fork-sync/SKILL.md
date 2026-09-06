@@ -1,6 +1,6 @@
 ---
 name: upstream-fork-sync
-description: 安全评估并同步 ruoyi-vue-plus-docs 的上游 Fork，持久化实际集成检查点，并生成上游差异与合并冲突报告。用于上游 6.X 或 6.X-Vue 的刷新与集成，不用于普通功能分支合并。
+description: 评估或获授权集成 ruoyi-vue-plus-docs 上游 Fork 时使用；不用于普通分支合并。
 ---
 
 # 上游 Fork 同步

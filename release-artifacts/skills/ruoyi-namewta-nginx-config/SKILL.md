@@ -19,17 +19,17 @@ description: 维护 ruoyi-vue-plus-docs 的 release-artifacts 多 App Nginx 部�
 
 ```bash
 # 公开 App
-python3 release-artifacts/skills/ruoyi-namewta-nginx-config/scripts/add_app.py \
-  --app client-web --prefix client
+python release-artifacts/skills/ruoyi-namewta-nginx-config/scripts/add_app.py \
+  --app admin-web --prefix admin
 
 # 敏感 App：生成 10 位私有前缀；提交配置只保存占位值，真实值写本地 .env
-python3 release-artifacts/skills/ruoyi-namewta-nginx-config/scripts/add_app.py \
+python release-artifacts/skills/ruoyi-namewta-nginx-config/scripts/add_app.py \
   --app secret-web --sensitive
 
 # 预览和台账
-python3 release-artifacts/skills/ruoyi-namewta-nginx-config/scripts/add_app.py --list
-python3 release-artifacts/skills/ruoyi-namewta-nginx-config/scripts/add_app.py \
-  --app client-web --prefix client --dry-run
+python release-artifacts/skills/ruoyi-namewta-nginx-config/scripts/add_app.py --list
+python release-artifacts/skills/ruoyi-namewta-nginx-config/scripts/add_app.py \
+  --app admin-web --prefix admin --dry-run
 ```
 
 脚本只修改 `release-artifacts/`，不改 App 源码 `.env.*`。它会幂等维护：

@@ -1,6 +1,6 @@
 ---
 name: deploy-namewta-environment
-description: 为 NAMEWTA RuoYi-Vue-Plus 全栈提供审计、接管、开发环境初始化、生产部署、迭代升级与回滚流程。处理开发服务器、生产服务器、/data/namewta-data、Docker Compose 中间件、MySQL/Redis/MinIO/Nacos、前后端发布交付，或需要在 temp/relase 下生成私密的端口账密部署文档时使用。
+description: 执行 NAMEWTA 环境审计、接管、部署、升级或回滚时使用；不用于普通代码开发。
 ---
 
 # NAMEWTA 全栈环境部署
@@ -10,10 +10,9 @@ description: 为 NAMEWTA RuoYi-Vue-Plus 全栈提供审计、接管、开发环�
 ## 加载项目规范
 
 1. 读取 `../../../AGENTS.md` 与 `../engineering-standards/SKILL.md`。
-2. 构建后端或调整运行配置时读取 `../ruoyi-backend-development/SKILL.md`。
-3. 构建前端或调整路由时读取 `../plus-ui-frontend-conventions/SKILL.md`。
-4. 涉及 OSS 或 system 公共能力时，按需读取 system/common 模块 Skill。
-5. 文档与当前源码、Compose、POM 或测试冲突时，以工作树证据为准。
+2. 构建后端、前端、调整运行配置或路由时读取 `../namewta-fullstack-development/SKILL.md`，按垂直切片合同核对两侧。
+3. 涉及 OSS 或 system 公共能力时，按需读取 system/common 模块 Skill。
+4. 文档与当前源码、Compose、POM 或测试冲突时，以工作树证据为准。
 
 ## 选择部署模式
 
@@ -30,10 +29,10 @@ description: 为 NAMEWTA RuoYi-Vue-Plus 全栈提供审计、接管、开发环�
 
 ```bash
 node .agents/skills/deploy-namewta-environment/scripts/validate-profile.mjs \
-  --profile temp/relase/deployment-profile.json
+  --profile temp/release/deployment-profile.json
 ```
 
-不得提交密码、令牌、私钥、`.env`、`*local.yml` 或生成的报告；不得将它们粘贴到 SpecDev 文档、终端输出、对话或日志中。只有 `temp/relase/namewta-deployment.md` 这类权限为 `0600` 的本地私密交接文件可以保存明文账密。
+不得提交密码、令牌、私钥、`.env`、`*local.yml` 或生成的报告；不得将它们粘贴到 SpecDev 文档、终端输出、对话或日志中。只有 `temp/release/namewta-deployment.md` 这类权限为 `0600` 的本地私密交接文件可以保存明文账密。
 
 ## 先盘点再写入
 
@@ -47,9 +46,9 @@ node .agents/skills/deploy-namewta-environment/scripts/validate-profile.mjs \
 
 ```bash
 node .agents/skills/deploy-namewta-environment/scripts/render-local-config.mjs \
-  --profile temp/relase/deployment-profile.json \
-  --secrets temp/relase/deployment-secrets.json \
-  --output temp/relase/rendered
+  --profile temp/release/deployment-profile.json \
+  --secrets temp/release/deployment-secrets.json \
+  --output temp/release/rendered
 ```
 
 只检查脚本输出的路径和权限，不回显敏感文件内容。仅安装当前模式需要的文件。中间件初始化顺序与 OSS 不变量见 [中间件、数据库与 OSS](references/middleware-database-oss.md)。
@@ -75,20 +74,20 @@ node .agents/skills/deploy-namewta-environment/scripts/render-local-config.mjs \
 
 ```bash
 node .agents/skills/deploy-namewta-environment/scripts/verify-frontend-artifact.mjs \
-  --profile temp/relase/deployment-profile.json \
+  --profile temp/release/deployment-profile.json \
   --index plus-ui-namewta/apps/admin-web/dist/index.html
 node .agents/skills/deploy-namewta-environment/scripts/verify-release-candidate.mjs \
-  --profile temp/relase/deployment-profile.json \
-  --state temp/relase/deployment-state.json
+  --profile temp/release/deployment-profile.json \
+  --state temp/release/deployment-state.json
 ```
 
 ```bash
 node .agents/skills/deploy-namewta-environment/scripts/generate-deployment-report.mjs \
-  --profile temp/relase/deployment-profile.json \
-  --secrets temp/relase/deployment-secrets.json \
-  --env-file temp/relase/namewta-release.env \
-  --state temp/relase/deployment-state.json \
-  --output temp/relase/namewta-deployment.md
+  --profile temp/release/deployment-profile.json \
+  --secrets temp/release/deployment-secrets.json \
+  --env-file temp/release/namewta-release.env \
+  --state temp/release/deployment-state.json \
+  --output temp/release/namewta-deployment.md
 ```
 
 报告生成器必须使用中文标题、字段和状态；服务名、镜像标签、路径、URL、Schema、SHA-256 等标识符保留原文。报告的“账号与凭据”表必须包含服务器 SSH 账号和密码：密码从 `deployment-secrets.json.sshPassword` 或 `SSH_PASSWORD` 读取，未读取到时必须明确标注来源和补充位置，不能写“故意不记录”或编造值。报告必须包含入口、端口、账号、持久化路径、版本、验证证据、升级流程、回滚流程与未决风险。后续迭代按 [升级与回滚](references/upgrade-and-rollback.md) 执行。

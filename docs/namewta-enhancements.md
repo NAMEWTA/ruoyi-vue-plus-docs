@@ -18,9 +18,9 @@ NAMEWTA 是 RuoYi-Vue-Plus / Plus-UI 的增强发行线。上游仍是基础能�
 | `packages/web-kit/*` | 多个 Web 消费者共同使用的壳层、基础组件和设计 token |
 | `packages/api-contracts` | 可追溯、确定性生成的 OpenAPI 传输合同 |
 
-当前激活 `admin-web` 和 `home-web` 两个终端。前者是管理端，后者是应用用户门户与用户中心；旧的 `client-web`、移动 Web 和小程序入口已清理，不属于工作区包。
+当前发布面包含 `admin-web` 管理端和 `home-web` 用户门户；未激活终端不参与工作区构建、路由和权限注册。
 
-domain 与后端模块一一对应为 `admin`、`system`、`workflow`、`demo`、`gen`、`ai`；包内第二层按 Controller 的稳定 HTTP 资源命名。由此可以从 `/system/client` 直接定位到 `domains/system/src/client`，再定位到 `web-domains/system/src/client` 的 Web 表现层。
+domain 与后端模块一一对应为 `admin`、`system`、`workflow`、`demo`、`profile`、`notify`、`third`、`ai`；包内第二层按 Controller 的稳定 HTTP 资源命名。由此可以从 `/system/client` 直接定位到 `domains/system/src/client`，再定位到 `web-domains/system/src/client` 的 Web 表现层。
 
 App 不重新实现后端接口和数据模型。新增 App 时只选择需要的公开 domain/web-domain，并实现该终端自己的适配和界面组合。未来移动端、小程序可以复用 headless domain 与 platform 合同，同时替换终端特有 UI、请求、存储和生命周期。
 
@@ -50,6 +50,8 @@ Token 明确区分 OAuth `clientId`、数据库 Client 主键和登录域。角�
 
 通知基础设施通过渠道标识和适配器解耦业务与邮件/短信实现，补充 Redis 幂等状态机、请求上下文、OSS 附件快照、逻辑通知与投递记录、敏感字段脱敏、清理策略及全局监控。业务模块不再直接绑定具体发送工具。
 
+通知公告先保存草稿，再单独发布。发送范围支持全部正常用户、指定用户和指定用户类型（登录域），接收人通过 `ruoyi-api` 的公开 `UserService` 解析；渠道可选择站内信、短信和邮件，默认站内信。发布后保留内容、通知类型与渠道快照，投递记录用于区分已提交、供应商已接受和实际送达。
+
 ### 完整 HTTP 系统日志
 
 `ruoyi-common-web` 在 Servlet Filter 边界生成一对可由 `requestId` 关联的请求与响应结构化事件，覆盖同步、异步和异常完成路径。正文采集具有大小上限和媒体类型策略，不可记录或无法采集时输出明确原因；日志输出失败不会改变业务响应。
@@ -58,9 +60,9 @@ Token 明确区分 OAuth `clientId`、数据库 Client 主键和登录域。角�
 
 `ruoyi-admin` 保持组合入口，业务能力位于 `ruoyi-modules`，跨模块服务与 DTO 通过 `ruoyi-api` 或 common SPI 暴露。默认 full bundle 和 `bundle-core` 都有明确的 Maven profile 与验证方式。
 
-NAMEWTA 当前只支持并验收 MySQL 8.4。数据库初始化资产由父仓库 `release-artifacts/docker/infrastructure/mysql/init/` 统一拥有，七份 SQL 是可直接修改的当前完整基座：`10` 至 `40` 分别承载 RuoYi、Job、Workflow、AI，`50-namewta-ddl.sql` 只承载 NAMEWTA 结构，`60-namewta-dml.sql` 承载通用 NAMEWTA 数据，`61-third-dml.sql` 承载三方接口管理菜单与权限数据。后端仓库不再保存 `script/` 或 SQL 副本，也不维护 PostgreSQL、Oracle、SQL Server 方言。
+NAMEWTA 当前只支持并验收 MySQL 8.4。数据库初始化资产由父仓库 `release-artifacts/docker/infrastructure/mysql/init/` 统一拥有，六份 SQL 是可直接修改的当前完整基座：`10` 至 `40` 分别承载 RuoYi、Job、Workflow、AI，`50-namewta-ddl.sql` 承载 NAMEWTA 结构，`60-namewta-dml.sql` 承载 NAMEWTA 数据（包括三方接口管理菜单与权限）。Nacos schema 保持在 `init/nacos/` 独立初始化。后端仓库不再保存 `script/` 或 SQL 副本，也不维护 PostgreSQL、Oracle、SQL Server 方言。
 
-全新环境按文件名前缀顺序执行全部七份基座。已有环境不得重放基座；升级时必须指定源 Git Tag 与目标 Git Tag，备份现场，在隔离库中生成、评审并演练差异 SQL，再执行获批的升级步骤。
+全新环境按文件名前缀顺序执行全部六份基座。已有环境不得重放基座；升级时必须指定源 Git Tag 与目标 Git Tag，备份现场，在隔离库中生成、评审并演练差异 SQL，再执行获批的升级步骤。
 
 ## 上游能力吸收
 

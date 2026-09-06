@@ -85,9 +85,9 @@ ELI5 校验已经通过：`validate-specdev.mjs --stage eli5` 返回 `0 error(s)
 
 - `engineering-standards`：任何代码、依赖、SQL、测试或交付修改前先加载。
 - `ruoyi-common-modules-guide`：继续修改 `ruoyi-common-openapi`、网关、SPI、Redis 或 Sa-Token 桥时加载。
-- `ruoyi-backend-development`：修改 admin/system Controller、Service、Mapper、事务、SQL 或后端门禁时加载。
+- `namewta-fullstack-development`：修改 admin/system Controller、Service、Mapper、事务、SQL 或后端门禁时加载。
 - `ruoyi-system-module-guide`：修改凭据、授权快照、system API 边界或跨模块调用时加载。
-- `plus-ui-frontend-conventions`：修改双入口 UI、system domain/web-domain、manifest、动态菜单或权限组合时加载。
+- `namewta-fullstack-development`：修改双入口 UI、system domain/web-domain、manifest、动态菜单或权限组合时加载。
 
 不要加载 workflow、AI、upstream 等与新目标无关的 skills。
 

@@ -650,7 +650,7 @@
 ### R-022
 - Claim: 当前 `admin-web` 已显式组合 system domain/web-domain；系统动态页面由 system manifest 注册，个人信息页则是 App 自有静态页并已有同级 `el-tabs`。因此 OpenAPI 管理页应新增 system domain/web-domain 资源，个人“开放应用”入口应由静态个人信息壳组合该 Web 领域的共享组件。
 - Type: code fact + architecture rule
-- Source: `CODE:<Path>plus-ui-namewta/apps/admin-web/src/router/adminManifestRegistry.ts</Path>`；`CODE:<Path>plus-ui-namewta/apps/admin-web/src/views/system/user/profile/index.vue</Path>`；`CODE:<Path>plus-ui-namewta/packages/domains/system/README.md</Path>`；`CODE:<Path>plus-ui-namewta/packages/web-domains/system/README.md</Path>`；`SKILL:<Path>.agents/skills/plus-ui-frontend-conventions/SKILL.md</Path>`。
+- Source: `CODE:<Path>plus-ui-namewta/apps/admin-web/src/router/adminManifestRegistry.ts</Path>`；`CODE:<Path>plus-ui-namewta/apps/admin-web/src/views/system/user/profile/index.vue</Path>`；`CODE:<Path>plus-ui-namewta/packages/domains/system/README.md</Path>`；`CODE:<Path>plus-ui-namewta/packages/web-domains/system/README.md</Path>`；`SKILL:<Path>.agents/skills/namewta-fullstack-development/SKILL.md</Path>`。
 - Confidence: high
 - Limits: App 静态壳只负责入口组合，不得拥有或复制 OpenAPI transport、领域状态、owner-scope 规则和权限过滤。
 - Artifact impact: D-001、D-013、D-015、D-025、ADR-020、ADR-021、Spec IN/OUT 与 Ticket。

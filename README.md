@@ -15,13 +15,13 @@
 | 方向 | NAMEWTA 增强 | 直接收益 |
 |---|---|---|
 | 多 App 前端 | 将单体前端重构为 `apps + domains + web-domains + platform + adapters + web-kit` 的 pnpm monorepo | Admin 当前独立交付，未来 Client/移动端/小程序可按需组合能力而不重复实现 API 与数据模型 |
-| 前后端定位 | 前端 domain 按 `admin/system/workflow/demo/gen/ai` 后端模块组织，第二层按 Controller HTTP 资源命名 | 从 Controller、URL 到前端 API、类型、页面都有稳定查找路径 |
+| 前后端定位 | 前端 domain 按 `admin/system/workflow/demo/profile/notify/third/ai` 后端模块组织，第二层按 Controller HTTP 资源命名 | 从 Controller、URL 到前端 API、类型、页面都有稳定查找路径 |
 | Client 身份域 | Client 可独立配置登录域、注册开关、默认角色和用户归属；密码、短信、邮件、社交、小程序登录统一执行准入 | 一套后端可安全服务多个产品入口和用户群体 |
 | RBAC 与会话 | 角色、菜单、按钮权限、动态路由、默认角色和会话按 `userId + Client 主键` 计算 | 防止跨 App 菜单、权限、Token 和会话串用 |
 | OSS | 浏览器直传对象存储，支持单文件、分片、断点续传、失败恢复、对象引用、临时文件清理、可恢复删除和授权下载 | 大文件不再经过应用服务器转发，并补齐对象全生命周期治理 |
 | 通知 | 渠道无关的通知分发，提供邮件/短信适配、Redis 幂等、OSS 附件快照、调用上下文审计、脱敏和全局投递监控 | 业务模块通过统一合同发送和追踪通知 |
 | HTTP 可观测性 | 在 Servlet 边界输出可关联的请求/响应结构化事件，覆盖同步、异步、异常、正文截断和媒体类型策略 | 无需为每个接口重复编写基础访问日志，可按 requestId 串联一次调用 |
-| 数据变更 | 父仓库统一维护七份 MySQL 8.4 完整初始化基座（含独立三方菜单 DML），业务迭代直接修改对应基座文件 | 全新环境可确定性初始化，已有环境按源/目标 Git Tag 评审差异后升级 |
+| 数据变更 | 父仓库统一维护六份 MySQL 8.4 完整初始化基座（三方菜单 DML 已并入 60），业务迭代直接修改对应基座文件 | 全新环境可确定性初始化，已有环境按源/目标 Git Tag 评审差异后升级 |
 | 工程治理 | 前后端产品分支与上游镜像分离，固定基线，维护定制边界、架构检查、OpenAPI 漂移检查和分层测试 | 可吸收上游能力，同时避免覆盖 NAMEWTA 的核心改造 |
 
 完整能力、实现位置和边界见 [NAMEWTA 增强说明](docs/namewta-enhancements.md)。
@@ -38,9 +38,9 @@ ruoyi-vue-plus-docs/
 │   ├── ruoyi-admin/                 # 服务启动与模块组装
 │   ├── ruoyi-api/                   # 跨模块公开合同
 │   ├── ruoyi-common/                # 通用基础能力
-│   └── ruoyi-modules/               # system/workflow/gen/demo/ai/job/third
+│   └── ruoyi-modules/               # system/workflow/demo/profile/notify/ai/job/third
 ├── docs/                            # 当前架构与上游治理文档
-├── release-artifacts/               # 发布资产及七份 MySQL 8.4 初始化基座
+├── release-artifacts/               # 发布资产及六份 MySQL 8.4 初始化基座
 └── speculo/                         # 规格驱动研发状态
 ```
 
@@ -52,7 +52,7 @@ ruoyi-vue-plus-docs/
 
 | 终端 | 状态 | 说明 |
 |---|---|---|
-| `admin-web` | 已激活 | 完整后台管理端，组合六个业务领域及动态菜单权限 |
+| `admin-web` | 已激活 | 完整后台管理端，组合八个业务领域及动态菜单权限 |
 | `home-web` | 已激活 | 用户门户与用户中心，组合登录、注册和档案认证流程 |
 
 新增 App 时不复制 `admin-web/src/api`、业务类型或领域页面。App 从公开包入口选择所需 domain/web-domain，再提供本终端的请求、存储、加密、布局和路由适配。

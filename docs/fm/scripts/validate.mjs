@@ -14,7 +14,7 @@ function files(directory) {
 
 const templates = files(root)
   .filter(path => path.endsWith('.ftl'))
-  .map(path => relative(root, path))
+  .map(path => relative(root, path).split('\\').join('/'))
   .sort();
 const catalog = JSON.parse(readFileSync(join(root, 'catalog.json'), 'utf8'));
 const catalogTemplates = catalog.templates.map(item => item.source).sort();

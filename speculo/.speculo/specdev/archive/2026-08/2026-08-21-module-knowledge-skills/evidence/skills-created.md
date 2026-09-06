@@ -30,7 +30,7 @@ updated_at: 2026-08-22T00:02:19+08:00
 
 | Skill | 目录 |
 |---|---|
-| plus-ui-frontend-conventions | `<Path>.agents/skills/plus-ui-frontend-conventions/</Path>` |
+| namewta-fullstack-development | `<Path>.agents/skills/namewta-fullstack-development/</Path>` |
 | ruoyi-system-module-guide | `<Path>.agents/skills/ruoyi-system-module-guide/</Path>` |
 | ruoyi-workflow-module-guide | `<Path>.agents/skills/ruoyi-workflow-module-guide/</Path>` |
 | ruoyi-common-modules-guide | `<Path>.agents/skills/ruoyi-common-modules-guide/</Path>` |
@@ -44,7 +44,7 @@ updated_at: 2026-08-22T00:02:19+08:00
 直接使用当前 Python 环境的首次复核命令：
 
 ```bash
-python "$HOME/.codex/skills/.system/skill-creator/scripts/quick_validate.py" .agents/skills/plus-ui-frontend-conventions
+python "$HOME/.codex/skills/.system/skill-creator/scripts/quick_validate.py" .agents/skills/namewta-fullstack-development
 ```
 
 结果：exit 1，`ModuleNotFoundError: No module named 'yaml'`；分类为验证环境依赖缺失，不是 Skill 内容失败。
@@ -54,7 +54,7 @@ python "$HOME/.codex/skills/.system/skill-creator/scripts/quick_validate.py" .ag
 ```bash
 for skill_dir in \
   .agents/skills/engineering-standards \
-  .agents/skills/plus-ui-frontend-conventions \
+  .agents/skills/namewta-fullstack-development \
   .agents/skills/ruoyi-system-module-guide \
   .agents/skills/ruoyi-workflow-module-guide \
   .agents/skills/ruoyi-common-modules-guide
@@ -68,7 +68,7 @@ done
 | Skill 目录 | 退出码 | 输出 |
 |---|---|---|
 | `<Path>.agents/skills/engineering-standards/</Path>` | 0 | Skill is valid! |
-| `<Path>.agents/skills/plus-ui-frontend-conventions/</Path>` | 0 | Skill is valid! |
+| `<Path>.agents/skills/namewta-fullstack-development/</Path>` | 0 | Skill is valid! |
 | `<Path>.agents/skills/ruoyi-system-module-guide/</Path>` | 0 | Skill is valid! |
 | `<Path>.agents/skills/ruoyi-workflow-module-guide/</Path>` | 0 | Skill is valid! |
 | `<Path>.agents/skills/ruoyi-common-modules-guide/</Path>` | 0 | Skill is valid! |
@@ -81,7 +81,7 @@ done
 
 ## CR-001 修复
 
-- `<Path>.agents/skills/plus-ui-frontend-conventions/SKILL.md</Path>` 已将仓库锚点改为“工具链脚本”，并明确 `pnpm fmt` 会写入工作树、不是门禁。
+- `<Path>.agents/skills/namewta-fullstack-development/SKILL.md</Path>` 已将仓库锚点改为“工具链脚本”，并明确 `pnpm fmt` 会写入工作树、不是门禁。
 - 本 Evidence 已补齐验证 cwd、命令、解释器、依赖、退出码、首次失败分类和成功复跑结果。
 - `<Path>.agents/skills/engineering-standards/SKILL.md</Path>` 已增加领域知识路由：规范裁决仍由 engineering-standards 负责，实际任务命中 plus-ui、system、workflow 或 common 领域时调用最小充分的原子 Skill。
 

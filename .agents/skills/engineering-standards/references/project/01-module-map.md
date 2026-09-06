@@ -53,6 +53,7 @@
 | `ruoyi-modules/ruoyi-ai` | AI 业务能力 | package surface | none |
 | `ruoyi-modules/ruoyi-demo` | 示例/集成演示能力 | package surface | none |
 | `ruoyi-modules/ruoyi-job` | 业务任务执行器 | package surface | none |
+| `ruoyi-modules/ruoyi-notify` | 通知公告、收件箱和渠道投递编排 | `controller/admin`、`controller/anonymous`、`usecase` | `src/test/java`; layered module; `validate-module-mode` required |
 | `ruoyi-modules/ruoyi-profile` | 账号资料业务聚合 POM | none | no source root |
 | `ruoyi-modules/ruoyi-profile/ruoyi-profile-bom` | profile 子模块版本/BOM 合同 | none | no source root |
 | `ruoyi-modules/ruoyi-profile/ruoyi-profile-person` | 个人资料与认证能力 | controller/service/mapper contracts | `src/test/java` |

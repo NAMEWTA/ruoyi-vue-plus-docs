@@ -17,7 +17,7 @@ plus-ui-namewta 前端编码、注释与动态权限路由的现行事实与 Ski
 
 ## Research: plus-ui-namewta 前端编码约定、注释约定与动态权限路由
 
-- Decision / target: 为后续在 `<Path>.agents/skills/plus-ui-frontend-conventions/</Path>` 编写 Skill 提供一手证据地图；本文件为唯一 owning artifact。
+- Decision / target: 为后续在 `<Path>.agents/skills/namewta-fullstack-development/</Path>` 编写 Skill 提供一手证据地图；本文件为唯一 owning artifact。
 - Scope / version: `<Path>plus-ui-namewta/</Path>` 当前工作树；对照后端菜单/权限接口 `<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-system/</Path>`。前端栈：Vue 3.5.40、TypeScript ^6.0.3、Vite ^8.1.5、Pinia 4.0.2、oxlint ^1.75.0、oxfmt ^0.60.0、pnpm@10.34.5、Node `>=20.19.0`（见 `<Path>plus-ui-namewta/package.json</Path>`）。
 - Stop condition: 路由端到端路径完整；每条约定有仓库路径；未知项单列。未创建 Skill、未改 status。
 
@@ -324,7 +324,7 @@ plus-ui-namewta 前端编码、注释与动态权限路由的现行事实与 Ski
 - Type: code fact
 - Source: 上述两个文件
 - Confidence: high
-- Limits: 该 Skill 面向 CRUD 生成，不是本 change 要创建的 plus-ui-frontend-conventions。
+- Limits: 该 Skill 面向 CRUD 生成，不是本 change 要创建的 namewta-fullstack-development。
 - Artifact impact: 新 Skill 可引用其 CRUD 细节，但权限路由必须以本调研的源码路径为准。
 
 ### R-035
@@ -358,7 +358,7 @@ plus-ui-namewta 前端编码、注释与动态权限路由的现行事实与 Ski
 
 ### Recommendation
 
-后续 Skill `<Path>.agents/skills/plus-ui-frontend-conventions/</Path>` 建议三份 references，且全部声明“描述不清则按文中路径读源码，禁止发明规范”：
+后续 Skill `<Path>.agents/skills/namewta-fullstack-development/</Path>` 建议三份 references，且全部声明“描述不清则按文中路径读源码，禁止发明规范”：
 
 1. **coding-style**：EditorConfig + oxlint/oxfmt/tsconfig/package.json scripts；明确无 ESLint/Prettier 工程；门禁 `pnpm lint`、写入格式化 `pnpm fmt`、构建 `pnpm build:prod`；typecheck/test 不是 active gate。链接 engineering-standards，不复制 MUST 条文。
 2. **comments**：只记录观察性实践（API 块 JSDoc、页面单行 `/** 操作名 */`、模板分区 HTML 注释、无版权头、无 TODO 文化、user 页 dropdown 那条注意）。不要写虚构 style guide。

@@ -18,7 +18,7 @@
 
 ## External contracts
 
-- system：`org.dromara.system.api.UserService`、`ConfigService`、`OssService`、`MessageService` 及 common SPI。
+- system：`org.dromara.system.api.UserService`、`ConfigService`、`OssService` 及 common SPI；通知统一依赖 `org.dromara.notify.api.NotificationApplicationService`。
 - workflow：`org.dromara.workflow.api.WorkflowService`、`ProcessEvent`、`ProcessTaskEvent`、`ProcessDeleteEvent`。
 - Redis challenge：`EnterpriseTransferChallengeStore` 是 Store，不是 DAO；合同属于 `port/store`，实现属于 `adapter/store`，不得调用 Mapper。
 - verification：`<Person|Enterprise>VerificationProvider` 只负责 provider 认证和规范化证据，不直接发布档案或修改绑定；合同属于 `port/provider`，实现属于 `adapter/provider`。

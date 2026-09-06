@@ -23,8 +23,8 @@ writable_paths:
   - "<Path>.agents/skills/engineering-standards/references/project/03-backend-module-modes.md</Path>"
   - "<Path>.agents/skills/ruoyi-module-guide/SKILL.md</Path>"
   - "<Path>.agents/skills/ruoyi-module-guide/references/modules/third/**</Path>"
-  - "<Path>.agents/skills/plus-ui-frontend-conventions/references/architecture.md</Path>"
-  - "<Path>.agents/skills/plus-ui-frontend-conventions/references/crud-resource-slices.md</Path>"
+  - "<Path>.agents/skills/namewta-fullstack-development/references/frontend/architecture.md</Path>"
+  - "<Path>.agents/skills/namewta-fullstack-development/references/frontend/crud-resource-slices.md</Path>"
 read_only_paths:
   - "<Path>ruoyi-vue-plus-namewta/**</Path>"
   - "<Path>plus-ui-namewta/**</Path>"
@@ -34,15 +34,15 @@ shared_paths:
   - "<Path>.agents/skills/engineering-standards/references/project/01-module-map.md</Path>"
   - "<Path>.agents/skills/engineering-standards/references/project/03-backend-module-modes.md</Path>"
   - "<Path>.agents/skills/ruoyi-module-guide/SKILL.md</Path>"
-  - "<Path>.agents/skills/plus-ui-frontend-conventions/references/architecture.md</Path>"
-  - "<Path>.agents/skills/plus-ui-frontend-conventions/references/crud-resource-slices.md</Path>"
+  - "<Path>.agents/skills/namewta-fullstack-development/references/frontend/architecture.md</Path>"
+  - "<Path>.agents/skills/namewta-fullstack-development/references/frontend/crud-resource-slices.md</Path>"
 shared_path_owners:
   - "<Path>.agents/skills/engineering-standards/references/project/00-project-profile.md</Path> => T-13"
   - "<Path>.agents/skills/engineering-standards/references/project/01-module-map.md</Path> => T-13"
   - "<Path>.agents/skills/engineering-standards/references/project/03-backend-module-modes.md</Path> => T-13"
   - "<Path>.agents/skills/ruoyi-module-guide/SKILL.md</Path> => T-13"
-  - "<Path>.agents/skills/plus-ui-frontend-conventions/references/architecture.md</Path> => T-13"
-  - "<Path>.agents/skills/plus-ui-frontend-conventions/references/crud-resource-slices.md</Path> => T-13"
+  - "<Path>.agents/skills/namewta-fullstack-development/references/frontend/architecture.md</Path> => T-13"
+  - "<Path>.agents/skills/namewta-fullstack-development/references/frontend/crud-resource-slices.md</Path> => T-13"
 ---
 
 # Ticket T-13: 同步工程事实并执行 ruoyi-third 全栈发布 Gate
@@ -79,8 +79,8 @@ shared_path_owners:
 
 ## 2.1 必须加载的 Skill 与工程基线
 
-- **必须加载：** <Path>.agents/skills/engineering-standards/SKILL.md</Path>、<Path>.agents/skills/ruoyi-backend-development/SKILL.md</Path>、<Path>.agents/skills/ruoyi-module-guide/SKILL.md</Path>、<Path>.agents/skills/ruoyi-common-modules-guide/SKILL.md</Path>、<Path>.agents/skills/java-api-compatibility/SKILL.md</Path>、<Path>.agents/skills/plus-ui-frontend-conventions/SKILL.md</Path>。
-- **必须先读的参考：** <Path>.agents/skills/engineering-standards/references/project/00-project-profile.md</Path>、<Path>.agents/skills/engineering-standards/references/project/01-module-map.md</Path>、<Path>.agents/skills/engineering-standards/references/project/02-decisions-and-exceptions.md</Path>、<Path>.agents/skills/engineering-standards/references/project/03-backend-module-modes.md</Path>、<Path>.agents/skills/plus-ui-frontend-conventions/references/architecture.md</Path>、<Path>.agents/skills/plus-ui-frontend-conventions/references/implementation.md</Path>、<Path>.agents/skills/ruoyi-backend-development/references/verification.md</Path>、<Path>.agents/skills/java-api-compatibility/SKILL.md</Path>。
+- **必须加载：** <Path>.agents/skills/engineering-standards/SKILL.md</Path>、<Path>.agents/skills/namewta-fullstack-development/SKILL.md</Path>、<Path>.agents/skills/ruoyi-module-guide/SKILL.md</Path>、<Path>.agents/skills/ruoyi-common-modules-guide/SKILL.md</Path>、<Path>.agents/skills/java-api-compatibility/SKILL.md</Path>、<Path>.agents/skills/namewta-fullstack-development/SKILL.md</Path>。
+- **必须先读的参考：** <Path>.agents/skills/engineering-standards/references/project/00-project-profile.md</Path>、<Path>.agents/skills/engineering-standards/references/project/01-module-map.md</Path>、<Path>.agents/skills/engineering-standards/references/project/02-decisions-and-exceptions.md</Path>、<Path>.agents/skills/engineering-standards/references/project/03-backend-module-modes.md</Path>、<Path>.agents/skills/namewta-fullstack-development/references/frontend/architecture.md</Path>、<Path>.agents/skills/namewta-fullstack-development/references/frontend/implementation.md</Path>、<Path>.agents/skills/namewta-fullstack-development/references/backend/verification.md</Path>、<Path>.agents/skills/java-api-compatibility/SKILL.md</Path>。
 - **目录与代码最低要求：** 以当前源码事实更新唯一 project/module/frontend Skills；若 T-01 的新模块已落地，必须把 ruoyi-third 登记为 layered 并记录 controller/usecase/service/dao/mapper/xml、POM、bundle、SQL、测试和前端 owner。Skill 只记录导航和事实，不复制实现。
 - **Gate 要求：** 按工程规范执行 module-mode、Maven full/core、MySQL 8.4、Redis、local HTTP、SysLog、frontend architecture/type/lint/test/build 和 Admin E2E；Evidence 记录命令、工作目录、退出码、环境/跳过原因和残余风险。
 - **执行停止条件：** 文档先于代码、遗漏 package/AGENTS/exports、验证只跑单元、把 source-worktree E2E 当通过、跳过 full/core/SQL/Redis、或为修绿而放宽规则时立即停止并退回原 Ticket。

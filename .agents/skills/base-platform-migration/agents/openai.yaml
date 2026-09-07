@@ -1,0 +1,6 @@
+interface:
+  display_name: "基座派生与持续同步"
+  short_description: "手动创建品牌化单仓库并持续维护三方映射"
+  default_prompt: "使用 $base-platform-migration，按给定品牌、Java 包名和目标持久化目录执行盘点、迁移、验证或同步。"
+policy:
+  allow_implicit_invocation: false

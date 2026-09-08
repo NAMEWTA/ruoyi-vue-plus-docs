@@ -101,7 +101,7 @@ MINIO_ROOT_USER=<仅服务端使用>
 MINIO_ROOT_PASSWORD=<仅服务端使用>
 MINIO_ENDPOINT=<后端和浏览器可达的 MinIO 地址>
 MINIO_BUCKET=ruoyi
-MINIO_API_CORS_ALLOW_ORIGIN=http://localhost:5177,http://127.0.0.1:5177
+MINIO_API_CORS_ALLOW_ORIGIN=*
 ```
 
 `MINIO_API_CORS_ALLOW_ORIGIN` 是逗号分隔的 Origin 白名单。当前项目使用 MinIO 的全局 CORS 环境变量；官方文档也说明该配置支持逗号分隔来源，并且环境变量优先于客户端配置。[MinIO CORS Configuration](https://docs.min.io/aistor/administration/cors-configuration/) 和 [MinIO mc admin config](https://docs.min.io/aistor/reference/cli/admin/mc-admin-config/)
@@ -110,7 +110,7 @@ MINIO_API_CORS_ALLOW_ORIGIN=http://localhost:5177,http://127.0.0.1:5177
 
 - 只添加真实的前端 Origin，不要写路径，不要加结尾 `/`。
 - 开发端口变化时同步更新，尤其区分 `localhost` 和 `127.0.0.1`。
-- 不要用 `*` 掩盖配置错误；预签名上传的签名权限和 CORS 来源应同时收紧。
+- `*` 仅允许用于本地开发/联调默认值；共享或生产环境必须覆盖为稳定 HTTPS 域名白名单，不能沿用该默认值。
 - 需要浏览器读取 Multipart 的 `ETag` 时，CORS 必须暴露 `ETag` 响应头。
 - 允许的方法至少包含 `PUT`；浏览器的 `OPTIONS` 预检由 MinIO 根据 CORS 配置响应。
 - `Access-Control-Allow-Headers` 必须覆盖签名返回的请求头。当前实现至少会使用 `content-type` 和 `x-amz-meta-upload-fingerprint`，实际以 `presignedRequest.requiredHeaders` 为准。

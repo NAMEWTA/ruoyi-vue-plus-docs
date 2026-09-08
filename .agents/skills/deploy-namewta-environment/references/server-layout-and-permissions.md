@@ -4,21 +4,35 @@
 
 ```text
 /data/namewta-data/
-  .env                         0600
-  namewta-release.env          0600
-  compose/                     版本化运行 Compose
+  compose/                     所有 Compose、override、env 与运行说明
+    docker-compose-*.yml       0640
+    overrides/*.yml            0640
+    namewta-release.env        0600
   releases/                    不可变发布目录
   release-current -> releases/<release-id>
-  mysql/data/                  持久化
-  redis/data/                  持久化
-  minio/data/                  持久化
-  minio/config/                持久化
-  nacos/data/                  持久化
-  nacos/logs/                  持久化
-  loki/ grafana/ prometheus/   启用时持久化
+  data/mysql/                  持久化
+  data/redis/                  持久化
+  data/minio/                  持久化
+  data/minio-config/           持久化
+  data/nacos/                  持久化
+  data/nacos-logs/              持久化
+  data/{loki,grafana,prometheus}/ 启用时持久化
   backups/<timestamp>/         配置、发布与数据备份
   staging/                     未完成传输
+  deployment/namewta-deployment.md  唯一最新部署报告（0600）
+  log/<yyyy-mm-dd>/            检测日志、命令输出与截图
 ```
+
+`compose/` 是唯一的编排文件目录。基础文件、环境差异 override 和对应的
+`--env-file` 都必须放在这里；禁止把 Compose 文件散落在根目录、`data/` 或
+`releases/`。所有中间件数据只放在 `data/` 下：
+
+```text
+/data/namewta-data/data/{mysql,redis,minio,nacos,loki,grafana,prometheus}/
+```
+
+`releases/` 仅保存不可变应用发布构件，`backups/` 仅保存备份，二者都不承担
+运行时数据。部署完成后只保留 `deployment/namewta-deployment.md` 作为唯一最新报告，并在 `log/<yyyy-mm-dd>/` 保存检测证据；报告含敏感信息，权限为 `0600`。
 
 目录由部署用户或已记录的容器 UID/GID 持有。敏感文件为 `0600`，普通配置为 `0640` 或更严格，目录为 `0750` 或更严格；容器确有要求时才记录例外。
 

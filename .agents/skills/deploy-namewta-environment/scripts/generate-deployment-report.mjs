@@ -211,7 +211,8 @@ try {
       `- SSH 服务器：\`${profile.server.sshUser}@${host}:${profile.server.sshPort}\``,
       `- 授权根目录：\`${profile.server.root}\``,
       `- Docker 网络：\`${profile.network.dockerNetwork}\``,
-      `- 持久化目录：\`${profile.server.root}/{mysql,redis,minio,nacos,loki,grafana,prometheus}\``,
+      `- Compose 目录：\`${profile.server.root}/compose\``,
+      `- 持久化目录：\`${profile.server.root}/data/{mysql,redis,minio,nacos,loki,grafana,prometheus}\``,
       '- 敏感文件权限：`0600`'
     ].join('\n'),
     endpointSection: ['| 用途 | 地址 | 端口 |', '|---|---|---|', ...endpointRows].join('\n'),
@@ -230,6 +231,11 @@ try {
         : ['- 全部自动化状态门禁通过。']),
       '- 详细采集时间：`' + markdownCell(state.capturedAt ?? '未记录') + '`'
     ].filter(Boolean).join('\n'),
+    evidenceSection: [
+      `- 当日目录：\`${markdownCell(state.evidence?.logDirectory ?? `${profile.server.root}/log/${new Date().toISOString().slice(0, 10)}`)}\``,
+      `- 日志文件：\`${markdownCell((state.evidence?.logFiles ?? []).join(', ') || '未记录')}\``,
+      `- 截图文件：\`${markdownCell((state.evidence?.screenshots ?? []).join(', ') || '未记录')}\``
+    ].join('\n'),
     upgradeSection: [
       '1. 记录当前清单、Schema、配置摘要与活动指针。',
       '2. 备份配置、数据库、对象存储元数据和当前发布，并验证备份。',

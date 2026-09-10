@@ -1460,3 +1460,54 @@ create table notify_message_recipient (
     unique key uk_notify_message_recipient (message_id, user_id),
     key idx_notify_message_recipient_user (user_id, read_time, create_time)
 ) engine=innodb comment='通知中心收件人及阅读状态';
+
+create table notify_channel_account (
+    account_id bigint(20) not null comment '渠道账号主键',
+    channel varchar(16) not null comment '渠道 MAIL SMS',
+    config_key varchar(64) not null comment '账号标识',
+    enabled char(1) not null default 'N' comment '是否启用（Y是 N否）',
+    supplier varchar(64) default null comment '短信厂商标识',
+    host varchar(128) default null comment 'SMTP 主机',
+    port int default null comment 'SMTP 端口',
+    mail_from varchar(128) default null comment '发件人',
+    mail_user varchar(128) default null comment 'SMTP 用户名',
+    mail_pass varchar(256) default null comment 'SMTP 密码',
+    ssl_enable char(1) default 'N' comment '是否启用 SSL',
+    starttls_enable char(1) default 'N' comment '是否启用 STARTTLS',
+    access_key_id varchar(128) default null comment '短信 AccessKey',
+    access_key_secret varchar(256) default null comment '短信密钥',
+    signature varchar(128) default null comment '短信签名',
+    sdk_app_id varchar(128) default null comment '短信应用 ID',
+    minute_max int not null default 60 comment '账号每分钟上限',
+    remark varchar(500) default null comment '备注',
+    create_dept bigint(20) default null comment '创建部门',
+    create_by bigint(20) default null comment '创建者',
+    create_time datetime not null comment '创建时间',
+    update_by bigint(20) default null comment '更新者',
+    update_time datetime default null comment '更新时间',
+    primary key (account_id),
+    unique key uk_notify_channel_account (channel, config_key)
+) engine=innodb comment='通知渠道账号';
+
+create table notify_scene_binding (
+    binding_id bigint(20) not null comment '场景绑定主键',
+    scene_code varchar(64) not null comment '逻辑场景编码',
+    channel varchar(16) not null comment '渠道 MAIL SMS',
+    account_id bigint(20) default null comment '绑定账号主键',
+    mail_subject varchar(500) default null comment '邮件主题模板',
+    mail_body longtext comment '邮件正文模板',
+    sms_template_code varchar(128) default null comment '短信供应商模板码',
+    sms_param_mapping_json json default null comment '逻辑变量到供应商参数映射',
+    template_minute_max int not null default 60 comment '模板每分钟上限',
+    restricted char(1) not null default 'N' comment '是否启用收件人拦截',
+    recipient_minute_max int not null default 0 comment '同一收件人每分钟上限',
+    recipient_day_max int not null default 0 comment '同一收件人每天上限',
+    create_dept bigint(20) default null comment '创建部门',
+    create_by bigint(20) default null comment '创建者',
+    create_time datetime not null comment '创建时间',
+    update_by bigint(20) default null comment '更新者',
+    update_time datetime default null comment '更新时间',
+    primary key (binding_id),
+    unique key uk_notify_scene_binding (scene_code, channel),
+    key idx_notify_scene_binding_account (account_id)
+) engine=innodb comment='通知场景渠道绑定';

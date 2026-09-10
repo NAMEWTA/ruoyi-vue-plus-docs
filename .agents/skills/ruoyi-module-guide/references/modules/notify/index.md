@@ -14,6 +14,7 @@
 | 收件箱 | `controller/admin/NotifyInboxController`、`usecase/NotifyInboxUseCase` |
 | 投递监控 | `controller/admin/NotificationMonitorController`、`usecase/NotificationMonitorUseCase` |
 | 供应商回调 | `controller/anonymous/ProviderCallbackController`、`usecase/ProviderCallbackUseCase` |
+| 通知配置 | `controller/admin/NotifyConfigController`、`usecase/NotifyConfigUseCase` |
 | 统一业务通知 | `org.dromara.notify.api.NotificationApplicationService` |
 | 实时推送 | `org.dromara.notify.api.InAppNotificationPort` 与 `common-push` 一次性票据 |
 
@@ -43,7 +44,9 @@
 - `recipientType=ALL`：`recipientIds` 必须为空；发布时分页读取正常用户，单次最多 100000 人。
 - `recipientType=PHONE/EMAIL`：仅用于明确的外部收件人合同，联系方式允许以明文保存在本次投递快照中。
 - `channels` 只允许 `IN_APP`、`SMS`、`MAIL`；未实现渠道不得写入命令。未选择时由公告入口默认 `IN_APP`。
-- 提交只写入 Intent、Recipient、Delivery 和 Outbox；不要在业务事务中等待 Provider I/O。由 Outbox Worker 负责有限重试、幂等和死信，供应商回调必须带短时窗口内的 `eventId`、`timestamp`、`providerKey` 并通过 HMAC 验签。
+- MAIL/SMS 调用方只传场景编码、模板码和已声明变量，不要传 `providerKey` 或写死完整句子。验证码场景编码为 `auth-captcha`。
+- 邮件 SMTP 与短信厂商账号、热配文案、模板码和收件人拦截的运行时权威是通知配置表，不是 YAML。YAML 最多保留 SMS4J 框架项（如 `config-type`）。
+- 提交只写入 Intent、Recipient、Delivery 和 Outbox；不要在业务事务中等待 Provider I/O。由 Outbox Worker 负责有限重试、幂等和死信，供应商回调必须带短时窗口内的 `eventId`、`timestamp`、`providerKey` 并通过 HMAC 验签。缺绑定、账号停用或限额用尽时该渠道失败关闭，不改选其他已启用账号。
 - 站内消息和消息盒子统一读取 `/notify/inbox`；实时提示只能使用 `/resource/message/ticket` 签发的一次性短时票据，禁止把长期 Bearer Token 放入 URL。
 
 ## 验证

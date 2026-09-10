@@ -135,4 +135,4 @@ FQN：`org.dromara.common.satoken.utils.LoginHelper`。JavaDoc「登录鉴权助
 
 | FQN | 职责 | 路径 |
 |---|---|---|
-| `org.dromara.common.mail.core.MailBuilder` | 邮件发送构建器。 | `ruoyi-common/ruoyi-common-mail/src/main/java/org/dromara/common/mail/core/MailBuilder.java` |
+| `org.dromara.common.mail.core.MailBuilder` | 邮件发送构建器。运行时 SMTP 账户由通知配置解析后传入，不从 YAML 发件人读取。 | `ruoyi-common/ruoyi-common-mail/src/main/java/org/dromara/common/mail/core/MailBuilder.java` |

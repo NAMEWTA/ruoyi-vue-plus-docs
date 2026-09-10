@@ -36,7 +36,7 @@
 | Excel 导入导出 | `ruoyi-common-excel` | `ExcelBuilder`（无 `ExcelUtil`） |
 | OSS 文件 | `ruoyi-common-oss` | `OssFactory` / `OssClient` |
 | 渠道无关通知、幂等、附件快照 | `ruoyi-common-notify` | `NotifyDispatcher`、`NotifyClient`、`NotifyChannelAdapter` |
-| 邮件 | `ruoyi-common-mail` | `MailBuilder` |
+| 邮件 | `ruoyi-common-mail` | `MailBuilder`、`MailAccountResolver`（发件账号由 ruoyi-notify 通知配置解析） |
 | 推送 | `ruoyi-common-push` | `PushHelper` |
 | 机器调用协议、显式开放注册表、签名网关与机器 Session | `ruoyi-common-openapi` | `@OpenApi`、`OpenApiCanonicalizer`、OpenAPI SPI；admin 默认开启，可用 `OPENAPI_ENABLED=false` 显式关闭，业务凭据与授权实现位于 system |
 | 字典标签 / 角色菜单权限 / 是否脱敏 | 注入 SPI，不要在 common 找实现 | 见 [SPI](#spi-接口-vs-system-实现) |
@@ -104,7 +104,7 @@
 - POM：`ruoyi-common/ruoyi-common-mail/pom.xml`，description「ruoyi-common-mail 邮件模块」。显式 common：`ruoyi-common-core`、`ruoyi-common-notify`。
 - 源码根：`ruoyi-common/ruoyi-common-mail/src/main/java/org/dromara/common/mail/`
 - AutoConfiguration.imports：`config/MailConfig.java`
-- 入口：`config/MailConfig.java`；`core/MailBuilder.java`（「邮件发送构建器。」）；`config/properties/MailProperties.java`
+- 入口：`config/MailConfig.java`；`core/MailBuilder.java`（「邮件发送构建器。」）；`notify/MailAccountResolver.java`（按 configKey 解析 SMTP，实现位于 ruoyi-notify）。运行时发件账号不从 YAML `mail.from`/`user`/`pass` 读取。
 
 ### 10. ruoyi-common-mybatis
 
@@ -145,7 +145,7 @@
 - POM：`ruoyi-common/ruoyi-common-sms/pom.xml`，description「ruoyi-common-sms 短信模块」。显式 common：`ruoyi-common-redis`、`ruoyi-common-notify`。
 - 源码根：`ruoyi-common/ruoyi-common-sms/src/main/java/org/dromara/common/sms/`
 - AutoConfiguration.imports：`config/SmsAutoConfiguration.java`（JavaDoc「短信配置类」，import `org.dromara.sms4j`）
-- 入口：`config/SmsAutoConfiguration.java`；`core/dao/PlusSmsDao.java`；`handler/SmsExceptionHandler.java`
+- 入口：`config/SmsAutoConfiguration.java`；`core/dao/PlusSmsDao.java`；`handler/SmsExceptionHandler.java`；`notify/SmsNotifyChannelAdapter.java`。厂商账号由 ruoyi-notify 通知配置注册 SMS4J blend，YAML 不再保存 `sms.blends` 与全局拦截。
 
 ### 16. ruoyi-common-elasticsearch
 

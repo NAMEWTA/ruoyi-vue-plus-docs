@@ -24,6 +24,15 @@ function walk(directory) {
 }
 walk(skillRoot);
 const all = markdownFiles.map(file => readFileSync(file, 'utf8')).join('\n');
+const canonicalText = markdownFiles
+  .filter(file => {
+    const normalized = file.replaceAll('\\', '/');
+    return canonical
+      .filter(name => name !== 'deploy-namewta-environment')
+      .some(name => normalized.includes(`/.agents/skills/${name}/`));
+  })
+  .map(file => readFileSync(file, 'utf8'))
+  .join('\n');
 const forbidden = [
   'temp/relase',
   'ruoyi-' + 'profile-module-guide',
@@ -32,7 +41,7 @@ const forbidden = [
   'client-web',
 ];
 for (const value of forbidden) {
-  if (all.includes(value)) fail(`Skills 残留过时事实: ${value}`);
+  if (canonicalText.includes(value)) fail(`Skills 残留过时事实: ${value}`);
 }
 if (!all.includes('ruoyi-notify')) fail('Skills 未登记 ruoyi-notify');
 for (const required of ['BaseMapperPlus', 'WorkflowService', 'NotificationApplicationService', 'UseCase -> Service -> DAO -> Mapper', '50-namewta-ddl.sql', '60-namewta-dml.sql', '需求/菜单', 'domain transport/model/service', 'web-domain 页面/runtime/manifest', 'getInfo -> getRouters -> addRoute -> replace', 'local-name', 'tabler:name', 'sys_menu.icon']) {

@@ -4,14 +4,14 @@ artifact: ticket
 change: 2026-09-08-richtext-third-oss
 id: T-01
 title: 富文本演示在缺少 Client 上下文时保持可诊断且不崩溃
-status: ready
+status: done
 planning_depth: standard
 planning_depth_reason: 跨前端页面和后端 demo 服务的垂直修复，需要补单元验证，但不涉及 schema、迁移或外部系统改造。
 ready: true
 risk: medium
 blocked_by: []
 contract_ids: [AC-001]
-owner: unassigned
+owner: grok-build
 expected_changes:
   - "<Path>plus-ui-namewta/packages/web-domains/demo/src/test-rich-text/RichTextPage.vue</Path>"
   - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-demo/src/main/java/org/dromara/demo/service/impl/TestRichTextServiceImpl.java</Path>"

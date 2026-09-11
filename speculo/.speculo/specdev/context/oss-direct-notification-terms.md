@@ -26,6 +26,9 @@ _Avoid_: 后端中转浏览器上传或下载
 **OSS Data Plane**：浏览器使用短时预签名请求直接向 OSS 上传 Part 或下载对象；业务数据库只持久化 `ossId`。
 _Avoid_: 永久下载 URL、业务表保存对象 URL
 
+**Local MinIO CORS Default**：`release-artifacts` 中 `MINIO_API_CORS_ALLOW_ORIGIN` 的本地/联调默认值是 `*`，用来避免前端 Origin 变化导致预检失败；共享或生产必须覆盖为稳定 HTTPS 域名白名单。
+_Avoid_: 把 `*` 拷进生产 env、用固定前端 IP 作为本地默认白名单
+
 **UploadTicket**：保存在 Redis 的上传会话，默认续传窗口 24 小时，绑定对象 Key、Provider uploadId、文件指纹、上传策略和审计上下文；完成校验后才生成 `ossId`。
 _Avoid_: sys_oss PENDING 上传记录
 

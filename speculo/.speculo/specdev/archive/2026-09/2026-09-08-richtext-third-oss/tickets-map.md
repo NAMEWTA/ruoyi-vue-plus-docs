@@ -2,7 +2,7 @@
 schema_version: 3
 artifact: tickets-map
 change: 2026-09-08-richtext-third-oss
-status: ready
+status: completed
 ---
 
 # Tickets Map: 富文本、三方调用明细/统计、OSS 直传稳定性修复
@@ -38,16 +38,16 @@ status: ready
 
 | ID | Ticket | 可观察产出 | Blocked By | Depth | Risk | Ready | Owner | Contract IDs | Wave/Gate | Status |
 |---|---|---|---|---|---|---|---|---|---|---|
-| T-01 | `<Path>{roots.state}/specdev/changes/2026-09-08-richtext-third-oss/ticket/01-richtext-client-context-stability.md</Path>` | 富文本页不再因缺少 Client 抛未处理异常 | — | standard | medium | yes | unassigned | AC-001 | — | ready |
-| T-02 | `<Path>{roots.state}/specdev/changes/2026-09-08-richtext-third-oss/ticket/02-third-observability-optional-provider-code.md</Path>` | 调用明细/统计空筛选可直接返回最近数据 | — | deep | medium | yes | unassigned | AC-002 | — | ready |
-| T-03 | `<Path>{roots.state}/specdev/changes/2026-09-08-richtext-third-oss/ticket/03-oss-dev-cors-default.md</Path>` | 开发环境不再依赖固定前端 IP 才能通过 OSS CORS | — | deep | high | yes | unassigned | AC-003 | — | ready |
+| T-01 | `<Path>{roots.state}/specdev/changes/2026-09-08-richtext-third-oss/ticket/01-richtext-client-context-stability.md</Path>` | 富文本页不再因缺少 Client 抛未处理异常 | — | standard | medium | yes | grok-build | AC-001 | — | done |
+| T-02 | `<Path>{roots.state}/specdev/changes/2026-09-08-richtext-third-oss/ticket/02-third-observability-optional-provider-code.md</Path>` | 调用明细/统计空筛选可直接返回最近数据 | — | deep | medium | yes | grok-build | AC-002 | — | done |
+| T-03 | `<Path>{roots.state}/specdev/changes/2026-09-08-richtext-third-oss/ticket/03-oss-dev-cors-default.md</Path>` | 开发环境不再依赖固定前端 IP 才能通过 OSS CORS | — | deep | high | yes | grok-build | AC-003 | — | done |
 
 ## 3. 依赖 DAG
 
 ```text
-T-01 [READY]
-T-02 [READY]
-T-03 [READY]
+T-01 [DONE]
+T-02 [DONE]
+T-03 [DONE]
 ```
 
 三张 Ticket 彼此独立，没有真实阻塞边。若后续实现阶段发现共享写路径，先把该路径提到专门 owner Ticket，再回写 Map。

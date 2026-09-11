@@ -4,14 +4,14 @@ artifact: ticket
 change: 2026-09-08-richtext-third-oss
 id: T-03
 title: OSS 开发环境默认不再依赖固定前端 IP 才能通过 CORS
-status: ready
+status: done
 planning_depth: deep
 planning_depth_reason: 这是跨浏览器、MinIO 和发布工件的安全敏感环境配置修订，会影响联调用 CORS 语义和生产默认值说明。
 ready: true
 risk: high
 blocked_by: []
 contract_ids: [AC-003]
-owner: unassigned
+owner: grok-build
 expected_changes:
   - "<Path>release-artifacts/docker/docker-compose-infrastructure.yml</Path>"
   - "<Path>release-artifacts/.env.example</Path>"

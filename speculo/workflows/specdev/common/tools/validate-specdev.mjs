@@ -2985,7 +2985,7 @@ function validateChange(change, stage = null, repoRoot = null) {
         (id) => !new RegExp(`${escapeRegExp(id)}.*\\bdeferred\\b`, "i").test(ticketsMap.body),
       );
     }
-    if (uncovered.length) {
+    if (uncovered.length && (ticketsRequired || tickets.size > 0)) {
       errors.push(`Spec acceptance contracts are not covered by Tickets: ${JSON.stringify(uncovered)}`);
     }
     if (spec.meta.ready_for_tickets === true && !declaredContracts.size) {

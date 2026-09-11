@@ -4,14 +4,14 @@ artifact: ticket
 change: 2026-09-08-richtext-third-oss
 id: T-02
 title: 三方调用明细和统计支持空 providerCode
-status: ready
+status: done
 planning_depth: deep
 planning_depth_reason: 这是对公开 GET 接口查询语义的修订，controller/service/mapper 必须一致，且要兼容现有页面直接打开的行为。
 ready: true
 risk: medium
 blocked_by: []
 contract_ids: [AC-002]
-owner: unassigned
+owner: grok-build
 expected_changes:
   - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-third/src/main/java/org/dromara/third/controller/admin/ThirdObservabilityController.java</Path>"
   - "<Path>ruoyi-vue-plus-namewta/ruoyi-modules/ruoyi-third/src/main/java/org/dromara/third/service/ThirdObservabilityService.java</Path>"

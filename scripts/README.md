@@ -14,14 +14,15 @@ scripts/
 │   ├── verify-dev-build-guard.sh
 │   └── verify-submodules.sh
 └── lib/
-    └── backend-build-guard.sh
+    ├── backend-build-guard.sh
+    └── dev-runtime.sh
 ```
 
 | 目录 | 作用 |
 | --- | --- |
 | `scripts/` | 父仓库自动化脚本的统一入口及说明文档。 |
 | `scripts/ci/` | CI 质量门禁脚本，负责子模块快照、后端打包内容和真实外部服务集成测试的验收。 |
-| `scripts/lib/` | 开发脚本复用模块；当前提供后端构建互斥和 Maven 模块 JAR 完整性校验。 |
+| `scripts/lib/` | 开发脚本复用模块；当前提供后端构建互斥、Maven 模块 JAR 完整性校验，以及 Windows/Unix classpath 与端口探测。 |
 
 ## start-dev.sh
 
@@ -41,12 +42,19 @@ scripts/
 ./scripts/start-dev.sh
 ```
 
+Windows PowerShell 或 CMD 需要 Git for Windows 提供的 `bash`：
+
+```powershell
+bash scripts/start-dev.sh
+```
+
 前端选项优先使用本机可直接调用的 `pnpm`，没有 `pnpm` 时回退到 `corepack pnpm`；依赖安装严格遵循 lockfile，随后运行固定端口且不自动打开浏览器的 `pnpm dev`。
 后端选项先取得按 canonical backend path 隔离的原子构建锁，再通过 Maven Wrapper 执行跳过自动测试的
 本地 reactor install。构建完成后，脚本会比较 `ruoyi-system/target/classes` 与 target JAR、
 `ruoyi-admin` 实际 Maven classpath 中已安装 JAR 的 class 集合，并检查 admin 登录链依赖的关键类型；全部
-通过后释放构建锁，再以 `dev,local` profiles 启动 `ruoyi-admin`。该脚本用于启动人工测试环境，不能替代
-前后端自动测试和质量门禁。
+通过后释放构建锁，再以 `dev,local` profiles 启动 `ruoyi-admin`。Windows 上 Maven classpath 使用 `;`
+和盘符路径，脚本按平台分隔符解析，不会把 `D:\` 中的冒号当成 Unix classpath 分隔符。该脚本用于启动
+人工测试环境，不能替代前后端自动测试和质量门禁。
 
 ### 前置条件与保护
 
@@ -54,8 +62,8 @@ scripts/
 - 后端需要 Java 21、可执行的 Maven Wrapper，以及非空的
   `ruoyi-vue-plus-namewta/ruoyi-admin/src/main/resources/application-local.yml`；该配置允许纳入 Git 跟踪，
   启动脚本不校验其忽略状态。
-- 若本机提供 `lsof`，脚本会在启动前检查前端 `80` 或后端 `8080` 端口；端口被占用时只报告进程并退出，
-  不会自动终止任何现有服务。
+- 启动前检查前端 `80` 或后端 `8080` 端口：优先 `lsof`，Windows 上回退到 `netstat`；端口被占用时只报告
+  进程并退出，不会自动终止任何现有服务。
 - 脚本不会读取或输出本地配置中的账号、密码等敏感值。
 - 父工作区只版本化 `.vscode/settings.json` 并关闭 Red Hat Java 的自动构建，其他 `.vscode` 本地文件仍被
   忽略；这可避免 JDT language server 与 Maven 同时写入 `target/generated-sources`。需要 IDE 编译时请
@@ -83,8 +91,9 @@ scripts/
 ### 作用
 
 验证父工作区已关闭 Java 自动构建，并使用临时目录和临时 JAR 验证后端开发构建保护模块，覆盖活动 owner
-锁冲突、并发 stale lock 回收、stale lock 恢复、`TERM` 清理、完整 class 集合、残缺 JAR 和关键 class
-哨兵。测试只清理自己创建的临时目录，不访问产品配置或本地 Maven 仓库。
+锁冲突、并发 stale lock 回收、stale lock 恢复、`TERM` 清理、完整 class 集合、残缺 JAR、关键 class
+哨兵，以及 Unix/Windows Maven classpath 中 `ruoyi-system` JAR 的唯一定位。测试只清理自己创建的临时目录，
+不访问产品配置或本地 Maven 仓库。
 
 ### 使用方式
 

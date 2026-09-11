@@ -3,6 +3,7 @@ set -euo pipefail
 
 workspace_root=$(git rev-parse --show-toplevel)
 guard_module="${workspace_root}/scripts/lib/backend-build-guard.sh"
+dev_runtime="${workspace_root}/scripts/lib/dev-runtime.sh"
 vscode_settings="${workspace_root}/.vscode/settings.json"
 test_root=$(mktemp -d "${TMPDIR:-/tmp}/namewta-build-guard-test.XXXXXX")
 backend_fixture="${test_root}/backend"
@@ -31,6 +32,10 @@ if [[ ! -r "${guard_module}" ]]; then
   echo "build guard module is unavailable: ${guard_module}" >&2
   exit 1
 fi
+if [[ ! -r "${dev_runtime}" ]]; then
+  echo "dev runtime module is unavailable: ${dev_runtime}" >&2
+  exit 1
+fi
 if [[ ! -r "${vscode_settings}" ]] ||
   ! grep -Eq '"java\.autobuild\.enabled"[[:space:]]*:[[:space:]]*false' "${vscode_settings}"; then
   echo "workspace Java auto build must stay disabled to protect Maven target output" >&2
@@ -42,6 +47,74 @@ if git -C "${workspace_root}" check-ignore -q .vscode/settings.json; then
 fi
 # shellcheck source=../lib/backend-build-guard.sh
 source "${guard_module}"
+# shellcheck source=../lib/dev-runtime.sh
+source "${dev_runtime}"
+
+assert_system_jar() {
+  local label=${1}
+  local classpath_value=${2}
+  local expected=${3}
+  local selected
+  local status
+
+  set +e
+  selected=$(dev_runtime_select_system_jar "${classpath_value}")
+  status=$?
+  set -e
+  if [[ ${status} -ne 0 || "${selected}" != "${expected}" ]]; then
+    echo "${label}: expected [${expected}], got status=${status} selected=[${selected}]" >&2
+    exit 1
+  fi
+}
+
+assert_system_jar_unresolved() {
+  local label=${1}
+  local classpath_value=${2}
+  local status
+
+  set +e
+  dev_runtime_select_system_jar "${classpath_value}" >/dev/null
+  status=$?
+  set -e
+  if [[ ${status} -eq 0 ]]; then
+    echo "${label}: uniquely resolved a system JAR from an invalid classpath" >&2
+    exit 1
+  fi
+}
+
+unix_system_jar='/home/u/.m2/repository/org/dromara/ruoyi-system/6.0.0/ruoyi-system-6.0.0.jar'
+windows_system_jar='D:\repo\org\dromara\ruoyi-system\6.0.0\ruoyi-system-6.0.0.jar'
+windows_other_jar='D:\repo\other-1.0.0.jar'
+windows_sources_jar='C:\cache\ruoyi-system-6.0.0-sources.jar'
+
+assert_system_jar "unix classpath" \
+  "${unix_system_jar}:/home/u/.m2/other-1.0.0.jar" \
+  "${unix_system_jar}"
+assert_system_jar "windows semicolon classpath" \
+  "${windows_system_jar};${windows_other_jar};${windows_sources_jar}" \
+  "$(dev_runtime_canonicalize_path "${windows_system_jar}")"
+assert_system_jar "windows single drive-letter path" \
+  "${windows_system_jar}" \
+  "$(dev_runtime_canonicalize_path "${windows_system_jar}")"
+assert_system_jar "newline classpath" \
+  $'D:\\repo\\org\\dromara\\ruoyi-system\\6.0.0\\ruoyi-system-6.0.0.jar\nD:\\repo\\other-1.0.0.jar' \
+  "$(dev_runtime_canonicalize_path "${windows_system_jar}")"
+assert_system_jar_unresolved "empty classpath" ""
+assert_system_jar_unresolved "sources-only classpath" "${windows_sources_jar}"
+assert_system_jar_unresolved "duplicate runtime jars" \
+  "${windows_system_jar};C:\\cache\\ruoyi-system-5.0.0.jar"
+
+netstat_fixture=$'  TCP    0.0.0.0:8080           0.0.0.0:0              LISTENING       1234\n  TCP    [::]:8080              [::]:0                 LISTENING       5678\n  TCP    127.0.0.1:18080         0.0.0.0:0              LISTENING       9\n  TCP    172.16.105.25:8631     23.11.38.161:80        CLOSE_WAIT      21288'
+netstat_8080=$(printf '%s\n' "${netstat_fixture}" | dev_runtime_filter_listening_port 8080)
+netstat_80=$(printf '%s\n' "${netstat_fixture}" | dev_runtime_filter_listening_port 80)
+if [[ "${netstat_8080}" != *$':8080'* || "${netstat_8080}" == *$':18080'* ]]; then
+  echo "netstat 8080 filter did not keep listening 8080 only: ${netstat_8080}" >&2
+  exit 1
+fi
+if [[ -n "${netstat_80}" ]]; then
+  echo "netstat 80 filter matched a non-listening remote port: ${netstat_80}" >&2
+  exit 1
+fi
 
 NAMEWTA_BUILD_LOCK_ROOT="${lock_root}"
 export NAMEWTA_BUILD_LOCK_ROOT
@@ -308,6 +381,7 @@ start_backend="${start_workspace}/ruoyi-vue-plus-namewta"
 mkdir -p "${start_workspace}/scripts/lib" "${start_backend}"
 cp "${workspace_root}/scripts/start-dev.sh" "${start_workspace}/scripts/start-dev.sh"
 cp "${guard_module}" "${start_workspace}/scripts/lib/backend-build-guard.sh"
+cp "${dev_runtime}" "${start_workspace}/scripts/lib/dev-runtime.sh"
 : >"${start_backend}/mvnw"
 chmod +x "${start_backend}/mvnw"
 
@@ -355,4 +429,4 @@ if [[ "${tracked_config_output}" != *"正在刷新后端本地 Maven reactor"* ]
   exit 1
 fi
 
-echo "workspace Java auto build, backend lock lifecycle, and module JAR class-set verification passed"
+echo "workspace Java auto build, backend lock lifecycle, Windows classpath parsing, and module JAR class-set verification passed"

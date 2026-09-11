@@ -1,13 +1,29 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Non-login Git Bash inherits Windows PATH, so system32/find.exe can shadow GNU find.
+case "$(uname -s 2>/dev/null)" in
+  MINGW* | MSYS* | CYGWIN*)
+    PATH="/usr/bin:${PATH}"
+    ;;
+esac
+
 script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 workspace_root=$(cd -- "${script_dir}/.." && pwd)
 frontend_dir="${workspace_root}/plus-ui-namewta"
 backend_dir="${workspace_root}/ruoyi-vue-plus-namewta"
 backend_local_config="ruoyi-admin/src/main/resources/application-local.yml"
 backend_build_guard="${script_dir}/lib/backend-build-guard.sh"
+dev_runtime="${script_dir}/lib/dev-runtime.sh"
 pnpm_runner=()
+mvnw_cmd=()
+
+[[ -r "${dev_runtime}" ]] || {
+  echo "错误：缺少本地启动运行时模块：${dev_runtime}" >&2
+  exit 1
+}
+# shellcheck source=lib/dev-runtime.sh
+source "${dev_runtime}"
 
 fail() {
   local message=${1}
@@ -31,49 +47,78 @@ resolve_pnpm_runner() {
   fi
 }
 
+resolve_mvnw_cmd() {
+  if [[ -x "${backend_dir}/mvnw" ]]; then
+    mvnw_cmd=("./mvnw")
+    return
+  fi
+  if [[ -f "${backend_dir}/mvnw" ]]; then
+    mvnw_cmd=(bash "./mvnw")
+    return
+  fi
+  fail "后端 Maven Wrapper 不存在或不可执行：${backend_dir}/mvnw"
+}
+
+run_mvnw() {
+  "${mvnw_cmd[@]}" "$@"
+}
+
+reject_occupied_port() {
+  local port=${1}
+  local service_name=${2}
+  local listeners=${3}
+
+  echo "错误：${service_name} 端口 ${port} 已被占用，未启动新进程。" >&2
+  echo "${listeners}" >&2
+  exit 1
+}
+
 ensure_port_available() {
   local port=${1}
   local service_name=${2}
+  local listeners
 
-  if ! command -v lsof >/dev/null 2>&1; then
-    if (exec 3<>"/dev/tcp/127.0.0.1/${port}") 2>/dev/null; then
-      fail "${service_name} 端口 ${port} 已被占用，且当前环境无法显示占用进程。"
+  if command -v lsof >/dev/null 2>&1; then
+    listeners=$(lsof -nP -iTCP:"${port}" -sTCP:LISTEN 2>/dev/null || true)
+    if [[ -n "${listeners}" ]]; then
+      reject_occupied_port "${port}" "${service_name}" "${listeners}"
     fi
     return
   fi
 
-  local listeners
-  listeners=$(lsof -nP -iTCP:"${port}" -sTCP:LISTEN 2>/dev/null || true)
-  if [[ -n "${listeners}" ]]; then
-    echo "错误：${service_name} 端口 ${port} 已被占用，未启动新进程。" >&2
-    echo "${listeners}" >&2
-    exit 1
+  if command -v netstat >/dev/null 2>&1; then
+    listeners=$(netstat -ano 2>/dev/null | dev_runtime_filter_listening_port "${port}")
+    if [[ -n "${listeners}" ]]; then
+      reject_occupied_port "${port}" "${service_name}" "${listeners}"
+    fi
+    return
+  fi
+
+  if (exec 3<>"/dev/tcp/127.0.0.1/${port}") 2>/dev/null; then
+    exec 3<&- || true
+    exec 3>&- || true
+    fail "${service_name} 端口 ${port} 已被占用，且当前环境无法显示占用进程。"
   fi
 }
 
 resolve_installed_system_jar() {
-  local classpath_entry
   local classpath_file
   local classpath_value
-  local installed_jars=()
+  local installed_system_jar
 
   classpath_file=$(mktemp "${TMPDIR:-/tmp}/namewta-admin-classpath.XXXXXX") || return 1
-  if ! ./mvnw -q -f ruoyi-admin/pom.xml dependency:build-classpath \
-    -Dmdep.outputFile="${classpath_file}"; then
+  # Force a newline separator so Windows ';' classpaths and drive-letter ':' stay intact.
+  if ! run_mvnw -q -f ruoyi-admin/pom.xml dependency:build-classpath \
+    -Dmdep.outputFile="${classpath_file}" \
+    -Dmdep.pathSeparator=$'\n'; then
     rm -f -- "${classpath_file}"
     return 1
   fi
   classpath_value=$(<"${classpath_file}")
   rm -f -- "${classpath_file}"
 
-  while IFS= read -r classpath_entry; do
-    if [[ "$(basename -- "${classpath_entry}")" == ruoyi-system-*.jar ]]; then
-      installed_jars+=("${classpath_entry}")
-    fi
-  done < <(printf '%s' "${classpath_value}" | tr ':' '\n')
-
-  [[ ${#installed_jars[@]} -eq 1 ]] || return 1
-  printf '%s\n' "${installed_jars[0]}"
+  installed_system_jar=$(dev_runtime_select_system_jar "${classpath_value}") || return 1
+  printf '%s\n' "${installed_system_jar}"
 }
 
 resolve_target_system_jar() {
@@ -81,12 +126,18 @@ resolve_target_system_jar() {
   local system_target_dir="${backend_dir}/ruoyi-modules/ruoyi-system/target"
   local target_jars=()
 
-  while IFS= read -r -d '' candidate; do
-    case "$(basename -- "${candidate}")" in
-      *-sources.jar|*-javadoc.jar) ;;
-      *) target_jars+=("${candidate}") ;;
-    esac
-  done < <(find "${system_target_dir}" -maxdepth 1 -type f -name 'ruoyi-system-*.jar' -print0 2>/dev/null)
+  while IFS= read -r candidate; do
+    [[ -n "${candidate}" ]] || continue
+    target_jars+=("${candidate}")
+  done < <(
+    shopt -s nullglob
+    for candidate in "${system_target_dir}"/ruoyi-system-*.jar; do
+      case "$(dev_runtime_path_basename "${candidate}")" in
+        *-sources.jar | *-javadoc.jar) ;;
+        *) printf '%s\n' "${candidate}" ;;
+      esac
+    done
+  )
 
   [[ ${#target_jars[@]} -eq 1 ]] || return 1
   printf '%s\n' "${target_jars[0]}"
@@ -132,7 +183,7 @@ start_frontend() {
 start_backend() {
   require_command java
   require_command jar
-  [[ -x "${backend_dir}/mvnw" ]] || fail "后端 Maven Wrapper 不存在或不可执行：${backend_dir}/mvnw"
+  resolve_mvnw_cmd
   [[ -r "${backend_build_guard}" ]] || fail "缺少后端构建保护模块：${backend_build_guard}"
 
   # shellcheck source=lib/backend-build-guard.sh
@@ -145,33 +196,45 @@ start_backend() {
 
   cd "${backend_dir}"
   echo "正在刷新后端本地 Maven reactor（跳过自动测试）..."
-  ./mvnw clean install -Dmaven.test.skip=true -Plocal
+  run_mvnw clean install -Dmaven.test.skip=true -Plocal
   verify_system_artifacts
   backend_build_lock_release
   cd ruoyi-admin
   echo "正在以前台 dev,local profiles 启动后端，按 Ctrl+C 停止..."
-  exec ../mvnw spring-boot:run \
+  if [[ -x ../mvnw ]]; then
+    exec ../mvnw spring-boot:run \
+      -Dmaven.test.skip=true \
+      -Pdev \
+      -Dspring-boot.run.profiles=dev,local
+  fi
+  exec bash ../mvnw spring-boot:run \
     -Dmaven.test.skip=true \
     -Pdev \
     -Dspring-boot.run.profiles=dev,local
 }
 
-echo "请选择要启动的本地测试服务："
-echo "1、启动前端"
-echo "2、启动后端"
-printf "请输入选项 [1-2]："
-if ! IFS= read -r choice; then
-  fail "未读取到启动选项。" 2
-fi
+start_dev_main() {
+  echo "请选择要启动的本地测试服务："
+  echo "1、启动前端"
+  echo "2、启动后端"
+  printf "请输入选项 [1-2]："
+  if ! IFS= read -r choice; then
+    fail "未读取到启动选项。" 2
+  fi
 
-case "${choice}" in
-  1)
-    start_frontend
-    ;;
-  2)
-    start_backend
-    ;;
-  *)
-    fail "无效选项：${choice}（只能输入 1 或 2）。" 2
-    ;;
-esac
+  case "${choice}" in
+    1)
+      start_frontend
+      ;;
+    2)
+      start_backend
+      ;;
+    *)
+      fail "无效选项：${choice}（只能输入 1 或 2）。" 2
+      ;;
+  esac
+}
+
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+  start_dev_main
+fi

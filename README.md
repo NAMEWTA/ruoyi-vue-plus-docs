@@ -1,3 +1,5 @@
+> **FROZEN.** This repository is a read-only backup. Current NAMEWTA product development is **https://github.com/NAMEWTA/WTA-plus**. Do not open new features or force-push here.
+
 # NAMEWTA RuoYi-Vue-Plus
 
 本项目是基于上游 **RuoYi-Vue-Plus / Plus-UI** 持续演进的 NAMEWTA 增强版。它不是简单改名或上游源码副本，而是在保留上游主要业务能力的基础上，重点增强了多 App 前端架构、Client 级身份与权限隔离、OSS 直传与生命周期、统一通知、HTTP 可观测性及工程治理。

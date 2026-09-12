@@ -4,7 +4,7 @@
 
 - [ ] Ticket frontmatter 可解析，`ready: true`，`status: ready`。
 - [ ] Tickets Map 已完整读取，包含总体实施背景和项目 Skill 读取矩阵；当前 Ticket 被 `ALL` 或自身 ID 覆盖。
-- [ ] 当前 Ticket 映射的项目 Skill 路径均为真实存在的项目根相对入口文件，Lead 已完整读取；implementation subagent Packet 包含 Map 与同一最低必读集合。
+- [ ] 当前 Ticket 映射的项目 Skill 路径均为真实存在的项目根相对入口文件，Lead 已读取入口并完整展开命中的 Skill；implementation subagent Packet 包含 Map 与同一最低必读集合。
 - [ ] 项目 Agent 指令或当前实现范围没有触发矩阵外的未读项目 Skill；发现新匹配项时由 Lead 更新 Map、重新运行 tickets 校验后再恢复项目写入。
 - [ ] 所有 `blocked_by` Ticket 为 done 且 Evidence 存在。
 - [ ] Spec、ADR、Ticket 与 Goal Plan 无冲突；旧 Goal Plan schema 必须重跑 P-goal-plan。
@@ -41,4 +41,4 @@
 - **delivery-unverified**：候选、provider 声明或附件不能独立核对；保持 unverified。
 - **e2e-owner-invalid**：required 模式 E2E 被安排在 source worktree，或任一模式不是 Lead owner；停止并修 Ticket/Goal Plan。
 - **direct-parent-invalid**：current 模式的 Ticket commit、父 HEAD、验证或 Evidence 不一致；保留最后可信 commit 并阻塞当前 Ticket。
-- **parent-plan-stale**：父 Implementation Map revision、成员 Ticket、serialization、workspace 策略、全局实现配额或 repository/ref 已变化；停止当前派单并返回 O-orchestrate-implementation 重算。
+- **parent-plan-stale**：父 Implementation Map revision、成员 Ticket、serialization、workspace 策略、全局实现配额或 repository/ref 已变化；停止当前派单并返回 P-goal-plan 重算。
